@@ -79,8 +79,9 @@ Une fois que toutes les configurations sont prêtes, vous pouvez déployer votre
     ```bash
     
     
-docker compose -f docker-compose.prod.yml --env-file .env config | docker stack deploy -c - prenom
 
+
+docker compose -f docker-compose.prod.yml --env-file .env config | grep -v '^name:' | docker stack deploy -c - jeremy
     ```
     *(Note : `prenom` est le nom du stack, vous pouvez choisir ce que vous voulez)*.
 
