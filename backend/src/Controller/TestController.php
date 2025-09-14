@@ -5,9 +5,11 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\DependencyInjection\Attribute\Value;
 
 final class TestController extends AbstractController
 {
+
     #[Route('/', name: 'app_test', methods: ['GET'])]
     public function index(): JsonResponse
     {
@@ -21,13 +23,6 @@ final class TestController extends AbstractController
     public function testParam(int $id): JsonResponse{
         return $this->json([
             'id' => $id
-        ]);
-    }
-
-    #[Route('/register', methods: ['POST'])]
-    public function store(): JsonResponse {
-        return $this->json([
-            'message' => 'hello'
         ]);
     }
 }

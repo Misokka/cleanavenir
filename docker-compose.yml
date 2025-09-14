@@ -27,22 +27,20 @@ services:
     networks:
       - myapp_network
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: myapp_frontend_nuxt
-  #   ports:
-  #     - "3000:3000" # On accède au site via http://localhost:3000
-  #   volumes:
-  #     - ./frontend:/app # Monte le code source pour le live-reload
-  #     - /app/node_modules # S'assure que node_modules n'est pas écrasé
-  #   environment:
-  #     # Important pour que Nuxt puisse se lancer dans cet environnement
-  #     NUXT_HOST: 0.0.0.0
-  #     NUXT_PORT: 3000
-  #   networks:
-  #     - myapp_network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000" # On accède au site via http://localhost:3000
+    volumes:
+      - ./frontend:/app # Monte le code source pour le live-reload
+      - /app/node_modules # S'assure que node_modules n'est pas écrasé
+    env_file:
+      - ./frontend/.env.local
+    networks:
+      - myapp_network
 
   # === Service Base de Données PostgreSQL ===
   db:

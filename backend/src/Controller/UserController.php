@@ -10,8 +10,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/users', methods: ['GET'])]
 final class UserController extends AbstractController
 {
-    #[Route('/user/{id}', name: 'getUser')]
-    public function index(UserRepository $userRepository, int $id): JsonResponse
+    #[Route('/', name: 'getUsers')]
+    public function index(UserRepository $userRepository): JsonResponse
+    {
+        $users = $userRepository->findAll();
+        if(!$users){
+            return $this->json([
+                'message' => 'Aucun utilisateurs',
+            ]);
+        }
+
+        return $this->json($users);
+    }
+
+    #[Route('/user/{id}')]
+    public function show(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
         if(!$user){

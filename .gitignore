@@ -1,4 +1,4 @@
-.env
+/.env
 
 
 # Cache and logs (Symfony2)
