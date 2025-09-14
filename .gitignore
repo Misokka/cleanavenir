@@ -53,3 +53,10 @@
 
 # Embedded web-server pid file
 /.web-server-pid
+
+# INFRA
+
+.env
+**/.env
+**/.env.*
+!**/.env.example

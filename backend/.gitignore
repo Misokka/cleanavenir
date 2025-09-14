@@ -8,3 +8,11 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+.env.dev
+/.env.dev
+/backend/docker/
+
+**/.env
+**/.env.*
+!**/.env.example
