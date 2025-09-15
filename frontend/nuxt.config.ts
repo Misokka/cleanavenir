@@ -12,9 +12,11 @@ export default defineNuxtConfig({
     ],
   },
   runtimeConfig: {
+    // url utilisé par le côté serveur de nuxt
     serverBackendUrl: process.env.NUXT_SERVER_BACKEND_URL,
 
     public: {
+      // url utilisé par le côté client de nuxt
       clientBackendUrl: process.env.NUXT_CLIENT_BACKEND_URL
     }
   },
