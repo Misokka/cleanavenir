@@ -25,7 +25,7 @@
 
 ## Étape 5: Création de user
 
-- Créer un ou plusieurs users avec postman et renseigner les propriété:
+- Créer un ou plusieurs users sur `/auth/register` ou avec postman et renseigner les propriété:
 
 route: POST 'http://localhost:{port}/api/users'
 ```json

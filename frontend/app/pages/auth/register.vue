@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useAuth } from '~/composables/useAuth';
 import type { RegisterForm } from '~/types/user';
 
+  const {register} = useAuth();
+  
   const registerForm = ref<RegisterForm>({
     firstname: "",
     lastname: "",
@@ -13,7 +16,7 @@ import type { RegisterForm } from '~/types/user';
 
   async function handleRegister(){
     // console.log(registerForm.value);
-    const response = await useRegister(registerForm.value)
+    const response = await register(registerForm.value)
 
     if('errors' in response){
       errors.value = response.errors

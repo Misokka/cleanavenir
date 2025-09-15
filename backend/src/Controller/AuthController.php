@@ -60,8 +60,14 @@ final class AuthController extends AbstractController
         }
 
         return $this->json([
-            'message' => 'Connexion réussie'
+            'message' => 'Connexion réussie',
+            'user' => $user
         ]);
+    }
+
+    #[Route('/me', name: 'app_me', methods: ['GET'])]
+    public function me(#[CurrentUser] ?User $user){
+        return $this->json($user, 200, [], ['groups' => 'user:read']);
     }
 
     #[Route('/logout', name: 'app_logout')]

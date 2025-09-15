@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { useUsers } from '~/composables/useUsers';
+
   const route = useRoute()
   const userId = parseInt(route.params.userId as string)
-  const response = await useGetOneUser(userId);
+
+  const {getOneUser} = useUsers();
+  const response = await getOneUser(userId);
   // console.log(response);
 
   const {data: user, status, pending, error} = response

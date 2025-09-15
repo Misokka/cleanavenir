@@ -1,26 +1,30 @@
 <script setup lang="ts">
+import { useAuth } from '~/composables/useAuth';
+
   const loginCredentials = ref({
     email: "",
     password: ""
   })
 
+  const {user, login, logout} = useAuth()
+
   const successMessage = ref<string | undefined>(undefined)
   const errorMessage = ref<string | undefined>(undefined)
 
   async function handleLogin(){
-    const response = await useLogin(loginCredentials.value);
-    console.log(errorMessage.value)
+    const response = await login(loginCredentials.value);
     if('errorMessage' in response){
       errorMessage.value = response.errorMessage
-      
     } else {
-      successMessage.value = response.message
+      successMessage.value = response.sucessMessage
     }
   }
 
   async function handleLogut(){
-    const response = await useLogout()
-    successMessage.value = response.message
+    const response = await logout()
+    if(response){
+      successMessage.value = response.message
+    }
   }
 </script>
 
@@ -60,7 +64,8 @@
       <button type="submit" class="bg-orange-200 p-3 mt-4">Me connecter</button>
     </form>
 
-    <form method="post" @submit.prevent="handleLogut">
+
+    <form v-if="user" method="post" @submit.prevent="handleLogut">
       <button type="submit" class="bg-red-300 p-3 mt-2">Me déconnecter</button>
     </form>
   </div>
