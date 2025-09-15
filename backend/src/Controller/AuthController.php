@@ -34,7 +34,7 @@ final class AuthController extends AbstractController
         if(count($errors) !== 0){
             $errorsArr = [];
             foreach ($errors as $error) {
-                $errorsArr[] = $error;
+                $errorsArr[$error->getPropertyPath()] = $error->getMessage();
             }
 
             return $this->json(['errors' => $errorsArr]);
@@ -55,7 +55,7 @@ final class AuthController extends AbstractController
     public function login(#[CurrentUser] ?User $user){
         if(null === $user) {
             return $this->json([
-                'message' => 'Missing credentials'
+                'errorMessage' => 'Identifiants invalides.'
             ], 401);
         }
 
