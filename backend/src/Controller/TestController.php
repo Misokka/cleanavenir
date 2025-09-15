@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Attribute\Value;
 final class TestController extends AbstractController
 {
 
-    #[Route('/', name: 'app_test', methods: ['GET'])]
+    #[Route('/api', name: 'app_test', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->json([
@@ -19,7 +19,7 @@ final class TestController extends AbstractController
         ]);
     }
 
-    #[Route('/param/{id}', methods: ['GET'])]
+    #[Route('/api/param/{id}', methods: ['GET'])]
     public function testParam(int $id): JsonResponse{
         return $this->json([
             'id' => $id

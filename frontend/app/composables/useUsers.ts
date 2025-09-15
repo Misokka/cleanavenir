@@ -1,11 +1,14 @@
-import { ref } from 'vue'
+import type { User } from '~/types/user';
 
 export function useGetUsers(){
-  const apiUrl = useApiUrl();
-  return useFetch(`${apiUrl}/users`);
+  return useApi<User[]>('/api/users', {
+    key: 'getAllUsers'
+  })
 }
 
 export function useGetOneUser(userId: number){
-  const apiUrl = useApiUrl();
-  return useFetch(`${apiUrl}/users/user/${userId}`);
+  const apiUrl = `/api/users/${userId}`
+  return useApi<User>(apiUrl, {
+    key: 'getOneUser'
+  });
 }

@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/auth', methods: ['POST'])]
+#[Route('/api/auth', methods: ['POST'])]
 final class AuthController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
