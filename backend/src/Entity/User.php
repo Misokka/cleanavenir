@@ -6,10 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+#[UniqueEntity('email', message: "Utilisateur existant.")]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +31,7 @@ class User
     #[Assert\NotBlank(message: "Le nom est requis")]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 320)]
+    #[ORM\Column(type: "string", length: 320, unique: true)]
     #[Groups("user:read")]
     #[Assert\NotBlank(message: "L'email est requis")]
     #[Assert\Email(message: "L'adresse '{{ value }}' n'est pas un email valide.")]
@@ -36,6 +40,9 @@ class User
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le mot de passe es requis")]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
 
     public function getId(): ?int
     {
@@ -88,5 +95,31 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+        
     }
 }

@@ -1,5 +1,9 @@
 <script setup lang="ts">
- const {data: users, error, status, pending} = await useGetUsers();
+import { useUsers } from '~/composables/useUsers';
+
+  const {getUsers} = useUsers()
+
+ const {data: users, error, status, pending} = await getUsers();
 </script>
 
 <template>

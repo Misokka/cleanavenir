@@ -12,5 +12,5 @@ nelmio_cors:
         '^/api/':
             # On ne surcharge QUE ce qui change pour ce chemin, c'est-à-dire l'origine
             allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
-            # allow_credentials: true
+            allow_credentials: true
             origin_regex: false # Plus clair car ce n'est pas une regex
