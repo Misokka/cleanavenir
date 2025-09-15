@@ -1,0 +1,10 @@
+# Dépendances Node.js
+frontend/node_modules
+frontend/.output
+
+# Dépendances PHP
+backend/vendor  # ✅ On l'ajoute ici
+
+# Fichiers système et logs...
+.DS_Store
+*.log

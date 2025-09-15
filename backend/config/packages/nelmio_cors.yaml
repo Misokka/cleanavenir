@@ -1,0 +1,16 @@
+nelmio_cors:
+    defaults:
+        # On met ici TOUTES les valeurs communes
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization']
+        expose_headers: ['Link']
+        max_age: 3600
+        # Par défaut, on n'autorise aucune origine
+        allow_origin: ['']
+
+    paths:
+        '^/api/':
+            # On ne surcharge QUE ce qui change pour ce chemin, c'est-à-dire l'origine
+            allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+            # allow_credentials: true
+            origin_regex: false # Plus clair car ce n'est pas une regex

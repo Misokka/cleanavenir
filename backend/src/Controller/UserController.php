@@ -7,11 +7,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/users', methods: ['GET'])]
+#[Route('/api/users')]
 final class UserController extends AbstractController
 {
-    #[Route('/user/{id}', name: 'getUser')]
-    public function index(UserRepository $userRepository, int $id): JsonResponse
+    #[Route('/', name: 'getUsers', methods: ['GET'])]
+    public function index(UserRepository $userRepository): JsonResponse
+    {
+        $users = $userRepository->findAll();
+        return $this->json($users, 200);
+    }
+
+    #[Route('/{id}', methods: ['GET'])]
+    public function show(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
         if(!$user){
@@ -20,6 +27,6 @@ final class UserController extends AbstractController
             ]);
         }
 
-        return $this->json([$user]);
+        return $this->json($user);
     }
 }
