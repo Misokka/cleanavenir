@@ -1,1 +1,38 @@
 # kickdeal
+
+
+# Prise en main du projet
+
+## Étape 1:
+
+- Renommer le .env.example en .env et remplir les variables
+
+## Étape 2: Backend
+
+- Créer un fichier `.env.local` et suivre le modèle du `.env`
+- générer un nouveau APP_SECRET avec `openssl rand -hex 32`
+- Renseigner l'url du frontend dans `CORS_ALLOW_ORIGIN`. Faire attention à bien mentionner l'url sous forme de `http://localhost:{port}` et pas directement avec le nom du service
+
+## Étape 3: Frontend
+
+- Créer un fichier `.env.local` et suivre le modèle du `.env`
+- mettre l'url du frontend `http://localhost:{port}` dans `NUXT_CLIENT_BACKEND_URL`
+- mettre l'url du frontend `http://nginx:{port interne de nginx}` dans `NUXT_SERVER_BACKEND_URL`
+
+## Étape 4: Build et lancement du projet
+
+- lancer la commande `docker compose up --build -d`
+
+## Étape 5: Création de user
+
+- Créer un ou plusieurs users avec postman et renseigner les propriété:
+
+route: POST 'http://localhost:{port}/api/users'
+```json
+  {
+    "firstname": "string",
+    "lastname": "string",
+    "email": "string",
+    "password": "string"
+  }
+```
