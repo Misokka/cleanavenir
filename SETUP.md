@@ -32,6 +32,7 @@ POSTGRES_PASSWORD=un_mot_de_passe_solide
 DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?serverVersion=15&charset=utf8"
 
 
+
 # ==================================
 # VARIABLES POUR TRAEFIK
 # (Utilisées pour le routage)
