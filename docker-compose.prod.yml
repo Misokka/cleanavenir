@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    image: kickdeal-backend:latest
+    env_file: .env
+    volumes:
+      - ./backend:/var/www/html
+      - /app/vendor
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    networks:
+      - myapp_network
+
+  nginx:
+    image: nginx:1.23-alpine
+    environment:
+      NGINX_SERVER_NAME: ${TRAEFIK_DOMAIN}
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - myapp_network
+      - web
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.${TRAEFIK_ROUTER_NAME}.rule=Host(`${TRAEFIK_DOMAIN}`)"
+        - "traefik.http.routers.${TRAEFIK_ROUTER_NAME}.entrypoints=websecure"
+        - "traefik.http.routers.${TRAEFIK_ROUTER_NAME}.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+        - "traefik.http.services.${TRAEFIK_ROUTER_NAME}.loadbalancer.server.port=80"
+        - "traefik.docker.network=traefik_web"
+
+  db:
+    image: postgres:15-alpine
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - myapp_network
+
+networks:
+  myapp_network:
+    driver: overlay
+    attachable: true
+  web:
+    external: true
+    name: traefik_web
+
+volumes:
+  db_data:
