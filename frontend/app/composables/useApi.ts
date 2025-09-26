@@ -10,6 +10,10 @@ function getApiUrl(){
   return runtimeConfig.public.clientBackendUrl
 }
 
+/**
+ * 
+ * @description À utiliser pour faire des requêtes API vers le backend côté serveur notamment pour le SSR
+ */
 export function useFetchApi<ReturnValue = unknown>(path: string, options = {}){
   // construction de l'url
   const fullUrl = `${getApiUrl()}${path}`
@@ -19,7 +23,9 @@ export function useFetchApi<ReturnValue = unknown>(path: string, options = {}){
   return useFetch<ReturnValue>(fullUrl, {...options, credentials: 'include'})
 }
 
-
+/**
+ * @description À utiliser pour faire des requêtes API vers le backend côté client
+ */
 export function use$fetchApi<ReturnValue = unknown>(path: string, options = {}){
   const fullUrl = `${getApiUrl()}${path}`
   return $fetch<ReturnValue>(fullUrl, {...options, credentials: 'include'})
