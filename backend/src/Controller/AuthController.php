@@ -5,10 +5,14 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -81,7 +85,12 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/forgot-password', name: 'app_forgot_password', methods: ['POST'])]
-    public function forgetPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse{
+    public function forgetPassword(
+		Request $request,
+		UserRepository $userRepository,
+		EntityManagerInterface $entityManager,
+		MailerInterface $mailer
+	): JsonResponse{
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
 
@@ -109,13 +118,27 @@ final class AuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+		// $frontendUrl = $this->getParameter('env(FRONTEND_URL)'); // Pour envoyer un lien qui pointe vers le frontend
+		$frontendUrl = $this->getParameter('frontend_url');
+		$resetTokenString = $tokenSelector . $hashedToken;
+		$resetLink = "{$frontendUrl}/api/auth/reset-password?token={$resetTokenString}";
+
+		$mailResult = $this->sendRestPasswordEmail($email, $resetLink, $mailer);
+
+		if(!$mailResult['success']){
+			return $this->json([
+				"message" => "Une erreur est survenue lors de l'envoie de mail",
+				"error" => $mailResult['message']
+			], 500);
+		}
+
         // Ici, vous enverriez un email avec un lien de réinitialisation du mot de passe.
         // Pour des raisons de sécurité, nous ne révélons pas si l'email existe ou non.
 
         return $this->json([
             'message' => 'Si un compte avec cet email existe, un lien de réinitialisation du mot de passe a été envoyé.',
-            'resetTokenString' => $tokenSelector . $hashedToken,
-        ]);
+            'resetTokenString' => $resetTokenString,
+        ], 200);
 
     }
 
@@ -169,5 +192,23 @@ final class AuthController extends AbstractController
         return $this->json([
             'message' => 'Mot de passe réinitialisé avec succès.'
         ]);
+    }
+
+    public function sendRestPasswordEmail(string $email, string $resetLink, MailerInterface $mailer){
+        $email = (new Email())
+            ->from('kickdeal@no-reply.com')
+            ->to($email)
+            ->subject("Réinitialisation de mot de passe")
+            ->html("<p>CLiquez <a href={$resetLink}>ici<a> pour réinitialiser votre mot de passe</p></br><span>resetlink: {$resetLink}</span>");
+        
+        try{
+			$mailer->send($email);
+			return ["success" => true];
+        } catch(Exception $exception) {
+			return [
+				"success" => false,
+				"message" => $exception->getMessage()
+			];
+        }
     }
 }

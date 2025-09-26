@@ -44,13 +44,16 @@ services:
   
   ###> symfony/mailer ###
   mailer:
+    container_name: mailer
     image: axllent/mailpit
     ports:
       - "1025"
-      - "8025"
+      - "8081:8025"
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - myapp_network
 ###< symfony/mailer ###
 
   # === Service Base de Données PostgreSQL ===
