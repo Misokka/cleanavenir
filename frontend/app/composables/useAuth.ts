@@ -41,7 +41,7 @@ export function useAuth(){
 
   async function logout(){
     const response = await use$fetchApi<{message: string}>('/api/auth/logout', {
-      method: 'POST',
+      method: 'DELETE',
       body: {}
     })
 
@@ -51,12 +51,32 @@ export function useAuth(){
     }
   }
 
+  async function sendMailForgotPassword(email: string){
+    const response = await use$fetchApi<{message: string, resetTokenString: string} | {error: string, message: string}>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: {email}
+    })
+
+    return response
+  }
+
+  async function resetPassword(newPassword: string, newPasswordConfirm: string, token: string){
+    const response = await use$fetchApi<{message: string} | {errorMessage: string}>(`/api/auth/reset-password?token=${token}`, {
+      method: 'PATCH',
+      body: {newPassword, newPasswordConfirm}
+    })
+
+    return response
+  }
+
   return {
     user,
     register,
     login,
     fetchUser,
-    logout
+    logout,
+    sendMailForgotPassword,
+    resetPassword
   }
 }
 

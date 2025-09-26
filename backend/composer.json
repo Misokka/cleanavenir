@@ -19,6 +19,7 @@
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
         "symfony/http-kernel": "6.4.*",
+        "symfony/mailer": "6.4.*",
         "symfony/property-access": "6.4.*",
         "symfony/property-info": "6.4.*",
         "symfony/runtime": "6.4.*",
@@ -26,7 +27,8 @@
         "symfony/security-csrf": "6.4.*",
         "symfony/serializer": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "symfonycasts/reset-password-bundle": "^1.23"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.64"

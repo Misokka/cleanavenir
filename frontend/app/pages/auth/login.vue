@@ -32,8 +32,8 @@ import { useAuth } from '~/composables/useAuth';
   <div class="wrapper max-w-7xl mx-auto p-3">
     <h1 class="text-2xl">Connexion</h1>
 
-    <p v-if="successMessage" class="text-orange-300">{{ successMessage }}</p>
-    <p v-if="errorMessage" class="text-red-200">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
+    <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
     <form method="post" @submit.prevent="handleLogin">
       <div class="space-y-2">
         <div>
@@ -63,6 +63,7 @@ import { useAuth } from '~/composables/useAuth';
 
       <button type="submit" class="bg-orange-200 p-3 mt-4">Me connecter</button>
     </form>
+    <NuxtLink to="/auth/forgot-password" class="inline-block mt-5 hover:underline hover:text-blue-600">Mot de passe oublié ?</NuxtLink>
 
 
     <form v-if="user" method="post" @submit.prevent="handleLogut">
