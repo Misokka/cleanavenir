@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Contract;
+use App\Entity\Negociation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Contract>
+ * @extends ServiceEntityRepository<Negociation>
  */
-class ContractRepository extends ServiceEntityRepository
+class NegociationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Contract::class);
+        parent::__construct($registry, Negociation::class);
     }
 
     //    /**
-    //     * @return Contract[] Returns an array of Contract objects
+    //     * @return Negociation[] Returns an array of Negociation objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
+    //            ->orderBy('n.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Contract
+    //    public function findOneBySomeField($value): ?Negociation
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

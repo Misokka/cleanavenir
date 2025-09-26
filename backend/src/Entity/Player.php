@@ -32,16 +32,7 @@ class Player
     private ?float $askingPrice = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $status = null;
-
-    #[ORM\Column]
-    private ?bool $isPublished = null;
-
-    /**
-     * @var Collection<int, Contract>
-     */
-    #[ORM\ManyToMany(targetEntity: Contract::class, inversedBy: 'players')]
-    private Collection $contract;
+    private ?string $profesionalStatus = null;
 
     /**
      * @var Collection<int, Agent>
@@ -61,19 +52,11 @@ class Player
     #[ORM\ManyToMany(targetEntity: Stat::class, inversedBy: 'players')]
     private Collection $stat;
 
-    /**
-     * @var Collection<int, Career>
-     */
-    #[ORM\ManyToMany(targetEntity: Career::class, inversedBy: 'players')]
-    private Collection $career;
-
     public function __construct()
     {
-        $this->contract = new ArrayCollection();
         $this->agent = new ArrayCollection();
         $this->club = new ArrayCollection();
         $this->stat = new ArrayCollection();
-        $this->career = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,51 +126,16 @@ class Player
 
     public function getStatus(): ?string
     {
-        return $this->status;
+        return $this->profesionalStatus;
     }
 
-    public function setStatus(?string $status): static
+    public function setprofesionalStatus(?string $profesionalStatus): static
     {
-        $this->status = $status;
+        $this->profesionalStatus = $profesionalStatus;
 
         return $this;
     }
 
-    public function isPublished(): ?bool
-    {
-        return $this->isPublished;
-    }
-
-    public function setIsPublished(bool $isPublished): static
-    {
-        $this->isPublished = $isPublished;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Contract>
-     */
-    public function getContract(): Collection
-    {
-        return $this->contract;
-    }
-
-    public function addContract(Contract $contract): static
-    {
-        if (!$this->contract->contains($contract)) {
-            $this->contract->add($contract);
-        }
-
-        return $this;
-    }
-
-    public function removeContract(Contract $contract): static
-    {
-        $this->contract->removeElement($contract);
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Agent>
@@ -257,30 +205,6 @@ class Player
     public function removeStat(Stat $stat): static
     {
         $this->stat->removeElement($stat);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Career>
-     */
-    public function getCareer(): Collection
-    {
-        return $this->career;
-    }
-
-    public function addCareer(Career $career): static
-    {
-        if (!$this->career->contains($career)) {
-            $this->career->add($career);
-        }
-
-        return $this;
-    }
-
-    public function removeCareer(Career $career): static
-    {
-        $this->career->removeElement($career);
 
         return $this;
     }
