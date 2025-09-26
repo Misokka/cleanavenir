@@ -44,6 +44,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetPasswordToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $resetPasswordTokenExpiry = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetTokenSelector = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,5 +130,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         
+    }
+
+    public function getResetPasswordToken(): ?string
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?string $resetPasswordToken): static
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function getResetPasswordTokenExpiry(): ?\DateTime
+    {
+        return $this->resetPasswordTokenExpiry;
+    }
+
+    public function setResetPasswordTokenExpiry(?\DateTime $resetPasswordTokenExpiry): static
+    {
+        $this->resetPasswordTokenExpiry = $resetPasswordTokenExpiry;
+
+        return $this;
+    }
+
+    public function getResetTokenSelector(): ?string
+    {
+        return $this->resetTokenSelector;
+    }
+
+    public function setResetTokenSelector(?string $resetTokenSelector): static
+    {
+        $this->resetTokenSelector = $resetTokenSelector;
+
+        return $this;
     }
 }

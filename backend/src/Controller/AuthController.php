@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,10 +15,10 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-#[Route('/api/auth', methods: ['POST'])]
+#[Route('/api/auth')]
 final class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
+    #[Route('/register', name: 'app_register', methods: ['POST'])]
     public function store(
         Request $request, 
         SerializerInterface $serializer,
@@ -51,7 +52,7 @@ final class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/login', name: 'app_login')]
+    #[Route('/login', name: 'app_login', methods: ['POST'])]
     public function login(#[CurrentUser] ?User $user){
         if(null === $user) {
             return $this->json([
@@ -70,12 +71,103 @@ final class AuthController extends AbstractController
         return $this->json($user, 200, [], ['groups' => 'user:read']);
     }
 
-    #[Route('/logout', name: 'app_logout')]
+    #[Route('/logout', name: 'app_logout', methods: ['DELETE'])]
     public function logout(Security $security){
         $security->logout(false);
 
         return $this->json([
             'message' => 'Déconnexion réussie.'
+        ]);
+    }
+
+    #[Route('/forgot-password', name: 'app_forgot_password', methods: ['POST'])]
+    public function forgetPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse{
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+
+        if(!$email){
+            return $this->json([
+                'errorMessage' => 'Email requis.'
+            ], 400);
+        }
+
+        $user = $userRepository->findOneBy(['email' => $email]);
+
+        if(!$user){
+            return $this->json([
+                'errorMessage' => 'Aucun utilisateur trouvé avec cet email.'
+            ], 404);
+        }
+
+        $tokenSelector = bin2hex(random_bytes(16));
+        $token = bin2hex(random_bytes(32));
+        $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+
+        $user->setResetTokenSelector($tokenSelector);
+        $user->setResetPasswordToken($hashedToken);
+        $user->setResetPasswordTokenExpiry(new \DateTime('+1 hour'));
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Ici, vous enverriez un email avec un lien de réinitialisation du mot de passe.
+        // Pour des raisons de sécurité, nous ne révélons pas si l'email existe ou non.
+
+        return $this->json([
+            'message' => 'Si un compte avec cet email existe, un lien de réinitialisation du mot de passe a été envoyé.',
+            'resetTokenString' => $tokenSelector . $hashedToken,
+        ]);
+
+    }
+
+    #[Route('/reset-password', name: 'app_reset_password', methods: ['PATCH'])]
+    public function resetPassword(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): JsonResponse{
+        $data = json_decode($request->getContent(), true);
+        $resetTokenString = $request->query->get('token');
+        $newPassword = $data['newPassword'] ?? null;
+        $newPasswordConfirm = $data['newPasswordConfirm'] ?? null;
+
+        if(!$resetTokenString || !$newPassword || !$newPasswordConfirm){
+            return $this->json([
+                'errorMessage' => 'Token et nouveau mot de passe requis.'
+            ], 400);
+        }
+
+        $selector = substr($resetTokenString, 0, 32); // 16 octets * 2 (hex)
+        $verifier = substr($resetTokenString, 32);
+
+        if($newPassword !== $newPasswordConfirm){
+            return $this->json([
+                'errorMessage' => 'Les mots de passe ne correspondent pas.'
+            ], 400);
+        }
+
+        $user = $userRepository->findOneBy(['resetTokenSelector' => $selector]);
+
+        if(!$user || $user->getResetPasswordTokenExpiry() < new \DateTime()){
+            return $this->json([
+                'errorMessage' => 'Token invalide ou expiré.',
+            ], 400);
+        }
+
+        //
+
+        if(!hash_equals($verifier, $user->getResetPasswordToken())){
+            return $this->json([
+                'errorMessage' => 'Token invalide.',
+                'verifer' => $verifier,
+            ], 400);
+        }
+
+
+        $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+        $user->setPassword($hashedPassword);
+        $user->setResetPasswordToken(null);
+        $user->setResetPasswordTokenExpiry(null);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json([
+            'message' => 'Mot de passe réinitialisé avec succès.'
         ]);
     }
 }
