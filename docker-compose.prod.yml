@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: kickdeal-backend:latest
@@ -30,6 +28,24 @@ services:
         - "traefik.http.routers.${TRAEFIK_ROUTER_NAME}.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
         - "traefik.http.services.${TRAEFIK_ROUTER_NAME}.loadbalancer.server.port=80"
         - "traefik.docker.network=traefik_web"
+
+  frontend:
+    image: kickdeal-frontend:latest
+    environment:
+      NUXT_SERVER_BACKEND_URL: "http://nginx:80"
+      NUXT_CLIENT_BACKEND_URL: "https://${TRAEFIK_DOMAIN}"
+    networks:
+      - myapp_network
+      - web
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.${TRAEFIK_FRONTEND_ROUTER_NAME}.rule=Host(`${TRAEFIK_FRONTEND_DOMAIN}`)"
+        - "traefik.http.routers.${TRAEFIK_FRONTEND_ROUTER_NAME}.entrypoints=websecure"
+        - "traefik.http.routers.${TRAEFIK_FRONTEND_ROUTER_NAME}.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+        - "traefik.http.services.${TRAEFIK_FRONTEND_ROUTER_NAME}.loadbalancer.server.port=3000"
+        - "traefik.docker.network=traefik_web"
+
 
   db:
     image: postgres:15-alpine
