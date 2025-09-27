@@ -75,8 +75,11 @@ Une fois que toutes les configurations sont prêtes, vous pouvez déployer votre
     
     docker build -t kickdeal-backend:latest ./backend
     ```
-
-2.  **Déployez le stack** avec Docker Swarm :
+2.  **Construisez l'image Docker** du frontend :
+    ```bash
+    docker build -t kickdeal-frontend:latest ./frontend
+    ```
+3.  **Déployez le stack** avec Docker Swarm :
     ```bash
     
     
@@ -126,3 +129,10 @@ server {
     error_log /var/log/nginx/error.log;
     access_log /var/log/nginx/access.log;
 }
+
+## Note importante sur les fichiers Docker Compose
+
+- `docker-compose.yml` : Pour le développement local (utilise `build`)
+- `docker-compose.prod.yml` : Pour la production avec Docker Swarm (utilise des images pré-construites)
+
+En production, toutes les images doivent être construites avant le déploiement car Docker Swarm ne supporte pas la directive `build`.
