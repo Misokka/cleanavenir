@@ -1,7 +1,9 @@
-export type UserRole = "CLIENT" | "DIRECTEUR" | "CONSEILLER";
+export type UserRole = "CLIENT" | "DIRECTOR" | "ADVISOR";
 
 export type UserDTO = {
   id: string;
+  firstname: string;
+  lastname: string;
   email: string;
   role: UserRole;
   isActive: boolean;          

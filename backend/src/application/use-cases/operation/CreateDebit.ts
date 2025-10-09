@@ -1,7 +1,7 @@
 import { Result } from "../../../shared/Result";
-import { OperationRepository } from "../../ports/OperationRepository";
+import { OperationRepository } from "../../ports/repositories/OperationRepository";
 import { InsufficientFundsError } from "../../../domain/errors/InsufficientFundsError";
-import { AccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 
 export type CreateDebitInput = {
   AccountId: string;
@@ -13,7 +13,7 @@ export type CreateDebitInput = {
 export class CreateDebit {
   constructor(private readonly ops: OperationRepository) {}
 
-  async execute(input: CreateDebitInput): Promise<Result<true, AccountNotFoundError | InsufficientFundsError | Error>> {
+  async execute(input: CreateDebitInput): Promise<Result<true, BankAccountNotFoundError | InsufficientFundsError | Error>> {
     if (input.amount <= 0) {
       return { ok: false, error: new Error("Amount must be > 0") };
     }

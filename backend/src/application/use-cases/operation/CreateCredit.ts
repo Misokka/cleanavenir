@@ -1,6 +1,6 @@
-import { AccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { Result } from "../../../shared/Result";
-import { OperationRepository } from "../../ports/OperationRepository";
+import { OperationRepository } from "../../ports/repositories/OperationRepository";
 
 
 export type CreateCreditInput = {
@@ -13,7 +13,7 @@ export type CreateCreditInput = {
 export class CreateCredit {
   constructor(private readonly ops: OperationRepository) {}
 
-  async execute(input: CreateCreditInput): Promise<Result<true, AccountNotFoundError | Error>> {
+  async execute(input: CreateCreditInput): Promise<Result<true, BankAccountNotFoundError | Error>> {
     if (input.amount <= 0) {
       return { ok: false, error: new Error("Amount must be > 0") };
     }
