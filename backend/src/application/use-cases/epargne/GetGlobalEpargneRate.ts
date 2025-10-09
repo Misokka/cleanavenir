@@ -1,12 +1,12 @@
 import { Result } from "../../../shared/Result";
-import { EpargneRepository } from "../../ports/EpargneRepository";
-import { EpargneRateDTO } from "../../dtos/EpargneRateDTO";
-import { EpargneRateNotSetError } from "../../../domain/errors/EpargneRateNotSetError";
+import { SavingRepository } from "../../ports/SavingRepository";
+import { SavingRateDTO } from "../../dtos/SavingRateDTO";
+import { SavingRateNotSetError } from "../../../domain/errors/SavingRateNotSetError";
 
-export class GetGlobalEpargneRate {
-  constructor(private readonly epargneRepo: EpargneRepository) {}
+export class GetGlobalSavingRate {
+  constructor(private readonly SavingRepo: SavingRepository) {}
 
-  async execute(): Promise<Result<EpargneRateDTO, EpargneRateNotSetError>> {
-    return this.epargneRepo.getGlobalRate();
+  async execute(): Promise<Result<SavingRateDTO, SavingRateNotSetError>> {
+    return this.SavingRepo.getGlobalRate();
   }
 }

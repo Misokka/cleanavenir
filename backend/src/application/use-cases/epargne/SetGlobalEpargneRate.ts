@@ -1,16 +1,16 @@
 import { Result } from "../../../shared/Result";
-import { EpargneRepository } from "../../ports/EpargneRepository";
-import { EpargneRateDTO } from "../../dtos/EpargneRateDTO";
+import { SavingRepository } from "../../ports/SavingRepository";
+import { SavingRateDTO } from "../../dtos/SavingRateDTO";
 
-export type SetGlobalEpargneRateInput = { value: number };
+export type SetGlobalSavingRateInput = { value: number };
 
-export class SetGlobalEpargneRate {
-  constructor(private readonly epargneRepo: EpargneRepository) {}
+export class SetGlobalSavingRate {
+  constructor(private readonly SavingRepo: SavingRepository) {}
 
-  async execute(input: SetGlobalEpargneRateInput): Promise<Result<EpargneRateDTO, Error>> {
+  async execute(input: SetGlobalSavingRateInput): Promise<Result<SavingRateDTO, Error>> {
     if (input.value < 0) {
       return { ok: false, error: new Error("Rate must be >= 0") };
     }
-    return this.epargneRepo.setGlobalRate(input.value);
+    return this.SavingRepo.setGlobalRate(input.value);
   }
 }

@@ -1,20 +1,20 @@
 import { Result } from "../../../shared/Result";
-import { EpargneRepository } from "../../ports/EpargneRepository";
-import { EpargneAccountDTO } from "../../dtos/EpargneAccountDTO";
-import { CompteNotFoundError } from "../../../domain/errors/CompteNotFoundError";
-import { AlreadyHasEpargneAccountError } from "../../../domain/errors/AlreadyHasEpargneAccountError";
+import { SavingRepository } from "../../ports/SavingRepository";
+import { SavingAccountDTO } from "../../dtos/SavingAccountDTO";
+import { AlreadyHasSavingAccountError } from "../../../domain/errors/AlreadyHasSavingAccountError";
+import { AccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
 
-export type OpenEpargneAccountInput = { compteId: string };
+export type OpenSavingAccountInput = { AccountId: string };
 
-export class OpenEpargneAccount {
-  constructor(private readonly epargneRepo: EpargneRepository) {}
+export class OpenSavingAccount {
+  constructor(private readonly SavingRepo: SavingRepository) {}
 
-  async execute(input: OpenEpargneAccountInput): Promise<
-    Result<EpargneAccountDTO, CompteNotFoundError | AlreadyHasEpargneAccountError | Error>
+  async execute(input: OpenSavingAccountInput): Promise<
+    Result<SavingAccountDTO, AccountNotFoundError | AlreadyHasSavingAccountError | Error>
   > {
-    if (!input.compteId?.trim()) {
-      return { ok: false, error: new Error("compteId is required") };
+    if (!input.AccountId?.trim()) {
+      return { ok: false, error: new Error("AccountId is required") };
     }
-    return this.epargneRepo.openForCompte(input.compteId);
+    return this.SavingRepo.openForAccount(input.AccountId);
   }
 }

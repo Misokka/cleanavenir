@@ -1,9 +1,10 @@
+import { AccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
 import { Result } from "../../../shared/Result";
 import { OperationRepository } from "../../ports/OperationRepository";
-import { CompteNotFoundError } from "../../../domain/errors/CompteNotFoundError";
+
 
 export type CreateCreditInput = {
-  compteId: string;
+  AccountId: string;
   amount: number;    
   currency: string;  
   label: string;
@@ -12,7 +13,7 @@ export type CreateCreditInput = {
 export class CreateCredit {
   constructor(private readonly ops: OperationRepository) {}
 
-  async execute(input: CreateCreditInput): Promise<Result<true, CompteNotFoundError | Error>> {
+  async execute(input: CreateCreditInput): Promise<Result<true, AccountNotFoundError | Error>> {
     if (input.amount <= 0) {
       return { ok: false, error: new Error("Amount must be > 0") };
     }
@@ -21,7 +22,7 @@ export class CreateCredit {
     }
 
     const created = await this.ops.createCredit({
-      compteId: input.compteId,
+      AccountId: input.AccountId,
       amount: input.amount,
       currency: input.currency,
       label: input.label || "CREDIT",

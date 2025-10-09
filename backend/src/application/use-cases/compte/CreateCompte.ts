@@ -1,13 +1,14 @@
 import { Result, ok } from "../../../shared/Result";
-import { CompteRepository } from "../../ports/CompteRepository";
+import { AccountRepository } from "../../ports/AccountRepository";
 
-export type CreateCompteInput = { label: string };
-export type CreateCompteOutput = { id: string };
 
-export class CreateCompte {
-  constructor(private readonly repo: CompteRepository) {}
+export type CreateAccountInput = { label: string };
+export type CreateAccountOutput = { id: string };
 
-  async execute(input: CreateCompteInput): Promise<Result<CreateCompteOutput, Error>> {
+export class CreateAccount {
+  constructor(private readonly repo: AccountRepository) {}
+
+  async execute(input: CreateAccountInput): Promise<Result<CreateAccountOutput, Error>> {
     const label = input.label?.trim();
     if (!label) {
       return { ok: false, error: new Error("Label is required") };
