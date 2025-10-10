@@ -1,8 +1,9 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
+import { Button } from "@/components/atoms/Button";
 
 export default function HomePage() {
-  const t = useTranslations("home");
+  const t = useTranslations("Home");
   const locale = useLocale();
 
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       </div>
       <h1 className="text-3xl font-bold text-blue-600">{t("title")}</h1>
       <p className="mt-2 text-lg text-gray-600">{t("subtitle")}</p>
+      <Button>{t("cta")}</Button>
     </main>
   );
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { Header } from "@/components/organisms/Header";
+import { Footer } from "@/components/organisms/Footer";
 import "../../styles/global.css";
 
 const geistSans = Geist({
@@ -19,24 +21,25 @@ export const metadata: Metadata = {
   description: "Your clean architecture banking application",
 };
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
-  params
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}>) {
-  const { locale } = await params;
-  
+  params: { locale: string };
+}) {
+  const { locale } = params;
   const messages = await getMessages({ locale });
 
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <Header />
+          <main className="min-h-[calc(100vh-100px)]">{children}</main>
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

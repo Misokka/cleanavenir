@@ -1,11 +1,17 @@
 {
-  "home": {
+  "Home": {
     "title": "Welcome to Clean Avenir",
-    "subtitle": "Your simple and secure client space"
+    "subtitle": "Your modern and ethical banking application.",
+    "cta": "Start"
   },
-  "navbar": {
+  "Header": {
     "home": "Home",
-    "account": "Accounts",
-    "login": "Login"
+    "about": "About",
+    "contact": "Contact",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "Footer": {
+    "copyright": "© 2025 Clean Avenir — All rights reserved"
   }
 }
