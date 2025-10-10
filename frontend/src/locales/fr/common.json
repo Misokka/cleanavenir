@@ -1,13 +1,17 @@
 {
-  "home": {
+  "Home": {
     "title": "Bienvenue sur Clean Avenir",
-    "subtitle": "Votre espace client, simple et sécurisé",
+    "subtitle": "Votre application bancaire moderne et responsable.",
     "cta": "Commencer"
   },
-  "navbar": {
+  "Header": {
     "home": "Accueil",
-    "account": "Comptes",
-    "login": "Connexion"
+    "about": "À propos",
+    "contact": "Contact",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "Footer": {
+    "copyright": "© 2025 Clean Avenir — Tous droits réservés"
   }
-  
 }

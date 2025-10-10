@@ -3,7 +3,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/atoms/Button";
 
 export default function HomePage() {
-  const t = useTranslations("home");
+  const t = useTranslations("Home");
   const locale = useLocale();
 
   return (
