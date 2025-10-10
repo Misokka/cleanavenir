@@ -1,7 +1,8 @@
 {
   "home": {
     "title": "Welcome to Clean Avenir",
-    "subtitle": "Your simple and secure client space"
+    "subtitle": "Your simple and secure client space",
+    "cta": "Start"
   },
   "navbar": {
     "home": "Home",
