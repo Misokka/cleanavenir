@@ -1,0 +1,11 @@
+{
+  "home": {
+    "title": "Welcome to Clean Avenir",
+    "subtitle": "Your simple and secure client space"
+  },
+  "navbar": {
+    "home": "Home",
+    "account": "Accounts",
+    "login": "Login"
+  }
+}

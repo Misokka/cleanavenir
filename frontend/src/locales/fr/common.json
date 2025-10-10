@@ -1,0 +1,11 @@
+{
+  "home": {
+    "title": "Bienvenue sur Clean Avenir",
+    "subtitle": "Votre espace client, simple et sécurisé"
+  },
+  "navbar": {
+    "home": "Accueil",
+    "account": "Comptes",
+    "login": "Connexion"
+  }
+}
