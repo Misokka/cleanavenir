@@ -1,17 +1,12 @@
 import { Result } from "../../../shared/Result";
-import { UserDTO, UserRole } from "../../dtos/UserDTO";
+import { UserRole } from "../../dtos/UserDTO";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { EmailAlreadyUsedError } from "../../../domain/errors/EmailAlreadyUsedError";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { User } from "../../../domain/entities/User";
 
 export interface UserRepository {
-  create(input: {
-    firstname: string,
-    lastname: string,
-    email: string;
-    role: UserRole;      
-  }): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>>;
+  save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>>;
 
   findById(id: string): Promise<Result<User, UserNotFoundError>>;
   findByEmail(email: string): Promise<Result<User, UserNotFoundError>>;

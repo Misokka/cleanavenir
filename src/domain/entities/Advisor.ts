@@ -1,4 +1,4 @@
-export class BankDirector{
+export class Advisor{
   constructor(
     public userIdentifier: string
   ){}

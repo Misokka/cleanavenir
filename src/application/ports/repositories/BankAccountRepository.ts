@@ -4,7 +4,7 @@ import { BankAccountNotFoundError } from "../../../domain/errors/AccountNotFound
 import { BankAccount } from "../../../domain/entities/BankAccount";
 
 export interface BankAccountRepository {
-    create(bankAccount: BankAccount): Promise<Result<BankAccount, BankAccountNotFoundError>>;
+    save(bankAccount: BankAccount): Promise<Result<BankAccount, BankAccountNotFoundError>>;
     findById(iban: string): Promise<Result<BankAccount, BankAccountNotFoundError>>;
     rename(iban: string, label: string): Promise<Result<BankAccount, BankAccountNotFoundError>>;
     remove(iban: string): Promise<Result<true, BankAccountNotFoundError>>;

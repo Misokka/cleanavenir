@@ -1,6 +1,6 @@
-import { Result } from "../../../shared/Result";
-import { SavingRepository } from "../../ports/repositories/SavingRepository";
-import { SavingRateDTO } from "../../dtos/SavingRateDTO";
+import { Result } from "../../../../shared/Result";
+import { SavingRepository } from "../../../ports/repositories/SavingRepository";
+import { SavingRateDTO } from "../../../dtos/SavingRateDTO";
 
 export type SetGlobalSavingRateInput = { value: number };
 

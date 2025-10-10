@@ -1,5 +1,9 @@
+import { Iban } from "../value-objects/Iban";
+import { Client } from "./Client";
+
 export class BankAccount{
   constructor(
-    public userIdentifier: number
+    public iban: Iban,
+    public client: Client
   ){}
 }
