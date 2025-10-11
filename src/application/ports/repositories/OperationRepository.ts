@@ -3,7 +3,7 @@ import { OperationDTO } from "../../dtos/OperationDTO";
 
 import { OperationNotFoundError } from "../../../domain/errors/OperationNotFoundError";
 import { InsufficientFundsError } from "../../../domain/errors/InsufficientFundsError";
-import { BankAccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 
 export interface OperationRepository {
     createCredit (input: {

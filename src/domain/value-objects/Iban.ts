@@ -3,7 +3,7 @@ import { IbanTooLongError } from "../errors/IbanTooLongError";
 import { IbanTooShortError } from "../errors/IbanTooShortError";
 
 export class Iban{
-  constructor(private value: string){}
+  constructor(public value: string){}
 
   public static from(value: string){
     if(value.length < 34){

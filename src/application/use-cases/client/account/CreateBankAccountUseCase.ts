@@ -1,6 +1,8 @@
+import { randomUUID } from "crypto";
 import { BankAccount } from "../../../../domain/entities/BankAccount";
 import { Client } from "../../../../domain/entities/Client";
 import { Iban } from "../../../../domain/value-objects/Iban";
+import { err } from "../../../../shared/Result";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
 export class CreateBankAccountUseCase{
@@ -8,14 +10,15 @@ export class CreateBankAccountUseCase{
     private readonly bankAccountRepository: BankAccountRepository
   ){}
 
-  public execute(ibanValue: string, client: Client){
+  public async execute(ibanValue: string, label: string, client: Client){
     const newIban = Iban.from(ibanValue)
 
     if(!newIban.ok){
-      throw newIban.error
+      return err(newIban.error)
     }
 
-    const newBankAccount = new BankAccount(newIban.value, client);
-    this.bankAccountRepository.save(newBankAccount);
+    const accountIdentifier = randomUUID();
+    const newBankAccount = new BankAccount(accountIdentifier, newIban.value, label, client);
+    await this.bankAccountRepository.save(newBankAccount);
   }
 }

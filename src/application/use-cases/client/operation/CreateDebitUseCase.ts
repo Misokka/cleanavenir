@@ -1,7 +1,7 @@
 import { Result } from "../../../../shared/Result";
 import { OperationRepository } from "../../../ports/repositories/OperationRepository";
 import { InsufficientFundsError } from "../../../../domain/errors/InsufficientFundsError";
-import { BankAccountNotFoundError } from "../../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
 
 export type CreateDebitInput = {
   AccountId: string;

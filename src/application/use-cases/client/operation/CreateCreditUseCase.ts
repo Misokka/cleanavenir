@@ -1,4 +1,4 @@
-import { BankAccountNotFoundError } from "../../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
 import { Result } from "../../../../shared/Result";
 import { OperationRepository } from "../../../ports/repositories/OperationRepository";
 

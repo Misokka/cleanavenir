@@ -3,7 +3,7 @@ import { SavingAccountDTO } from "../../dtos/SavingAccountDTO";
 import { SavingRateDTO } from "../../dtos/SavingRateDTO";
 import { AlreadyHasSavingAccountError } from "../../../domain/errors/AlreadyHasSavingAccountError";
 import { SavingRateNotSetError } from "../../../domain/errors/SavingRateNotSetError";
-import { BankAccountNotFoundError } from "../../../domain/errors/AccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { SavingBankAccountNotFoundError } from "../../../domain/errors/SavingAccountNotFoundError";
 
 export interface SavingRepository {
