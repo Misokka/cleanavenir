@@ -1,17 +1,69 @@
 {
   "Home": {
-    "title": "Bienvenue sur Clean Avenir",
-    "subtitle": "Votre application bancaire moderne et responsable.",
-    "cta": "Commencer"
+    "hero": {
+      "title": "Votre banque du futur",
+      "subtitle": "Clean Avenir révolutionne votre gestion financière avec une approche simple, moderne et responsable.",
+      "cta": "Ouvrir un compte",
+      "ctaSecondary": "En savoir plus"
+    },
+    "features": {
+      "title": "Pourquoi choisir Clean Avenir ?",
+      "items": [
+        {
+          "title": "Sécurité maximale",
+          "description": "Vos données sont protégées par les technologies les plus avancées"
+        },
+        {
+          "title": "Interface intuitive",
+          "description": "Une expérience utilisateur pensée pour votre confort au quotidien"
+        },
+        {
+          "title": "Transparence totale",
+          "description": "Aucun frais caché, des tarifs clairs et équitables"
+        }
+      ]
+    },
+    "accounts": {
+      "title": "Vos comptes en un coup d'œil",
+      "viewAll": "Voir tous les comptes",
+      "balance": "Solde"
+    },
+    "stats": {
+      "title": "Clean Avenir en chiffres",
+      "users": "Utilisateurs actifs",
+      "transactions": "Transactions sécurisées",
+      "satisfaction": "Satisfaction client"
+    }
   },
   "Header": {
     "home": "Accueil",
-    "about": "À propos",
-    "contact": "Contact",
-    "fr": "FR",
-    "en": "EN"
+    "accounts": "Comptes",
+    "transfer": "Virements",
+    "support": "Support",
+    "login": "Connexion",
+    "signup": "Inscription"
   },
   "Footer": {
-    "copyright": "© 2025 Clean Avenir — Tous droits réservés"
+    "copyright": "© 2025 Clean Avenir — Tous droits réservés",
+    "about": "À propos",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "contact": "Contact"
+  },
+  "Accounts": {
+    "types": {
+      "checking": "Compte Courant",
+      "savings": "Livret Épargne",
+      "investment": "Compte Investissement"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "labels": {
+      "createdOn": "Créé le",
+      "balance": "Solde",
+      "currency": "EUR"
+    }
   }
 }
