@@ -1,14 +1,14 @@
 import { randomUUID } from "crypto";
-import { User } from "../../../domain/entities/User";
-import { PasswordDoNotMatchError } from "../../../domain/errors/PasswordDoNotMatchError";
-import { UserRole } from "../../dtos/UserDTO";
-import { ClientRepository } from "../../ports/repositories/ClientRepository";
-import { UserRepository } from "../../ports/repositories/UserRepository";
-import { err } from "../../../shared/Result";
-import { EmailAlreadyUsedError } from "../../../domain/errors/EmailAlreadyUsedError";
-import { Client } from "../../../domain/entities/Client";
+import { User } from "../../../../domain/entities/User";
+import { PasswordDoNotMatchError } from "../../../../domain/errors/PasswordDoNotMatchError";
+import { UserRole } from "../../../dtos/UserDTO";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
+import { UserRepository } from "../../../ports/repositories/UserRepository";
+import { err } from "../../../../shared/Result";
+import { EmailAlreadyUsedError } from "../../../../domain/errors/EmailAlreadyUsedError";
+import { Client } from "../../../../domain/entities/Client";
 
-export class Register{
+export class RegisterUseCase{
   constructor(
     private readonly userRepository: UserRepository,
     private readonly clientRepository: ClientRepository,

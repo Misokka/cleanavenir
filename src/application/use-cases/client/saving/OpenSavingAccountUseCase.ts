@@ -2,7 +2,7 @@ import { Result } from "../../../../shared/Result";
 import { SavingRepository } from "../../../ports/repositories/SavingRepository";
 import { SavingAccountDTO } from "../../../dtos/SavingAccountDTO";
 import { AlreadyHasSavingAccountError } from "../../../../domain/errors/AlreadyHasSavingAccountError";
-import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
+import { BankAccountNotFoundError } from "../../../../domain/errors/AccountNotFoundError";
 
 export type OpenSavingAccountInput = { AccountId: string };
 
