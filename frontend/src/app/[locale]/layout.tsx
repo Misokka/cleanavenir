@@ -17,18 +17,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CleanAvenir",
-  description: "Your clean architecture banking application",
+  title: {
+    template: '%s | Clean Avenir',
+    default: 'Clean Avenir - Votre banque du futur',
+  },
+  description: 'Clean Avenir révolutionne votre gestion financière avec une approche simple, moderne et responsable. Découvrez une expérience bancaire nouvelle génération.',
+  keywords: ['banque', 'finance', 'moderne', 'numérique', 'épargne', 'compte bancaire', 'clean architecture'],
+  authors: [{ name: 'Clean Avenir Team' }],
+  creator: 'Clean Avenir',
+  publisher: 'Clean Avenir',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://cleanavenir.fr',
+    title: 'Clean Avenir - Votre banque du futur',
+    description: 'Clean Avenir révolutionne votre gestion financière avec une approche simple, moderne et responsable.',
+    siteName: 'Clean Avenir',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Clean Avenir - Votre banque du futur',
+    description: 'Clean Avenir révolutionne votre gestion financière avec une approche simple, moderne et responsable.',
+    creator: '@cleanavenir',
+  },
+  verification: {
+    google: 'google-site-verification-code',
+  },
 };
 
 export default async function LocaleLayout({
   children,
   params,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
-}) {
-  const { locale } = params;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
   const messages = await getMessages({ locale });
 
   return (

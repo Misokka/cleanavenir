@@ -1,17 +1,69 @@
 {
   "Home": {
-    "title": "Welcome to Clean Avenir",
-    "subtitle": "Your modern and ethical banking application.",
-    "cta": "Start"
+    "hero": {
+      "title": "Your bank of the future",
+      "subtitle": "Clean Avenir revolutionizes your financial management with a simple, modern and responsible approach.",
+      "cta": "Open an account",
+      "ctaSecondary": "Learn more"
+    },
+    "features": {
+      "title": "Why choose Clean Avenir?",
+      "items": [
+        {
+          "title": "Maximum security",
+          "description": "Your data is protected by the most advanced technologies"
+        },
+        {
+          "title": "Intuitive interface",
+          "description": "A user experience designed for your daily comfort"
+        },
+        {
+          "title": "Total transparency",
+          "description": "No hidden fees, clear and fair pricing"
+        }
+      ]
+    },
+    "accounts": {
+      "title": "Your accounts at a glance",
+      "viewAll": "View all accounts",
+      "balance": "Balance"
+    },
+    "stats": {
+      "title": "Clean Avenir in numbers",
+      "users": "Active users",
+      "transactions": "Secure transactions",
+      "satisfaction": "Customer satisfaction"
+    }
   },
   "Header": {
     "home": "Home",
-    "about": "About",
-    "contact": "Contact",
-    "fr": "FR",
-    "en": "EN"
+    "accounts": "Accounts",
+    "transfer": "Transfers",
+    "support": "Support",
+    "login": "Login",
+    "signup": "Sign up"
   },
   "Footer": {
-    "copyright": "© 2025 Clean Avenir — All rights reserved"
+    "copyright": "© 2025 Clean Avenir — All rights reserved",
+    "about": "About",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  },
+  "Accounts": {
+    "types": {
+      "checking": "Checking Account",
+      "savings": "Savings Account",
+      "investment": "Investment Account"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "labels": {
+      "createdOn": "Created on",
+      "balance": "Balance",
+      "currency": "EUR"
+    }
   }
 }

@@ -1,19 +1,29 @@
-"use client";
-import { useTranslations, useLocale } from "next-intl";
-import { Button } from "@/components/atoms/Button";
+import { Metadata } from 'next';
+import { Hero } from '@/components/organisms/Hero';
+import { Features } from '@/components/organisms/Features';
+import { AccountsOverview } from '@/components/organisms/AccountsOverview';
+import { Stats } from '@/components/organisms/Stats';
+
+export const metadata: Metadata = {
+  title: 'Accueil',
+  description: 'Découvrez Clean Avenir, votre banque du futur. Une expérience bancaire simple, moderne et responsable.',
+  openGraph: {
+    title: 'Clean Avenir - Votre banque du futur',
+    description: 'Découvrez Clean Avenir, votre banque du futur. Une expérience bancaire simple, moderne et responsable.',
+    type: 'website',
+  },
+};
 
 export default function HomePage() {
-  const t = useTranslations("Home");
-  const locale = useLocale();
-
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen text-center">
-      <div className="mb-4 text-sm text-gray-500">
-        Locale actuelle: {locale}
-      </div>
-      <h1 className="text-3xl font-bold text-blue-600">{t("title")}</h1>
-      <p className="mt-2 text-lg text-gray-600">{t("subtitle")}</p>
-      <Button>{t("cta")}</Button>
+    <main className="min-h-screen">
+      <Hero />
+      
+      <Features />
+      
+      <AccountsOverview />
+      
+      <Stats />
     </main>
   );
 }
