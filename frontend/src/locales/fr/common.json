@@ -1,0 +1,17 @@
+{
+  "Home": {
+    "title": "Bienvenue sur Clean Avenir",
+    "subtitle": "Votre application bancaire moderne et responsable.",
+    "cta": "Commencer"
+  },
+  "Header": {
+    "home": "Accueil",
+    "about": "À propos",
+    "contact": "Contact",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "Footer": {
+    "copyright": "© 2025 Clean Avenir — Tous droits réservés"
+  }
+}
