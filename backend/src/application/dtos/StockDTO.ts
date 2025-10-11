@@ -1,4 +1,4 @@
-export type ActionDTO = {
+export type StockDTO = {
   id: string;
   symbol: string; 
   name: string;   

@@ -1,6 +1,6 @@
-export class ActionNotFoundError extends Error {
+export class StockNotFoundError extends Error {
   constructor(public readonly idOrSymbol: string) {
-    super(`Action not found: ${idOrSymbol}`);
-    this.name = "ActionNotFoundError";
+    super(`Stock not found: ${idOrSymbol}`);
+    this.name = "StockNotFoundError";
   }
 }
