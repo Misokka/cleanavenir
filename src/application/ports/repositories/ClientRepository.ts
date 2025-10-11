@@ -5,5 +5,5 @@ import { Result } from "../../../shared/Result";
 
 export interface ClientRepository{
   save(client: Client): Promise<Result<Client, InvalidRoleError>>
-  findbyId(userIdentifier: number): Promise<Result<Client, UserNotFoundError>>
+  findById(userIdentifier: string): Promise<Result<Client, UserNotFoundError>>
 }

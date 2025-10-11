@@ -10,7 +10,7 @@ export type CreateCreditInput = {
   label: string;
 };
 
-export class CreateCredit {
+export class CreateCreditUseCase {
   constructor(private readonly ops: OperationRepository) {}
 
   async execute(input: CreateCreditInput): Promise<Result<true, BankAccountNotFoundError | Error>> {

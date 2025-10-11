@@ -10,7 +10,7 @@ export type CreateDebitInput = {
   label: string;
 };
 
-export class CreateDebit {
+export class CreateDebitUseCase {
   constructor(private readonly ops: OperationRepository) {}
 
   async execute(input: CreateDebitInput): Promise<Result<true, BankAccountNotFoundError | InsufficientFundsError | Error>> {

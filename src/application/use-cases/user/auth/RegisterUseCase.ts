@@ -2,16 +2,18 @@ import { randomUUID } from "crypto";
 import { User } from "../../../../domain/entities/User";
 import { PasswordDoNotMatchError } from "../../../../domain/errors/PasswordDoNotMatchError";
 import { UserRole } from "../../../dtos/UserDTO";
-import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 import { UserRepository } from "../../../ports/repositories/UserRepository";
-import { err } from "../../../../shared/Result";
+import { err, ok } from "../../../../shared/Result";
 import { EmailAlreadyUsedError } from "../../../../domain/errors/EmailAlreadyUsedError";
-import { Client } from "../../../../domain/entities/Client";
+import { PasswordHasher } from "../../../ports/services/PasswordHasher";
+import { ProfileManager } from "../../../ports/services/ProfileFetcher";
+
 
 export class RegisterUseCase{
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly clientRepository: ClientRepository,
+    private readonly profileManager: ProfileManager,
+    private readonly passwordHasher: PasswordHasher
   ){}
 
   public async execute(
@@ -28,20 +30,19 @@ export class RegisterUseCase{
     }
 
     const userIdentifier = randomUUID()
-    const newUser = new User(userIdentifier, firstname, lastname, email, password, role);
-    const existingUser = await this.userRepository.findByEmail(newUser.email);
-
+    const existingUser = await this.userRepository.findByEmail(email);
+    
+    
     if(existingUser.ok){
-      return err(new EmailAlreadyUsedError(newUser.email))
+      return err(new EmailAlreadyUsedError(email))
     }
+    
+    const hashedPassword = await this.passwordHasher.hash(password);
+    const newUser = new User(userIdentifier, firstname, lastname, email, hashedPassword, role);
 
     this.userRepository.save(newUser);
-    const newClient = new Client(newUser.userIndentifier);
+    const newProfile = await this.profileManager.create(newUser.userIndentifier, newUser.role);
 
-    switch(role){
-      case "CLIENT":
-        this.clientRepository.save(newClient);
-
-    }
+    return ok(newProfile);
   }
 }

@@ -3,7 +3,7 @@ import { Client } from "../../../../domain/entities/Client";
 import { Iban } from "../../../../domain/value-objects/Iban";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
-export class CreateBankAccount{
+export class CreateBankAccountUseCase{
   constructor(
     private readonly bankAccountRepository: BankAccountRepository
   ){}

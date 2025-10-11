@@ -6,7 +6,7 @@ import { BankAccountNotFoundError } from "../../../../domain/errors/AccountNotFo
 
 export type OpenSavingAccountInput = { AccountId: string };
 
-export class OpenSavingAccount {
+export class OpenSavingAccountUseCase {
   constructor(private readonly SavingRepo: SavingRepository) {}
 
   async execute(input: OpenSavingAccountInput): Promise<

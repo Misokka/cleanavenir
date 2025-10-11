@@ -5,5 +5,5 @@ import { Result } from "../../../shared/Result";
 
 export interface AdvisorRepository{
   save(advisor: Advisor): Promise<Result<Advisor, CouldNotCreateAdvisorError>>
-  findbyId(advisorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>
+  findById(advisorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>
 }

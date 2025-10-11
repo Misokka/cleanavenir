@@ -4,7 +4,7 @@ import { SavingRateDTO } from "../../../dtos/SavingRateDTO";
 
 export type SetGlobalSavingRateInput = { value: number };
 
-export class SetGlobalSavingRate {
+export class SetGlobalSavingRateUseCase {
   constructor(private readonly SavingRepo: SavingRepository) {}
 
   async execute(input: SetGlobalSavingRateInput): Promise<Result<SavingRateDTO, Error>> {
