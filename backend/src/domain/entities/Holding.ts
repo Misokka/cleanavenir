@@ -1,3 +1,7 @@
 export class Holding{
-  constructor(){}
+  constructor(
+    public readonly portfolioId: string,
+    public readonly stockId: string,
+    public quantity: number
+  ) {}
 }

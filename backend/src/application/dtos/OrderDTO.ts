@@ -1,5 +1,4 @@
-export type OrderType = "BUY" | "SELL";
-export type OrderStatus = "PENDING" | "PARTIALLY_FILLED" | "FILLED" | "CANCELLED";
+import { OrderStatus, OrderType } from "../../domain/entities/Order";
 
 export type OrderDTO = {
   id: string;
