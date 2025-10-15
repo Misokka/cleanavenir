@@ -1,27 +1,26 @@
 import { Result } from "../../../shared/Result";
-import { OrderDTO, OrderSide, OrderStatus } from "../../dtos/OrderDTO";
-import { ActionNotFoundError } from "../../../domain/errors/ActionNotFoundError";
 import { InvalidOrderQuantityError } from "../../../domain/errors/InvalidOrderQuantityError";
 import { InvalidOrderPriceError } from "../../../domain/errors/InvalidOrderPriceError";
 import { OrderNotFoundError } from "../../../domain/errors/OrderNotFoundError";
+import { StockNotFoundError } from "../../../domain/errors/StockNotFoundError";
+import { Order, OrderStatus, OrderType } from "../../../domain/entities/Order";
+
 
 
 export interface OrderRepository {
-  place(input: {
-    actionId: string;
-    userId: string;
-    side: OrderSide;
-    quantity: number;
-    limitPrice: number; 
-    fees: number;     
-  }): Promise<Result<OrderDTO, ActionNotFoundError | InvalidOrderQuantityError | InvalidOrderPriceError>>;
+  save(
+    stockId: string,
+    userId: string,
+    type: OrderType,
+    quantity: number,
+  ): Promise<Result<Order, StockNotFoundError | InvalidOrderQuantityError | InvalidOrderPriceError>>;
 
-  findById(id: string): Promise<Result<OrderDTO, OrderNotFoundError>>;
+  findById(id: string): Promise<Result<Order, OrderNotFoundError>>;
 
-  setStatus(id: string, status: OrderStatus): Promise<Result<OrderDTO, OrderNotFoundError>>;
+  setStatus(id: string, status: OrderStatus): Promise<Result<Order, OrderNotFoundError>>;
 
-  listOpenBuysByAction(actionId: string): Promise<Result<OrderDTO[], ActionNotFoundError>>;
-  listOpenSellsByAction(actionId: string): Promise<Result<OrderDTO[], ActionNotFoundError>>;
+  listOpenBuysByStock(stockId: string): Promise<Result<Order[], StockNotFoundError>>;
+  listOpenSellsByStock(stockId: string): Promise<Result<Order[], StockNotFoundError>>;
 
-  listByUser(userId: string): Promise<Result<OrderDTO[], never>>;
+  listByUser(userId: string): Promise<Result<Order[], never>>;
 }

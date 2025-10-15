@@ -1,6 +1,6 @@
 export type PositionDTO = {
   userId: string;
-  actionId: string;
+  stockId: string;
   quantity: number; 
   updatedAt: string; 
 }
