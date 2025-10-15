@@ -8,14 +8,12 @@ import { Order, OrderStatus, OrderType } from "../../../domain/entities/Order";
 
 
 export interface OrderRepository {
-  place(input: {
-    stockId: string;
-    userId: string;
-    type: OrderType;
-    quantity: number;
-    limitPrice: number; 
-    fees: number;     
-  }): Promise<Result<Order, StockNotFoundError | InvalidOrderQuantityError | InvalidOrderPriceError>>;
+  save(
+    stockId: string,
+    userId: string,
+    type: OrderType,
+    quantity: number,
+  ): Promise<Result<Order, StockNotFoundError | InvalidOrderQuantityError | InvalidOrderPriceError>>;
 
   findById(id: string): Promise<Result<Order, OrderNotFoundError>>;
 

@@ -1,3 +1,4 @@
+import { OrderType } from "../../../../../domain/entities/Order";
 import { ClientRepository } from "../../../../ports/repositories/ClientRepository";
 import { HoldingRepository } from "../../../../ports/repositories/HoldingRepository";
 import { OrderRepository } from "../../../../ports/repositories/OrderRepository";
@@ -13,7 +14,14 @@ export class BuyStockUseCase{
     private readonly portfolioRepository: PortfolioRepository,
   ){}
 
-  public async execute(){
+  public async execute(
+    stockIdentifier: string,
+    userIdentifier: string,
+    quantity: number, 
+    type: OrderType = "BUY"
+  ){
+    await this.orderRepository.save(stockIdentifier, userIdentifier, type, quantity)
+    
 
   }
 
