@@ -1,3 +1,4 @@
+import { InsufficientFundsError } from "../errors/InsufficientFundsError";
 import { Iban } from "../value-objects/Iban";
 
 export class BankAccount{
@@ -8,4 +9,11 @@ export class BankAccount{
     public label: string,
     public balance: number
   ){}
+
+  public withdraw(amount: number): void {
+    if (this.balance < amount) {
+      throw new InsufficientFundsError(this.accountIdentifier);
+    }
+    this.balance -= amount;
+  }
 }
