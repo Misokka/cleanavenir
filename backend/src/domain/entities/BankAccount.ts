@@ -1,5 +1,6 @@
 import { InsufficientFundsError } from "../errors/InsufficientFundsError";
 import { Iban } from "../value-objects/Iban";
+import { Transaction } from "./Transaction";
 
 export class BankAccount{
   constructor(
@@ -15,5 +16,17 @@ export class BankAccount{
       throw new InsufficientFundsError(this.accountIdentifier);
     }
     this.balance -= amount;
+  }
+
+  public deposit(amount: number): void{
+    this.balance += amount;
+  }
+
+  public applyTransaction(transaction: Transaction){
+    if(transaction.direction === "CREDIT"){
+      this.deposit(transaction.amount);
+    } else {
+      this.withdraw(transaction.amount);
+    }
   }
 }
