@@ -18,19 +18,16 @@ export class Loan{
 
   public processMonthlyPayment(): void {
     if (this.status === "PAID_OFF") {
-      return; // Ne rien faire si déjà remboursé
+      return;
     }
 
-    // Calculer la part des intérêts pour le mois en cours
     const monthlyInterestRate = this.annualInterestRate / 12;
     const interestPortion = this.remainingAmoutToPay * monthlyInterestRate;
     
-    // Calculer la part du capital remboursé ce mois-ci
     const capitalPortion = this.mensualities - interestPortion - this.insuranceMensualities;
     
     this.remainingAmoutToPay -= capitalPortion;
 
-    // Vérifier si le prêt est terminé
     if (this.remainingAmoutToPay <= 0) {
       this.remainingAmoutToPay = 0;
       this.status = "PAID_OFF";

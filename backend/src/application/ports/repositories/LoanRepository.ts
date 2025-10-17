@@ -5,7 +5,8 @@ import { Result } from "../../../shared/Result";
 
 export interface LoanRepository{
   save(loan: Loan): Promise<Result<Loan, InsufficientFundsError>>;
-  findById(loanIdentifier: string): Promise<Result<Loan, LoanNotFoundError>>
-  all(): Promise<Loan[]>
-  delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>>
+  findById(loanIdentifier: string): Promise<Result<Loan, LoanNotFoundError>>;
+  findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>>;
+  all(): Promise<Loan[]>;
+  delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>>;
 }
