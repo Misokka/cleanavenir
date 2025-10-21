@@ -5,8 +5,13 @@ import { AlreadyHasSavingAccountError } from "../../../domain/errors/AlreadyHasS
 import { SavingRateNotSetError } from "../../../domain/errors/SavingRateNotSetError";
 import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { SavingBankAccountNotFoundError } from "../../../domain/errors/SavingAccountNotFoundError";
+import { SavingAccount } from "../../../domain/entities/SavingAccount";
 
-export interface SavingRepository {
+export interface SavingAccountRepository {
+    save(savingAccount: SavingAccount): Promise<Result<SavingAccount, Error>>;
+    saveAll(savingAccounts: SavingAccount[]): Promise<Result<void, Error>>
+    all(): Promise<Result<SavingAccount[], Error>>;
+
     openForAccount(AccountId: string): Promise<
         Result<SavingAccountDTO, BankAccountNotFoundError | AlreadyHasSavingAccountError>
     >;

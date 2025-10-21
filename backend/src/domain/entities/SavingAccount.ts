@@ -7,9 +7,10 @@ export class SavingAccount extends  BankAccount{
   constructor(
     accountIdentifier: string,
     clientIdentifier: string,
+    public productIdentifier: string,
     iban: Iban,
     label: string,
-    balance: number
+    balance: number,
   ){
     super(accountIdentifier, clientIdentifier, iban, label, balance);
   }
