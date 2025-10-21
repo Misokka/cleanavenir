@@ -1,12 +1,12 @@
 import { Result } from "../../../../shared/Result";
-import { SavingRepository } from "../../../ports/repositories/SavingRepository";
+import { SavingAccountRepository } from "../../../ports/repositories/SavingAccountRepository";
 import { SavingRateDTO } from "../../../dtos/SavingRateDTO";
 import { SavingRateNotSetError } from "../../../../domain/errors/SavingRateNotSetError";
 
 export class GetGlobalSavingRateUseCase {
-  constructor(private readonly SavingRepo: SavingRepository) {}
+  constructor(private readonly savingAccountRepository: SavingAccountRepository) {}
 
   async execute(): Promise<Result<SavingRateDTO, SavingRateNotSetError>> {
-    return this.SavingRepo.getGlobalRate();
+    return this.savingAccountRepository.getGlobalRate();
   }
 }
