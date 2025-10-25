@@ -1,0 +1,10 @@
+-- 008_create_holdings.sql
+CREATE TABLE IF NOT EXISTS holdings (
+  id TEXT PRIMARY KEY,
+  owner_id TEXT NOT NULL,
+  stock_id TEXT NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 0,
+  average_price INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
