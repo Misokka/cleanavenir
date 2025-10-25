@@ -1,0 +1,11 @@
+-- 007_create_orders.sql
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  stock_id TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  type TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  price INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'OPEN',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,8 @@
+-- 009_create_portfolios.sql
+CREATE TABLE IF NOT EXISTS portfolios (
+  id TEXT PRIMARY KEY,
+  owner_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

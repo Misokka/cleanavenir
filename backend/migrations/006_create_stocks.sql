@@ -1,0 +1,8 @@
+-- 006_create_stocks.sql
+CREATE TABLE IF NOT EXISTS stocks (
+  id TEXT PRIMARY KEY,
+  symbol TEXT NOT NULL UNIQUE,
+  company_name TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
