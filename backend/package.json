@@ -6,16 +6,18 @@
   "scripts": {
     "dev": "tsx watch src/interface/http-express/main.ts",
     "build": "tsc",
-    "test": "vitest run",
+  "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky",
     "migrate:push": "npx drizzle-kit push",
     "migrate:generate": "npx drizzle-kit generate",
-    "migrate:up": "npx drizzle-kit migrate",
-    "db:seed": "npx tsx scripts/seed-users.ts",
-    "test:db": "npx tsx src/index.ts"
+  "migrate:up": "npx drizzle-kit migrate",
+  "db:seed": "npx tsx scripts/seed-users.ts",
+  "db:seed:accounts": "npx tsx scripts/seed-accounts.ts",
+  "db:seed:stocks": "npx tsx scripts/seed-stocks.ts",
+  "test:db": "npx tsx src/index.ts"
   },
   "lint-staged": {
     "*.{ts,js,json,md}": [
