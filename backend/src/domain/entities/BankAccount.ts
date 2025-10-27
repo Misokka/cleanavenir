@@ -29,4 +29,8 @@ export class BankAccount{
       this.withdraw(transaction.amount);
     }
   }
+
+  public checkBalance(amount: number): boolean{
+    return this.balance >= amount;
+  }
 }
