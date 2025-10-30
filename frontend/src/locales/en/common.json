@@ -65,5 +65,51 @@
       "balance": "Balance",
       "currency": "EUR"
     }
+  },
+  "Auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Access your Clean Avenir space",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "register": "Create account",
+      "loading": "Signing in...",
+      "success": "Login successful!",
+      "error": "Invalid credentials"
+    },
+    "register": {
+      "title": "Sign up",
+      "subtitle": "Create your Clean Avenir account",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "role": "Account type",
+      "submit": "Create my account",
+      "loading": "Creating account...",
+      "success": "Account created successfully!",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in",
+      "errors": {
+        "emailExists": "This email address is already in use",
+        "passwordMismatch": "Passwords do not match",
+        "weakPassword": "Password must contain at least 8 characters"
+      }
+    },
+    "roles": {
+      "client": "Individual client",
+      "business": "Business client",
+      "premium": "Premium client"
+    },
+    "validations": {
+      "required": "This field is required",
+      "invalidEmail": "Invalid email address",
+      "minLength": "Minimum {{count}} characters",
+      "maxLength": "Maximum {{count}} characters"
+    }
   }
 }

@@ -75,12 +75,16 @@ export function Header() {
               </button>
             </div>
             
-            <Button variant="outline" size="sm">
-              {t('login')}
-            </Button>
-            <Button size="sm">
-              {t('signup')}
-            </Button>
+            <Link href={`/${locale}/auth/login`}>
+              <Button variant="outline" size="sm">
+                {t('login')}
+              </Button>
+            </Link>
+            <Link href={`/${locale}/auth/register`}>
+              <Button size="sm">
+                {t('signup')}
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
