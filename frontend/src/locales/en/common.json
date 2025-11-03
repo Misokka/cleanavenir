@@ -1,8 +1,16 @@
 {
   "Home": {
+    "metadata": {
+      "title": "Home",
+      "description": "Discover Clean Avenir, your bank of the future. A simple, modern and responsible banking experience.",
+      "openGraph": {
+        "title": "Clean Avenir - Your bank of the future",
+        "description": "Discover Clean Avenir, your bank of the future. A simple, modern and responsible banking experience."
+      }
+    },
     "hero": {
       "title": "Your bank of the future",
-      "subtitle": "Clean Avenir revolutionizes your financial management with a simple, modern and responsible approach.",
+      "subtitle": "Clean Avenir revolutionizes financial management with a simple, modern and responsible approach.",
       "cta": "Open an account",
       "ctaSecondary": "Learn more"
     },
@@ -110,6 +118,80 @@
       "invalidEmail": "Invalid email address",
       "minLength": "Minimum {{count}} characters",
       "maxLength": "Maximum {{count}} characters"
+    }
+  },
+  "Dashboard": {
+    "navigation": {
+      "overview": "Overview",
+      "accounts": "Accounts",
+      "savings": "Savings",
+      "logout": "Logout"
+    },
+    "header": {
+      "greeting": "Hello, {firstName}",
+      "welcome": "Welcome to your space",
+      "today": "Today"
+    },
+    "overview": {
+      "title": "Overview",
+      "description": "Manage your accounts and view your recent transactions on your Clean Avenir dashboard",
+      "totalBalance": "Total balance",
+      "recentOperations": "Recent operations",
+      "viewAll": "View all",
+      "noOperations": "No recent operations",
+      "accountsSummary": "My accounts",
+      "noAccountsAvailable": "No accounts available",
+      "accountsWillAppear": "Your accounts will appear here once activated"
+    },
+    "accounts": {
+      "title": "My accounts",
+      "description": "View all your bank accounts and their details on Clean Avenir",
+      "balance": "Balance",
+      "accountNumber": "Account number",
+      "openedOn": "Opened on",
+      "status": "Status",
+      "interestRate": "Interest rate",
+      "annualGrossRate": "Annual gross rate",
+      "viewDetails": "View details",
+      "actions": {
+        "makeTransfer": "Make a transfer",
+        "downloadRib": "Download RIB",
+        "fullHistory": "Full history"
+      },
+      "accountDetailsDescription": "Details and operations of your"
+    },
+    "savings": {
+      "title": "Savings",
+      "description": "Manage your savings accounts and check interest rates on Clean Avenir",
+      "currentRate": "Current rate",
+      "premiumRate": "Premium rate",
+      "minimumAmount": "Minimum amount",
+      "openAccount": "Open savings account",
+      "mySavingsAccounts": "My savings accounts",
+      "totalSavings": "Total savings",
+      "distributedOn": "Distributed across",
+      "account": "account",
+      "accounts": "accounts",
+      "savingsAccount": "Savings account",
+      "perYear": "per year",
+      "noSavingsAccount": "No savings account",
+      "noSavingsDescription": "Open your first savings account and start growing your money",
+      "importantInfo": "Important information",
+      "rateInfo": {
+        "baseRate": "Base rate: {rate}% for all clients",
+        "premiumRate": "Premium rate: {rate}% for premium accounts",
+        "minimumAmount": "Minimum amount: {amount}",
+        "lastUpdate": "Last update: {date}"
+      }
+    },
+    "operations": {
+      "credit": "Credit",
+      "debit": "Debit",
+      "date": "Date",
+      "description": "Description",
+      "amount": "Amount",
+      "category": "Category",
+      "recentTransactionsWillAppear": "Your recent transactions will appear here"
     }
   }
 }

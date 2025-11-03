@@ -1,5 +1,13 @@
 {
   "Home": {
+    "metadata": {
+      "title": "Accueil",
+      "description": "Découvrez Clean Avenir, votre banque du futur. Une expérience bancaire simple, moderne et responsable.",
+      "openGraph": {
+        "title": "Clean Avenir - Votre banque du futur",
+        "description": "Découvrez Clean Avenir, votre banque du futur. Une expérience bancaire simple, moderne et responsable."
+      }
+    },
     "hero": {
       "title": "Votre banque du futur",
       "subtitle": "Clean Avenir révolutionne votre gestion financière avec une approche simple, moderne et responsable.",
@@ -110,6 +118,80 @@
       "invalidEmail": "Adresse e-mail invalide",
       "minLength": "Minimum {{count}} caractères",
       "maxLength": "Maximum {{count}} caractères"
+    }
+  },
+  "Dashboard": {
+    "navigation": {
+      "overview": "Accueil",
+      "accounts": "Comptes",
+      "savings": "Épargne",
+      "logout": "Déconnexion"
+    },
+    "header": {
+      "greeting": "Bonjour, {firstName}",
+      "welcome": "Bienvenue sur votre espace",
+      "today": "Aujourd'hui"
+    },
+    "overview": {
+      "title": "Vue d'ensemble",
+      "description": "Gérez vos comptes et consultez vos opérations récentes sur votre tableau de bord Clean Avenir",
+      "totalBalance": "Solde total",
+      "recentOperations": "Opérations récentes",
+      "viewAll": "Tout voir",
+      "noOperations": "Aucune opération récente",
+      "accountsSummary": "Mes comptes",
+      "noAccountsAvailable": "Aucun compte disponible",
+      "accountsWillAppear": "Vos comptes apparaîtront ici une fois activés"
+    },
+    "accounts": {
+      "title": "Mes comptes",
+      "description": "Consultez tous vos comptes bancaires et leurs détails sur Clean Avenir",
+      "balance": "Solde",
+      "accountNumber": "Numéro de compte",
+      "openedOn": "Ouvert le",
+      "status": "Statut",
+      "interestRate": "Taux d'intérêt",
+      "annualGrossRate": "Taux annuel brut",
+      "viewDetails": "Voir les détails",
+      "actions": {
+        "makeTransfer": "Effectuer un virement",
+        "downloadRib": "Télécharger le RIB",
+        "fullHistory": "Historique complet"
+      },
+      "accountDetailsDescription": "Détails et opérations de votre"
+    },
+    "savings": {
+      "title": "Épargne",
+      "description": "Gérez vos comptes d'épargne et consultez les taux d'intérêt sur Clean Avenir",
+      "currentRate": "Taux actuel",
+      "premiumRate": "Taux premium",
+      "minimumAmount": "Montant minimum",
+      "openAccount": "Ouvrir un compte épargne",
+      "mySavingsAccounts": "Mes comptes d'épargne",
+      "totalSavings": "Total épargne",
+      "distributedOn": "Répartis sur",
+      "account": "compte",
+      "accounts": "comptes",
+      "savingsAccount": "Livret d'épargne",
+      "perYear": "par an",
+      "noSavingsAccount": "Aucun compte d'épargne",
+      "noSavingsDescription": "Ouvrez votre premier compte d'épargne et commencez à faire fructifier votre argent",
+      "importantInfo": "Informations importantes",
+      "rateInfo": {
+        "baseRate": "Taux de base: {rate}% pour tous les clients",
+        "premiumRate": "Taux premium: {rate}% pour les comptes premium", 
+        "minimumAmount": "Montant minimum: {amount}",
+        "lastUpdate": "Dernière mise à jour: {date}"
+      }
+    },
+    "operations": {
+      "credit": "Crédit",
+      "debit": "Débit",
+      "date": "Date",
+      "description": "Description",
+      "amount": "Montant",
+      "category": "Catégorie",
+      "recentTransactionsWillAppear": "Vos dernières transactions apparaîtront ici"
     }
   }
 }
