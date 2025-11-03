@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Header } from "@/components/organisms/Header";
 import { Footer } from "@/components/organisms/Footer";
+import { AuthProvider } from "@/contexts/AuthProvider";
 import "../../styles/global.css";
 
 const geistSans = Geist({
@@ -72,9 +73,11 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="min-h-[calc(100vh-100px)]">{children}</main>
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <main className="min-h-[calc(100vh-100px)]">{children}</main>
+            <Footer />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

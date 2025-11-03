@@ -1,16 +1,31 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormFieldWithInput, FormField } from '../atoms/FormField';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
-import { mockRegister, RegisterData } from '../../lib/api/auth.mock';
+import { useRegister } from '../../features/auth/useRegister';
+import { useAuth } from '../../contexts/AuthProvider';
+import { UserRole } from '../../infrastructure/web/types';
+
+interface RegisterData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: 'client' | 'business' | 'premium';
+}
 
 export const RegisterForm: React.FC = () => {
   const t = useTranslations('Auth.register');
   const tRoles = useTranslations('Auth.roles');
   const tValidations = useTranslations('Auth.validations');
+  const router = useRouter();
+  const { register, loading: registerLoading, error: registerError } = useRegister();
+  const { setUser } = useAuth();
   
   const [formData, setFormData] = useState<RegisterData>({
     firstName: '',
@@ -22,8 +37,6 @@ export const RegisterForm: React.FC = () => {
   });
   
   const [errors, setErrors] = useState<Partial<RegisterData>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState<string>('');
 
   const validateForm = (): boolean => {
     const newErrors: Partial<RegisterData> = {};
@@ -73,10 +86,6 @@ export const RegisterForm: React.FC = () => {
       }));
     }
     
-    if (submitError) {
-      setSubmitError('');
-    }
-    
     if (field === 'password' && formData.confirmPassword) {
       const isMatch = e.target.value === formData.confirmPassword;
       setErrors(prev => ({
@@ -101,26 +110,28 @@ export const RegisterForm: React.FC = () => {
       return;
     }
     
-    setIsLoading(true);
-    setSubmitError('');
+    const roleMapping = {
+      'client': 'CLIENT',
+      'business': 'ADVISOR',  
+      'premium': 'CLIENT'
+    } as const;
     
-    try {
-      const response = await mockRegister(formData);
+    const result = await register({
+      email: formData.email,
+      password: formData.password,
+      confirmation: formData.confirmPassword,
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      role: roleMapping[formData.role] as UserRole
+    });
+    
+    if (result?.user) {
+      setUser(result.user);
       
-      if (response.success && response.user && response.token) {
-        localStorage.setItem('authToken', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        
-        globalThis.location.href = '/fr';
-      } else {
-        const errorMessage = response.error || 'Erreur lors de la création du compte';
-        setSubmitError(errorMessage);
+      if (globalThis.window !== undefined) {
+        const currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
+        router.push(`/${currentLocale}/client/dashboard`);
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la création du compte';
-      setSubmitError(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -135,7 +146,7 @@ export const RegisterForm: React.FC = () => {
           error={errors.firstName}
           required
           placeholder="Jean"
-          disabled={isLoading}
+          disabled={registerLoading}
         />
         
         <FormFieldWithInput
@@ -146,7 +157,7 @@ export const RegisterForm: React.FC = () => {
           error={errors.lastName}
           required
           placeholder="Dupont"
-          disabled={isLoading}
+          disabled={registerLoading}
         />
       </div>
       
@@ -158,7 +169,7 @@ export const RegisterForm: React.FC = () => {
         error={errors.email}
         required
         placeholder="exemple@email.com"
-        disabled={isLoading}
+        disabled={registerLoading}
       />
       
       <FormField
@@ -168,7 +179,7 @@ export const RegisterForm: React.FC = () => {
         <select
           value={formData.role}
           onChange={handleInputChange('role')}
-          disabled={isLoading}
+          disabled={registerLoading}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#083A31] focus:border-[#083A31] text-gray-900"
         >
           <option value="client">{tRoles('client')}</option>
@@ -185,7 +196,7 @@ export const RegisterForm: React.FC = () => {
         error={errors.password}
         required
         placeholder="••••••••"
-        disabled={isLoading}
+        disabled={registerLoading}
       />
       
       <FormFieldWithInput
@@ -196,13 +207,13 @@ export const RegisterForm: React.FC = () => {
         error={errors.confirmPassword}
         required
         placeholder="••••••••"
-        disabled={isLoading}
+        disabled={registerLoading}
       />
       
-      {submitError && (
+      {registerError && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <Typography variant="caption" className="text-red-700">
-            {submitError}
+            {registerError}
           </Typography>
         </div>
       )}
@@ -211,9 +222,9 @@ export const RegisterForm: React.FC = () => {
         type="submit"
         variant="primary"
         className="w-full"
-        disabled={isLoading}
+        disabled={registerLoading}
       >
-        {isLoading ? t('loading') : t('submit')}
+        {registerLoading ? t('loading') : t('submit')}
       </Button>
       
       <div className="text-center pt-4 border-t border-gray-200">
@@ -223,6 +234,13 @@ export const RegisterForm: React.FC = () => {
         <br />
         <button
           type="button"
+          onClick={() => {
+            let currentLocale = 'fr';
+            if (globalThis.window) {
+              currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
+            }
+            router.push(`/${currentLocale}/auth/login`);
+          }}
           className="text-sm font-medium text-[#083A31] hover:text-[#3F6868] transition-colors"
         >
           {t('login')}
