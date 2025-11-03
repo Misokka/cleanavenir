@@ -1,14 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { DashboardLayout } from '../../../components/templates/DashboardLayout';
-import { DashboardAccountsOverview } from '../../../components/organisms/DashboardAccountsOverview';
-import { RecentOperations } from '../../../components/organisms/RecentOperations';
-import { 
-  mockAccounts, 
-  mockOperations, 
-  getRecentOperations 
-} from '../../../features/dashboard/mocks';
+import { DashboardClientMain } from './DashboardClientMain';
 
 interface DashboardPageProps {
   readonly params: Promise<{ locale: string }>;
@@ -40,23 +33,5 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     notFound();
   }
 
-  const accounts = mockAccounts;
-  const recentOperations = getRecentOperations(mockOperations, 5);
-
-  return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        <DashboardAccountsOverview 
-          accounts={accounts}
-          showTotal={true}
-          showViewAll={true}
-        />
-        
-        <RecentOperations 
-          operations={recentOperations}
-          limit={5}
-        />
-      </div>
-    </DashboardLayout>
-  );
+  return <DashboardClientMain locale={locale} />;
 }

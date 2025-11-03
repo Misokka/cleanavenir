@@ -141,7 +141,8 @@
       "noOperations": "No recent operations",
       "accountsSummary": "My accounts",
       "noAccountsAvailable": "No accounts available",
-      "accountsWillAppear": "Your accounts will appear here once activated"
+      "accountsWillAppear": "Your accounts will appear here once activated",
+      "retry": "Retry"
     },
     "accounts": {
       "title": "My accounts",
@@ -172,6 +173,8 @@
       "distributedOn": "Distributed across",
       "account": "account",
       "accounts": "accounts",
+      "retrySaving": "Retry savings",
+      "retryRate": "Retry rate",
       "savingsAccount": "Savings account",
       "perYear": "per year",
       "noSavingsAccount": "No savings account",

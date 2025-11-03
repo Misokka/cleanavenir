@@ -140,6 +140,7 @@
       "viewAll": "Tout voir",
       "noOperations": "Aucune opération récente",
       "accountsSummary": "Mes comptes",
+      "retry": "Réessayer",
       "noAccountsAvailable": "Aucun compte disponible",
       "accountsWillAppear": "Vos comptes apparaîtront ici une fois activés"
     },
@@ -174,6 +175,8 @@
       "accounts": "comptes",
       "savingsAccount": "Livret d'épargne",
       "perYear": "par an",
+      "retrySaving": "Réessayer épargne",
+      "retryRate": "Réessayer taux",
       "noSavingsAccount": "Aucun compte d'épargne",
       "noSavingsDescription": "Ouvrez votre premier compte d'épargne et commencez à faire fructifier votre argent",
       "importantInfo": "Informations importantes",

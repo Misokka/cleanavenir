@@ -6,121 +6,162 @@ import Link from 'next/link';
 import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
-import { 
-  DashboardAccount, 
-  SavingsRate, 
-  formatCurrency,
-  formatDate,
-  getSavingsAccounts,
-  getTotalBalance
-} from '../../features/dashboard/mocks';
+import { useGetSavings, useCurrentSavingRate } from '../../features/savings/useGetSavings';
+import { SavingAccountDTO } from '../../infrastructure/web/types';
 
 interface SavingsOverviewProps {
-  accounts: DashboardAccount[];
-  savingsRate: SavingsRate;
+  showCreateButton?: boolean;
 }
 
 export const SavingsOverview: React.FC<SavingsOverviewProps> = ({ 
-  accounts,
-  savingsRate
+  showCreateButton = true
 }) => {
-  const t = useTranslations('Dashboard');
+  const t = useTranslations('Dashboard.savings');
   const locale = useLocale();
+  const { savings, loading: savingsLoading, error: savingsError, refetch: refetchSavings } = useGetSavings();
+  const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRate();
 
-  const savingsAccounts = getSavingsAccounts(accounts);
-  const totalSavings = getTotalBalance(savingsAccounts);
+
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const loading = savingsLoading || rateLoading;
+  const error = savingsError || rateError;
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="h-8 bg-gray-200 rounded animate-pulse w-32"></div>
+          {showCreateButton && (
+            <div className="h-10 bg-gray-200 rounded animate-pulse w-40"></div>
+          )}
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <Typography variant="h3" color="primary">
+          {t('title')}
+        </Typography>
+        
+        <Card className="text-center py-12 border-red-200 bg-red-50">
+          <div className="text-6xl mb-4"></div>
+          <Typography variant="h4" className="mb-2 text-red-700">
+            Erreur de chargement
+          </Typography>
+          <Typography color="muted" className="mb-4">
+            {error}
+          </Typography>
+          <div className="space-x-2">
+            <Button variant="primary" onClick={refetchSavings}>
+              {t('retrySaving')}
+            </Button>
+            <Button variant="secondary" onClick={refetchRate}>
+              {t('retryRate')}
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Typography variant="h3" color="primary">
-          {t('savings.title')}
+          {t('title')}
         </Typography>
-        <Button variant="primary" size="sm">
-          {t('savings.openAccount')}
-        </Button>
+        {showCreateButton && (
+          <Button variant="primary" size="sm">
+            {t('openAccount')}
+          </Button>
+        )}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card className="text-center bg-green-50 border-green-200">
-          <Typography variant="caption" color="muted" className="mb-2">
-            {t('savings.currentRate')}
-          </Typography>
-          <Typography variant="h2" className="text-green-600 font-bold">
-            {savingsRate.baseRate}%
-          </Typography>
-        </Card>
-        
-        <Card className="text-center bg-blue-50 border-blue-200">
-          <Typography variant="caption" color="muted" className="mb-2">
-            {t('savings.premiumRate')}
-          </Typography>
-          <Typography variant="h2" className="text-blue-600 font-bold">
-            {savingsRate.premiumRate}%
-          </Typography>
-        </Card>
-        
-        <Card className="text-center bg-gray-50 border-gray-200">
-          <Typography variant="caption" color="muted" className="mb-2">
-            {t('savings.minimumAmount')}
-          </Typography>
-          <Typography variant="h2" className="text-gray-600 font-bold">
-            {formatCurrency(savingsRate.minimumAmount)}
-          </Typography>
-        </Card>
-      </div>
-
-      {totalSavings > 0 && (
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
-          <div className="text-center">
-            <Typography variant="caption" className="text-white opacity-90 mb-2">
-              {t('savings.totalSavings')}
+      {currentRate && (
+        <div className="grid md:grid-cols-2 gap-4">
+          <Card className="text-center bg-green-50 border-green-200">
+            <Typography variant="caption" color="muted" className="mb-2">
+              {t('currentRate')}
             </Typography>
-            <Typography variant="h2" className="text-white font-bold">
-              {formatCurrency(totalSavings)}
+            <Typography variant="h2" className="text-green-600 font-bold">
+              {currentRate.value}%
             </Typography>
-            <Typography variant="caption" className="text-white opacity-75 mt-2">
-              {t('savings.distributedOn')} {savingsAccounts.length} {savingsAccounts.length > 1 ? t('savings.accounts') : t('savings.account')}
+            <Typography variant="caption" color="muted" className="mt-1">
+              {t('perYear')}
             </Typography>
-          </div>
-        </Card>
+          </Card>
+          
+          <Card className="text-center bg-blue-50 border-blue-200">
+            <Typography variant="caption" color="muted" className="mb-2">
+              Dernière mise à jour
+            </Typography>
+            <Typography variant="body" className="text-blue-600 font-medium">
+              {formatDate(currentRate.updateAt)}
+            </Typography>
+          </Card>
+        </div>
       )}
 
-      {savingsAccounts.length > 0 ? (
+      {savings && savings.length > 0 ? (
         <div>
           <Typography variant="h4" className="mb-4">
-            {t('savings.mySavingsAccounts')}
+            {t('mySavingsAccounts')} ({savings.length})
           </Typography>
           <div className="grid gap-4 md:grid-cols-2">
-            {savingsAccounts.map((account) => (
+            {savings.map((savingAccount: SavingAccountDTO) => (
               <Link 
-                key={account.id} 
-                href={`/${locale}/dashboard/accounts/${account.id}`}
+                key={savingAccount.id} 
+                href={`/${locale}/dashboard/accounts/${savingAccount.AccountId}`}
                 className="block"
               >
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl"></span>
+                      <span className="text-2xl">💰</span>
                       <div>
                         <Typography variant="body" className="font-medium">
-                          {t('savings.savingsAccount')}
+                          {t('savingsAccount')}
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          ••••{account.accountNumber.slice(-4)}
+                          ••••{savingAccount.AccountId.slice(-4)}
                         </Typography>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <Typography variant="h4" className="text-green-600 font-bold">
-                        {formatCurrency(account.balance)}
-                      </Typography>
-                      {account.interestRate && (
-                        <Typography variant="caption" color="muted">
-                          {account.interestRate}% {t('savings.perYear')}
-                        </Typography>
-                      )}
+                    <div className={`px-2 py-1 rounded-full text-xs ${
+                      savingAccount.isActive 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {savingAccount.isActive ? 'Actif' : 'Inactif'}
                     </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <Typography variant="caption" color="muted">
+                      Ouvert le {formatDate(savingAccount.openedAt)}
+                    </Typography>
+                    {currentRate && (
+                      <Typography variant="caption" className="mt-1 text-green-600">
+                        {currentRate.value}% {t('perYear')}
+                      </Typography>
+                    )}
                   </div>
                 </Card>
               </Link>
@@ -129,35 +170,37 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
         </div>
       ) : (
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4"></div>
+          <div className="text-6xl mb-4">💰</div>
           <Typography variant="h4" className="mb-2">
-            Aucun compte d'épargne
+            {t('noSavingsAccount')}
           </Typography>
           <Typography color="muted" className="mb-6">
-            Ouvrez votre premier compte d'épargne et commencez à faire fructifier votre argent
+            {t('noSavingsDescription')}
           </Typography>
           <Button variant="primary">
-            {t('savings.openAccount')}
+            {t('openAccount')}
           </Button>
         </Card>
       )}
 
-      <Card className="bg-blue-50 border-blue-200">
-        <div className="flex items-start space-x-3">
-          <span className="text-2xl"></span>
-          <div>
-            <Typography variant="body" className="font-medium text-blue-900 mb-2">
-              {t('savings.importantInfo')}
-            </Typography>
-            <Typography variant="caption" className="text-blue-800">
-              • {t('savings.rateInfo.baseRate', { rate: savingsRate.baseRate })}<br/>
-              • {t('savings.rateInfo.premiumRate', { rate: savingsRate.premiumRate })}<br/>
-              • {t('savings.rateInfo.minimumAmount', { amount: formatCurrency(savingsRate.minimumAmount) })}<br/>
-              • {t('savings.rateInfo.lastUpdate', { date: formatDate(savingsRate.lastUpdated) })}
-            </Typography>
+      {currentRate && (
+        <Card className="bg-blue-50 border-blue-200">
+          <div className="flex items-start space-x-3">
+            <span className="text-2xl">ℹ️</span>
+            <div>
+              <Typography variant="body" className="font-medium text-blue-900 mb-2">
+                {t('importantInfo')}
+              </Typography>
+              <Typography variant="caption" className="text-blue-800">
+                • Taux actuel: {currentRate.value}% par an<br/>
+                • Dernière mise à jour: {formatDate(currentRate.updateAt)}<br/>
+                • Calcul des intérêts mensuel<br/>
+                • Capital garanti
+              </Typography>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      )}
     </div>
   );
 };

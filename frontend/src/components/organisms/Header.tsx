@@ -40,7 +40,7 @@ export function Header() {
             <Link href={`/${locale}`} className="text-gray-600 hover:text-clean-dark transition-colors">
               {t('home')}
             </Link>
-            <Link href={`/${locale}/accounts`} className="text-gray-600 hover:text-clean-dark transition-colors">
+            <Link href={`/${locale}/dashboard/accounts`} className="text-gray-600 hover:text-clean-dark transition-colors">
               {t('accounts')}
             </Link>
             <Link href={`/${locale}/transfer`} className="text-gray-600 hover:text-clean-dark transition-colors">
