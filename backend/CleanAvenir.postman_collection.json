@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "CleanAvenir API",
+    "_postman_id": "1a2b3c4d-5e6f-7g8h-9i10-jklmnopqrst",
+    "description": "Collection de tests pour le backend CleanAvenir (Express + Drizzle).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "http://localhost:3000/api/health", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "health"] }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstname\": \"Alice\",\n  \"lastname\": \"Durand\",\n  \"email\": \"alice@example.com\",\n  \"password\": \"hash\"\n}"
+            },
+            "url": { "raw": "http://localhost:3000/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"hash\"\n}"
+            },
+            "url": { "raw": "http://localhost:3000/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Me (current user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/auth/me", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "List Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/accounts", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "accounts"] }
+          }
+        },
+        {
+          "name": "Get Account by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/accounts/a1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "accounts", "a1"] }
+          }
+        },
+        {
+          "name": "Get Account Operations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/accounts/a1/operations", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "accounts", "a1", "operations"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operations",
+      "item": [
+        {
+          "name": "List Recent Operations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/operations/recent", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "operations", "recent"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Savings",
+      "item": [
+        {
+          "name": "List Saving Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/savings/accounts", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "savings", "accounts"] }
+          }
+        },
+        {
+          "name": "Get Current Rate",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer mock-jwt-token", "type": "text" }
+            ],
+            "url": { "raw": "http://localhost:3000/api/savings/rates/current", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "savings", "rates", "current"] }
+          }
+        }
+      ]
+    }
+  ]
+}
