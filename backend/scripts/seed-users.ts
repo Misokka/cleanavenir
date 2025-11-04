@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { randomUUID } from 'crypto';
 import { db } from '../src/infrastructure/drizzle/client';
 import { users } from '../src/infrastructure/drizzle/schema';
+import { eq } from 'drizzle-orm';
 
 async function seed() {
   const now = new Date().toISOString();
@@ -14,7 +15,6 @@ async function seed() {
       password: 'hashedpassword',
       role: 'CLIENT',
       isActive: 1,
-      emailVerifiedAt: null,
       createdAt: now,
       updatedAt: now,
     },
@@ -26,7 +26,6 @@ async function seed() {
       password: 'hashedpassword',
       role: 'CLIENT',
       isActive: 1,
-      emailVerifiedAt: null,
       createdAt: now,
       updatedAt: now,
     },
@@ -34,10 +33,19 @@ async function seed() {
 
   for (const r of rows) {
     try {
+      // Vérifier si l'utilisateur existe déjà
+      const existing = await db.select().from(users).where(eq(users.email, r.email));
+      
+      if (existing.length > 0) {
+        console.log(`User ${r.email} already exists, skipping`);
+        continue;
+      }
+
       await db.insert(users).values(r);
       console.log(`Inserted ${r.email}`);
     } catch (e: any) {
-      console.warn(`Could not insert ${r.email}:`, e.message);
+      console.error(`Could not insert ${r.email}:`, e);
+      console.error('Full error details:', JSON.stringify(e, null, 2));
     }
   }
 
@@ -46,6 +54,6 @@ async function seed() {
 }
 
 seed().catch((e) => {
-  console.error(e);
+  console.error('Seed failed:', e);
   process.exit(1);
 });
