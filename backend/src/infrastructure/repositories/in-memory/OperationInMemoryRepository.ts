@@ -1,5 +1,5 @@
-import { OperationRepository } from '../../application/ports/repositories/OperationRepository';
-import { Operation } from '../../domain/entities/Operation';
+import { OperationRepository } from '../../../application/ports/repositories/OperationRepository';
+import { Operation } from '../../../domain/entities/Operation';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class OperationInMemoryRepository

@@ -1,5 +1,5 @@
-import { BankAccountRepository } from '../../application/ports/repositories/BankAccountRepository';
-import { BankAccount } from '../../domain/entities/BankAccount';
+import { BankAccountRepository } from '../../../application/ports/repositories/BankAccountRepository';
+import { BankAccount } from '../../../domain/entities/BankAccount';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class BankAccountInMemoryRepository

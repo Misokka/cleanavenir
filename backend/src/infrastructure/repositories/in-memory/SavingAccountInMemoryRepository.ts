@@ -1,5 +1,5 @@
-import { SavingAccountRepository } from '../../application/ports/repositories/SavingAccountRepository';
-import { SavingAccount } from '../../domain/entities/SavingAccount';
+import { SavingAccountRepository } from '../../../application/ports/repositories/SavingAccountRepository';
+import { SavingAccount } from '../../../domain/entities/SavingAccount';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class SavingAccountInMemoryRepository

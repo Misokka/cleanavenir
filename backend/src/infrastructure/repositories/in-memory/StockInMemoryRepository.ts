@@ -1,5 +1,5 @@
-import { StockRepository } from '../../application/ports/repositories/StockRepository';
-import { Stock } from '../../domain/entities/Stock';
+import { StockRepository } from '../../../application/ports/repositories/StockRepository';
+import { Stock } from '../../../domain/entities/Stock';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class StockInMemoryRepository

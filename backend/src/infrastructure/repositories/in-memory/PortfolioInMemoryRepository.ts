@@ -1,5 +1,5 @@
-import { PortfolioRepository } from '../../application/ports/repositories/PortfolioRepository';
-import { Portfolio } from '../../domain/entities/Portfolio';
+import { PortfolioRepository } from '../../../application/ports/repositories/PortfolioRepository';
+import { Portfolio } from '../../../domain/entities/Portfolio';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class PortfolioInMemoryRepository

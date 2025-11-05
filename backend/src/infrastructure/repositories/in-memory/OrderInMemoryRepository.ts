@@ -1,5 +1,5 @@
-import { OrderRepository } from '../../application/ports/repositories/OrderRepository';
-import { Order } from '../../domain/entities/Order';
+import { OrderRepository } from '../../../application/ports/repositories/OrderRepository';
+import { Order } from '../../../domain/entities/Order';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class OrderInMemoryRepository

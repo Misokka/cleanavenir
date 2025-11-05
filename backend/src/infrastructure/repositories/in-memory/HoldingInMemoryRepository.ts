@@ -1,5 +1,5 @@
-import { HoldingRepository } from '../../application/ports/repositories/HoldingRepository';
-import { Holding } from '../../domain/entities/Holding';
+import { HoldingRepository } from '../../../application/ports/repositories/HoldingRepository';
+import { Holding } from '../../../domain/entities/Holding';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class HoldingInMemoryRepository

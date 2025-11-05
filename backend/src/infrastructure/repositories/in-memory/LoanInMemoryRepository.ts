@@ -1,5 +1,5 @@
-import { LoanRepository } from '../../application/ports/repositories/LoanRepository';
-import { Loan } from '../../domain/entities/Loan';
+import { LoanRepository } from '../../../application/ports/repositories/LoanRepository';
+import { Loan } from '../../../domain/entities/Loan';
 import { BaseInMemoryRepository } from './BaseInMemoryRepository';
 
 export class LoanInMemoryRepository
