@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { bankAccounts } from '../../../../infrastructure/drizzle/schema';
-import { eq } from 'drizzle-orm';
 import { toAccountDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const listAccountsController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -17,11 +15,18 @@ export const listAccountsController = asyncHandler(
       return;
     }
 
-    const accounts = await db.query.bankAccounts.findMany({
-      where: eq(bankAccounts.ownerId, userId),
-    });
+    const container = getContainer();
+    const result = await container.useCases.account.list.execute({ userId });
 
-    const accountDTOs = accounts.map(toAccountDTO);
+    if (!result.ok) {
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: result.error.message,
+      });
+      return;
+    }
+
+    const accountDTOs = result.value.map(toAccountDTO);
 
     res.json(accountDTOs);
   }

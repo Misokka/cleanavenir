@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { users } from '../../../../infrastructure/drizzle/schema';
-import { eq } from 'drizzle-orm';
 import { toUserDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const registerController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -34,53 +32,51 @@ export const registerController = asyncHandler(
       return;
     }
 
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, email.toLowerCase()),
-    });
+    const container = getContainer();
+    
+    const result = await container.useCases.auth.register.execute(
+      firstname,
+      lastname,
+      email.toLowerCase(),
+      password,
+      password, 
+      'CLIENT' // Rôle par défaut
+    );
 
-    if (existingUser) {
-      res.status(409).json({
-        error: 'EMAIL_ALREADY_EXISTS',
-        message: 'Un compte existe déjà avec cet email',
+    if (!result.ok) {
+      const error = result.error;
+      
+      if (error.message.includes("don't match") || error.message.includes('correspondent')) {
+        res.status(400).json({
+          error: 'VALIDATION_ERROR',
+          message: 'Les mots de passe ne correspondent pas',
+        });
+        return;
+      }
+      
+      if (error.message.includes('already') || error.message.includes('utilisé')) {
+        res.status(409).json({
+          error: 'EMAIL_ALREADY_EXISTS',
+          message: 'Un compte existe déjà avec cet email',
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: error.message,
       });
       return;
     }
 
-    // TODO: En production, hasher le mot de passe avec bcrypt
-    // const hashedPassword = await bcrypt.hash(password, 10);
-
-    const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    const now = new Date().toISOString();
-
-    const [newUser] = await db
-      .insert(users)
-      .values({
-        id: userId,
-        firstname,
-        lastname,
-        email: email.toLowerCase(),
-        password, // En dev, stocké en clair (à hasher en prod)
-        role: 'CLIENT', 
-        isActive: 1,
-        emailVerifiedAt: null,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning();
+    const { user, profile } = result.value;
 
     // TODO: En production, générer un vrai JWT
-    // const token = jwt.sign(
-    //   { userId: newUser.id, email: newUser.email, role: newUser.role },
-    //   process.env.JWT_SECRET!,
-    //   { expiresIn: '7d' }
-    // );
-
-    // Pour le dev, token simple
-    const token = `${newUser.id}:${newUser.email}`;
+    const token = `${user.userIndentifier}:${user.email}`;
 
     res.status(201).json({
       token,
-      user: toUserDTO(newUser),
+      user: toUserDTO(user as any),
     });
   }
 );

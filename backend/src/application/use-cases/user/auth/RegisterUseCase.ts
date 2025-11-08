@@ -1,13 +1,20 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { User } from "../../../../domain/entities/User";
 import { PasswordDoNotMatchError } from "../../../../domain/errors/PasswordDoNotMatchError";
 import { UserRole } from "../../../dtos/UserDTO";
 import { UserRepository } from "../../../ports/repositories/UserRepository";
-import { err, ok } from "../../../../shared/Result";
+import { err, ok, Result } from "../../../../shared/Result";
 import { EmailAlreadyUsedError } from "../../../../domain/errors/EmailAlreadyUsedError";
 import { PasswordHasher } from "../../../ports/services/PasswordHasher";
 import { ProfileManager } from "../../../ports/services/ProfileFetcher";
+import { Client } from "../../../../domain/entities/Client";
+import { Director } from "../../../../domain/entities/Director";
+import { Advisor } from "../../../../domain/entities/Advisor";
 
+type RegisterResult = {
+  user: User;
+  profile: Client | Director | Advisor;
+}
 
 export class RegisterUseCase{
   constructor(
@@ -23,10 +30,10 @@ export class RegisterUseCase{
     password: string,
     confirmation: string,
     role: UserRole
-  ){
+  ): Promise<Result<RegisterResult, Error>>{
 
     if(password !== confirmation){
-      throw new PasswordDoNotMatchError("Passwords don't match");
+      return err(new PasswordDoNotMatchError("Passwords don't match"));
     }
 
     const userIdentifier = randomUUID()
@@ -40,9 +47,21 @@ export class RegisterUseCase{
     const hashedPassword = await this.passwordHasher.hash(password);
     const newUser = new User(userIdentifier, firstname, lastname, email, hashedPassword, role);
 
-    this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+    
+    if(!savedUser.ok){
+      return err(savedUser.error);
+    }
+
     const newProfile = await this.profileManager.create(newUser.userIndentifier, newUser.role);
 
-    return ok(newProfile);
+    if(!newProfile.ok){
+      return err(newProfile.error);
+    }
+
+    return ok({
+      user: savedUser.value,
+      profile: newProfile.value
+    });
   }
 }

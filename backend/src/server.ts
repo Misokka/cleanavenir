@@ -1,9 +1,6 @@
-import { createServer } from './interface/http-express/main';
+import 'dotenv/config';
+import { startServer } from './infrastructure/bootstrap/server';
 
-const port = process.env.PORT || 3000;
+const port = Number.parseInt(process.env.PORT || '3000', 10);
 
-const app = createServer();
-
-app.listen(port, () => {
-  console.log(`API running on http://localhost:${port}`);
-});
+startServer(port);
