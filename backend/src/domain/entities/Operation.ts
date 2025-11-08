@@ -1,3 +1,3 @@
-export class Opreation{
+export class Operation{
   constructor(){}
 }

@@ -1,4 +1,6 @@
-export class User{
+export class User {
+  public active: boolean = false;
+  public emailVerifiedAt: Date | null = null;
   constructor(
     public userIndentifier: string,
     public firstname: string,
@@ -6,5 +8,5 @@ export class User{
     public email: string,
     public password: string,
     public role: "CLIENT" | "ADVISOR" | "DIRECTOR"
-  ){}
+  ) { }
 }
