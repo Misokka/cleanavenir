@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { users } from '../../../../infrastructure/drizzle/schema';
-import { eq } from 'drizzle-orm';
 import { toUserDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const loginController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -17,50 +15,47 @@ export const loginController = asyncHandler(
       return;
     }
 
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email.toLowerCase()),
+    const container = getContainer();
+    const result = await container.useCases.auth.login.execute({
+      email: email.toLowerCase(),
+      password,
     });
 
-    if (!user) {
-      res.status(401).json({
-        error: 'INVALID_CREDENTIALS',
-        message: 'Email ou mot de passe incorrect',
+    if (!result.ok) {
+      const error = result.error;
+      
+      if (error.message.includes('credentials') || error.message.includes('email')) {
+        res.status(401).json({
+          error: 'INVALID_CREDENTIALS',
+          message: 'Email ou mot de passe incorrect',
+        });
+        return;
+      }
+
+      if (error.message.includes('désactivé') || error.message.includes('inactive')) {
+        res.status(403).json({
+          error: 'ACCOUNT_INACTIVE',
+          message: 'Compte désactivé',
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: error.message,
       });
       return;
     }
 
-    // TODO: En production, utiliser bcrypt.compare(password, user.password)
-    // Pour le dev, comparaison directe (mot de passe en clair)
-    if (password !== user.password) {
-      res.status(401).json({
-        error: 'INVALID_CREDENTIALS',
-        message: 'Email ou mot de passe incorrect',
-      });
-      return;
-    }
-
-    // Vérifier que l'utilisateur est actif
-    if (!user.isActive) {
-      res.status(403).json({
-        error: 'ACCOUNT_INACTIVE',
-        message: 'Compte désactivé',
-      });
-      return;
-    }
+    const { user, profile } = result.value;
 
     // TODO: En production, générer un vrai JWT avec jsonwebtoken
-    // const token = jwt.sign(
-    //   { userId: user.id, email: user.email, role: user.role },
-    //   process.env.JWT_SECRET!,
-    //   { expiresIn: rememberMe ? '30d' : '7d' }
-    // );
-
     // Pour le dev, token simple (format: userId:email)
-    const token = `${user.id}:${user.email}`;
+    const token = `${user.userIndentifier}:${user.email}`;
 
     res.json({
       token,
-      user: toUserDTO(user),
+      user: toUserDTO(user as any),
       rememberMe: rememberMe || false,
     });
   }

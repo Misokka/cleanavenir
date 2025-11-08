@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { operations, bankAccounts } from '../../../../infrastructure/drizzle/schema';
-import { eq, or, desc, inArray } from 'drizzle-orm';
 import { toOperationDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const listRecentOperationsController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -18,27 +16,21 @@ export const listRecentOperationsController = asyncHandler(
       return;
     }
 
-    const userAccounts = await db.query.bankAccounts.findMany({
-      where: eq(bankAccounts.ownerId, userId),
-    });
-
-    if (userAccounts.length === 0) {
-      res.json([]);
-      return;
-    }
-
-    const accountIds = userAccounts.map((account) => account.id);
-
-    const recentOps = await db.query.operations.findMany({
-      where: or(
-        inArray(operations.fromAccountId, accountIds),
-        inArray(operations.toAccountId, accountIds)
-      ),
-      orderBy: [desc(operations.createdAt)],
+    const container = getContainer();
+    const result = await container.useCases.operation.listRecent.execute({
+      userId,
       limit,
     });
 
-    const operationDTOs = recentOps.map(toOperationDTO);
+    if (!result.ok) {
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: result.error.message,
+      });
+      return;
+    }
+
+    const operationDTOs = result.value.map(toOperationDTO);
 
     res.json(operationDTOs);
   }

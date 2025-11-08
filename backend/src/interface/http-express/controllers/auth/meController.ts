@@ -1,10 +1,7 @@
 import { Request, Response } from 'express';
 import { toUserDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { users } from '../../../../infrastructure/drizzle/schema';
-import { eq } from 'drizzle-orm';
-
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const meController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -18,11 +15,10 @@ export const meController = asyncHandler(
       return;
     }
 
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, userId),
-    });
+    const container = getContainer();
+    const result = await container.useCases.auth.getUserProfile.execute(userId);
 
-    if (!user) {
+    if (!result.ok) {
       res.status(404).json({
         error: 'USER_NOT_FOUND',
         message: 'Utilisateur non trouvé',
@@ -30,6 +26,6 @@ export const meController = asyncHandler(
       return;
     }
 
-    res.json(toUserDTO(user));
+    res.json(toUserDTO(result.value));
   }
 );

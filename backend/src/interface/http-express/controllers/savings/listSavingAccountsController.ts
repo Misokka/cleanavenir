@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { savings, bankAccounts } from '../../../../infrastructure/drizzle/schema';
-import { eq, inArray } from 'drizzle-orm';
 import { toSavingAccountDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const listSavingAccountsController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -17,22 +15,18 @@ export const listSavingAccountsController = asyncHandler(
       return;
     }
 
-    const userAccounts = await db.query.bankAccounts.findMany({
-      where: eq(bankAccounts.ownerId, userId),
-    });
+    const container = getContainer();
+    const result = await container.useCases.saving.listUser.execute({ userId });
 
-    if (userAccounts.length === 0) {
-      res.json([]);
+    if (!result.ok) {
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: result.error.message,
+      });
       return;
     }
 
-    const accountIds = userAccounts.map((account) => account.id);
-
-    const savingAccounts = await db.query.savings.findMany({
-      where: inArray(savings.accountId, accountIds),
-    });
-
-    const savingDTOs = savingAccounts.map(toSavingAccountDTO);
+    const savingDTOs = result.value.map(toSavingAccountDTO);
 
     res.json(savingDTOs);
   }

@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../../../../infrastructure/drizzle/client';
-import { bankAccounts } from '../../../../infrastructure/drizzle/schema';
-import { eq, and } from 'drizzle-orm';
 import { toAccountDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
+import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const getAccountController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -18,21 +16,36 @@ export const getAccountController = asyncHandler(
       return;
     }
 
-    const account = await db.query.bankAccounts.findFirst({
-      where: and(
-        eq(bankAccounts.id, accountId),
-        eq(bankAccounts.ownerId, userId)
-      ),
+    const container = getContainer();
+    const result = await container.useCases.account.get.execute({
+      userId,
+      accountId,
     });
 
-    if (!account) {
-      res.status(404).json({
-        error: 'ACCOUNT_NOT_FOUND',
-        message: 'Compte non trouvé',
+    if (!result.ok) {
+      if (result.error.message.includes('trouvé') || result.error.message.includes('not found')) {
+        res.status(404).json({
+          error: 'ACCOUNT_NOT_FOUND',
+          message: 'Compte non trouvé',
+        });
+        return;
+      }
+
+      if (result.error.message.includes('autorisé') || result.error.message.includes('unauthorized')) {
+        res.status(403).json({
+          error: 'UNAUTHORIZED',
+          message: 'Accès non autorisé à ce compte',
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: result.error.message,
       });
       return;
     }
 
-    res.json(toAccountDTO(account));
+    res.json(toAccountDTO(result.value));
   }
 );

@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { savings } from '../../drizzle/schema';
 import { ok, err } from '../../../shared/Result';
 
 export class SavingRepositoryDrizzle {
-  constructor(private db: any) {}
+  constructor(private readonly db: any) {}
 
   async save(saving: any) {
     try {
@@ -22,4 +22,17 @@ export class SavingRepositoryDrizzle {
       return err(new Error(`Could not find saving by id: ${e.message}`));
     }
   }
+
+  async findByAccountIds(accountIds: string[]) {
+    try {
+      if (accountIds.length === 0) {
+        return ok([]);
+      }
+      const rows = await this.db.select().from(savings).where(inArray(savings.accountId, accountIds));
+      return ok(rows);
+    } catch (e: any) {
+      return err(new Error(`Could not find savings by account ids: ${e.message}`));
+    }
+  }
 }
+

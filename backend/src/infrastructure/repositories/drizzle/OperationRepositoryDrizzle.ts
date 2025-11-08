@@ -1,6 +1,6 @@
 import { ok, err, Result } from '../../../shared/Result';
 import { operations } from '../../drizzle/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, desc, inArray } from 'drizzle-orm';
 
 export class OperationRepositoryDrizzle {
   constructor(private readonly db: any) {}
@@ -35,10 +35,31 @@ export class OperationRepositoryDrizzle {
       const rows = await this.db
         .select()
         .from(operations)
-        .where(or(eq(operations.fromAccountId, accountId), eq(operations.toAccountId, accountId)));
+        .where(or(eq(operations.fromAccountId, accountId), eq(operations.toAccountId, accountId)))
+        .orderBy(desc(operations.createdAt));
+      return ok(rows);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
+  async listRecentForUser(accountIds: string[], limit: number): Promise<Result<any[], Error>> {
+    try {
+      const rows = await this.db
+        .select()
+        .from(operations)
+        .where(
+          or(
+            inArray(operations.fromAccountId, accountIds),
+            inArray(operations.toAccountId, accountIds)
+          )
+        )
+        .orderBy(desc(operations.createdAt))
+        .limit(limit);
       return ok(rows);
     } catch (e: any) {
       return err(e);
     }
   }
 }
+
