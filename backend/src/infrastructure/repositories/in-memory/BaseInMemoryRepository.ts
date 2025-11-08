@@ -29,7 +29,7 @@ export abstract class BaseInMemoryRepository<T> {
   }
 
   async findAll(): Promise<T[]> {
-    return [...this.items.values()].map(structuredClone);
+    return [...this.items.values()].map(item => structuredClone(item));
   }
 
   async existsById(id: string): Promise<boolean> {
@@ -48,10 +48,9 @@ export abstract class BaseInMemoryRepository<T> {
     return this.items.size;
   }
 
-  // --- Helpers pour les classes enfants ---
 
   protected where(predicate: (entity: T) => boolean): T[] {
-    return [...this.items.values()].filter(predicate).map(structuredClone);
+    return [...this.items.values()].filter(predicate).map(item => structuredClone(item));
   }
 
   protected firstWhere(predicate: (entity: T) => boolean): T | null {

@@ -16,7 +16,6 @@ export class UserInMemoryRepository implements UserRepository {
   async save(
     user: User,
   ): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>> {
-    // 1. Vérifier l'unicité de l'email (logique spécifique à 'save')
     for (const existing of this.users.values()) {
       if (
         existing.email.toLowerCase() === user.email.toLowerCase() &&
@@ -26,7 +25,6 @@ export class UserInMemoryRepository implements UserRepository {
       }
     }
 
-    // 2. Sauvegarder (créer ou mettre à jour)
     this.users.set(this.getIdentifier(user), user);
     return ok(user);
   }
@@ -60,16 +58,11 @@ export class UserInMemoryRepository implements UserRepository {
 
     const user = userResult.value;
     
-    // (Ici, vous pourriez ajouter la logique de validation pour 'InvalidRoleError')
 
     user.role = role;
 
-    // --- CORRECTION ICI ---
-    // Ne pas appeler this.save() pour éviter le conflit de type d'erreur.
-    // Mettre à jour la map directement.
     this.users.set(this.getIdentifier(user), user);
     
-    // Retourner Ok<User>, qui est compatible avec le type de retour.
     return ok(user);
   }
 
@@ -83,10 +76,8 @@ export class UserInMemoryRepository implements UserRepository {
     }
     const user = userResult.value;
 
-    // @ts-ignore (en supposant que 'active' existe sur User)
     user.active = active;
 
-    // --- CORRECTION ICI ---
     this.users.set(this.getIdentifier(user), user);
     return ok(user);
   }
@@ -101,10 +92,8 @@ export class UserInMemoryRepository implements UserRepository {
     }
     const user = userResult.value;
 
-    // @ts-ignore (en supposant que 'emailVerifiedAt' existe sur User)
     user.emailVerifiedAt = new Date(whenISO);
 
-    // --- CORRECTION ICI ---
     this.users.set(this.getIdentifier(user), user);
     return ok(user);
   }
