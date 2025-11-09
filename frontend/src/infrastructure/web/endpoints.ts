@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
     DETAILS: (id: string) => `/operations/${id}`,
     CREATE: '/operations',
     RECENT: '/operations/recent',
+    TRANSFER: '/operations/transfer',
   },
 
   SAVINGS: {

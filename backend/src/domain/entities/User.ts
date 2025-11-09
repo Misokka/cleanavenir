@@ -1,5 +1,5 @@
 export class User {
-  public active: boolean = false;
+  public active: boolean = true;
   public emailVerifiedAt: Date | null = null;
   constructor(
     public userIndentifier: string,
