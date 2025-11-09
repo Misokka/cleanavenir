@@ -62,6 +62,6 @@ export class LoanCalculator{
   public computeInsuranceMensualities(loanAmount: number, annualInsuranceRate: number){
     const MONTH_IN_YEAR = 12;
 
-    return (loanAmount * annualInsuranceRate) / MONTH_IN_YEAR;
+    return (loanAmount * annualInsuranceRate / 100) / MONTH_IN_YEAR;
   }
 }
