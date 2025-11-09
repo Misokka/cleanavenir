@@ -94,7 +94,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
         </div>
         
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4">🏦</div>
+          <div className="text-6xl mb-4"></div>
           <Typography variant="h4" className="mb-2">
             {t('noAccountsAvailable')}
           </Typography>
@@ -150,7 +150,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
             <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <span className="text-2xl">🏦</span>
+                  <span className="text-2xl"></span>
                   <div>
                     <Typography variant="h4" className="mb-1">
                       {account.label}

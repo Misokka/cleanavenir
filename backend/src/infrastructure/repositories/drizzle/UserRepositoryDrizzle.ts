@@ -14,8 +14,16 @@ export class UserRepositoryDrizzle implements UserRepository {
   async save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>> {
     try {
       const now = new Date().toISOString();
-      const isActive = (user as any).isActive ? 1 : 0;
-      const emailVerifiedAt = (user as any).emailVerifiedAt ?? null;
+      const isActive = (user as any).active ? 1 : 0;
+      
+      let emailVerifiedAt = now;
+      const userEmailVerified = (user as any).emailVerifiedAt;
+      if (userEmailVerified) {
+        emailVerifiedAt = userEmailVerified instanceof Date 
+          ? userEmailVerified.toISOString() 
+          : userEmailVerified;
+      }
+      
       const createdAt = (user as any).createdAt ?? now;
       const updatedAt = (user as any).updatedAt ?? now;
 

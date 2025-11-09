@@ -66,6 +66,13 @@ class HttpClient {
         }
       }
 
+      // Handle 401 Unauthorized - clear token and redirect to login
+      if (response.status === 401 && globalThis.window !== undefined) {
+        this.clearAuthToken();
+        const currentLocale = globalThis.window.location.pathname.split('/')[1] || 'fr';
+        globalThis.window.location.href = `/${currentLocale}/auth/login`;
+      }
+
       throw new HttpClientError(errorMessage, response.status, errorCode);
     }
 

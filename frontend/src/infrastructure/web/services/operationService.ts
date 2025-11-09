@@ -186,6 +186,37 @@ export class OperationService {
       throw error;
     }
   }
+
+  async transfer(payload: {
+    fromAccountId: string;
+    toAccountId: string;
+    amount: number;
+    description?: string;
+  }): Promise<{ success: boolean; message?: string }> {
+    if (!payload.fromAccountId || !payload.toAccountId) {
+      throw new Error('Les comptes source et destination sont requis');
+    }
+
+    if (payload.amount <= 0) {
+      throw new Error('Le montant doit être supérieur à 0');
+    }
+
+    if (payload.fromAccountId === payload.toAccountId) {
+      throw new Error('Les comptes source et destination doivent être différents');
+    }
+
+    try {
+      const response = await httpClient.post<{ success: boolean; message?: string }>(
+        API_ENDPOINTS.OPERATIONS.TRANSFER,
+        payload
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du virement:', error);
+      throw error;
+    }
+  }
 }
 
 export const operationService = new OperationService();

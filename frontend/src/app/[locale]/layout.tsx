@@ -5,6 +5,8 @@ import { getMessages } from "next-intl/server";
 import { Header } from "@/components/organisms/Header";
 import { Footer } from "@/components/organisms/Footer";
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { ToastProvider } from "@/contexts/ToastProvider";
+import { ToastContainer } from "@/components/organisms/ToastContainer";
 import "../../styles/global.css";
 
 const geistSans = Geist({
@@ -74,9 +76,12 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <Header />
-            <main className="min-h-[calc(100vh-100px)]">{children}</main>
-            <Footer />
+            <ToastProvider>
+              <Header />
+              <main className="min-h-[calc(100vh-100px)]">{children}</main>
+              <Footer />
+              <ToastContainer />
+            </ToastProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

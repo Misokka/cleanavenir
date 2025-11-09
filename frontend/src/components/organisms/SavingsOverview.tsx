@@ -134,7 +134,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl">💰</span>
+                      <span className="text-2xl"></span>
                       <div>
                         <Typography variant="body" className="font-medium">
                           {t('savingsAccount')}
@@ -170,7 +170,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
         </div>
       ) : (
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4">💰</div>
+          <div className="text-6xl mb-4"></div>
           <Typography variant="h4" className="mb-2">
             {t('noSavingsAccount')}
           </Typography>
@@ -186,7 +186,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
       {currentRate && (
         <Card className="bg-blue-50 border-blue-200">
           <div className="flex items-start space-x-3">
-            <span className="text-2xl">ℹ️</span>
+            <span className="text-2xl"></span>
             <div>
               <Typography variant="body" className="font-medium text-blue-900 mb-2">
                 {t('importantInfo')}

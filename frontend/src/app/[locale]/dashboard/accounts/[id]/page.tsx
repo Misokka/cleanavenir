@@ -1,77 +1,67 @@
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { DashboardLayout } from '../../../../../components/templates/DashboardLayout';
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
 import { RecentOperations } from '../../../../../components/organisms/RecentOperations';
-import { 
-  mockAccounts, 
-  mockOperations, 
-  formatCurrency,
-  formatDate
-} from '../../../../../features/dashboard/mocks';
+import { useAuth } from '../../../../../contexts/AuthProvider';
+import { useAccountWithOperations } from '../../../../../features/account/useAccountWithOperations';
+import { formatCurrency, formatDate, maskIBAN } from '../../../../../lib/formatters';
 
-interface AccountDetailPageProps {
-  readonly params: Promise<{ locale: string; id: string }>;
-}
+export default function AccountDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
+  const accountId = params.id as string;
+  
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { account, operations, loading, error } = useAccountWithOperations(accountId, 10);
 
-export async function generateMetadata({ params }: AccountDetailPageProps): Promise<Metadata> {
-  const { locale, id } = await params;
-  
-  if (!['fr', 'en'].includes(locale)) {
-    notFound();
-  }
-  
-  const account = mockAccounts.find(acc => acc.id === id);
-  
-  if (!account) {
-    notFound();
-  }
-  
-  const accountsT = await getTranslations({ locale, namespace: 'Accounts' });
-  
-  const accountTypeName = accountsT(`types.${account.type}`);
-  
-  const t = await getTranslations({ locale, namespace: 'Dashboard.accounts' });
-  
-  return {
-    title: `${accountTypeName} | Clean Avenir`,
-    description: `${t('accountDetailsDescription')} ${accountTypeName.toLowerCase()}`,
-    robots: {
-      index: false, 
-      follow: false
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push(`/${locale}/auth/login`);
     }
-  };
-}
+  }, [authLoading, isAuthenticated, router, locale]);
 
-export default async function AccountDetailPage({ params }: AccountDetailPageProps) {
-  const { locale, id } = await params;
-  
-  if (!['fr', 'en'].includes(locale)) {
-    notFound();
+  if (authLoading || !isAuthenticated) {
+    return null;
   }
 
-  const account = mockAccounts.find(acc => acc.id === id);
-  
-  if (!account) {
-    notFound();
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-8">
+          <div className="h-40 bg-gray-200 rounded-xl animate-pulse"></div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
-  const accountOperations = mockOperations.filter(op => op.accountId === account.id);
-
-  const t = await getTranslations({ locale, namespace: 'Dashboard.accounts' });
-  const accountsT = await getTranslations({ locale, namespace: 'Accounts' });
-
-  const getAccountTypeIcon = (type: string): string => {
-    switch (type) {
-      case 'checking': return '';
-      case 'savings': return '';
-      case 'investment': return '';
-      default: return '';
-    }
-  };
+  if (error || !account) {
+    return (
+      <DashboardLayout>
+        <Card className="text-center py-12 border-red-200 bg-red-50">
+          <Typography variant="h4" className="mb-2 text-red-700">
+            Erreur
+          </Typography>
+          <Typography color="muted" className="mb-4">
+            {error || 'Compte introuvable'}
+          </Typography>
+          <Button variant="primary" onClick={() => router.push(`/${locale}/dashboard/accounts`)}>
+            Retour aux comptes
+          </Button>
+        </Card>
+      </DashboardLayout>
+    );
+  }
 
   const getBalanceColor = (balance: number): string => {
     return balance >= 0 ? 'text-green-600' : 'text-red-500';
@@ -83,22 +73,22 @@ export default async function AccountDetailPage({ params }: AccountDetailPagePro
         <Card className="bg-gradient-to-r from-clean-dark to-clean-secondary text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-4xl">{getAccountTypeIcon(account.type)}</span>
+              <span className="text-4xl"></span>
               <div>
                 <Typography variant="h2" className="text-white mb-2">
-                  {accountsT(`types.${account.type}`)}
+                  {account.label}
                 </Typography>
                 <Typography variant="body" className="text-white opacity-90">
-                  {account.accountNumber}
+                  {maskIBAN(account.iban)}
                 </Typography>
               </div>
             </div>
             <div className="text-right">
               <Typography variant="caption" className="text-white opacity-75 mb-1">
-                {t('balance')}
+                Solde
               </Typography>
               <Typography variant="h1" className={`font-bold ${getBalanceColor(account.balance)} text-white`}>
-                {formatCurrency(account.balance)}
+                {formatCurrency(account.balance, locale === 'fr' ? 'fr-FR' : 'en-US', account.currency)}
               </Typography>
             </div>
           </div>
@@ -107,70 +97,102 @@ export default async function AccountDetailPage({ params }: AccountDetailPagePro
         <div className="grid md:grid-cols-3 gap-6">
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              {t('accountNumber')}
+              IBAN
             </Typography>
             <Typography variant="body" className="font-mono">
-              {account.accountNumber}
+              {account.iban}
             </Typography>
           </Card>
           
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              {t('openedOn')}
+              Devise
             </Typography>
             <Typography variant="body">
-              {formatDate(account.createdAt)}
+              {account.currency}
             </Typography>
           </Card>
           
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              {t('status')}
+              Identifiant
             </Typography>
-            <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-              account.isActive 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
-            }`}>
-              {account.isActive ? accountsT('status.active') : accountsT('status.inactive')}
-            </div>
+            <Typography variant="body" className="font-mono text-sm">
+              {account.id}
+            </Typography>
           </Card>
         </div>
-
-        {account.interestRate && (
-          <Card className="bg-green-50 border-green-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <Typography variant="h4" className="text-green-800 mb-1">
-                  {t('interestRate')}
-                </Typography>
-                <Typography variant="caption" className="text-green-600">
-                  {t('annualGrossRate')}
-                </Typography>
-              </div>
-              <Typography variant="h2" className="text-green-600 font-bold">
-                {account.interestRate}%
-              </Typography>
-            </div>
-          </Card>
-        )}
 
         <div className="flex flex-wrap gap-4">
-          <Button variant="primary">
-            {t('actions.makeTransfer')}
+          <Button 
+            variant="primary"
+            onClick={() => router.push(`/${locale}/dashboard/operations/transfer?from=${accountId}`)}
+          >
+            Effectuer un virement
           </Button>
           <Button variant="outline">
-            {t('actions.downloadRib')}
+            Télécharger RIB
           </Button>
           <Button variant="outline">
-            {t('actions.fullHistory')}
+            Historique complet
           </Button>
         </div>
 
-        <RecentOperations 
-          operations={accountOperations}
-          limit={10}
-        />
+        {operations && operations.length > 0 ? (
+          <div>
+            <Typography variant="h3" className="mb-4">
+              Dernières opérations
+            </Typography>
+            <Card>
+              <div className="divide-y divide-gray-200">
+                {operations.map((operation) => {
+                  const isCredit = operation.kind === 'CREDIT';
+                  return (
+                    <div key={operation.id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0">
+                            <span className="text-2xl">{isCredit ? '' : ''}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <Typography variant="body" className="font-medium text-gray-900 mb-1">
+                              {operation.label}
+                            </Typography>
+                            <div className="flex items-center space-x-4 text-sm text-gray-500">
+                              <span>{formatDate(operation.createdAt, locale === 'fr' ? 'fr-FR' : 'en-US')}</span>
+                              <span>•</span>
+                              <span className={`capitalize ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
+                                {isCredit ? 'Crédit' : 'Débit'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 text-right">
+                          <Typography 
+                            variant="body" 
+                            className={`font-semibold ${isCredit ? 'text-green-600' : 'text-red-500'}`}
+                          >
+                            {isCredit ? '+' : '-'}{formatCurrency(operation.amount, locale === 'fr' ? 'fr-FR' : 'en-US', operation.currency)}
+                          </Typography>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </div>
+        ) : (
+          <Card className="text-center py-12">
+            <div className="text-6xl mb-4"></div>
+            <Typography variant="h4" className="mb-2">
+              Aucune opération
+            </Typography>
+            <Typography color="muted">
+              Les opérations sur ce compte apparaîtront ici
+            </Typography>
+          </Card>
+        )}
       </div>
     </DashboardLayout>
   );

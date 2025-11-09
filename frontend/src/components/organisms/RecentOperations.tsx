@@ -36,7 +36,7 @@ export const RecentOperations: React.FC<RecentOperationsProps> = ({
   };
 
   const getOperationIcon = (kind: OperationKind): string => {
-    return kind === 'CREDIT' ? '💰' : '💸';
+    return kind === 'CREDIT' ? '' : '';
   };
 
   const getOperationColor = (kind: OperationKind): string => {
@@ -148,7 +148,7 @@ export const RecentOperations: React.FC<RecentOperationsProps> = ({
         </Card>
       ) : (
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4">📊</div>
+          <div className="text-6xl mb-4"></div>
           <Typography variant="h4" className="mb-2">
             {t('noOperations')}
           </Typography>
