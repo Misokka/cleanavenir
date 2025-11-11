@@ -126,7 +126,6 @@ export class OperationService {
       if (params?.sort) queryParams.set('sort', params.sort);
       if (params?.order) queryParams.set('order', params.order);
       
-      // Ajouter la pagination dans l'endpoint
       queryParams.set('paginated', 'true');
 
       const endpoint = `${API_ENDPOINTS.OPERATIONS.LIST}?${queryParams.toString()}`;

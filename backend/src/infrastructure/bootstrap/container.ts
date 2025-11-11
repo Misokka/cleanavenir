@@ -32,6 +32,9 @@ import { TransferUseCase } from '../../application/use-cases/client/operation/Tr
 
 // Use Cases - Saving
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
+import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
+import { ApplyDailyInterestUseCase } from '../../application/use-cases/client/saving/ApplyDailyInterestUseCase';
+import { GetCurrentSavingRateUseCase } from '../../application/use-cases/client/saving/GetCurrentSavingRateUseCase';
 
 export function createContainer() {
 
@@ -90,6 +93,16 @@ export function createContainer() {
     savingRepository,
     bankAccountRepository
   );
+  const createSavingAccountUseCase = new CreateSavingAccountUseCase(
+    savingRepository,
+    bankAccountRepository,
+    operationRepository
+  );
+  const applyDailyInterestUseCase = new ApplyDailyInterestUseCase(
+    savingRepository,
+    operationRepository
+  );
+  const getCurrentSavingRateUseCase = new GetCurrentSavingRateUseCase();
   
   return {
     repositories: {
@@ -127,6 +140,9 @@ export function createContainer() {
       },
       saving: {
         listUser: listUserSavingsUseCase,
+        create: createSavingAccountUseCase,
+        applyDailyInterest: applyDailyInterestUseCase,
+        getCurrentRate: getCurrentSavingRateUseCase,
       },
     },
   };

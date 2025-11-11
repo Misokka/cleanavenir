@@ -1,9 +1,29 @@
 import { eq, inArray } from 'drizzle-orm';
 import { savings } from '../../drizzle/schema';
-import { ok, err } from '../../../shared/Result';
+import { ok, err, Result } from '../../../shared/Result';
 
 export class SavingRepositoryDrizzle {
   constructor(private readonly db: any) {}
+
+  async create(saving: {
+    id: string;
+    accountId: string;
+    rate: number; // taux annuel en basis points (ex: 250 = 2.5%)
+    balance: number; // en centimes
+  }): Promise<Result<any, Error>> {
+    try {
+      const now = new Date().toISOString();
+      const savingData = {
+        ...saving,
+        createdAt: now,
+        updatedAt: now,
+      };
+      await this.db.insert(savings).values(savingData);
+      return ok(savingData);
+    } catch (e: any) {
+      return err(new Error(`Could not insert saving: ${e.message}`));
+    }
+  }
 
   async save(saving: any) {
     try {
@@ -14,16 +34,19 @@ export class SavingRepositoryDrizzle {
     }
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Result<any, Error>> {
     try {
       const row = await this.db.select().from(savings).where(eq(savings.id, id)).limit(1);
-      return ok(row?.[0] ?? null);
+      if (!row || row.length === 0) {
+        return err(new Error('Saving not found'));
+      }
+      return ok(row[0]);
     } catch (e: any) {
       return err(new Error(`Could not find saving by id: ${e.message}`));
     }
   }
 
-  async findByAccountIds(accountIds: string[]) {
+  async findByAccountIds(accountIds: string[]): Promise<Result<any[], Error>> {
     try {
       if (accountIds.length === 0) {
         return ok([]);
@@ -32,6 +55,28 @@ export class SavingRepositoryDrizzle {
       return ok(rows);
     } catch (e: any) {
       return err(new Error(`Could not find savings by account ids: ${e.message}`));
+    }
+  }
+
+  async findAll(): Promise<Result<any[], Error>> {
+    try {
+      const rows = await this.db.select().from(savings);
+      return ok(rows);
+    } catch (e: any) {
+      return err(new Error(`Could not find all savings: ${e.message}`));
+    }
+  }
+
+  async updateBalance(id: string, newBalance: number): Promise<Result<number, Error>> {
+    try {
+      const now = new Date().toISOString();
+      await this.db.update(savings).set({ 
+        balance: newBalance,
+        updatedAt: now 
+      }).where(eq(savings.id, id));
+      return ok(newBalance);
+    } catch (e: any) {
+      return err(new Error(`Could not update saving balance: ${e.message}`));
     }
   }
 }

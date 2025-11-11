@@ -31,11 +31,14 @@ export const API_ENDPOINTS = {
   },
 
   SAVINGS: {
+    LIST: '/savings',
+    CREATE: '/savings',
+    CURRENT_RATE: '/savings/rate',
+    APPLY_INTEREST: '/savings/apply-interest',
     ACCOUNTS: '/savings/accounts',
     RATES: '/savings/rates',
     CREATE_ACCOUNT: '/savings/accounts',
     ACCOUNT_DETAILS: (id: string) => `/savings/accounts/${id}`,
-    CURRENT_RATE: '/savings/rates/current',
   },
 
   INVESTMENTS: {

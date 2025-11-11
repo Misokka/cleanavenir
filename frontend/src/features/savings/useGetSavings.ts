@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { savingService } from '@/infrastructure/web/services/savingService';
+import { savingService, type SavingDTO, type CreateSavingRequest, type CurrentRateDTO } from '@/infrastructure/web/services/savingService';
 import { 
   SavingAccountDTO, 
   SavingRateDTO, 
@@ -8,6 +8,137 @@ import {
   MutationState,
   NotFoundError 
 } from '@/infrastructure/web/types';
+
+export function useGetSavingsNew() {
+  const [savings, setSavings] = useState<SavingDTO[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSavings = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await savingService.getSavings();
+      setSavings(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la récupération des épargnes';
+      setError(message);
+      console.error('Error fetching savings:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSavings();
+  }, [fetchSavings]);
+
+  return {
+    savings,
+    loading,
+    error,
+    refetch: fetchSavings,
+  };
+}
+
+export function useCreateSavingNew() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const createSaving = async (data: CreateSavingRequest): Promise<SavingDTO | null> => {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+      
+      const result = await savingService.createSaving(data);
+      setSuccess(true);
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la création de l\'épargne';
+      setError(message);
+      console.error('Error creating saving:', err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setError(null);
+    setSuccess(false);
+    setLoading(false);
+  };
+
+  return {
+    createSaving,
+    loading,
+    error,
+    success,
+    reset,
+  };
+}
+
+export function useCurrentSavingRateNew() {
+  const [currentRate, setCurrentRate] = useState<CurrentRateDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCurrentRate = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await savingService.getCurrentRate();
+      setCurrentRate(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erreur lors de la récupération du taux';
+      setError(message);
+      console.error('Error fetching current rate:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCurrentRate();
+  }, [fetchCurrentRate]);
+
+  return {
+    currentRate,
+    loading,
+    error,
+    refetch: fetchCurrentRate,
+  };
+}
+
+export function useGetSavingDetails(savingId: string) {
+  const [saving, setSaving] = useState<SavingDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSaving = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await savingService.getSavingById(savingId);
+      setSaving(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la récupération de l\'épargne');
+      setSaving(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [savingId]);
+
+  useEffect(() => {
+    if (savingId) {
+      fetchSaving();
+    }
+  }, [savingId, fetchSaving]);
+
+  return { saving, loading, error, refetch: fetchSaving };
+}
 
 export function useGetSavings() {
   const [state, setState] = useState<AsyncState<SavingAccountDTO[]>>({
