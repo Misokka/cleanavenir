@@ -21,6 +21,9 @@ import { GetUserProfileUseCase } from '../../application/use-cases/user/auth/Get
 // Use Cases - Account
 import { GetBankAccountUseCase } from '../../application/use-cases/client/account/GetBankAccountUseCase';
 import { ListUserBankAccountsUseCase } from '../../application/use-cases/client/account/ListUserBankAccountsUseCase';
+import { CreateBankAccountUseCase } from '../../application/use-cases/client/account/CreateBankAccountUseCase';
+import { RenameBankAccountUseCase } from '../../application/use-cases/client/account/RenamebankAccountUseCase';
+import { DeleteBankAccountUseCase } from '../../application/use-cases/client/account/DeleteBankAccountUseCase';
 
 // Use Cases - Operation
 import { ListAccountOperationsUseCase } from '../../application/use-cases/client/operation/ListAccountOperationsUseCase';
@@ -64,6 +67,9 @@ export function createContainer() {
   // Account Use Cases
   const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository);
   const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository);
+  const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository);
+  const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository);
+  const deleteBankAccountUseCase = new DeleteBankAccountUseCase(bankAccountRepository);
 
   // Operation Use Cases
   const listAccountOperationsUseCase = new ListAccountOperationsUseCase(
@@ -110,6 +116,9 @@ export function createContainer() {
       account: {
         get: getBankAccountUseCase,
         list: listUserBankAccountsUseCase,
+        create: createBankAccountUseCase,
+        rename: renameBankAccountUseCase,
+        delete: deleteBankAccountUseCase,
       },
       operation: {
         listForAccount: listAccountOperationsUseCase,

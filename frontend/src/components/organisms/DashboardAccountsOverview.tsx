@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Card } from '../atoms/Card';
@@ -8,6 +8,8 @@ import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
 import { useGetAccounts } from '../../features/account/useGetAccounts';
 import { AccountDTO } from '../../infrastructure/web/types';
+import { CreateAccountModal } from '../molecules/CreateAccountModal';
+import { formatIban } from '../../utils/formatIban';
 
 interface DashboardAccountsOverviewProps {
   showTotal?: boolean;
@@ -21,6 +23,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
   const t = useTranslations('Dashboard.overview');
   const locale = useLocale();
   const { accounts, loading, error, refetch } = useGetAccounts();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const formatCurrency = (amount: number, currency: string = 'EUR') => {
     return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
@@ -94,17 +97,23 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
         </div>
         
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4"></div>
+          <div className="text-6xl mb-4">🏦</div>
           <Typography variant="h4" className="mb-2">
             {t('noAccountsAvailable')}
           </Typography>
           <Typography color="muted" className="mb-6">
             {t('accountsWillAppear')}
           </Typography>
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
             Ouvrir un compte
           </Button>
         </Card>
+
+        <CreateAccountModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={refetch}
+        />
       </div>
     );
   }
@@ -115,13 +124,22 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
         <Typography variant="h3" color="primary">
           {t('accountsSummary')}
         </Typography>
-        {showViewAll && (
-          <Link href={`/${locale}/dashboard/accounts`}>
-            <Button variant="outline" size="sm">
-              {t('viewAll')}
-            </Button>
-          </Link>
-        )}
+        <div className="flex gap-2">
+          <Button 
+            variant="primary" 
+            size="sm"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            + Créer un compte
+          </Button>
+          {showViewAll && (
+            <Link href={`/${locale}/dashboard/accounts`}>
+              <Button variant="outline" size="sm">
+                {t('viewAll')}
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {showTotal && (
@@ -155,8 +173,8 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
                     <Typography variant="h4" className="mb-1">
                       {account.label}
                     </Typography>
-                    <Typography variant="caption" color="muted">
-                      ••••{account.iban.slice(-4)}
+                    <Typography variant="caption" color="muted" className="font-mono text-xs">
+                      {formatIban(account.iban)}
                     </Typography>
                   </div>
                 </div>
@@ -174,6 +192,12 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
           </Link>
         ))}
       </div>
+
+      <CreateAccountModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={refetch}
+      />
     </div>
   );
 };

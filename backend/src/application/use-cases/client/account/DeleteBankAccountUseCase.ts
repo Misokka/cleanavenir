@@ -1,25 +1,38 @@
-import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
-import { CouldNotDeleteBankAccountError } from "../../../../domain/errors/CouldNotDeleteBankAccountError";
-import { err, ok } from "../../../../shared/Result";
-import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
+import { err, ok, Result } from "../../../../shared/Result";
+import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
 
-export class DeleteBankAccountUseCase{
+export interface DeleteAccountInput {
+  accountId: string;
+  userId: string;
+}
+
+export class DeleteBankAccountUseCase {
   constructor(
-    private readonly bankAccountRepository: BankAccountRepository
-  ){}
+    private readonly bankAccountRepository: BankAccountRepositoryDrizzle
+  ) {}
 
-  public async execute(accountIdentifier: string){
-    const bankAccount = await this.bankAccountRepository.findById(accountIdentifier);
-    if(!bankAccount.ok){
-      return err(new BankAccountNotFoundError(accountIdentifier));
+  public async execute(input: DeleteAccountInput): Promise<Result<true, Error>> {
+    // Vérifier que le compte existe
+    const bankAccount = await this.bankAccountRepository.findById(input.accountId);
+    
+    if (!bankAccount.ok) {
+      return err(new Error('Compte introuvable'));
     }
 
-    const deletedBankAccount = await this.bankAccountRepository.remove(accountIdentifier);
-    if(!deletedBankAccount.ok){
-      return err(new CouldNotDeleteBankAccountError(accountIdentifier))
+    if (bankAccount.value.ownerId !== input.userId) {
+      return err(new Error('Accès non autorisé à ce compte'));
     }
 
-    return ok(deletedBankAccount.value);
+    if (bankAccount.value.balance !== 0) {
+      return err(new Error('Impossible de supprimer un compte avec un solde non nul'));
+    }
 
+    const deletedBankAccount = await this.bankAccountRepository.delete(input.accountId);
+    
+    if (!deletedBankAccount.ok) {
+      return err(new Error('Erreur lors de la suppression du compte'));
+    }
+
+    return ok(true);
   }
 }

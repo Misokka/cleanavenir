@@ -66,16 +66,12 @@ export class AccountService {
   }
 
   async createAccount(accountData: {
-    label: string;
-    currency?: string;
+    name: string;
   }): Promise<AccountDTO> {
     try {
       const response = await httpClient.post<AccountDTO>(
         API_ENDPOINTS.ACCOUNTS.CREATE,
-        {
-          ...accountData,
-          currency: accountData.currency || 'EUR'
-        }
+        { name: accountData.name }
       );
       return response.data;
     } catch (error) {
@@ -84,18 +80,18 @@ export class AccountService {
     }
   }
 
-  async updateAccount(
+  async renameAccount(
     accountId: string, 
-    updates: Partial<Pick<AccountDTO, 'label'>>
+    newName: string
   ): Promise<AccountDTO> {
     if (!accountId) {
       throw new Error('ID de compte requis');
     }
 
     try {
-      const response = await httpClient.put<AccountDTO>(
+      const response = await httpClient.patch<AccountDTO>(
         API_ENDPOINTS.ACCOUNTS.UPDATE(accountId),
-        updates
+        { name: newName }
       );
       return response.data;
     } catch (error) {
