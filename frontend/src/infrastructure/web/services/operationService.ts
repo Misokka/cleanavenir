@@ -7,7 +7,65 @@ import {
   PaginatedResponse 
 } from '../types';
 
+export interface OperationFilters {
+  type?: string[]; // ['CREDIT', 'DEBIT', 'TRANSFER', 'INTEREST']
+  dateFrom?: string; // ISO date
+  dateTo?: string; // ISO date
+  amountMin?: number; // en euros
+  amountMax?: number; // en euros
+  accountId?: string;
+}
+
+export interface OperationWithDirection {
+  id: string;
+  fromAccountId: string | null;
+  toAccountId: string | null;
+  amount: number;
+  type: string;
+  description: string | null;
+  createdAt: string;
+  direction: 'INCOMING' | 'OUTGOING' | 'INTERNAL';
+  userAccountId: string;
+}
+
 export class OperationService {
+  async getOperationsHistory(filters?: OperationFilters): Promise<OperationWithDirection[]> {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters?.type && filters.type.length > 0) {
+        for (const t of filters.type) {
+          queryParams.append('type', t);
+        }
+      }
+      if (filters?.dateFrom) {
+        queryParams.set('dateFrom', filters.dateFrom);
+      }
+      if (filters?.dateTo) {
+        queryParams.set('dateTo', filters.dateTo);
+      }
+      if (filters?.amountMin !== undefined) {
+        queryParams.set('amountMin', filters.amountMin.toString());
+      }
+      if (filters?.amountMax !== undefined) {
+        queryParams.set('amountMax', filters.amountMax.toString());
+      }
+      if (filters?.accountId) {
+        queryParams.set('accountId', filters.accountId);
+      }
+
+      const endpoint = `${API_ENDPOINTS.OPERATIONS.HISTORY}${
+        queryParams.toString() ? `?${queryParams.toString()}` : ''
+      }`;
+
+      const response = await httpClient.get<OperationWithDirection[]>(endpoint);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'historique:', error);
+      throw error;
+    }
+  }
+
   async getRecentOperations(limit: number = 5): Promise<OperationDTO[]> {
     try {
       const queryParams = new URLSearchParams();

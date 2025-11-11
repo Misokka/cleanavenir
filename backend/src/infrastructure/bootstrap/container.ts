@@ -29,6 +29,7 @@ import { DeleteBankAccountUseCase } from '../../application/use-cases/client/acc
 import { ListAccountOperationsUseCase } from '../../application/use-cases/client/operation/ListAccountOperationsUseCase';
 import { ListRecentOperationsUseCase } from '../../application/use-cases/client/operation/ListRecentOperationsUseCase';
 import { TransferUseCase } from '../../application/use-cases/client/operation/TransferUseCase';
+import { GetOperationsHistoryUseCase } from '../../application/use-cases/client/operation/GetOperationsHistoryUseCase';
 
 // Use Cases - Saving
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
@@ -87,6 +88,10 @@ export function createContainer() {
     operationRepository,
     bankAccountRepository
   );
+  const getOperationsHistoryUseCase = new GetOperationsHistoryUseCase(
+    operationRepository,
+    bankAccountRepository
+  );
 
   // Saving Use Cases
   const listUserSavingsUseCase = new ListUserSavingsUseCase(
@@ -137,6 +142,7 @@ export function createContainer() {
         listForAccount: listAccountOperationsUseCase,
         listRecent: listRecentOperationsUseCase,
         transfer: transferUseCase,
+        getHistory: getOperationsHistoryUseCase,
       },
       saving: {
         listUser: listUserSavingsUseCase,
