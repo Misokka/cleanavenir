@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     CREATE: '/operations',
     RECENT: '/operations/recent',
     TRANSFER: '/operations/transfer',
+    HISTORY: '/operations/history',
   },
 
   SAVINGS: {
