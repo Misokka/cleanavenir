@@ -97,7 +97,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
         </div>
         
         <Card className="text-center py-12">
-          <div className="text-6xl mb-4">🏦</div>
+          <div className="text-6xl mb-4"></div>
           <Typography variant="h4" className="mb-2">
             {t('noAccountsAvailable')}
           </Typography>

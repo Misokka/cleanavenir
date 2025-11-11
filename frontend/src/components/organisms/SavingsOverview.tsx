@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
-import { useGetSavings, useCurrentSavingRate } from '../../features/savings/useGetSavings';
-import { SavingAccountDTO } from '../../infrastructure/web/types';
+import { CreateSavingModal } from '../molecules/CreateSavingModal';
+import { useGetSavingsNew, useCurrentSavingRateNew } from '../../features/savings/useGetSavings';
+import { SavingDTO } from '../../infrastructure/web/services/savingService';
 
 interface SavingsOverviewProps {
   showCreateButton?: boolean;
@@ -18,10 +19,9 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
 }) => {
   const t = useTranslations('Dashboard.savings');
   const locale = useLocale();
-  const { savings, loading: savingsLoading, error: savingsError, refetch: refetchSavings } = useGetSavings();
-  const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRate();
-
-
+  const { savings, loading: savingsLoading, error: savingsError, refetch: refetchSavings } = useGetSavingsNew();
+  const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRateNew();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
@@ -29,6 +29,13 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
       month: '2-digit',
       year: 'numeric'
     });
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
   };
 
   const loading = savingsLoading || rateLoading;
@@ -88,7 +95,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
           {t('title')}
         </Typography>
         {showCreateButton && (
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={() => setIsCreateModalOpen(true)}>
             {t('openAccount')}
           </Button>
         )}
@@ -101,7 +108,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
               {t('currentRate')}
             </Typography>
             <Typography variant="h2" className="text-green-600 font-bold">
-              {currentRate.value}%
+              {currentRate.rate}%
             </Typography>
             <Typography variant="caption" color="muted" className="mt-1">
               {t('perYear')}
@@ -113,7 +120,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
               Dernière mise à jour
             </Typography>
             <Typography variant="body" className="text-blue-600 font-medium">
-              {formatDate(currentRate.updateAt)}
+              {formatDate(currentRate.updatedAt)}
             </Typography>
           </Card>
         </div>
@@ -125,10 +132,10 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
             {t('mySavingsAccounts')} ({savings.length})
           </Typography>
           <div className="grid gap-4 md:grid-cols-2">
-            {savings.map((savingAccount: SavingAccountDTO) => (
+            {savings.map((saving: SavingDTO) => (
               <Link 
-                key={savingAccount.id} 
-                href={`/${locale}/dashboard/accounts/${savingAccount.AccountId}`}
+                key={saving.id} 
+                href={`/${locale}/dashboard/savings/${saving.id}`}
                 className="block"
               >
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -137,31 +144,30 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                       <span className="text-2xl"></span>
                       <div>
                         <Typography variant="body" className="font-medium">
-                          {t('savingsAccount')}
+                          Compte Épargne
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          ••••{savingAccount.AccountId.slice(-4)}
+                          Taux: {saving.rate}%
                         </Typography>
                       </div>
                     </div>
-                    <div className={`px-2 py-1 rounded-full text-xs ${
-                      savingAccount.isActive 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {savingAccount.isActive ? 'Actif' : 'Inactif'}
+                    <div className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                      Actif
                     </div>
                   </div>
                   
-                  <div className="text-right">
-                    <Typography variant="caption" color="muted">
-                      Ouvert le {formatDate(savingAccount.openedAt)}
-                    </Typography>
-                    {currentRate && (
-                      <Typography variant="caption" className="mt-1 text-green-600">
-                        {currentRate.value}% {t('perYear')}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Typography variant="caption" color="muted">
+                        Solde
                       </Typography>
-                    )}
+                      <Typography variant="h4" className="text-green-600">
+                        {formatCurrency(saving.balance)}
+                      </Typography>
+                    </div>
+                    <Typography variant="caption" color="muted">
+                      Ouvert le {formatDate(saving.createdAt)}
+                    </Typography>
                   </div>
                 </Card>
               </Link>
@@ -177,7 +183,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
           <Typography color="muted" className="mb-6">
             {t('noSavingsDescription')}
           </Typography>
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
             {t('openAccount')}
           </Button>
         </Card>
@@ -192,15 +198,21 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                 {t('importantInfo')}
               </Typography>
               <Typography variant="caption" className="text-blue-800">
-                • Taux actuel: {currentRate.value}% par an<br/>
-                • Dernière mise à jour: {formatDate(currentRate.updateAt)}<br/>
-                • Calcul des intérêts mensuel<br/>
+                • Taux actuel: {currentRate.rate}% par an<br/>
+                • Dernière mise à jour: {formatDate(currentRate.updatedAt)}<br/>
+                • Calcul des intérêts journalier<br/>
                 • Capital garanti
               </Typography>
             </div>
           </div>
         </Card>
       )}
+
+      <CreateSavingModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={refetchSavings}
+      />
     </div>
   );
 };

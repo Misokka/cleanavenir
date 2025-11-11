@@ -103,7 +103,7 @@ export const RenameAccountModal: React.FC<RenameAccountModalProps> = ({
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start space-x-3">
-              <span className="text-blue-500 text-xl">ℹ️</span>
+              <span className="text-blue-500 text-xl"></span>
               <div>
                 <Typography variant="body" className="text-sm text-blue-800">
                   <strong>IBAN actuel :</strong> {account.iban}

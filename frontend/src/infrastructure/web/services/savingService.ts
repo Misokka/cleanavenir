@@ -7,7 +7,85 @@ import {
   NotFoundError 
 } from '../types';
 
+export interface SavingDTO {
+  id: string;
+  accountId: string;
+  balance: number; // en euros
+  rate: number; // en pourcentage (ex: 2.5)
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateSavingRequest {
+  sourceAccountId: string;
+  initialAmount: number; // en euros
+  rate?: number; // optionnel, défaut 2.5%
+}
+
+export interface CurrentRateDTO {
+  rate: number;
+  updatedAt: string;
+}
+
 export class SavingService {
+  async getSavings(): Promise<SavingDTO[]> {
+    try {
+      const response = await httpClient.get<SavingDTO[]>(API_ENDPOINTS.SAVINGS.LIST);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des épargnes:', error);
+      throw error;
+    }
+  }
+
+  async getSavingById(id: string): Promise<SavingDTO> {
+    try {
+      const response = await httpClient.get<SavingDTO>(`${API_ENDPOINTS.SAVINGS.LIST}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'épargne:', error);
+      throw error;
+    }
+  }
+
+  async createSaving(data: CreateSavingRequest): Promise<SavingDTO> {
+    try {
+      const response = await httpClient.post<SavingDTO>(
+        API_ENDPOINTS.SAVINGS.CREATE,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'épargne:', error);
+      throw error;
+    }
+  }
+
+  async getCurrentRate(): Promise<CurrentRateDTO> {
+    try {
+      const response = await httpClient.get<CurrentRateDTO>(
+        API_ENDPOINTS.SAVINGS.CURRENT_RATE
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du taux actuel:', error);
+      throw error;
+    }
+  }
+
+  async applyDailyInterest(): Promise<{ message: string; processed: number; totalInterest: number }> {
+    try {
+      const response = await httpClient.post<{ message: string; processed: number; totalInterest: number }>(
+        API_ENDPOINTS.SAVINGS.APPLY_INTEREST,
+        {}
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de l\'application des intérêts:', error);
+      throw error;
+    }
+  }
+
   async getSavingAccounts(): Promise<SavingAccountDTO[]> {
     try {
       const response = await httpClient.get<SavingAccountDTO[]>(

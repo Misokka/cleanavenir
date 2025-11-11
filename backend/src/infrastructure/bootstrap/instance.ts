@@ -12,7 +12,7 @@ export function getContainer(): Container {
 
 export function resetContainer(): void {
   containerInstance = null;
-  console.log('🔄 Container réinitialisé');
+  console.log('Container réinitialisé');
 }
 
 export function setContainer(container: Container): void {
