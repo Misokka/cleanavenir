@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DashboardLayout } from '../../../../../components/templates/DashboardLayout';
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
+import { RenameAccountModal } from '../../../../../components/molecules/RenameAccountModal';
+import { DeleteAccountModal } from '../../../../../components/molecules/DeleteAccountModal';
 import { RecentOperations } from '../../../../../components/organisms/RecentOperations';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useAccountWithOperations } from '../../../../../features/account/useAccountWithOperations';
 import { formatCurrency, formatDate, maskIBAN } from '../../../../../lib/formatters';
+import { formatIban } from '../../../../../utils/formatIban';
 
 export default function AccountDetailPage() {
   const router = useRouter();
@@ -18,7 +21,9 @@ export default function AccountDetailPage() {
   const accountId = params.id as string;
   
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { account, operations, loading, error } = useAccountWithOperations(accountId, 10);
+  const { account, operations, loading, error, refetch } = useAccountWithOperations(accountId, 10);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -67,6 +72,10 @@ export default function AccountDetailPage() {
     return balance >= 0 ? 'text-green-600' : 'text-red-500';
   };
 
+  const handleDeleteSuccess = () => {
+    router.push(`/${locale}/dashboard/accounts`);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -100,7 +109,7 @@ export default function AccountDetailPage() {
               IBAN
             </Typography>
             <Typography variant="body" className="font-mono">
-              {account.iban}
+              {formatIban(account.iban)}
             </Typography>
           </Card>
           
@@ -130,6 +139,19 @@ export default function AccountDetailPage() {
           >
             Effectuer un virement
           </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setIsRenameModalOpen(true)}
+          >
+            Renommer
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="text-red-600 border-red-600 hover:bg-red-50"
+          >
+           Supprimer
+          </Button>
           <Button variant="outline">
             Télécharger RIB
           </Button>
@@ -137,6 +159,23 @@ export default function AccountDetailPage() {
             Historique complet
           </Button>
         </div>
+
+        {account && (
+          <>
+            <RenameAccountModal
+              isOpen={isRenameModalOpen}
+              onClose={() => setIsRenameModalOpen(false)}
+              onSuccess={refetch}
+              account={account}
+            />
+            <DeleteAccountModal
+              isOpen={isDeleteModalOpen}
+              onClose={() => setIsDeleteModalOpen(false)}
+              onSuccess={handleDeleteSuccess}
+              account={account}
+            />
+          </>
+        )}
 
         {operations && operations.length > 0 ? (
           <div>

@@ -2,7 +2,6 @@ import { ok, err, Result } from '../../../shared/Result';
 import { bankAccounts } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-// simple repo for bank accounts
 export class BankAccountRepositoryDrizzle {
   constructor(private readonly db: any) {}
 
@@ -40,6 +39,16 @@ export class BankAccountRepositoryDrizzle {
     }
   }
 
+  async findByIban(iban: string): Promise<Result<any, Error>> {
+    try {
+      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.iban, iban)).limit(1);
+      if (!rows.length) return err(new Error('BankAccount not found'));
+      return ok(rows[0]);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
   async findByOwner(ownerId: string): Promise<Result<any[], Error>> {
     try {
   const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, ownerId));
@@ -53,6 +62,25 @@ export class BankAccountRepositoryDrizzle {
     try {
   await this.db.update(bankAccounts).set({ balance: newBalance }).where(eq(bankAccounts.id, id));
       return ok(newBalance);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
+  async rename(id: string, newName: string): Promise<Result<any, Error>> {
+    try {
+      const now = new Date().toISOString();
+      await this.db.update(bankAccounts).set({ name: newName, updatedAt: now }).where(eq(bankAccounts.id, id));
+      return this.findById(id);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
+  async delete(id: string): Promise<Result<true, Error>> {
+    try {
+      await this.db.delete(bankAccounts).where(eq(bankAccounts.id, id));
+      return ok(true);
     } catch (e: any) {
       return err(e);
     }
