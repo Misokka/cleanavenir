@@ -24,3 +24,71 @@ model Advisor{
   userIdentifier            String      @id @default(cuid())
   createdAt     DateTime @default(now())
 }
+
+model BankAccount{
+  accountIdentifier String @id @default(cuid())
+  clientIdentifier String
+  iban String @unique
+  label String
+  balance Float @default(0)
+}
+
+model Transaction{
+  transctionIdentifier String @id @default(cuid())
+  bankAccountIdentifier String
+  amount Float
+  direction TransactionDirection
+  type TransactionType
+  description String
+  date DateTime @default(now())
+}
+
+enum TransactionDirection {
+  TRANSFER
+  LOAN_PAYMENT
+  STOCK_PURCHASE
+  STOCK_SALE
+  SAVINGS_INTEREST
+  INITIAL_DEPOSIT
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+model Company{
+  companyIdentifier String @id @default(cuid())
+  name String
+  description String
+}
+
+model Discussion {
+  discussionIdentifier String @id @default(cuid())
+  clientIdentifier String
+  createdAt DateTime @default(now())
+  advisorIdentifier String?
+  subject String?
+}
+
+model Loan {
+  loanIdentifier String @id @default(cuid())
+  clientIdentifier String
+  advisorIdentifier String
+  loanAmount Float
+  durationInMonth Float
+  mensualities Float
+  insuranceMensualities Float
+  remainingAmountToPay Float
+  annualInterestRate Float
+  annualInsuranceRate Float
+  status LoanStatus
+  createAdt DateTime @default(now())
+  lastPaidAt DateTime?
+  nextToPayAt DateTime?
+}
+
+enum LoanStatus {
+  ACTIVE
+  PAID_OFF
+}
