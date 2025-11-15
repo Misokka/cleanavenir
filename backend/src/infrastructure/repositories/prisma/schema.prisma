@@ -34,7 +34,7 @@ model BankAccount{
 }
 
 model Transaction{
-  transctionIdentifier String @id @default(cuid())
+  transactionIdentifier String @id @default(cuid())
   bankAccountIdentifier String
   amount Float
   direction TransactionDirection
