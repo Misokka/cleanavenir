@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { db } from '../../../infrastructure/drizzle/client';
 import { users } from '../../../infrastructure/drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { verifyToken } from '../../../infrastructure/adapters/JwtService';
 
 declare global {
   namespace Express {
@@ -24,59 +25,31 @@ export async function requireAuth(
   next: NextFunction
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
+    // 1. Vérifier dans les cookies (httpOnly - recommandé)
+    let token = req.cookies?.accessToken;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({
-        error: 'UNAUTHORIZED',
-        message: 'Token manquant ou invalide',
-      });
-      return;
-    }
-
-    const token = authHeader.substring(7); 
-
-    if (token === 'mock-jwt-token') {
-      const mockUser = await db.query.users.findFirst();
-      
-      if (!mockUser) {
-        res.status(401).json({
-          error: 'UNAUTHORIZED',
-          message: 'Aucun utilisateur trouvé',
-        });
-        return;
+    // 2. Fallback sur Authorization header (pour compatibilité)
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
       }
-
-      req.userId = mockUser.id;
-      req.user = {
-        id: mockUser.id,
-        email: mockUser.email,
-        firstname: mockUser.firstname,
-        lastname: mockUser.lastname,
-        role: mockUser.role,
-      };
-
-      next();
-      return;
     }
 
-    // En production, valider le JWT avec jsonwebtoken
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-    // const user = await db.query.users.findFirst({
-    //   where: eq(users.id, decoded.userId)
-    // });
-    const parts = token.split(':');
-    if (parts.length < 2) {
+    if (!token) {
       res.status(401).json({
         error: 'UNAUTHORIZED',
-        message: 'Format de token invalide',
+        message: 'Token manquant',
       });
       return;
     }
 
-    const userId = parts[0];
+    // Vérifier et décoder le token
+    const decoded = verifyToken(token);
+
+    // Récupérer l'utilisateur depuis la DB
     const user = await db.query.users.findFirst({
-      where: eq(users.id, userId),
+      where: eq(users.id, decoded.userId),
     });
 
     if (!user || !user.isActive) {
@@ -99,9 +72,18 @@ export async function requireAuth(
     next();
   } catch (error) {
     console.error('Auth middleware error:', error);
+    
+    if (error instanceof Error && error.name === 'TokenExpiredError') {
+      res.status(401).json({
+        error: 'TOKEN_EXPIRED',
+        message: 'Token expiré',
+      });
+      return;
+    }
+
     res.status(401).json({
       error: 'UNAUTHORIZED',
-      message: 'Erreur lors de la vérification du token',
+      message: 'Token invalide',
     });
   }
 }
