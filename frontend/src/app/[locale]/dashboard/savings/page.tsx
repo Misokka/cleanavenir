@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { DashboardLayout } from '../../../../components/templates/DashboardLayout';
 import { SavingsOverview } from '../../../../components/organisms/SavingsOverview';
-import { mockAccounts, mockSavingsRate } from '../../../../features/dashboard/mocks';
 
 interface SavingsPageProps {
   readonly params: Promise<{ locale: string }>;
@@ -35,15 +34,11 @@ export default async function SavingsPage({ params }: SavingsPageProps) {
     notFound();
   }
 
-  const accounts = mockAccounts;
-  const savingsRate = mockSavingsRate;
-
   return (
     <DashboardLayout>
       <div className="space-y-8">
         <SavingsOverview 
-          accounts={accounts}
-          savingsRate={savingsRate}
+          showCreateButton={true}
         />
       </div>
     </DashboardLayout>
