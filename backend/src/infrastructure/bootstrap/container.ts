@@ -21,13 +21,21 @@ import { GetUserProfileUseCase } from '../../application/use-cases/user/auth/Get
 // Use Cases - Account
 import { GetBankAccountUseCase } from '../../application/use-cases/client/account/GetBankAccountUseCase';
 import { ListUserBankAccountsUseCase } from '../../application/use-cases/client/account/ListUserBankAccountsUseCase';
+import { CreateBankAccountUseCase } from '../../application/use-cases/client/account/CreateBankAccountUseCase';
+import { RenameBankAccountUseCase } from '../../application/use-cases/client/account/RenamebankAccountUseCase';
+import { DeleteBankAccountUseCase } from '../../application/use-cases/client/account/DeleteBankAccountUseCase';
 
 // Use Cases - Operation
 import { ListAccountOperationsUseCase } from '../../application/use-cases/client/operation/ListAccountOperationsUseCase';
 import { ListRecentOperationsUseCase } from '../../application/use-cases/client/operation/ListRecentOperationsUseCase';
+import { TransferUseCase } from '../../application/use-cases/client/operation/TransferUseCase';
+import { GetOperationsHistoryUseCase } from '../../application/use-cases/client/operation/GetOperationsHistoryUseCase';
 
 // Use Cases - Saving
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
+import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
+import { ApplyDailyInterestUseCase } from '../../application/use-cases/client/saving/ApplyDailyInterestUseCase';
+import { GetCurrentSavingRateUseCase } from '../../application/use-cases/client/saving/GetCurrentSavingRateUseCase';
 
 export function createContainer() {
 
@@ -63,6 +71,9 @@ export function createContainer() {
   // Account Use Cases
   const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository);
   const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository);
+  const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository);
+  const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository);
+  const deleteBankAccountUseCase = new DeleteBankAccountUseCase(bankAccountRepository);
 
   // Operation Use Cases
   const listAccountOperationsUseCase = new ListAccountOperationsUseCase(
@@ -73,12 +84,30 @@ export function createContainer() {
     operationRepository,
     bankAccountRepository
   );
+  const transferUseCase = new TransferUseCase(
+    operationRepository,
+    bankAccountRepository
+  );
+  const getOperationsHistoryUseCase = new GetOperationsHistoryUseCase(
+    operationRepository,
+    bankAccountRepository
+  );
 
   // Saving Use Cases
   const listUserSavingsUseCase = new ListUserSavingsUseCase(
     savingRepository,
     bankAccountRepository
   );
+  const createSavingAccountUseCase = new CreateSavingAccountUseCase(
+    savingRepository,
+    bankAccountRepository,
+    operationRepository
+  );
+  const applyDailyInterestUseCase = new ApplyDailyInterestUseCase(
+    savingRepository,
+    operationRepository
+  );
+  const getCurrentSavingRateUseCase = new GetCurrentSavingRateUseCase();
   
   return {
     repositories: {
@@ -105,13 +134,21 @@ export function createContainer() {
       account: {
         get: getBankAccountUseCase,
         list: listUserBankAccountsUseCase,
+        create: createBankAccountUseCase,
+        rename: renameBankAccountUseCase,
+        delete: deleteBankAccountUseCase,
       },
       operation: {
         listForAccount: listAccountOperationsUseCase,
         listRecent: listRecentOperationsUseCase,
+        transfer: transferUseCase,
+        getHistory: getOperationsHistoryUseCase,
       },
       saving: {
         listUser: listUserSavingsUseCase,
+        create: createSavingAccountUseCase,
+        applyDailyInterest: applyDailyInterestUseCase,
+        getCurrentRate: getCurrentSavingRateUseCase,
       },
     },
   };

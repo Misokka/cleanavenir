@@ -66,6 +66,12 @@ class HttpClient {
         }
       }
 
+      if (response.status === 401 && globalThis.window !== undefined) {
+        this.clearAuthToken();
+        const currentLocale = globalThis.window.location.pathname.split('/')[1] || 'fr';
+        globalThis.window.location.href = `/${currentLocale}/auth/login`;
+      }
+
       throw new HttpClientError(errorMessage, response.status, errorCode);
     }
 
@@ -114,6 +120,20 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'PUT',
+      headers: this.getHeaders(includeAuth),
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    return this.handleResponse<T>(response);
+  }
+
+  async patch<T, U = unknown>(
+    endpoint: string, 
+    data?: U, 
+    includeAuth: boolean = true
+  ): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseURL}${endpoint}`, {
+      method: 'PATCH',
       headers: this.getHeaders(includeAuth),
       body: data ? JSON.stringify(data) : undefined,
     });

@@ -80,7 +80,7 @@ export const DashboardHeader: React.FC = () => {
               </>
             ) : (
               <>
-                <span className="text-lg">🚪</span>
+                <span className="text-lg"></span>
                 <Typography variant="caption">
                   {tNav('logout')}
                 </Typography>

@@ -1,47 +1,33 @@
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '../../../../components/templates/DashboardLayout';
 import { DashboardAccountsOverview } from '../../../../components/organisms/DashboardAccountsOverview';
-import { mockAccounts } from '../../../../features/dashboard/mocks';
+import { useAuth } from '../../../../contexts/AuthProvider';
 
-interface AccountsPageProps {
-  readonly params: Promise<{ locale: string }>;
+interface AccountsPageClientProps {
+  readonly locale: string;
 }
 
-export async function generateMetadata({ params }: AccountsPageProps): Promise<Metadata> {
-  const { locale } = await params;
-  
-  if (!['fr', 'en'].includes(locale)) {
-    notFound();
-  }
-  
-  const t = await getTranslations({ locale, namespace: 'Dashboard.accounts' });
-  
-  return {
-    title: `${t('title')} | Clean Avenir`,
-    description: t('description'),
-    robots: {
-      index: false, 
-      follow: false
+function AccountsPageClient({ locale }: AccountsPageClientProps) {
+  const router = useRouter();
+  const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push(`/${locale}/auth/login`);
     }
-  };
-}
+  }, [loading, isAuthenticated, router, locale]);
 
-export default async function AccountsPage({ params }: AccountsPageProps) {
-  const { locale } = await params;
-  
-  if (!['fr', 'en'].includes(locale)) {
-    notFound();
+  if (loading || !isAuthenticated) {
+    return null;
   }
-
-  const accounts = mockAccounts;
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
         <DashboardAccountsOverview 
-          accounts={accounts}
           showTotal={false}
           showViewAll={false}
         />
@@ -49,3 +35,5 @@ export default async function AccountsPage({ params }: AccountsPageProps) {
     </DashboardLayout>
   );
 }
+
+export default AccountsPageClient;

@@ -7,7 +7,65 @@ import {
   PaginatedResponse 
 } from '../types';
 
+export interface OperationFilters {
+  type?: string[]; // ['CREDIT', 'DEBIT', 'TRANSFER', 'INTEREST']
+  dateFrom?: string; // ISO date
+  dateTo?: string; // ISO date
+  amountMin?: number; // en euros
+  amountMax?: number; // en euros
+  accountId?: string;
+}
+
+export interface OperationWithDirection {
+  id: string;
+  fromAccountId: string | null;
+  toAccountId: string | null;
+  amount: number;
+  type: string;
+  description: string | null;
+  createdAt: string;
+  direction: 'INCOMING' | 'OUTGOING' | 'INTERNAL';
+  userAccountId: string;
+}
+
 export class OperationService {
+  async getOperationsHistory(filters?: OperationFilters): Promise<OperationWithDirection[]> {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters?.type && filters.type.length > 0) {
+        for (const t of filters.type) {
+          queryParams.append('type', t);
+        }
+      }
+      if (filters?.dateFrom) {
+        queryParams.set('dateFrom', filters.dateFrom);
+      }
+      if (filters?.dateTo) {
+        queryParams.set('dateTo', filters.dateTo);
+      }
+      if (filters?.amountMin !== undefined) {
+        queryParams.set('amountMin', filters.amountMin.toString());
+      }
+      if (filters?.amountMax !== undefined) {
+        queryParams.set('amountMax', filters.amountMax.toString());
+      }
+      if (filters?.accountId) {
+        queryParams.set('accountId', filters.accountId);
+      }
+
+      const endpoint = `${API_ENDPOINTS.OPERATIONS.HISTORY}${
+        queryParams.toString() ? `?${queryParams.toString()}` : ''
+      }`;
+
+      const response = await httpClient.get<OperationWithDirection[]>(endpoint);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'historique:', error);
+      throw error;
+    }
+  }
+
   async getRecentOperations(limit: number = 5): Promise<OperationDTO[]> {
     try {
       const queryParams = new URLSearchParams();
@@ -126,7 +184,6 @@ export class OperationService {
       if (params?.sort) queryParams.set('sort', params.sort);
       if (params?.order) queryParams.set('order', params.order);
       
-      // Ajouter la pagination dans l'endpoint
       queryParams.set('paginated', 'true');
 
       const endpoint = `${API_ENDPOINTS.OPERATIONS.LIST}?${queryParams.toString()}`;
@@ -183,6 +240,37 @@ export class OperationService {
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la recherche d\'opérations:', error);
+      throw error;
+    }
+  }
+
+  async transfer(payload: {
+    fromAccountId: string;
+    toAccountId: string;
+    amount: number;
+    description?: string;
+  }): Promise<{ success: boolean; message?: string }> {
+    if (!payload.fromAccountId || !payload.toAccountId) {
+      throw new Error('Les comptes source et destination sont requis');
+    }
+
+    if (payload.amount <= 0) {
+      throw new Error('Le montant doit être supérieur à 0');
+    }
+
+    if (payload.fromAccountId === payload.toAccountId) {
+      throw new Error('Les comptes source et destination doivent être différents');
+    }
+
+    try {
+      const response = await httpClient.post<{ success: boolean; message?: string }>(
+        API_ENDPOINTS.OPERATIONS.TRANSFER,
+        payload
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du virement:', error);
       throw error;
     }
   }
