@@ -1,11 +1,12 @@
+export type TradeStatus = "PENDING_SETTLEMENT" | "SETTLED"
 export class Trade {
-  public status: "PENDING_SETTLEMENT" | "SETTLED" = "PENDING_SETTLEMENT";
+  public status: TradeStatus = "PENDING_SETTLEMENT";
   
   constructor(
-    public readonly id: string,
-    public readonly stockId: string,
-    public readonly buyOrderId: string,
-    public readonly sellOrderId: string,
+    public readonly tradeIdentifier: string,
+    public readonly stockIdentifier: string,
+    public readonly buyOrderIdentifier: string,
+    public readonly sellOrderIdentifier: string,
     public readonly quantity: number,
     public readonly price: number, // Le prix où l'échange s'est fait
     public readonly timestamp: Date = new Date()

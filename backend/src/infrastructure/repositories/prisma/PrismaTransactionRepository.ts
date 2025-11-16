@@ -2,6 +2,7 @@ import { $Enums, PrismaClient } from "@prisma/client";
 import { TransactionRepository } from "../../../application/ports/repositories/TransactionRepository";
 import { Transaction, TransactionDirection, TransactionType } from "../../../domain/entities/Transaction";
 import Result, { err, ok } from "../../../shared/Result";
+import { TransactionNotFoundError } from "../../../domain/errors/TransactionNotFoundError";
 
 export class PrismaTransactionRepository implements TransactionRepository {
   constructor(
@@ -12,7 +13,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
     try{
       const registeredTransaction = await this.prismaClient.transaction.create({
       data: {
-        transctionIdentifier: transaction.transactionIdentifier,
+        transactionIdentifier: transaction.transactionIdentifier,
           bankAccountIdentifier: transaction.bankAccountIdentifier,
           direction: transaction.direction as $Enums.TransactionDirection,
           description: transaction.description,
@@ -23,7 +24,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       });
 
       const newTransaction = new Transaction(
-        registeredTransaction.transctionIdentifier,
+        registeredTransaction.transactionIdentifier,
         registeredTransaction.bankAccountIdentifier,
         registeredTransaction.amount,
         registeredTransaction.direction as TransactionDirection,
@@ -56,24 +57,51 @@ export class PrismaTransactionRepository implements TransactionRepository {
   async all(): Promise<Result<Transaction[], Error>> {
     try{
       const transactions = await this.prismaClient.transaction.findMany();
-      transactions.map(transaction => {
-        transaction = new Transaction(
+      const transactionsArray: Transaction[] = [];
+      transactions.forEach(transaction => {
+        const newTransaction = new Transaction(
           transaction.transactionIdentifier, 
           transaction.bankAccountIdentifier, 
           transaction.amount,
-          transaction.type as TransactionType,
-          transaction.direction as TransactionDirection,
+          transaction.direction.toString() as TransactionDirection,
+          transaction.type.toString() as TransactionType,
           transaction.description,
           transaction.date
         )
+
+        transactionsArray.push(newTransaction);
       })
-      return ok(transactions as Transaction[]);
+      return ok(transactionsArray);
     } catch (error) {
       return err(new Error("An error occured when retrieving a transaction"))
     }
   }
 
-  async findById(transactionIdentifier: string): Promise<Result<Transaction, Error>> {
-      
+  async findById(transactionIdentifier: string): Promise<Result<Transaction, TransactionNotFoundError>> {
+    try{
+      const existingTransaction = await this.prismaClient.transaction.findUnique({
+        where: {
+          transactionIdentifier
+        }
+      });
+
+      if(!existingTransaction){
+        return err(new TransactionNotFoundError(transactionIdentifier));
+      }
+
+      const transactionObject = new Transaction(
+        existingTransaction.transactionIdentifier,
+        existingTransaction.bankAccountIdentifier,
+        existingTransaction.amount,
+        existingTransaction.direction as TransactionDirection,
+        existingTransaction.type as TransactionType,
+        existingTransaction.description,
+        existingTransaction.date
+      )
+
+      return ok(transactionObject);
+    } catch (error){
+      return err(new Error(`An error occured when retreiving transaction: ${transactionIdentifier}`))
+    }
   }
 }

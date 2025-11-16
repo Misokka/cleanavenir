@@ -92,3 +92,41 @@ enum LoanStatus {
   ACTIVE
   PAID_OFF
 }
+
+model Stock {
+  stockIdentifier String @id @default(cuid())
+  companyIdentifier String @default(cuid())
+  ticker String @unique
+  isAvailable Boolean @default(true)
+}
+
+model Trade {
+  tradeIdentifier String @id @default(cuid())
+  stockIdentifier String @default(cuid())
+  buyOrderIdentifier String @default(cuid())
+  sellOrderIdentifier String @default(cuid())
+  quantity Float
+  price Float
+  status TradeStatus
+  timestamp DateTime
+}
+
+enum TradeStatus {
+  PENDING_SETTLEMENT
+  SETTLED
+}
+
+model SavingAccount {
+  accountIdentifier String @id @default(cuid())
+  clientIdentifier String @default(cuid())
+  productIdentifier String @default(cuid())
+  iban String
+  label String
+  balance Float
+}
+
+model SavingProduct {
+  savingProductIdentifier String @id @default(cuid())
+  label String
+  rate Float
+}
