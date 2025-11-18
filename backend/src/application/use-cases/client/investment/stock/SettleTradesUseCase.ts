@@ -22,22 +22,22 @@ export class SettleTradesUseCase {
 
     for (const trade of tradesToSettle.value) {
       // 1. Trouver les infos de l'acheteur (buyer) et du vendeur (seller)
-      const buyerPortfolio = await this.portfolioRepository.findByClientId(trade.buyOrderId);
+      const buyerPortfolio = await this.portfolioRepository.findByClientId(trade.buyOrderIdentifier);
       if(!buyerPortfolio.ok){
         throw buyerPortfolio.error;
       }
 
-      const buyerAccount = await this.bankAccountRepository.findDefaultAccountByClientId(trade.buyOrderId);
+      const buyerAccount = await this.bankAccountRepository.findDefaultAccountByClientId(trade.buyOrderIdentifier);
       if(!buyerAccount.ok){
         throw buyerAccount.error;
       }
 
-      const sellerPortfolio = await this.portfolioRepository.findByClientId(trade.sellOrderId);
+      const sellerPortfolio = await this.portfolioRepository.findByClientId(trade.sellOrderIdentifier);
       if(!sellerPortfolio.ok){
         throw sellerPortfolio.error;
       }
 
-      const sellerAccount = await this.bankAccountRepository.findDefaultAccountByClientId(trade.sellOrderId);
+      const sellerAccount = await this.bankAccountRepository.findDefaultAccountByClientId(trade.sellOrderIdentifier);
       if(!sellerAccount.ok){
         throw sellerAccount.error;
       }
@@ -72,8 +72,8 @@ export class SettleTradesUseCase {
       );
 
       // 4. Déplacer les actions
-      sellerPortfolio.value.removeHolding(trade.stockId, trade.quantity);
-      buyerPortfolio.value.addHolding(trade.stockId, trade.quantity);
+      sellerPortfolio.value.removeHolding(trade.stockIdentifier, trade.quantity);
+      buyerPortfolio.value.addHolding(trade.stockIdentifier, trade.quantity);
       
       // 5. Marquer le trade comme réglé
       trade.status = "SETTLED";
