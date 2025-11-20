@@ -7,7 +7,7 @@ export class Loan{
     public durationInMonth: number,
     public mensualities: number,
     public insuranceMensualities: number,
-    public remainingAmoutToPay: number,
+    public remainingAmountToPay: number,
     public annualInterestRate: number,
     public annualInsuranceRate: number,
     public status: "ACTIVE" | "PAID_OFF",
@@ -22,14 +22,14 @@ export class Loan{
     }
 
     const monthlyInterestRate = this.annualInterestRate / 12;
-    const interestPortion = this.remainingAmoutToPay * monthlyInterestRate;
+    const interestPortion = this.remainingAmountToPay * monthlyInterestRate;
     
     const capitalPortion = this.mensualities - interestPortion - this.insuranceMensualities;
     
-    this.remainingAmoutToPay -= capitalPortion;
+    this.remainingAmountToPay -= capitalPortion;
 
-    if (this.remainingAmoutToPay <= 0) {
-      this.remainingAmoutToPay = 0;
+    if (this.remainingAmountToPay <= 0) {
+      this.remainingAmountToPay = 0;
       this.status = "PAID_OFF";
     }
   }
