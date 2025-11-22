@@ -1,25 +1,22 @@
-import { PrismaClient, TradeStatus } from "@prisma/client";
+import { $Enums, PrismaClient, TradeStatus } from "@prisma/client";
 import { TradeRepository } from "../../../application/ports/repositories/TradeRepository";
 import { Trade } from "../../../domain/entities/Trade";
 import Result, { err, ok } from "../../../shared/Result";
+import { PrismaTradeMapper } from "../mappers/PrismaMappers/PrismaTradeMapper";
 
 export class PrismaTradeRepository implements TradeRepository {
   constructor(
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
+    private readonly prismaTradeMapper: PrismaTradeMapper,
   ){}
 
   async save(trade: Trade): Promise<Result<Trade, Error>> {
+    const tradeToPersist = this.prismaTradeMapper.toPersistence(trade);
     const registerdTrade = await this.prismaClient.trade.create({
       data: {
-        tradeIdentifier: trade.tradeIdentifier,
-        stockIdentifier: trade.stockIdentifier,
-        price: trade.price,
-        buyOrderIdentifier: trade.buyOrderIdentifier,
-        sellOrderIdentifier: trade.sellOrderIdentifier,
-        quantity: trade.quantity,
-        status: trade.status,
-        timestamp: trade.timestamp
-
+        ...tradeToPersist,
+        timestamp: tradeToPersist.timestamp as Date,
+        status: $Enums.TradeStatus.PENDING_SETTLEMENT
       }
     });
 
@@ -27,7 +24,8 @@ export class PrismaTradeRepository implements TradeRepository {
       return err(new Error(`An error occured when creating this trade ${trade.tradeIdentifier}`))
     }
 
-    return ok(trade)
+    const tradeToDomain = this.prismaTradeMapper.toDomain(registerdTrade);
+    return ok(tradeToDomain)
   }
 
   async saveAll(trades: Trade[]): Promise<Result<boolean, Error>> {
@@ -51,8 +49,8 @@ export class PrismaTradeRepository implements TradeRepository {
       });
 
       pendingSettlements.forEach((pendingSettlement) => {
-        pendingSettlement = {...pendingSettlement, status: pendingSettlement.status as TradeStatus }
-        pendingSettlemntsArray.push(pendingSettlement)
+        const pendingSettlementToDomain = this.prismaTradeMapper.toDomain(pendingSettlement);
+        pendingSettlemntsArray.push(pendingSettlementToDomain)
       })
 
       return ok(pendingSettlements)

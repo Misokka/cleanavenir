@@ -1,5 +1,5 @@
 export class Advisor{
   constructor(
-    public userIdentifier: string
+    public advisorIdentifier: string
   ){}
 }

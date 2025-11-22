@@ -4,33 +4,25 @@ import { BankAccount } from "../../../domain/entities/BankAccount";
 import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import Result, { err, ok } from "../../../shared/Result";
 import { UnexpectedBankAccountError } from "../../../domain/errors/UnexpectedBankAccountError";
+import { PrismaBankAccountMapper } from "../mappers/PrismaMappers/PrismaBankAccountMapper";
 
 export class PrismaBankAccountRepository implements BankAccountRepository{
   constructor(
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
+    private readonly prismaBankAccountMapper: PrismaBankAccountMapper,
   ){}
 
   async save(bankAccount: BankAccount): Promise<Result<BankAccount, Error>> {
     try{
+      const bankAccountToPersist = this.prismaBankAccountMapper.toPersistence(bankAccount);
       const registeredBankAccount = await this.prismaClient.bankAccount.create({
         data: {
-          accountIdentifier: bankAccount.accountIdentifier,
-          clientIdentifier: bankAccount.clientIdentifier,
-          iban: bankAccount.iban.value,
-          label: bankAccount.label,
-          balance: bankAccount.balance
+          ...bankAccountToPersist
         }
       })
 
-      const newBankAccount = new BankAccount(
-        registeredBankAccount.accountIdentifier,
-        registeredBankAccount.clientIdentifier,
-        bankAccount.iban,
-        registeredBankAccount.label,
-        registeredBankAccount.balance
-      );
-
-      return ok(newBankAccount);
+      const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(registeredBankAccount)
+      return ok(bankAccountToDomain);
     } catch (error){
       return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
     }
@@ -49,15 +41,9 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
         return err(new BankAccountNotFoundError(iban));
       }
 
-      const bankAccount = new BankAccount(
-        maybeBankAccount.accountIdentifier,
-        maybeBankAccount.clientIdentifier,
-        {value: maybeBankAccount.iban},
-        maybeBankAccount.label,
-        maybeBankAccount.balance
-      );
+      const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(maybeBankAccount);
 
-      return ok(bankAccount);
+      return ok(bankAccountToDomain);
     } catch (error){
       return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by IBAN"));
     }
@@ -76,15 +62,9 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
           return err(new BankAccountNotFoundError(accountIdentifier));
         }
 
-        const bankAccount = new BankAccount(
-          maybeBankAccount.accountIdentifier,
-          maybeBankAccount.clientIdentifier,
-          {value: maybeBankAccount.iban},
-          maybeBankAccount.label,
-          maybeBankAccount.balance
-        );
+        const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(maybeBankAccount);
 
-        return ok(bankAccount);
+        return ok(bankAccountToDomain);
       } catch (error) {
         return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
       }
@@ -102,15 +82,9 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
           return err(new BankAccountNotFoundError(clientIdentifier));
         }
 
-        const bankAccount = new BankAccount(
-          maybeBankAccount.accountIdentifier,
-          maybeBankAccount.clientIdentifier,
-          {value: maybeBankAccount.iban},
-          maybeBankAccount.label,
-          maybeBankAccount.balance
-        );
+        const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(maybeBankAccount);
 
-        return ok(bankAccount); 
+        return ok(bankAccountToDomain); 
       } catch (error){
         return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
       }
@@ -127,15 +101,9 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
           }
         });
 
-        const bankAccount = new BankAccount(
-          updatedBankAccount.accountIdentifier,
-          updatedBankAccount.clientIdentifier,
-          {value: updatedBankAccount.iban},
-          updatedBankAccount.label,
-          updatedBankAccount.balance
-        );
+        const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(updatedBankAccount);
 
-        return ok(bankAccount);
+        return ok(bankAccountToDomain);
       } catch (error){
        return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
       }

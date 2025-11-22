@@ -8,7 +8,7 @@ generator client {
 }
 
 model Client {
-  userIdentifier String   @id @default(cuid())
+  clientIdentifier String   @id @default(cuid())
   createdAt  DateTime @default(now())
   email      String   @unique
   firstname       String
@@ -16,12 +16,12 @@ model Client {
 }
 
 model Director{
-  userIdentifier            String      @id @default(cuid())
+  directorIdentifier            String      @id @default(cuid())
   createdAt     DateTime @default(now())
 }
 
 model Advisor{
-  userIdentifier            String      @id @default(cuid())
+  advisorIdentifier            String      @id @default(cuid())
   createdAt     DateTime @default(now())
 }
 

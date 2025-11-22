@@ -4,44 +4,47 @@ import { Advisor } from "../../../domain/entities/Advisor";
 import Result, { err, ok } from "../../../shared/Result";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
+import { PrismaAdvisorMapper } from "../mappers/PrismaMappers/PrismaAdvisorMapper";
 
 export class PrismaAdvisorRepository implements AdvisorRepository{
   constructor(
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
+    private readonly prismaAdvisorMapper: PrismaAdvisorMapper
   ){}
 
   async save(advisor: Advisor): Promise<Result<Advisor, InvalidRoleError>>{
     try{
+      const advisorToPersist = this.prismaAdvisorMapper.toPersistence(advisor)
       const registeredAdvisor = await this.prismaClient.advisor.create({
         data: {
-          userIdentifier: advisor.userIdentifier,
+          ...advisorToPersist
         }
       });
-      return ok(registeredAdvisor);
+
+      const returnedAdvisor = this.prismaAdvisorMapper.toDomain(registeredAdvisor)
+      return ok(returnedAdvisor);
     } catch (error){
       return err(new InvalidRoleError(""));
     }
   }
 
-  async findById(directorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>{
+  async findById(advisorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>{
     try{
-      const maybeAdvisor = await this.prismaClient.director.findUnique({
+      const maybeAdvisor = await this.prismaClient.advisor.findUnique({
         where: {
-          userIdentifier: directorIdentifier
+          advisorIdentifier: advisorIdentifier
         }
       });
 
       if(!maybeAdvisor){
-        return err(new UserNotFoundError(directorIdentifier));
+        return err(new UserNotFoundError(advisorIdentifier));
       }
 
-      const director = new Advisor(
-        maybeAdvisor.userIdentifier
-      );
+      const returnedAdvisor = this.prismaAdvisorMapper.toDomain(maybeAdvisor)
 
-      return ok(director);
+      return ok(returnedAdvisor);
     } catch (error){
-      return err(new UserNotFoundError(directorIdentifier));
+      return err(new UserNotFoundError(advisorIdentifier));
     }
   }
 }

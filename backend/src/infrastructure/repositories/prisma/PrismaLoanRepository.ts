@@ -7,79 +7,101 @@ import Result, { err, ok } from "../../../shared/Result";
 import { PrismaBankAccountRepository } from "./PrismaBankAccountRepository";
 import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { UnexpectedBankAccountError } from "../../../domain/errors/UnexpectedBankAccountError";
+import { PrismaLoanMapper } from "../mappers/PrismaMappers/PrismaLoanMapper";
 
 export class PrismaLoanRepository implements LoanRepository {
   constructor(
     private readonly prismaClient: PrismaClient,
+    private readonly prismaLoanMapper: PrismaLoanMapper,
   ){}
 
   async save(loan: Loan): Promise<Result<Loan, Error>> {
     try{
+      const loanToPersist = this.prismaLoanMapper.toPersistence(loan);
 
-      await this.prismaClient.loan.create({
+      const registeredLoan = await this.prismaClient.loan.create({
         data: {
-          loanIdentifier: loan.loanIdentifier,
-          clientIdentifier: loan.clientIdentifier,
-          advisorIdentifier: loan.advisorIdentifier,
-          annualInterestRate: loan.annualInterestRate,
-          annualInsuranceRate: loan.annualInsuranceRate,
-          loanAmount: loan.loanAmount,
-          mensualities: loan.mensualities,
-          durationInMonth: loan.durationInMonth,
-          insuranceMensualities: loan.insuranceMensualities,
-          remainingAmountToPay: loan.remainingAmoutToPay,
-          status: loan.status,
-          createAdt: loan.createdAt,
-          lastPaidAt: loan.lastPaidAt,
-          nextToPayAt: loan.nextToPayAt
+          ...loanToPersist
         }
       });
 
-      return ok(loan);
+      const loanToDomain = this.prismaLoanMapper.toDomain(registeredLoan)
+      return ok(loanToDomain);
     } catch (error) {
       return err(new Error(`An error occured when creating the loan ${loan.loanIdentifier}`))
     }
   }
 
   async findById(loanIdentifier: string): Promise<Result<Loan, LoanNotFoundError>> {
-    const loan = await this.prismaClient.loan.findUnique({
+    const maybeLoan = await this.prismaClient.loan.findUnique({
       where: {loanIdentifier}
     });
 
-    if(!loan){
+    if(!maybeLoan){
       return err(new LoanNotFoundError(loanIdentifier));
     }
 
-    const loanObject = new Loan(
-      loan.loanIdentifier,
-      loan.clientIdentifier,
-      loan.advisorIdentifier,
-      loan.loanAmount,
-      loan.durationInMonth,
-      loan.mensualities,
-      loan.insuranceMensualities,
-      loan.remainingAmountToPay,
-      loan.annualInterestRate,
-      loan.annualInsuranceRate,
-      loan.status,
-      loan.createAdt,
-      loan.lastPaidAt ?? undefined,
-      loan.nextToPayAt ?? undefined
-    );
+    const loanToDomain = this.prismaLoanMapper.toDomain(maybeLoan)
 
 
-    return ok(loanObject);
+    return ok(loanToDomain);
   }
 
   async findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>> {
-    
+    try{
+      const activeLoans = await this.prismaClient.loan.findMany({
+        where: {
+          nextToPayAt: date
+        }
+      });
+
+      const activeLoansToDomain: Loan[] = [];
+      activeLoans.forEach((loan) => {
+        const loanToDomain = this.prismaLoanMapper.toDomain(loan);
+        activeLoansToDomain.push(loanToDomain);
+      })
+
+      return ok(activeLoansToDomain)
+    } catch (error){
+      return err(new Error(`An error occured when retrive active loans due on ${date.getDate()}`)) // à préciser la date
+    }
   }
 
-  async all(): Promise<Loan[]> {
-    
+  async all(): Promise<Result<Loan[], Error>> {
+    try {
+      const allLoans = await this.prismaClient.loan.findMany();
+      const allLoansToDomain: Loan[] = [];
+
+      allLoans.forEach((loan) => {
+        const loanToDomain = this.prismaLoanMapper.toDomain(loan);
+        allLoansToDomain.push(loanToDomain);
+      });
+
+      return ok(allLoansToDomain);
+    } catch (error) {
+      return err(new Error("An error occured when retrieving loans."))
+    }
   }
 
   async delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>> {
-    
+    try{
+      const maybeLoan = await this.prismaClient.loan.findUnique({
+        where: {
+          loanIdentifier
+        }
+      });
+
+      if(!maybeLoan){
+        return err(new LoanNotFoundError(loanIdentifier));
+      }
+
+      const deletedLoan = await this.prismaClient.loan.delete({
+        where: {loanIdentifier}
+      })
+
+      return ok(`Deleted loan: ${deletedLoan.loanIdentifier}.`);
+    } catch (error) {
+      return err(new Error(`An error occured when deleting loan: ${loanIdentifier}.`))
+    }
   }
 }

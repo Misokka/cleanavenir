@@ -2,7 +2,7 @@ export class User {
   public active: boolean = true;
   public emailVerifiedAt: Date | null = null;
   constructor(
-    public userIndentifier: string,
+    public userIdentifier: string,
     public firstname: string,
     public lastname: string,
     public email: string,

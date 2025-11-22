@@ -3,7 +3,14 @@ import { BankAccount } from "../../../../domain/entities/BankAccount";
 import { Iban } from "../../../../domain/value-objects/Iban";
 import { Mapper } from "../MapperInterface";
 
-export class BankAccountMapper implements Mapper<PrismaBankAccount, BankAccount> {
+type BankAccountToPersist = {
+  accountIdentifier: string,
+  clientIdentifier: string,
+  iban: string,
+  label: string,
+  balance: number
+}
+export class PrismaBankAccountMapper implements Mapper<PrismaBankAccount, BankAccount, BankAccountToPersist> {
   // Prisma -> Domaine
   toDomain(raw: PrismaBankAccount): BankAccount {
     return new BankAccount(
@@ -16,13 +23,10 @@ export class BankAccountMapper implements Mapper<PrismaBankAccount, BankAccount>
   }
 
   // Domaine -> Prisma
-  toPersistence(bankAccount: BankAccount): unknown {
+  toPersistence(bankAccount: BankAccount): BankAccountToPersist {
     return {
-      accountIdentifier: bankAccount.accountIdentifier,
-      clientIdentifier: bankAccount.clientIdentifier,
-      iban: bankAccount.iban.value,
-      label: bankAccount.label,
-      balance: bankAccount.balance,
+      ...bankAccount,
+      iban: bankAccount.iban.value
     };
   }
 }

@@ -4,20 +4,25 @@ import { Director } from "../../../domain/entities/Director";
 import Result, { err, ok } from "../../../shared/Result";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
+import { PrismaDirectorMapper } from "../mappers/PrismaMappers/PrismaDirectorMapper";
 
 export class PrismaDirectorRepository implements DirectorRepository{
   constructor(
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
+    private readonly prismaDirectorMapper: PrismaDirectorMapper
   ){}
 
   async save(director: Director): Promise<Result<Director, InvalidRoleError>>{
     try{
+      const directorToPersist = this.prismaDirectorMapper.toPersistence(director)
       const registeredDirector = await this.prismaClient.director.create({
         data: {
-          userIdentifier: director.userIdentifier,
+          ...directorToPersist
         }
       });
-      return ok(registeredDirector);
+
+      const directorToDomain = this.prismaDirectorMapper.toDomain(registeredDirector)
+      return ok(directorToDomain);
     } catch (error){
       return err(new InvalidRoleError(""));
     }
@@ -27,7 +32,7 @@ export class PrismaDirectorRepository implements DirectorRepository{
     try{
       const maybeDirector = await this.prismaClient.director.findUnique({
         where: {
-          userIdentifier: directorIdentifier
+          directorIdentifier: directorIdentifier
         }
       });
 
@@ -35,11 +40,9 @@ export class PrismaDirectorRepository implements DirectorRepository{
         return err(new UserNotFoundError(directorIdentifier));
       }
 
-      const director = new Director(
-        maybeDirector.userIdentifier
-      );
+      const directorToDomain = this.prismaDirectorMapper.toDomain(maybeDirector)
 
-      return ok(director);
+      return ok(directorToDomain);
     } catch (error){
       return err(new UserNotFoundError(directorIdentifier));
     }

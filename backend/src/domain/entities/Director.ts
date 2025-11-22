@@ -1,5 +1,5 @@
 export class Director{
   constructor(
-    public userIdentifier: string
+    public directorIdentifier: string
   ){}
 }

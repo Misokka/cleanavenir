@@ -1,39 +1,28 @@
-import { $Enums, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { TransactionRepository } from "../../../application/ports/repositories/TransactionRepository";
-import { Transaction, TransactionDirection, TransactionType } from "../../../domain/entities/Transaction";
+import { Transaction } from "../../../domain/entities/Transaction";
 import Result, { err, ok } from "../../../shared/Result";
 import { TransactionNotFoundError } from "../../../domain/errors/TransactionNotFoundError";
+import { PrismaTransactionMapper } from "../mappers/PrismaMappers/PrismaTransactionMapper";
 
 export class PrismaTransactionRepository implements TransactionRepository {
   constructor(
-    private prismaClient: PrismaClient
+    private prismaClient: PrismaClient,
+    private prismaTransactionMapper: PrismaTransactionMapper
   ){}
 
   async save(transaction: Transaction): Promise<Result<Transaction, Error>> {
     try{
+      const transactionToPersist = this.prismaTransactionMapper.toPersistence(transaction);
       const registeredTransaction = await this.prismaClient.transaction.create({
-      data: {
-        transactionIdentifier: transaction.transactionIdentifier,
-          bankAccountIdentifier: transaction.bankAccountIdentifier,
-          direction: transaction.direction as $Enums.TransactionDirection,
-          description: transaction.description,
-          amount: transaction.amount,
-          type: transaction.type as $Enums.TransactionType,
-          date: transaction.date
+        data: {
+          ...transactionToPersist
         }
       });
 
-      const newTransaction = new Transaction(
-        registeredTransaction.transactionIdentifier,
-        registeredTransaction.bankAccountIdentifier,
-        registeredTransaction.amount,
-        registeredTransaction.direction as TransactionDirection,
-        registeredTransaction.type as TransactionType,
-        registeredTransaction.description,
-        registeredTransaction.date
-      )
+      const transactionToDomain = this.prismaTransactionMapper.toDomain(registeredTransaction);
 
-      return ok(newTransaction)
+      return ok(transactionToDomain)
     } catch (error) {
       return err(new Error(`An error occured when saving this transaction ${transaction.transactionIdentifier}.`))
     }
@@ -59,47 +48,31 @@ export class PrismaTransactionRepository implements TransactionRepository {
       const transactions = await this.prismaClient.transaction.findMany();
       const transactionsArray: Transaction[] = [];
       transactions.forEach(transaction => {
-        const newTransaction = new Transaction(
-          transaction.transactionIdentifier, 
-          transaction.bankAccountIdentifier, 
-          transaction.amount,
-          transaction.direction.toString() as TransactionDirection,
-          transaction.type.toString() as TransactionType,
-          transaction.description,
-          transaction.date
-        )
-
-        transactionsArray.push(newTransaction);
+        const transactionToDomain = this.prismaTransactionMapper.toDomain(transaction);
+        transactionsArray.push(transactionToDomain);
       })
+
       return ok(transactionsArray);
     } catch (error) {
-      return err(new Error("An error occured when retrieving a transaction"))
+      return err(new Error("An error occured when retrieving a transaction"));
     }
   }
 
   async findById(transactionIdentifier: string): Promise<Result<Transaction, TransactionNotFoundError>> {
     try{
-      const existingTransaction = await this.prismaClient.transaction.findUnique({
+      const maybeTransaction = await this.prismaClient.transaction.findUnique({
         where: {
           transactionIdentifier
         }
       });
 
-      if(!existingTransaction){
+      if(!maybeTransaction){
         return err(new TransactionNotFoundError(transactionIdentifier));
       }
 
-      const transactionObject = new Transaction(
-        existingTransaction.transactionIdentifier,
-        existingTransaction.bankAccountIdentifier,
-        existingTransaction.amount,
-        existingTransaction.direction as TransactionDirection,
-        existingTransaction.type as TransactionType,
-        existingTransaction.description,
-        existingTransaction.date
-      )
+      const transactionToDomain = this.prismaTransactionMapper.toDomain(maybeTransaction);
 
-      return ok(transactionObject);
+      return ok(transactionToDomain);
     } catch (error){
       return err(new Error(`An error occured when retreiving transaction: ${transactionIdentifier}`))
     }

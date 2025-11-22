@@ -3,24 +3,25 @@ import { ClientRepository } from "../../../application/ports/repositories/Client
 import { Client } from "../../../domain/entities/Client";
 import Result, { err, ok } from "../../../shared/Result";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
+import { PrismaClientMapper } from "../mappers/PrismaMappers/PrismaClientMapper";
 
 export class PrismaClientRepository implements ClientRepository{
   constructor(
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
+    private readonly prismaCientMapper: PrismaClientMapper
   ){}
 
   async save(client: Client): Promise<Result<Client, Error>>{
     try{
+      const clientToPersist = this.prismaCientMapper.toPersistence(client)
       const registeredClient = await this.prismaClient.client.create({
         data: {
-          userIdentifier: client.userIdentifier,
-          firstname: client.firstname,
-          lastname: client.lastname,
-          email: client.email
+          ...clientToPersist
         }
       });
 
-      return ok(registeredClient as Client);
+      const clientToDomain = this.prismaCientMapper.toDomain(registeredClient)
+      return ok(clientToDomain);
 
     } catch (error){
       return err(new Error("Error saving client"));
@@ -28,25 +29,19 @@ export class PrismaClientRepository implements ClientRepository{
 
   }
 
-  async findById(userIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
+  async findById(clientIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
     const maybeClient = await this.prismaClient.client.findUnique({
       where: {
-        userIdentifier: userIdentifier
+        clientIdentifier: clientIdentifier
       }
     });
 
     if(!maybeClient){
-      return err(new UserNotFoundError(userIdentifier));
+      return err(new UserNotFoundError(clientIdentifier));
     }
 
-    const client = new Client(
-      maybeClient.userIdentifier,
-      maybeClient.firstname,
-      maybeClient.lastname,
-      maybeClient.email
-    );
-
-    return ok(client);
+    const clientToDomain = this.prismaCientMapper.toDomain(maybeClient);
+    return ok(clientToDomain);
   }
 
   async findByEmail(email: string): Promise<Result<Client, UserNotFoundError>> {
@@ -60,13 +55,7 @@ export class PrismaClientRepository implements ClientRepository{
       return err(new UserNotFoundError(email));
     }
 
-    const client = new Client(
-      maybeClient.userIdentifier,
-      maybeClient.firstname,
-      maybeClient.lastname,
-      maybeClient.email
-    );
-
-    return ok(client);
+    const clientToDomain = this.prismaCientMapper.toDomain(maybeClient);
+    return ok(clientToDomain);
   }
 }
