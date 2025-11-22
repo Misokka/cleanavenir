@@ -127,6 +127,6 @@ model SavingAccount {
 
 model SavingProduct {
   savingProductIdentifier String @id @default(cuid())
-  label String
+  label String @unique
   rate Float
 }

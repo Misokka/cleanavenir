@@ -9,7 +9,7 @@ import { SavingAccount } from "../../../domain/entities/SavingAccount";
 
 export interface SavingAccountRepository {
     save(savingAccount: SavingAccount): Promise<Result<SavingAccount, Error>>;
-    saveAll(savingAccounts: SavingAccount[]): Promise<Result<void, Error>>
+    saveAll(savingAccounts: SavingAccount[]): Promise<Result<SavingAccount[], Error>>
     all(): Promise<Result<SavingAccount[], Error>>;
 
     openForAccount(AccountId: string): Promise<
