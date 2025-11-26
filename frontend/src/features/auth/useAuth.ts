@@ -10,20 +10,13 @@ export function useAuth() {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [hasChecked, setHasChecked] = useState<boolean>(false);
 
   useEffect(() => {
+    if (hasChecked) return; // Ne vérifier qu'une seule fois
+    
     const checkAuthStatus = async () => {
       try {
-        if (!authService.isAuthenticated()) {
-          setAuthState({
-            data: null,
-            loading: false,
-            error: null,
-          });
-          setIsAuthenticated(false);
-          return;
-        }
-
         const user = await authService.getCurrentUser();
         
         setAuthState({
@@ -33,33 +26,22 @@ export function useAuth() {
         });
         setIsAuthenticated(true);
       } catch (error) {
-        let errorMessage = 'Erreur de vérification d\'authentification';
-        
-        if (error instanceof AuthenticationError) {
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-
+        // Si l'utilisateur n'est pas connecté (401), c'est normal, pas d'erreur à afficher
         setAuthState({
           data: null,
           loading: false,
-          error: errorMessage,
+          error: null,
         });
         setIsAuthenticated(false);
-
-        authService.clearAuthToken();
+      } finally {
+        setHasChecked(true);
       }
     };
 
     checkAuthStatus();
-  }, []); 
+  }, [hasChecked]); 
 
   const refetchUser = useCallback(async () => {
-    if (!authService.isAuthenticated()) {
-      return;
-    }
-
     setAuthState(prev => ({
       ...prev,
       loading: true,

@@ -48,6 +48,21 @@ export const API_ENDPOINTS = {
     ORDERS: '/investments/orders',
     POSITIONS: '/investments/positions',
   },
+
+  LOANS: {
+    LIST: '/loans',
+    SIMULATE: '/loans/simulate',
+    REQUEST: '/loans/request',
+    DETAILS: (id: string) => `/loans/${id}`,
+    APPROVE: (id: string) => `/loans/${id}/approve`,
+  },
+
+  ADMIN: {
+    CLIENTS: '/admin/clients',
+    BAN_CLIENT: (id: string) => `/admin/clients/${id}/ban`,
+    STATISTICS: '/admin/statistics',
+    SET_SAVING_RATE: '/admin/savings/rate',
+  },
 } as const;
 
 export type ApiEndpoint = typeof API_ENDPOINTS;
@@ -55,3 +70,5 @@ export type AuthEndpoint = typeof API_ENDPOINTS.AUTH;
 export type AccountEndpoint = typeof API_ENDPOINTS.ACCOUNTS;
 export type OperationEndpoint = typeof API_ENDPOINTS.OPERATIONS;
 export type SavingsEndpoint = typeof API_ENDPOINTS.SAVINGS;
+export type LoansEndpoint = typeof API_ENDPOINTS.LOANS;
+export type AdminEndpoint = typeof API_ENDPOINTS.ADMIN;

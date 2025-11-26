@@ -75,14 +75,12 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <NextIntlClientProvider messages={messages}>
-          <AuthProvider>
-            <ToastProvider>
-              <Header />
-              <main className="min-h-[calc(100vh-100px)]">{children}</main>
-              <Footer />
-              <ToastContainer />
-            </ToastProvider>
-          </AuthProvider>
+          <ToastProvider>
+            <Header />
+            <main className="min-h-[calc(100vh-100px)]">{children}</main>
+            <Footer />
+            <ToastContainer />
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>
