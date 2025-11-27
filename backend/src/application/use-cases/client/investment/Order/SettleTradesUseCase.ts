@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import { Transaction } from "../../../../../domain/entities/Transaction";
-import { err } from "../../../../../shared/Result";
 import { BankAccountRepository } from "../../../../ports/repositories/BankAccountRepository";
 import { PortfolioRepository } from "../../../../ports/repositories/PortfolioRepository";
 import { TradeRepository } from "../../../../ports/repositories/TradeRepository";
