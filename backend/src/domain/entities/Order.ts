@@ -1,17 +1,26 @@
 export type OrderType = "BUY" | "SELL";
-export type OrderStatus = "OPEN" | "PARTIALLY_FILLED" | "FILLED" | "CANCELLED";
+export type OrderStatus = "PENDING" | "EXECUTED" | "CANCELLED";
 
 export class Order {
-  public remainingQuantity: number;
-  constructor(
+  private constructor(
     public readonly orderIdentifier: string,
-    public readonly portfolioIdentifier: string,
     public readonly stockIdentifier: string,
-    public readonly type: OrderType,
-    public readonly initialQuantity: number,
+    public readonly clientIdentifier: string,
+    public readonly orderType: OrderType,
+    public readonly quantity: number,
     public readonly limitPrice: number, // Le prix maximum (pour un BUY) ou minimum (pour un SELL)
-    public status: OrderStatus = "OPEN",
-  ) {
-    this.remainingQuantity = initialQuantity;
+    public status: OrderStatus = "PENDING",
+  ) {}
+
+  public static create({orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, status = "PENDING"}: {
+    orderIdentifier: string,
+    stockIdentifier: string,
+    clientIdentifier: string,
+    orderType: OrderType,
+    quantity: number,
+    limitPrice: number,
+    status?: OrderStatus
+  }): Order {
+    return new Order(orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, status);
   }
 }

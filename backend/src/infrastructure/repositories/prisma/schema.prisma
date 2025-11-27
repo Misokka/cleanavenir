@@ -97,7 +97,42 @@ model Stock {
   stockIdentifier String @id @default(cuid())
   companyIdentifier String @default(cuid())
   ticker String @unique
+  price Float
   isAvailable Boolean @default(true)
+}
+
+model Portfolio {
+  portfolioIdentifier String @id @default(cuid())
+  clientIdentifier String
+}
+
+model Holding {
+  holdingIdentifier String @id @default(cuid())
+  portfolioIdentifier String
+  stockIdentifier String
+  quantity Float
+}
+
+model Order {
+  orderIdentifier String @id @default(cuid())
+  stockIdentifier String
+  clientIdentifier String
+  orderType OrderType
+  quantity Float
+  limitPrice Float
+  status OrderStatus
+  createdAt DateTime @default(now())
+}
+
+enum OrderType {
+  BUY
+  SELL
+}
+
+enum OrderStatus {
+  PENDING
+  EXECUTED
+  CANCELLED
 }
 
 model Trade {

@@ -49,6 +49,9 @@ export class ProfileManager {
 
   public async create(
     userIdentifier: string,
+    firstname: string,
+    lastname: string,
+    email: string,
     role: UserRole
   ): Promise<Result<Profile, Error>>{
 
@@ -56,7 +59,7 @@ export class ProfileManager {
 
     switch(role){
       case "CLIENT":
-        const newClient = new Client(userIdentifier);
+        const newClient = new Client(userIdentifier, firstname, lastname, email);
         newProfile = await this.clientRepository.save(newClient);
         break;
       
