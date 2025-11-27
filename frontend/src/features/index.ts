@@ -19,3 +19,5 @@ export {
   useGetOperationsByType,
   useSearchOperations 
 } from './operations/useGetRecentOperations';
+export { useSimulateLoan, useRequestLoan, useGetLoans } from './loans';
+export { useGetClients, useBanClient, useGetStatistics, useSetSavingRate } from './admin';

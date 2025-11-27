@@ -15,13 +15,11 @@ export class AuthService {
     try {
       const response = await httpClient.post<AuthResponse>(
         API_ENDPOINTS.AUTH.LOGIN,
-        credentials,
-        false 
+        credentials
       );
 
-      if (response.data.token) {
-        httpClient.setAuthToken(response.data.token, true); 
-      }
+      // Les cookies sont gérés automatiquement par le backend (httpOnly)
+      // Plus besoin de stocker le token manuellement
 
       return response.data;
     } catch (error) {
@@ -40,13 +38,10 @@ export class AuthService {
     try {
       const response = await httpClient.post<AuthResponse>(
         API_ENDPOINTS.AUTH.REGISTER,
-        userData,
-        false 
+        userData
       );
 
-      if (response.data.token) {
-        httpClient.setAuthToken(response.data.token, true);
-      }
+      // Les cookies sont gérés automatiquement par le backend (httpOnly)
 
       return response.data;
     } catch (error) {
@@ -71,9 +66,8 @@ export class AuthService {
       await httpClient.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
       console.warn('Erreur lors de la déconnexion API:', error);
-    } finally {
-      httpClient.clearAuthToken();
     }
+    // Les cookies sont supprimés automatiquement par le backend
   }
 
   async getCurrentUser(): Promise<UserDTO> {
@@ -82,7 +76,6 @@ export class AuthService {
       return response.data;
     } catch (error) {
       if (error instanceof Error && error.message.includes('401')) {
-        httpClient.clearAuthToken();
         throw new AuthenticationError('Session expirée, veuillez vous reconnecter');
       }
       throw error;
@@ -92,32 +85,15 @@ export class AuthService {
   async refreshToken(): Promise<AuthResponse> {
     try {
       const response = await httpClient.post<AuthResponse>(API_ENDPOINTS.AUTH.REFRESH);
-      
-      if (response.data.token) {
-        httpClient.setAuthToken(response.data.token, true);
-      }
-      
       return response.data;
     } catch (error) {
-      httpClient.clearAuthToken();
       throw new AuthenticationError('Impossible de rafraîchir la session');
     }
   }
 
-  isAuthenticated(): boolean {
-    if (typeof globalThis.window === 'undefined') return false;
-    
-    return !!(
-      localStorage.getItem('authToken') || 
-      sessionStorage.getItem('authToken')
-    );
-  }
-
-  getCurrentToken(): string | null {
-    if (typeof globalThis.window === 'undefined') return null;
-    
-    return localStorage.getItem('authToken') || 
-           sessionStorage.getItem('authToken');
+  clearAuthToken(): void {
+    // Méthode pour compatibilité - les cookies sont gérés par le backend
+    // On pourrait forcer un logout ici si nécessaire
   }
 }
 

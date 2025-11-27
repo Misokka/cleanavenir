@@ -1,0 +1,59 @@
+{
+  "admin": {
+    "clients": {
+      "title": "Gestion des clients",
+      "description": "Gérer tous les clients de la plateforme",
+      "totalClients": "Total clients",
+      "activeClients": "Clients actifs",
+      "bannedClients": "Clients bannis",
+      "table": {
+        "client": "Client",
+        "email": "Email",
+        "role": "Rôle",
+        "status": "Statut",
+        "created": "Créé le",
+        "actions": "Actions"
+      },
+      "actions": {
+        "ban": "Bannir",
+        "confirmBan": "Êtes-vous sûr de vouloir bannir ce client ?",
+        "banSuccess": "Client banni avec succès",
+        "banError": "Erreur lors du bannissement"
+      },
+      "status": {
+        "active": "Actif",
+        "banned": "Banni"
+      },
+      "roles": {
+        "CLIENT": "Client",
+        "ADVISOR": "Conseiller",
+        "DIRECTOR": "Directeur"
+      },
+      "noClients": "Aucun client",
+      "noClientsDescription": "Aucun client enregistré sur la plateforme",
+      "refresh": "Actualiser"
+    },
+    "statistics": {
+      "title": "Statistiques générales",
+      "description": "Vue d'ensemble des données de la plateforme",
+      "totalClients": "Total clients",
+      "totalAccounts": "Total comptes",
+      "totalOperations": "Opérations",
+      "activeLoans": "Prêts actifs",
+      "totalLoanAmount": "Montant total des prêts actifs",
+      "accountsPerClient": "Comptes par client",
+      "activeLoanRate": "Taux de prêts actifs",
+      "keyRatios": "Ratios clés",
+      "alerts": "Alertes",
+      "distributedOn": "Répartis sur",
+      "loans": "prêts",
+      "highLoanCount": "Nombre élevé de prêts actifs",
+      "noOperations": "Aucune opération enregistrée",
+      "noClients": "Aucun client enregistré",
+      "refresh": "Actualiser",
+      "error": "Impossible de charger les statistiques",
+      "retry": "Réessayer",
+      "noData": "Aucune statistique disponible"
+    }
+  }
+}

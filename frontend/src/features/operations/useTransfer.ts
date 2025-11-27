@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { operationService } from '@/infrastructure/web/services/operationService';
 import { MutationState } from '@/infrastructure/web/types';
+import { useToast } from '@/contexts/ToastProvider';
 
 interface TransferPayload {
   fromAccountId: string;
@@ -10,6 +11,7 @@ interface TransferPayload {
 }
 
 export function useTransfer() {
+  const toast = useToast();
   const [state, setState] = useState<MutationState>({
     loading: false,
     error: null,
@@ -32,6 +34,10 @@ export function useTransfer() {
         success: result.success,
       });
 
+      if (result.success) {
+        toast.success('Virement effectué avec succès');
+      }
+
       return result.success;
     } catch (error) {
       let errorMessage = 'Erreur lors du virement';
@@ -45,6 +51,8 @@ export function useTransfer() {
         error: errorMessage,
         success: false,
       });
+
+      toast.error(errorMessage);
 
       return false;
     }

@@ -17,6 +17,8 @@ import { ProfileManager } from '../../application/ports/services/ProfileFetcher'
 import { RegisterUseCase } from '../../application/use-cases/user/auth/RegisterUseCase';
 import { LoginUseCase } from '../../application/use-cases/user/auth/LoginUseCase';
 import { GetUserProfileUseCase } from '../../application/use-cases/user/auth/GetUserProfileUseCase';
+import { RefreshTokenUseCase } from '../../application/use-cases/user/auth/RefreshTokenUseCase';
+import { ResetPasswordUseCase } from '../../application/use-cases/user/auth/ResetPasswordUseCase';
 
 // Use Cases - Account
 import { GetBankAccountUseCase } from '../../application/use-cases/client/account/GetBankAccountUseCase';
@@ -67,6 +69,8 @@ export function createContainer() {
   );
 
   const getUserProfileUseCase = new GetUserProfileUseCase(userRepository);
+  const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, profileManager);
+  const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, passwordHasher);
 
   // Account Use Cases
   const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository);
@@ -130,6 +134,8 @@ export function createContainer() {
         register: registerUseCase,
         login: loginUseCase,
         getUserProfile: getUserProfileUseCase,
+        refreshToken: refreshTokenUseCase,
+        resetPassword: resetPasswordUseCase,
       },
       account: {
         get: getBankAccountUseCase,

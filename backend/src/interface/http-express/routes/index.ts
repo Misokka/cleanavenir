@@ -3,6 +3,8 @@ import { authRoutes } from './auth.routes';
 import { accountRoutes } from './account.routes';
 import { operationRoutes } from './operation.routes';
 import { savingsRoutes } from './savings.routes';
+import { loanRoutes } from './loan.routes';
+import { adminRoutes } from '../../../infrastructure/http-express/routes/admin.routes';
 
 const router = Router();
 
@@ -10,5 +12,7 @@ router.use('/auth', authRoutes);
 router.use('/accounts', accountRoutes);
 router.use('/operations', operationRoutes);
 router.use('/savings', savingsRoutes);
+router.use('/loans', loanRoutes);
+router.use('/admin', adminRoutes);
 
 export { router as mainRouter };

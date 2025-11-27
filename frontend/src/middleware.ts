@@ -1,9 +1,16 @@
 import createMiddleware from 'next-intl/middleware';
- 
-export default createMiddleware({
+import { NextRequest, NextResponse } from 'next/server';
+
+const intlMiddleware = createMiddleware({
   locales: ['en', 'fr'],
-  defaultLocale: 'en'
+  defaultLocale: 'fr'
 });
+
+export default function middleware(request: NextRequest) {
+  // Appliquer uniquement le middleware d'internationalisation pour le moment
+  // La protection des routes sera gérée côté composant
+  return intlMiddleware(request);
+}
  
 export const config = {
   matcher: ['/', '/(fr|en)/:path*']

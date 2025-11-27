@@ -1,0 +1,59 @@
+{
+  "admin": {
+    "clients": {
+      "title": "Client Management",
+      "description": "Manage all platform clients",
+      "totalClients": "Total clients",
+      "activeClients": "Active clients",
+      "bannedClients": "Banned clients",
+      "table": {
+        "client": "Client",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "actions": {
+        "ban": "Ban",
+        "confirmBan": "Are you sure you want to ban this client?",
+        "banSuccess": "Client banned successfully",
+        "banError": "Error banning client"
+      },
+      "status": {
+        "active": "Active",
+        "banned": "Banned"
+      },
+      "roles": {
+        "CLIENT": "Client",
+        "ADVISOR": "Advisor",
+        "DIRECTOR": "Director"
+      },
+      "noClients": "No clients",
+      "noClientsDescription": "No clients registered on the platform",
+      "refresh": "Refresh"
+    },
+    "statistics": {
+      "title": "General Statistics",
+      "description": "Overview of platform data",
+      "totalClients": "Total clients",
+      "totalAccounts": "Total accounts",
+      "totalOperations": "Operations",
+      "activeLoans": "Active loans",
+      "totalLoanAmount": "Total active loan amount",
+      "accountsPerClient": "Accounts per client",
+      "activeLoanRate": "Active loan rate",
+      "keyRatios": "Key ratios",
+      "alerts": "Alerts",
+      "distributedOn": "Distributed on",
+      "loans": "loans",
+      "highLoanCount": "High number of active loans",
+      "noOperations": "No operations recorded",
+      "noClients": "No clients registered",
+      "refresh": "Refresh",
+      "error": "Unable to load statistics",
+      "retry": "Retry",
+      "noData": "No statistics available"
+    }
+  }
+}

@@ -24,27 +24,18 @@ export class HttpClientError extends Error {
 class HttpClient {
   private readonly baseURL: string;
 
-  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api') {
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api') {
     this.baseURL = baseURL;
   }
 
-  private getAuthToken(): string | null {
-    if (globalThis.window === undefined) return null;
-    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-  }
-
-  private getHeaders(includeAuth: boolean = true): HeadersInit {
+  // L'authentification est maintenant gérée par les cookies httpOnly côté backend
+  // Plus besoin de gérer les tokens manuellement
+  
+  private getHeaders(): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-
-    if (includeAuth) {
-      const token = this.getAuthToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
 
     return headers;
   }
@@ -90,10 +81,11 @@ class HttpClient {
     };
   }
 
-  async get<T>(endpoint: string, includeAuth: boolean = true): Promise<ApiResponse<T>> {
+  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'GET',
-      headers: this.getHeaders(includeAuth),
+      headers: this.getHeaders(),
+      credentials: 'include',
     });
 
     return this.handleResponse<T>(response);
@@ -101,13 +93,13 @@ class HttpClient {
 
   async post<T, U = unknown>(
     endpoint: string, 
-    data?: U, 
-    includeAuth: boolean = true
+    data?: U
   ): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'POST',
-      headers: this.getHeaders(includeAuth),
+      headers: this.getHeaders(),
       body: data ? JSON.stringify(data) : undefined,
+      credentials: 'include',
     });
 
     return this.handleResponse<T>(response);
@@ -115,13 +107,13 @@ class HttpClient {
 
   async put<T, U = unknown>(
     endpoint: string, 
-    data?: U, 
-    includeAuth: boolean = true
+    data?: U
   ): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'PUT',
-      headers: this.getHeaders(includeAuth),
+      headers: this.getHeaders(),
       body: data ? JSON.stringify(data) : undefined,
+      credentials: 'include',
     });
 
     return this.handleResponse<T>(response);
@@ -129,42 +121,36 @@ class HttpClient {
 
   async patch<T, U = unknown>(
     endpoint: string, 
-    data?: U, 
-    includeAuth: boolean = true
+    data?: U
   ): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'PATCH',
-      headers: this.getHeaders(includeAuth),
+      headers: this.getHeaders(),
       body: data ? JSON.stringify(data) : undefined,
+      credentials: 'include',
     });
 
     return this.handleResponse<T>(response);
   }
 
-  async delete<T>(endpoint: string, includeAuth: boolean = true): Promise<ApiResponse<T>> {
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'DELETE',
-      headers: this.getHeaders(includeAuth),
+      headers: this.getHeaders(),
+      credentials: 'include',
     });
 
     return this.handleResponse<T>(response);
   }
 
-  setAuthToken(token: string, persistent: boolean = false): void {
-    if (globalThis.window === undefined) return;
-    
-    if (persistent) {
-      localStorage.setItem('authToken', token);
-    } else {
-      sessionStorage.setItem('authToken', token);
-    }
+  // Les tokens sont maintenant gérés via cookies httpOnly côté backend
+  // Ces méthodes ne sont plus nécessaires mais gardées pour compatibilité
+  setAuthToken(_token: string, _persistent: boolean = false): void {
+    // No-op - les cookies sont gérés par le backend
   }
 
   clearAuthToken(): void {
-    if (globalThis.window === undefined) return;
-    
-    localStorage.removeItem('authToken');
-    sessionStorage.removeItem('authToken');
+    // No-op - les cookies sont gérés par le backend
   }
 }
 
