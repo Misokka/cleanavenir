@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { toUserDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
+import { generateToken, generateRefreshToken, setTokenCookie, setRefreshTokenCookie } from '../../../../infrastructure/adapters/JwtService';
 
 export const registerController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -71,11 +72,24 @@ export const registerController = asyncHandler(
 
     const { user, profile } = result.value;
 
-    // TODO: En production, générer un vrai JWT
-    const token = `${user.userIndentifier}:${user.email}`;
+    // Générer de vrais tokens JWT et les poser en cookies httpOnly
+    const accessToken = generateToken({
+      userId: user.userIndentifier,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = generateRefreshToken({
+      userId: user.userIndentifier,
+      email: user.email,
+      role: user.role,
+    });
+
+    setTokenCookie(res, accessToken);
+    setRefreshTokenCookie(res, refreshToken);
 
     res.status(201).json({
-      token,
+      token: accessToken,
       user: toUserDTO(user as any),
     });
   }
