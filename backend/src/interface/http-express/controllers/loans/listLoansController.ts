@@ -9,8 +9,7 @@ export const listLoansController = asyncHandler(
     const container = getContainer();
     const loanRepository = container.repositories.loan;
 
-    // Pour un client, lister ses propres prêts
-    const result = await loanRepository.findByClientId(userId);
+    const result = await loanRepository.findAllByUserId(userId);
 
     if (!result.ok) {
       res.status(500).json({
@@ -20,8 +19,6 @@ export const listLoansController = asyncHandler(
       return;
     }
 
-    res.json({
-      loans: result.value,
-    });
+    res.json({ loans: result.value });
   }
 );

@@ -65,28 +65,7 @@ export const DashboardHeader: React.FC = () => {
             </Typography>
           </div>
 
-          <Button
-            variant="secondary"
-            onClick={handleLogout}
-            disabled={logoutLoading}
-            className="flex items-center space-x-2 px-4 py-2"
-          >
-            {logoutLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
-                <Typography variant="caption">
-                  Déconnexion...
-                </Typography>
-              </>
-            ) : (
-              <>
-                <span className="text-lg"></span>
-                <Typography variant="caption">
-                  {tNav('logout')}
-                </Typography>
-              </>
-            )}
-          </Button>
+        
         </div>
       </div>
     </div>

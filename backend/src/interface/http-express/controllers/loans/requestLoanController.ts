@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
+import crypto from 'crypto';
 
 export const requestLoanController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -25,35 +26,40 @@ export const requestLoanController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.client.loan.request.execute({
+    const loanRepository = container.repositories.loan;
+
+    // Calcul simplifié de la mensualité (hors assurance)
+    const monthlyRate = annualInterestRate / 12 / 100;
+    const n = durationInMonth;
+    const principal = amount;
+    const monthlyPayment = monthlyRate > 0
+      ? Math.round(principal * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -n))))
+      : Math.round(principal / n);
+
+    const loan = {
+      id: crypto.randomUUID(),
       clientId,
-      amount,
-      durationInMonth,
-      annualInterestRate,
-      annualInsuranceRate,
-    });
+      principal,
+      annualRate: Math.round(annualInterestRate),
+      termMonths: n,
+      monthlyPayment,
+      outstanding: principal,
+      createdAt: new Date().toISOString(),
+    };
 
-    if (!result.ok) {
-      const error = result.error;
-      
-      if (error.message.includes('introuvable')) {
-        res.status(404).json({
-          error: 'CLIENT_NOT_FOUND',
-          message: error.message,
-        });
-        return;
-      }
+    const saveResult = await loanRepository.save(loan as any);
 
+    if (!saveResult.ok) {
       res.status(500).json({
         error: 'INTERNAL_ERROR',
-        message: error.message,
+        message: saveResult.error.message,
       });
       return;
     }
 
     res.status(201).json({
       message: 'Demande de prêt créée avec succès',
-      loan: result.value,
+      loan: saveResult.value,
     });
   }
 );

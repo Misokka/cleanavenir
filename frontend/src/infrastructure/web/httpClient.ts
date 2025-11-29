@@ -57,10 +57,13 @@ class HttpClient {
         }
       }
 
-      if (response.status === 401 && globalThis.window !== undefined) {
+      if (response.status === 401) {
+        // Ne pas rediriger automatiquement ici :
+        // si l'appel vient de la page de login/inscription, cela provoque une
+        // boucle de reload (la page appelle /auth/me -> 401 -> redirige vers
+        // /auth/login -> reload -> nouvel appel -> 401 -> ...).
+        // Laisser la gestion de la redirection aux composants/handlers supérieurs.
         this.clearAuthToken();
-        const currentLocale = globalThis.window.location.pathname.split('/')[1] || 'fr';
-        globalThis.window.location.href = `/${currentLocale}/auth/login`;
       }
 
       throw new HttpClientError(errorMessage, response.status, errorCode);

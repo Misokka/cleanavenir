@@ -8,6 +8,7 @@ import { AdvisorRepositoryDrizzle } from '../repositories/drizzle/AdvisorReposit
 import { BankAccountRepositoryDrizzle } from '../repositories/drizzle/BankAccountRepositoryDrizzle';
 import { OperationRepositoryDrizzle } from '../repositories/drizzle/OperationRepositoryDrizzle';
 import { SavingRepositoryDrizzle } from '../repositories/drizzle/SavingRepositoryDrizzle';
+import { LoanRepositoryDrizzle } from '../repositories/drizzle/LoanRepositoryDrizzle';
 
 // Services/Adapters
 import { SimplePasswordHasher } from '../adapters/SimplePasswordHasher';
@@ -48,6 +49,7 @@ export function createContainer() {
   const bankAccountRepository = new BankAccountRepositoryDrizzle(db);
   const operationRepository = new OperationRepositoryDrizzle(db);
   const savingRepository = new SavingRepositoryDrizzle(db);
+  const loanRepository = new LoanRepositoryDrizzle(db);
   const passwordHasher = new SimplePasswordHasher();
 
   const profileManager = new ProfileManager(
@@ -122,6 +124,7 @@ export function createContainer() {
       bankAccount: bankAccountRepository,
       operation: operationRepository,
       saving: savingRepository,
+      loan: loanRepository,
     },
 
     services: {

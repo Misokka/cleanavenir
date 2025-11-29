@@ -1,9 +1,12 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { Typography } from '../atoms/Typography';
+import Link from "next/link";
+import { useLocale } from "next-intl";
 
 export function Footer() {
   const t = useTranslations("Footer");
+  const locale = useLocale();
 
   return (
     <footer className="bg-clean-dark text-white py-12">
@@ -28,18 +31,18 @@ export function Footer() {
               Navigation
             </Typography>
             <div className="space-y-2">
-              <button className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
+              <Link href={`/${locale}/about`} className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
                 {t('about')}
-              </button>
-              <button className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
+              </Link>
+              <Link href={`/${locale}/contact`} className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
                 {t('contact')}
-              </button>
-              <button className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
+              </Link>
+              <Link href={`/${locale}/legal`} className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
                 {t('legal')}
-              </button>
-              <button className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
+              </Link>
+              <Link href={`/${locale}/privacy`} className="block text-white opacity-80 hover:opacity-100 transition-opacity text-left">
                 {t('privacy')}
-              </button>
+              </Link>
             </div>
           </div>
 

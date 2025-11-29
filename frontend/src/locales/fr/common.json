@@ -58,6 +58,32 @@
     "privacy": "Confidentialité",
     "contact": "Contact"
   },
+  "About": {
+    "title": "À propos de Clean Avenir",
+    "intro": "Clean Avenir est une banque moderne, conçue pour offrir une expérience simple, transparente et responsable à tous ses clients.",
+    "ourVisionTitle": "Notre vision",
+    "ourVisionText": "Mettre la technologie au service de la finance pour rendre la gestion de l'argent plus accessible, plus sûre et plus durable.",
+    "ourValuesTitle": "Nos valeurs",
+    "ourValuesText": "Transparence, sécurité, simplicité et impact positif. Nous construisons des services qui respectent nos clients et leur environnement."
+  },
+  "Contact": {
+    "title": "Contact",
+    "intro": "Vous pouvez nous joindre via les coordonnées ci-dessous.",
+    "email": "Email",
+    "phone": "Téléphone"
+  },
+  "Legal": {
+    "title": "Mentions légales",
+    "intro": "Informations légales et notices de Clean Avenir.",
+    "companyInfo": "Clean Avenir — Société fictive à des fins de démonstration.",
+    "legalNotice": "Les informations présentées sur ce site sont fournies à titre indicatif."
+  },
+  "Privacy": {
+    "title": "Confidentialité",
+    "intro": "Découvrez comment nous collectons et utilisons vos données.",
+    "dataUsage": "Vos données sont utilisées pour vous fournir des services bancaires sécurisés.",
+    "rights": "Vous disposez de droits d'accès, de rectification et d'effacement."
+  },
   "Accounts": {
     "types": {
       "checking": "Compte Courant",

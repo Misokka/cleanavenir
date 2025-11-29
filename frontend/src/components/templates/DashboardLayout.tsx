@@ -29,16 +29,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         isActive: pathname === `/${locale}/client/dashboard`,
       },
       {
-        href: `/${locale}/client/dashboard/accounts`,
+        href: `/${locale}/dashboard/accounts`,
         label: t('navigation.accounts'),
         icon: '💳',
-        isActive: pathname.startsWith(`/${locale}/client/dashboard/accounts`),
+        isActive: pathname.startsWith(`/${locale}/dashboard/accounts`),
       },
       {
-        href: `/${locale}/client/dashboard/savings`,
+        href: `/${locale}/dashboard/savings`,
         label: t('navigation.savings'),
         icon: '💰',
-        isActive: pathname.startsWith(`/${locale}/client/dashboard/savings`),
+        isActive: pathname.startsWith(`/${locale}/dashboard/savings`),
       },
       {
         href: `/${locale}/client/dashboard/loans`,
@@ -47,10 +47,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         isActive: pathname.startsWith(`/${locale}/client/dashboard/loans`),
       },
       {
-        href: `/${locale}/client/dashboard/operations`,
+        href: `/${locale}/dashboard/operations/history`,
         label: 'Opérations',
         icon: '📊',
-        isActive: pathname.startsWith(`/${locale}/client/dashboard/operations`),
+        isActive: pathname.startsWith(`/${locale}/dashboard/operations`),
       },
     ];
 
@@ -257,8 +257,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     
     // Client routes
     if (pathname === `/${locale}/client/dashboard`) return t('overview.title');
-    if (pathname.startsWith(`/${locale}/client/dashboard/accounts`)) return t('accounts.title');
-    if (pathname.startsWith(`/${locale}/client/dashboard/savings`)) return t('savings.title');
+    if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
+    if (pathname.startsWith(`/${locale}/dashboard/savings`)) return t('savings.title');
     if (pathname.startsWith(`/${locale}/client/dashboard/loans`)) return 'Mes prêts';
     if (pathname.startsWith(`/${locale}/client/dashboard/operations`)) return 'Opérations';
     

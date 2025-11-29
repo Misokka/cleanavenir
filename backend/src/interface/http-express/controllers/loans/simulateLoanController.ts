@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
-import { getContainer } from '../../../../infrastructure/bootstrap/instance';
+// No container use case available: compute simulation inline
 
 export const simulateLoanController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -23,24 +23,30 @@ export const simulateLoanController = asyncHandler(
       return;
     }
 
-    const container = getContainer();
-    const result = await container.useCases.client.loan.simulate.execute({
-      amount,
-      durationInMonth,
-      annualInterestRate,
-      annualInsuranceRate,
-    });
+    // Inputs: amount (in cents), rates in basis points (100 = 1%)
+    const principal = amount; // cents
+    const n = durationInMonth;
+    const rMonthly = (annualInterestRate / 100) / 12 / 100; // basis points -> percent -> monthly
+    const insuranceMonthlyRate = (annualInsuranceRate / 100) / 12 / 100;
 
-    if (!result.ok) {
-      res.status(500).json({
-        error: 'INTERNAL_ERROR',
-        message: result.error.message,
-      });
-      return;
-    }
+    const monthlyPaymentWithoutInsurance = rMonthly > 0
+      ? Math.round(principal * (rMonthly / (1 - Math.pow(1 + rMonthly, -n))))
+      : Math.round(principal / n);
+
+    const insuranceMonthly = Math.round(principal * insuranceMonthlyRate);
+    const monthlyPayment = monthlyPaymentWithoutInsurance + insuranceMonthly;
+
+    const totalCost = monthlyPayment * n;
+    const totalInterest = Math.max(totalCost - principal - insuranceMonthly * n, 0);
+    const totalInsurance = insuranceMonthly * n;
 
     res.json({
-      simulation: result.value,
+      simulation: {
+        monthlyPayment,
+        totalCost,
+        totalInterest,
+        totalInsurance,
+      },
     });
   }
 );
