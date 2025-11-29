@@ -13,6 +13,7 @@ import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useAccountWithOperations } from '../../../../../features/account/useAccountWithOperations';
 import { formatCurrency, formatDate, maskIBAN } from '../../../../../lib/formatters';
 import { formatIban } from '../../../../../utils/formatIban';
+import { accountService } from '@/infrastructure/web';
 
 export default function AccountDetailPage() {
   const router = useRouter();
@@ -152,8 +153,24 @@ export default function AccountDetailPage() {
           >
            Supprimer
           </Button>
-          <Button variant="outline">
-            Télécharger RIB
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const blob = await accountService.downloadRib(params.id as string);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RIB-${account.label}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch (e) {
+                console.error('Téléchargement du RIB échoué:', e);
+                alert('RIB introuvable ou indisponible pour ce compte.');
+              }
+            }}
+          >
+            Télécharger le RIB
           </Button>
           <Button variant="outline">
             Historique complet

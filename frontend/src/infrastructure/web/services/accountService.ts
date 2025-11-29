@@ -168,6 +168,42 @@ export class AccountService {
       throw error;
     }
   }
+
+  async downloadRib(accountId: string): Promise<Blob> {
+    if (!accountId) {
+      throw new Error('ID de compte requis');
+    }
+
+    try {
+      // Récupère le RIB (JSON) depuis l'API, puis construit un Blob téléchargeable
+      const response = await httpClient.get(
+        `${API_ENDPOINTS.ACCOUNTS.DETAILS(accountId)}/rib`
+      );
+
+      const data = response.data as {
+        holderName: string;
+        iban: string;
+        bic: string;
+        bankName: string;
+        accountLabel: string;
+      };
+
+      const ribText = [
+        `Banque: ${data.bankName}`,
+        `Titulaire: ${data.holderName}`,
+        `Libellé du compte: ${data.accountLabel}`,
+        `IBAN: ${data.iban}`,
+        `BIC: ${data.bic}`,
+      ].join('\n');
+
+      return new Blob([ribText], { type: 'text/plain;charset=utf-8' });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('404')) {
+        throw new NotFoundError(`RIB introuvable pour le compte ${accountId}`, 'rib');
+      }
+      throw error;
+    }
+  }
 }
 
 export const accountService = new AccountService();
