@@ -1,8 +1,9 @@
 import { eq } from 'drizzle-orm';
 import { loans } from '../../drizzle/schema';
 import { ok, err } from '../../../shared/Result';
+import type { LoanRepository } from '../../../application/ports/repositories/LoanRepository';
 
-export class LoanRepositoryDrizzle {
+export class LoanRepositoryDrizzle implements LoanRepository {
   constructor(private db: any) {}
 
   async save(loan: any) {
@@ -17,9 +18,19 @@ export class LoanRepositoryDrizzle {
   async findById(id: string) {
     try {
       const row = await this.db.select().from(loans).where(eq(loans.id, id)).limit(1);
-      return ok(row?.[0] ?? null);
+      if (!row?.[0]) return err(new Error('Loan not found'));
+      return ok(row[0] as any);
     } catch (e: any) {
       return err(new Error(`Could not find loan by id: ${e.message}`));
+    }
+  }
+
+  async findAllByUserId(userId: string) {
+    try {
+      const rows = await this.db.select().from(loans).where(eq(loans.clientId, userId));
+      return ok(rows as any);
+    } catch (e: any) {
+      return err(new Error(`Could not list loans: ${e.message}`));
     }
   }
 }
