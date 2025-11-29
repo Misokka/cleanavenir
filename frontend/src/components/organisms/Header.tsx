@@ -4,11 +4,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
+import { useAuth } from '../../contexts/AuthProvider';
 
 export function Header() {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("Header");
+  const { isAuthenticated } = useAuth();
 
   const currentLocale = pathname.split('/')[1] || 'en'; 
 
@@ -74,17 +76,20 @@ export function Header() {
                 EN
               </button>
             </div>
-            
-            <Link href={`/${locale}/auth/login`}>
-              <Button variant="outline" size="sm">
-                {t('login')}
-              </Button>
-            </Link>
-            <Link href={`/${locale}/auth/register`}>
-              <Button size="sm">
-                {t('signup')}
-              </Button>
-            </Link>
+            {!isAuthenticated && (
+              <>
+                <Link href={`/${locale}/auth/login`}>
+                  <Button variant="outline" size="sm">
+                    {t('login')}
+                  </Button>
+                </Link>
+                <Link href={`/${locale}/auth/register`}>
+                  <Button size="sm">
+                    {t('signup')}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
