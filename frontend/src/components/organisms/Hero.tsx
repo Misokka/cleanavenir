@@ -7,7 +7,7 @@ export const Hero = () => {
   const t = useTranslations('Home.hero');
 
   return (
-    <section className="bg-gradient-to-br from-clean-dark to-clean-secondary text-white py-20 lg:py-32">
+    <section id="hero" className="bg-gradient-to-br from-clean-dark to-clean-secondary text-white py-20 lg:py-32">
       <div className="container mx-auto px-6 text-center">
         <Typography variant="h1" color="white" className="mb-6 max-w-4xl mx-auto">
           {t('title')}

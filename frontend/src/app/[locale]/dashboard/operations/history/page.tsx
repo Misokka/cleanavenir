@@ -6,6 +6,7 @@ import { DashboardLayout } from '../../../../../components/templates/DashboardLa
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
+import { OperationsHistorySkeleton } from '../../../../../components/molecules/OperationSkeleton';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useOperationsHistory } from '../../../../../features/operations/useOperationsHistory';
 import { useGetAccounts } from '../../../../../features/account/useGetAccounts';
@@ -30,8 +31,24 @@ export default function OperationsHistoryPage() {
     }
   }, [authLoading, isAuthenticated, router, locale]);
 
-  if (authLoading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <OperationsHistorySkeleton />
+      </DashboardLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
+  }
+
+  if (loading && (!operations || operations.length === 0)) {
+    return (
+      <DashboardLayout>
+        <OperationsHistorySkeleton />
+      </DashboardLayout>
+    );
   }
 
   const formatCurrency = (amount: number) => {

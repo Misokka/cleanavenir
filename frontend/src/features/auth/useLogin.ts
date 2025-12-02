@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { authService } from '@/infrastructure/web/services/authService';
+import { useAuth } from '@/contexts/AuthProvider';
 import { 
   LoginRequest, 
   AuthResponse, 
@@ -73,6 +74,7 @@ export function useLogin() {
 
 export function useLogout() {
   const [loading, setLoading] = useState(false);
+  const { clearUser } = useAuth();
 
   const logout = useCallback(async (): Promise<void> => {
     setLoading(true);
@@ -80,18 +82,26 @@ export function useLogout() {
     try {
       await authService.logout();
       
-      if (typeof globalThis.window !== 'undefined') {
-        globalThis.window.location.href = '/';
+      authService.clearAuthToken();
+      
+      clearUser();
+      
+      if (globalThis.window !== undefined) {
+        globalThis.window.location.href = '/fr/auth/login';
       }
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
-      if (typeof globalThis.window !== 'undefined') {
-        globalThis.window.location.href = '/';
+      
+      authService.clearAuthToken();
+      clearUser();
+      
+      if (globalThis.window !== undefined) {
+        globalThis.window.location.href = '/fr/auth/login';
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [clearUser]);
 
   return {
     logout,

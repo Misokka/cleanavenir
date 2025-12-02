@@ -22,7 +22,7 @@ export default function StatisticsPage() {
         <div className="flex justify-between items-center">
           <div>
             <Typography variant="h1" className="mb-2">
-              📊 Statistiques Générales
+              Statistiques Générales
             </Typography>
             <Typography variant="body" color="muted">
               Vue d&apos;ensemble des données de la plateforme

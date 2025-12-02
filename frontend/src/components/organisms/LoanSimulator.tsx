@@ -158,7 +158,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
       {simulation && (
         <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
           <Typography variant="h4" className="mb-6 text-blue-900">
-            📊 Résultat de la simulation
+            Résultat de la simulation
           </Typography>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -201,7 +201,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
           <div className="mt-6 bg-blue-100 rounded-lg p-4">
             <Typography variant="caption" className="text-blue-900">
-              💡 <strong>Remarque :</strong> Cette simulation est indicative. 
+              <strong>Remarque :</strong> Cette simulation est indicative. 
               Le taux final peut varier selon votre profil et les conditions du marché.
             </Typography>
           </div>

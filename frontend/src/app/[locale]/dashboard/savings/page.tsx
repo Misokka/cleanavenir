@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { DashboardLayout } from '../../../../components/templates/DashboardLayout';
-import { SavingsOverview } from '../../../../components/organisms/SavingsOverview';
+import { SavingsPageClient } from './SavingsPageClient';
 
 interface SavingsPageProps {
   readonly params: Promise<{ locale: string }>;
@@ -34,13 +33,5 @@ export default async function SavingsPage({ params }: SavingsPageProps) {
     notFound();
   }
 
-  return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        <SavingsOverview 
-          showCreateButton={true}
-        />
-      </div>
-    </DashboardLayout>
-  );
+  return <SavingsPageClient locale={locale} />;
 }

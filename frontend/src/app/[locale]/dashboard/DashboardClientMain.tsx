@@ -8,12 +8,24 @@ import { DashboardAccountsOverview } from '../../../components/organisms/Dashboa
 import { RecentOperations } from '../../../components/organisms/RecentOperations';
 import { SavingsOverview } from '../../../components/organisms/SavingsOverview';
 import { Button } from '../../../components/atoms/Button';
+import { DashboardSkeleton } from '../../../components/molecules/DashboardSkeleton';
+import { useAuth } from '../../../contexts/AuthProvider';
 
 interface DashboardClientMainProps {
   locale: string;
 }
 
 export const DashboardClientMain: React.FC<DashboardClientMainProps> = ({ locale }) => {
+  const { loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <DashboardSkeleton />
+      </DashboardLayout>
+    );
+  }
+  
   return (
     <DashboardLayout>
       <DashboardHeader />
