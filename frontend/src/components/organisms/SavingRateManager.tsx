@@ -19,12 +19,11 @@ export const SavingRateManager: React.FC = () => {
   return (
     <Card>
       <Typography variant="h4" className="mb-4">
-        ⚙️ Gestion des taux d&apos;épargne
+        Gestion des taux d&apos;épargne
       </Typography>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Taux de base */}
           <div>
             <label className="block mb-2">
               <Typography variant="body" className="font-medium">
@@ -60,7 +59,6 @@ export const SavingRateManager: React.FC = () => {
             </div>
           </div>
 
-          {/* Taux premium */}
           <div>
             <label className="block mb-2">
               <Typography variant="body" className="font-medium">
@@ -97,10 +95,9 @@ export const SavingRateManager: React.FC = () => {
           </div>
         </div>
 
-        {/* Aperçu */}
         <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-gray-200 rounded-lg p-4">
           <Typography variant="caption" className="mb-2 block font-medium">
-            📊 Aperçu des gains annuels
+            Aperçu des gains annuels
           </Typography>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -122,7 +119,6 @@ export const SavingRateManager: React.FC = () => {
           </div>
         </div>
 
-        {/* Validation */}
         {baseRate >= premiumRate && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <Typography variant="caption" className="text-yellow-800">
@@ -131,7 +127,6 @@ export const SavingRateManager: React.FC = () => {
           </div>
         )}
 
-        {/* Bouton de soumission */}
         <div className="flex justify-end">
           <Button type="submit" disabled={isLoading || baseRate >= premiumRate}>
             {isLoading ? 'Mise à jour en cours...' : '💾 Sauvegarder les taux'}

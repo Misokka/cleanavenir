@@ -6,6 +6,7 @@ import { DashboardLayout } from '../../../../../components/templates/DashboardLa
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
+import { TransferPageSkeleton } from '../../../../../components/molecules/OperationSkeleton';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useToast } from '../../../../../contexts/ToastProvider';
 import { useGetAccounts } from '../../../../../features/account/useGetAccounts';
@@ -91,8 +92,24 @@ export default function TransferPage() {
     });
   };
 
-  if (authLoading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <TransferPageSkeleton />
+      </DashboardLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
+  }
+
+  if (accountsLoading) {
+    return (
+      <DashboardLayout>
+        <TransferPageSkeleton />
+      </DashboardLayout>
+    );
   }
 
   const fromAccount = accounts?.find((acc) => acc.id === formData.fromAccountId);

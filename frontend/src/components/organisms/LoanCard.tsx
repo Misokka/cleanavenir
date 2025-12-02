@@ -81,7 +81,6 @@ export const LoanCard: React.FC<LoanCardProps> = ({ loan, onClick }) => {
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <span className="text-3xl">💰</span>
           <div>
             <Typography variant="h4" className="mb-1">
               Prêt n°{loan.id.slice(0, 8)}
@@ -140,7 +139,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({ loan, onClick }) => {
           {loan.nextPaymentDate && (
             <div className="bg-blue-50 rounded-lg p-3 mt-4">
               <Typography variant="caption" className="text-blue-800">
-                📅 Prochain paiement : {formatDate(loan.nextPaymentDate)}
+                Prochain paiement : {formatDate(loan.nextPaymentDate)}
               </Typography>
             </div>
           )}
@@ -150,7 +149,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({ loan, onClick }) => {
       {loan.status === 'PENDING' && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
           <Typography variant="caption" className="text-yellow-800">
-            ⏳ Votre demande est en cours d'examen par nos conseillers
+            Votre demande est en cours d'examen par nos conseillers
           </Typography>
         </div>
       )}
@@ -158,7 +157,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({ loan, onClick }) => {
       {loan.status === 'CLOSED' && loan.closedAt && (
         <div className="bg-gray-50 rounded-lg p-3 mt-4">
           <Typography variant="caption" className="text-gray-700">
-            🎉 Prêt remboursé le {formatDate(loan.closedAt)}
+            Prêt remboursé le {formatDate(loan.closedAt)}
           </Typography>
         </div>
       )}

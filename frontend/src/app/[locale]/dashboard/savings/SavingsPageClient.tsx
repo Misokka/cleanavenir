@@ -3,15 +3,15 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '../../../../components/templates/DashboardLayout';
-import { DashboardAccountsOverview } from '../../../../components/organisms/DashboardAccountsOverview';
-import { AccountListSkeleton } from '../../../../components/molecules/AccountSkeleton';
+import { SavingsOverview } from '../../../../components/organisms/SavingsOverview';
+import { SavingListSkeleton } from '../../../../components/molecules/SavingSkeleton';
 import { useAuth } from '../../../../contexts/AuthProvider';
 
-interface AccountsPageClientProps {
+interface SavingsPageClientProps {
   readonly locale: string;
 }
 
-function AccountsPageClient({ locale }: AccountsPageClientProps) {
+export function SavingsPageClient({ locale }: SavingsPageClientProps) {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
 
@@ -24,7 +24,7 @@ function AccountsPageClient({ locale }: AccountsPageClientProps) {
   if (loading) {
     return (
       <DashboardLayout>
-        <AccountListSkeleton />
+        <SavingListSkeleton />
       </DashboardLayout>
     );
   }
@@ -36,13 +36,12 @@ function AccountsPageClient({ locale }: AccountsPageClientProps) {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <DashboardAccountsOverview 
-          showTotal={false}
-          showViewAll={false}
+        <SavingsOverview 
+          showCreateButton={true}
         />
       </div>
     </DashboardLayout>
   );
 }
 
-export default AccountsPageClient;
+export default SavingsPageClient;

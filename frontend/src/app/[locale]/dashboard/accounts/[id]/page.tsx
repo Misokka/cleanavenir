@@ -8,7 +8,7 @@ import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
 import { RenameAccountModal } from '../../../../../components/molecules/RenameAccountModal';
 import { DeleteAccountModal } from '../../../../../components/molecules/DeleteAccountModal';
-import { RecentOperations } from '../../../../../components/organisms/RecentOperations';
+import { AccountDetailSkeleton } from '../../../../../components/molecules/AccountSkeleton';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useAccountWithOperations } from '../../../../../features/account/useAccountWithOperations';
 import { formatCurrency, formatDate, maskIBAN } from '../../../../../lib/formatters';
@@ -32,21 +32,22 @@ export default function AccountDetailPage() {
     }
   }, [authLoading, isAuthenticated, router, locale]);
 
-  if (authLoading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <AccountDetailSkeleton />
+      </DashboardLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-8">
-          <div className="h-40 bg-gray-200 rounded-xl animate-pulse"></div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
-            ))}
-          </div>
-        </div>
+        <AccountDetailSkeleton />
       </DashboardLayout>
     );
   }
@@ -153,24 +154,8 @@ export default function AccountDetailPage() {
           >
            Supprimer
           </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                const blob = await accountService.downloadRib(params.id as string);
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `RIB-${account.label}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-              } catch (e) {
-                console.error('Téléchargement du RIB échoué:', e);
-                alert('RIB introuvable ou indisponible pour ce compte.');
-              }
-            }}
-          >
-            Télécharger le RIB
+          <Button variant="outline">
+            Télécharger RIB
           </Button>
           <Button variant="outline">
             Historique complet

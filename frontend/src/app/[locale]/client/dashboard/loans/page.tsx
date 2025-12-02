@@ -54,9 +54,6 @@ export default function LoansPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <Typography variant="h2" className="mb-2">
-              Mes Prêts
-            </Typography>
             <Typography variant="body" color="muted">
               Gérez vos demandes de prêt et suivez vos remboursements
             </Typography>
@@ -64,7 +61,7 @@ export default function LoansPage() {
           <div className="flex space-x-3">
             <Link href={`/${locale}/client/dashboard/loans/simulate`}>
               <Button variant="outline" size="sm">
-                📊 Simuler
+                Simuler
               </Button>
             </Link>
             <Link href={`/${locale}/client/dashboard/loans/request`}>
@@ -77,7 +74,6 @@ export default function LoansPage() {
 
         {loans && loans.length > 0 ? (
           <>
-            {/* Statistiques */}
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="bg-blue-50 border-blue-200">
                 <Typography variant="caption" color="muted" className="mb-1">
@@ -105,7 +101,6 @@ export default function LoansPage() {
               </Card>
             </div>
 
-            {/* Liste des prêts */}
             <div>
               <Typography variant="h3" className="mb-4">
                 Tous mes prêts ({loans.length})
@@ -119,7 +114,6 @@ export default function LoansPage() {
           </>
         ) : (
           <Card className="text-center py-16">
-            <div className="text-6xl mb-6">💰</div>
             <Typography variant="h3" className="mb-4">
               Aucun prêt pour le moment
             </Typography>
@@ -130,7 +124,7 @@ export default function LoansPage() {
             <div className="flex justify-center space-x-4">
               <Link href={`/${locale}/client/dashboard/loans/simulate`}>
                 <Button variant="outline">
-                  📊 Simuler un prêt
+                  Simuler un prêt
                 </Button>
               </Link>
               <Link href={`/${locale}/client/dashboard/loans/request`}>

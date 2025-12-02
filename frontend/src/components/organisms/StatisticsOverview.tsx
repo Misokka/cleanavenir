@@ -42,7 +42,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
     {
       title: 'Prêts Actifs',
       value: statistics.activeLoans,
-      icon: '💰',
+      icon: '',
       color: 'orange',
       description: 'Crédits en cours',
     },
@@ -84,7 +84,6 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
         ))}
       </div>
 
-      {/* Carte montant total des prêts */}
       <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
         <div className="text-center py-6">
           <Typography variant="caption" className="text-white opacity-90 mb-2">
@@ -99,11 +98,10 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
         </div>
       </Card>
 
-      {/* Ratios */}
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
           <Typography variant="h4" className="mb-4">
-            📊 Ratios clés
+            Ratios clés
           </Typography>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -132,7 +130,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
 
         <Card className="bg-yellow-50 border-yellow-200">
           <Typography variant="h4" className="mb-4 text-yellow-900">
-            ⚠️ Alertes
+            Alertes
           </Typography>
           <div className="space-y-2">
             {statistics.activeLoans > 50 && (

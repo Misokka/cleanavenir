@@ -79,7 +79,6 @@ export default function AdvisorDashboardClient() {
             <Typography variant="caption" color="muted">
               Montant total
             </Typography>
-            <span className="text-2xl">💰</span>
           </div>
           <Typography variant="h2" className="font-bold text-purple-600">
             {formatCurrency(stats.totalLoanAmount)}
@@ -90,10 +89,9 @@ export default function AdvisorDashboardClient() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
       <Card>
         <Typography variant="h3" className="mb-4">
-          🚀 Actions rapides
+          Actions rapides
         </Typography>
         <div className="grid md:grid-cols-2 gap-4">
           <Link href={`/${locale}/advisor/clients`}>
@@ -103,16 +101,15 @@ export default function AdvisorDashboardClient() {
           </Link>
           <Link href={`/${locale}/advisor/loans`}>
             <Button variant="secondary" className="w-full">
-              ✅ Prêts à valider ({stats.pendingLoans})
+              Prêts à valider ({stats.pendingLoans})
             </Button>
           </Link>
         </div>
       </Card>
 
-      {/* Recent Activity */}
       <Card>
         <Typography variant="h3" className="mb-4">
-          📋 Activité récente
+          Activité récente
         </Typography>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
@@ -157,7 +154,6 @@ export default function AdvisorDashboardClient() {
         </div>
       </Card>
 
-      {/* Info Note */}
       <Card className="bg-blue-50 border-blue-200">
         <div className="flex items-start space-x-3">
           <span className="text-2xl">ℹ️</span>

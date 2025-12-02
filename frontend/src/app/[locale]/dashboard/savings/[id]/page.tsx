@@ -6,6 +6,7 @@ import { DashboardLayout } from '../../../../../components/templates/DashboardLa
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
+import { SavingDetailSkeleton } from '../../../../../components/molecules/SavingSkeleton';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useGetSavingDetails } from '../../../../../features/savings/useGetSavings';
 import { useGetAccounts } from '../../../../../features/account/useGetAccounts';
@@ -27,21 +28,22 @@ export default function SavingDetailPage() {
     }
   }, [authLoading, isAuthenticated, router, locale]);
 
-  if (authLoading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <DashboardLayout>
+        <SavingDetailSkeleton />
+      </DashboardLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-8">
-          <div className="h-40 bg-gray-200 rounded-xl animate-pulse"></div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
-            ))}
-          </div>
-        </div>
+        <SavingDetailSkeleton />
       </DashboardLayout>
     );
   }
