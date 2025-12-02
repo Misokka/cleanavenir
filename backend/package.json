@@ -52,6 +52,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/node": "^24.9.1",
+    "@types/pdfkit": "^0.17.4",
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
@@ -83,9 +84,10 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^4.2.1",
+    "pdfkit": "^0.17.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.18.3",
-    "node-cron": "^4.2.1"
+    "winston": "^3.18.3"
   }
 }

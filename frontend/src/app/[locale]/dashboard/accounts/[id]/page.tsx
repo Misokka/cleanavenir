@@ -157,16 +157,18 @@ export default function AccountDetailPage() {
             variant="outline"
             onClick={async () => {
               try {
+                console.log('Téléchargement RIB pour compte:', params.id);
                 const blob = await accountService.downloadRib(params.id as string);
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `RIB-${account.label}.txt`;
+                a.download = `RIB-${account.label}.pdf`;
                 a.click();
                 URL.revokeObjectURL(url);
               } catch (e) {
                 console.error('Téléchargement du RIB échoué:', e);
-                alert('RIB introuvable ou indisponible pour ce compte.');
+                const errorMessage = e instanceof Error ? e.message : 'Erreur inconnue';
+                alert(`RIB introuvable ou indisponible: ${errorMessage}`);
               }
             }}
           >
