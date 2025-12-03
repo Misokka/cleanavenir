@@ -20,6 +20,6 @@ router.get('/:id', getAccountController);
 router.patch('/:id', renameAccountController);
 router.delete('/:id', deleteAccountController);
 router.get('/:id/operations', listAccountOperationsController);
-router.get('/:id/rib', getRibController);
+router.get('/:id/rib', requireAuth, getRibController);
 
 export const accountRoutes = router;

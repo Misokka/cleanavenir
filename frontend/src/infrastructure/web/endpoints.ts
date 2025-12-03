@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   ACCOUNTS: {
     LIST: '/accounts',
     DETAILS: (id: string) => `/accounts/${id}`,
+    RIB: (id: string) => `/accounts/${id}/rib`, // Ajouter si manquant
     CREATE: '/accounts',
     UPDATE: (id: string) => `/accounts/${id}`,
     DELETE: (id: string) => `/accounts/${id}`,

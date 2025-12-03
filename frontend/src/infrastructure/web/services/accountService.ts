@@ -175,32 +175,44 @@ export class AccountService {
     }
 
     try {
-      // Récupère le RIB (JSON) depuis l'API, puis construit un Blob téléchargeable
-      const response = await httpClient.get(
-        `${API_ENDPOINTS.ACCOUNTS.DETAILS(accountId)}/rib`
-      );
+      // Récupère le RIB en PDF directement depuis l'API
+      // On utilise fetch avec credentials: 'include' pour envoyer les cookies d'auth
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+      const endpoint = API_ENDPOINTS.ACCOUNTS.RIB(accountId);
+      const fullUrl = `${apiUrl}${endpoint}`;
+      
+      const response = await fetch(fullUrl, {
+        method: 'GET',
+        credentials: 'include', // Important : envoie les cookies d'authentification
+        headers: {
+          'Accept': 'application/pdf',
+        },
+      });
 
-      const data = response.data as {
-        holderName: string;
-        iban: string;
-        bic: string;
-        bankName: string;
-        accountLabel: string;
-      };
-
-      const ribText = [
-        `Banque: ${data.bankName}`,
-        `Titulaire: ${data.holderName}`,
-        `Libellé du compte: ${data.accountLabel}`,
-        `IBAN: ${data.iban}`,
-        `BIC: ${data.bic}`,
-      ].join('\n');
-
-      return new Blob([ribText], { type: 'text/plain;charset=utf-8' });
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('404')) {
-        throw new NotFoundError(`RIB introuvable pour le compte ${accountId}`, 'rib');
+      if (!response.ok) {
+        // Essayer de lire le message d'erreur du serveur
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          console.error('Erreur serveur:', errorData);
+          throw new Error(errorData.message || `Erreur ${response.status}`);
+        }
+        
+        if (response.status === 404) {
+          throw new NotFoundError(`RIB introuvable pour le compte ${accountId}`, 'rib');
+        }
+        if (response.status === 401) {
+          throw new Error('Non authentifié - veuillez vous reconnecter');
+        }
+        throw new Error(`Erreur lors du téléchargement du RIB: ${response.status}`);
       }
+
+      return await response.blob();
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      console.error('Erreur lors du téléchargement du RIB:', error);
       throw error;
     }
   }

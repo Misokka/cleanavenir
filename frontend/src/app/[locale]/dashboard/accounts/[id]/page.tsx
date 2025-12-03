@@ -154,8 +154,26 @@ export default function AccountDetailPage() {
           >
            Supprimer
           </Button>
-          <Button variant="outline">
-            Télécharger RIB
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                console.log('Téléchargement RIB pour compte:', params.id);
+                const blob = await accountService.downloadRib(params.id as string);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RIB-${account.label}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch (e) {
+                console.error('Téléchargement du RIB échoué:', e);
+                const errorMessage = e instanceof Error ? e.message : 'Erreur inconnue';
+                alert(`RIB introuvable ou indisponible: ${errorMessage}`);
+              }
+            }}
+          >
+            Télécharger le RIB
           </Button>
           <Button variant="outline">
             Historique complet
