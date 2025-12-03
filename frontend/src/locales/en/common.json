@@ -152,7 +152,14 @@
       "overview": "Overview",
       "accounts": "Accounts",
       "savings": "Savings",
-      "logout": "Logout"
+      "logout": "Logout",
+      "director": {
+        "overview": "Overview",
+        "accounts": "Client Accounts",
+        "savings": "Savings Rate",
+        "companies": "Companies",
+        "stocks": "Stocks"
+      }
     },
     "header": {
       "greeting": "Hello, {firstName}",
@@ -222,6 +229,196 @@
       "amount": "Amount",
       "category": "Category",
       "recentTransactionsWillAppear": "Your recent transactions will appear here"
+    }
+  },
+  "Director": {
+    "dashboard": {
+      "title": "Director Dashboard",
+      "stats": {
+        "totalClients": "Total Clients",
+        "totalAccounts": "Total Accounts",
+        "savingsRate": "Current Savings Rate",
+        "availableStocks": "Available Stocks"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "manageAccounts": "Manage accounts",
+        "manageAccountsDesc": "Ban, unban, delete",
+        "updateRate": "Update rate",
+        "updateRateDesc": "Current savings rate",
+        "manageCompanies": "Manage companies",
+        "manageCompaniesDesc": "Create, edit, delete"
+      }
+    },
+    "accounts": {
+      "title": "Client Accounts Management",
+      "list": {
+        "title": "Accounts list",
+        "search": "Search for an account...",
+        "filterAll": "All",
+        "filterActive": "Active",
+        "filterBanned": "Banned",
+        "noAccounts": "No accounts found",
+        "accountNumber": "Account #",
+        "clientName": "Client",
+        "type": "Type",
+        "balance": "Balance",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "banned": "Banned",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "ban": "Ban",
+        "unban": "Unban",
+        "rename": "Rename",
+        "delete": "Delete",
+        "view": "View details"
+      },
+      "modals": {
+        "banTitle": "Ban account",
+        "banMessage": "Are you sure you want to ban this account?",
+        "banReason": "Reason (optional)",
+        "unbanTitle": "Unban account",
+        "unbanMessage": "Are you sure you want to unban this account?",
+        "deleteTitle": "Delete account",
+        "deleteMessage": "This action is irreversible. Are you sure?",
+        "renameTitle": "Rename account",
+        "renameLabel": "New name",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      },
+      "toasts": {
+        "banSuccess": "Account banned successfully",
+        "banError": "Error banning account",
+        "unbanSuccess": "Account unbanned successfully",
+        "unbanError": "Error unbanning account",
+        "deleteSuccess": "Account deleted successfully",
+        "deleteError": "Error deleting account",
+        "renameSuccess": "Account renamed successfully",
+        "renameError": "Error renaming account"
+      }
+    },
+    "savings": {
+      "title": "Savings Rate Management",
+      "currentRate": {
+        "title": "Current Rate",
+        "value": "{rate}%",
+        "effectiveDate": "Effective since {date}",
+        "lastModified": "Last modified: {date}"
+      },
+      "updateForm": {
+        "title": "Update Rate",
+        "newRate": "New rate (%)",
+        "effectiveDate": "Effective date",
+        "reason": "Reason for change",
+        "submit": "Update",
+        "cancel": "Cancel"
+      },
+      "history": {
+        "title": "Change history",
+        "rate": "Rate",
+        "effectiveDate": "Effective date",
+        "modifiedBy": "Modified by",
+        "reason": "Reason",
+        "noHistory": "No history available"
+      },
+      "toasts": {
+        "updateSuccess": "Rate updated successfully",
+        "updateError": "Error updating rate",
+        "invalidRate": "Rate must be between 0 and 100"
+      }
+    },
+    "companies": {
+      "title": "Companies Management",
+      "list": {
+        "title": "Companies list",
+        "search": "Search for a company...",
+        "addNew": "New Company",
+        "name": "Name",
+        "description": "Description",
+        "createdAt": "Created on",
+        "actions": "Actions",
+        "noCompanies": "No companies found"
+      },
+      "form": {
+        "createTitle": "Create a company",
+        "editTitle": "Edit company",
+        "name": "Company name",
+        "description": "Description",
+        "submit": "Save",
+        "cancel": "Cancel"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "viewStocks": "View stocks"
+      },
+      "modals": {
+        "deleteTitle": "Delete company",
+        "deleteMessage": "Are you sure you want to delete this company? All associated stocks will also be deleted.",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      },
+      "toasts": {
+        "createSuccess": "Company created successfully",
+        "createError": "Error creating company",
+        "updateSuccess": "Company updated successfully",
+        "updateError": "Error updating company",
+        "deleteSuccess": "Company deleted successfully",
+        "deleteError": "Error deleting company"
+      }
+    },
+    "stocks": {
+      "title": "Stocks Management",
+      "list": {
+        "title": "Stocks list",
+        "search": "Search for a stock...",
+        "addNew": "New Stock",
+        "ticker": "Ticker",
+        "company": "Company",
+        "available": "Available",
+        "createdAt": "Created on",
+        "actions": "Actions",
+        "noStocks": "No stocks found"
+      },
+      "form": {
+        "createTitle": "Create a stock",
+        "editTitle": "Edit stock",
+        "company": "Company",
+        "ticker": "Ticker (ex: AAPL)",
+        "isAvailable": "Available for purchase",
+        "submit": "Save",
+        "cancel": "Cancel"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "toggleAvailability": "Toggle availability"
+      },
+      "availability": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "modals": {
+        "deleteTitle": "Delete stock",
+        "deleteMessage": "Are you sure you want to delete this stock?",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      },
+      "toasts": {
+        "createSuccess": "Stock created successfully",
+        "createError": "Error creating stock",
+        "updateSuccess": "Stock updated successfully",
+        "updateError": "Error updating stock",
+        "deleteSuccess": "Stock deleted successfully",
+        "deleteError": "Error deleting stock",
+        "toggleSuccess": "Availability updated",
+        "toggleError": "Error updating availability"
+      }
     }
   }
 }

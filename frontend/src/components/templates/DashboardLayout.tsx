@@ -98,22 +98,34 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
     const directorItems: NavigationItem[] = [
       {
-        href: `/${locale}/admin/statistics`,
-        label: 'Statistiques',
+        href: `/${locale}/director/dashboard`,
+        label: t('navigation.director.overview'),
         iconClass: 'fi fi-br-chart-histogram',
-        isActive: pathname.startsWith(`/${locale}/admin/statistics`),
+        isActive: pathname.startsWith(`/${locale}/director/dashboard`),
       },
       {
-        href: `/${locale}/admin/clients`,
-        label: 'Gestion clients',
+        href: `/${locale}/director/accounts`,
+        label: t('navigation.director.accounts'),
         iconClass: 'fi fi-br-users-alt',
-        isActive: pathname.startsWith(`/${locale}/admin/clients`),
+        isActive: pathname.startsWith(`/${locale}/director/accounts`),
       },
       {
-        href: `/${locale}/admin/settings`,
-        label: 'Paramètres',
-        iconClass: 'fi fi-br-settings',
-        isActive: pathname.startsWith(`/${locale}/admin/settings`),
+        href: `/${locale}/director/savings`,
+        label: t('navigation.director.savings'),
+        iconClass: 'fi fi-br-piggy-bank',
+        isActive: pathname.startsWith(`/${locale}/director/savings`),
+      },
+      {
+        href: `/${locale}/director/companies`,
+        label: t('navigation.director.companies'),
+        iconClass: 'fi fi-br-home-location-alt',
+        isActive: pathname.startsWith(`/${locale}/director/companies`),
+      },
+      {
+        href: `/${locale}/director/stocks`,
+        label: t('navigation.director.stocks'),
+        iconClass: 'fi fi-br-list-check',
+        isActive: pathname.startsWith(`/${locale}/director/stocks`),
       },
     ];
 
