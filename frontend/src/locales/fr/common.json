@@ -152,7 +152,14 @@
       "overview": "Accueil",
       "accounts": "Comptes",
       "savings": "Épargne",
-      "logout": "Déconnexion"
+      "logout": "Déconnexion",
+      "director": {
+        "overview": "Vue d'ensemble",
+        "accounts": "Comptes Clients",
+        "savings": "Taux Épargne",
+        "companies": "Entreprises",
+        "stocks": "Actions"
+      }
     },
     "header": {
       "greeting": "Bonjour, {firstName}",
@@ -222,6 +229,196 @@
       "amount": "Montant",
       "category": "Catégorie",
       "recentTransactionsWillAppear": "Vos dernières transactions apparaîtront ici"
+    }
+  },
+  "Director": {
+    "dashboard": {
+      "title": "Tableau de bord Directeur",
+      "stats": {
+        "totalClients": "Total Clients",
+        "totalAccounts": "Total Comptes",
+        "savingsRate": "Taux Épargne Actuel",
+        "availableStocks": "Actions Disponibles"
+      },
+      "quickActions": {
+        "title": "Actions Rapides",
+        "manageAccounts": "Gérer les comptes",
+        "manageAccountsDesc": "Bannir, débannir, supprimer",
+        "updateRate": "Modifier le taux",
+        "updateRateDesc": "Taux d'épargne actuel",
+        "manageCompanies": "Gérer les entreprises",
+        "manageCompaniesDesc": "Créer, modifier, supprimer"
+      }
+    },
+    "accounts": {
+      "title": "Gestion des Comptes Clients",
+      "list": {
+        "title": "Liste des comptes",
+        "search": "Rechercher un compte...",
+        "filterAll": "Tous",
+        "filterActive": "Actifs",
+        "filterBanned": "Bannis",
+        "noAccounts": "Aucun compte trouvé",
+        "accountNumber": "N° Compte",
+        "clientName": "Client",
+        "type": "Type",
+        "balance": "Solde",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Actif",
+        "banned": "Banni",
+        "inactive": "Inactif"
+      },
+      "actions": {
+        "ban": "Bannir",
+        "unban": "Débannir",
+        "rename": "Renommer",
+        "delete": "Supprimer",
+        "view": "Voir détails"
+      },
+      "modals": {
+        "banTitle": "Bannir le compte",
+        "banMessage": "Êtes-vous sûr de vouloir bannir ce compte ?",
+        "banReason": "Raison (optionnel)",
+        "unbanTitle": "Débannir le compte",
+        "unbanMessage": "Êtes-vous sûr de vouloir débannir ce compte ?",
+        "deleteTitle": "Supprimer le compte",
+        "deleteMessage": "Cette action est irréversible. Êtes-vous sûr ?",
+        "renameTitle": "Renommer le compte",
+        "renameLabel": "Nouveau nom",
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+      },
+      "toasts": {
+        "banSuccess": "Compte banni avec succès",
+        "banError": "Erreur lors du bannissement",
+        "unbanSuccess": "Compte débanni avec succès",
+        "unbanError": "Erreur lors du débannissement",
+        "deleteSuccess": "Compte supprimé avec succès",
+        "deleteError": "Erreur lors de la suppression",
+        "renameSuccess": "Compte renommé avec succès",
+        "renameError": "Erreur lors du renommage"
+      }
+    },
+    "savings": {
+      "title": "Gestion du Taux d'Épargne",
+      "currentRate": {
+        "title": "Taux Actuel",
+        "value": "{rate}%",
+        "effectiveDate": "En vigueur depuis le {date}",
+        "lastModified": "Dernière modification : {date}"
+      },
+      "updateForm": {
+        "title": "Modifier le Taux",
+        "newRate": "Nouveau taux (%)",
+        "effectiveDate": "Date d'effet",
+        "reason": "Raison du changement",
+        "submit": "Mettre à jour",
+        "cancel": "Annuler"
+      },
+      "history": {
+        "title": "Historique des modifications",
+        "rate": "Taux",
+        "effectiveDate": "Date d'effet",
+        "modifiedBy": "Modifié par",
+        "reason": "Raison",
+        "noHistory": "Aucun historique disponible"
+      },
+      "toasts": {
+        "updateSuccess": "Taux mis à jour avec succès",
+        "updateError": "Erreur lors de la mise à jour",
+        "invalidRate": "Le taux doit être entre 0 et 100"
+      }
+    },
+    "companies": {
+      "title": "Gestion des Entreprises",
+      "list": {
+        "title": "Liste des entreprises",
+        "search": "Rechercher une entreprise...",
+        "addNew": "Nouvelle Entreprise",
+        "name": "Nom",
+        "description": "Description",
+        "createdAt": "Créée le",
+        "actions": "Actions",
+        "noCompanies": "Aucune entreprise trouvée"
+      },
+      "form": {
+        "createTitle": "Créer une entreprise",
+        "editTitle": "Modifier l'entreprise",
+        "name": "Nom de l'entreprise",
+        "description": "Description",
+        "submit": "Enregistrer",
+        "cancel": "Annuler"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "viewStocks": "Voir les actions"
+      },
+      "modals": {
+        "deleteTitle": "Supprimer l'entreprise",
+        "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette entreprise ? Toutes les actions associées seront également supprimées.",
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+      },
+      "toasts": {
+        "createSuccess": "Entreprise créée avec succès",
+        "createError": "Erreur lors de la création",
+        "updateSuccess": "Entreprise modifiée avec succès",
+        "updateError": "Erreur lors de la modification",
+        "deleteSuccess": "Entreprise supprimée avec succès",
+        "deleteError": "Erreur lors de la suppression"
+      }
+    },
+    "stocks": {
+      "title": "Gestion des Actions",
+      "list": {
+        "title": "Liste des actions",
+        "search": "Rechercher une action...",
+        "addNew": "Nouvelle Action",
+        "ticker": "Ticker",
+        "company": "Entreprise",
+        "available": "Disponible",
+        "createdAt": "Créée le",
+        "actions": "Actions",
+        "noStocks": "Aucune action trouvée"
+      },
+      "form": {
+        "createTitle": "Créer une action",
+        "editTitle": "Modifier l'action",
+        "company": "Entreprise",
+        "ticker": "Ticker (ex: AAPL)",
+        "isAvailable": "Disponible à l'achat",
+        "submit": "Enregistrer",
+        "cancel": "Annuler"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "toggleAvailability": "Activer/Désactiver"
+      },
+      "availability": {
+        "yes": "Oui",
+        "no": "Non"
+      },
+      "modals": {
+        "deleteTitle": "Supprimer l'action",
+        "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette action ?",
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+      },
+      "toasts": {
+        "createSuccess": "Action créée avec succès",
+        "createError": "Erreur lors de la création",
+        "updateSuccess": "Action modifiée avec succès",
+        "updateError": "Erreur lors de la modification",
+        "deleteSuccess": "Action supprimée avec succès",
+        "deleteError": "Erreur lors de la suppression",
+        "toggleSuccess": "Disponibilité modifiée",
+        "toggleError": "Erreur lors du changement"
+      }
     }
   }
 }
