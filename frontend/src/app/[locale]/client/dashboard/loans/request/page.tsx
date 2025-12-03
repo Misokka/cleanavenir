@@ -50,7 +50,7 @@ export default async function RequestPage({ params }: RequestPageProps) {
             href={`/${locale}/client/dashboard/loans/simulate`}
             className="text-blue-600 hover:text-blue-700 text-sm font-medium"
           >
-            📊 Simuler d'abord
+            Simuler d'abord
           </Link>
         </div>
 
@@ -60,7 +60,7 @@ export default async function RequestPage({ params }: RequestPageProps) {
 
         <div className="max-w-2xl bg-blue-50 border border-blue-200 rounded-lg p-6">
           <Typography variant="h4" className="mb-3 text-blue-900">
-            📋 Processus de validation
+            Processus de validation
           </Typography>
           <ol className="space-y-2 text-sm text-blue-800">
             <li className="flex items-start">

@@ -1,15 +1,20 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { usePathname } from "next/navigation";
 import { Typography } from '../atoms/Typography';
 import Link from "next/link";
-import { useLocale } from "next-intl";
 
 export function Footer() {
   const t = useTranslations("Footer");
   const locale = useLocale();
+  const pathname = usePathname();
+  const hassidebar = pathname.includes('/dashboard') || 
+                      pathname.includes('/client') || 
+                      pathname.includes('/advisor') || 
+                      pathname.includes('/admin');
 
   return (
-    <footer className="bg-clean-dark text-white py-12">
+    <footer className={`bg-clean-dark text-white py-12 ${hassidebar ? 'lg:ml-64' : ''}`}>
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">

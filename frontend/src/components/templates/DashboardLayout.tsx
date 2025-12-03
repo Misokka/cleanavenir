@@ -1,11 +1,13 @@
 'use client';
 
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Typography } from '../atoms/Typography';
+import { Button } from '../atoms/Button';
 import { useAuth } from '@/features/auth/useAuth';
+import { useLogout } from '@/features/auth/useLogin';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -13,85 +15,104 @@ interface DashboardLayoutProps {
 
 type UserRole = 'CLIENT' | 'ADVISOR' | 'DIRECTOR';
 
+interface NavigationItem {
+  href: string;
+  label: string;
+  iconClass: string;
+  isActive: boolean;
+}
+
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const t = useTranslations('Dashboard');
   const locale = useLocale();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
+  const { logout, loading: logoutLoading } = useLogout();
 
-  const getNavigationItems = (role?: UserRole) => {
-    const clientItems = [
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  const getLogoutButtonText = () => {
+    if (logoutLoading) {
+      return locale === 'fr' ? 'Déconnexion...' : 'Logging out...';
+    }
+    return t('navigation.logout');
+  };
+
+  const getNavigationItems = (role?: UserRole): NavigationItem[] => {
+    const clientItems: NavigationItem[] = [
       {
         href: `/${locale}/client/dashboard`,
         label: t('navigation.overview'),
-        icon: '🏠',
+        iconClass: 'fi fi-br-home-location-alt',
         isActive: pathname === `/${locale}/client/dashboard`,
       },
       {
         href: `/${locale}/dashboard/accounts`,
         label: t('navigation.accounts'),
-        icon: '💳',
+        iconClass: 'fi fi-br-credit-card',
         isActive: pathname.startsWith(`/${locale}/dashboard/accounts`),
       },
       {
         href: `/${locale}/dashboard/savings`,
         label: t('navigation.savings'),
-        icon: '💰',
+        iconClass: 'fi fi-br-piggy-bank',
         isActive: pathname.startsWith(`/${locale}/dashboard/savings`),
       },
       {
         href: `/${locale}/client/dashboard/loans`,
         label: 'Prêts',
-        icon: '🏦',
+        iconClass: 'fi fi-br-hand-holding-usd',
         isActive: pathname.startsWith(`/${locale}/client/dashboard/loans`),
       },
       {
         href: `/${locale}/dashboard/operations/history`,
         label: 'Opérations',
-        icon: '📊',
+        iconClass: 'fi fi-br-list-check',
         isActive: pathname.startsWith(`/${locale}/dashboard/operations`),
       },
     ];
 
-    const advisorItems = [
+    const advisorItems: NavigationItem[] = [
       {
         href: `/${locale}/advisor/dashboard`,
         label: 'Vue d\'ensemble',
-        icon: '🏠',
+        iconClass: 'fi fi-br-home-location-alt',
         isActive: pathname === `/${locale}/advisor/dashboard`,
       },
       {
         href: `/${locale}/advisor/clients`,
         label: 'Mes clients',
-        icon: '👥',
+        iconClass: 'fi fi-br-users-alt',
         isActive: pathname.startsWith(`/${locale}/advisor/clients`),
       },
       {
         href: `/${locale}/advisor/loans`,
         label: 'Prêts à valider',
-        icon: '✅',
+        iconClass: 'fi fi-br-check-circle',
         isActive: pathname.startsWith(`/${locale}/advisor/loans`),
       },
     ];
 
-    const directorItems = [
+    const directorItems: NavigationItem[] = [
       {
         href: `/${locale}/admin/statistics`,
         label: 'Statistiques',
-        icon: '📊',
+        iconClass: 'fi fi-br-chart-histogram',
         isActive: pathname.startsWith(`/${locale}/admin/statistics`),
       },
       {
         href: `/${locale}/admin/clients`,
         label: 'Gestion clients',
-        icon: '👥',
+        iconClass: 'fi fi-br-users-alt',
         isActive: pathname.startsWith(`/${locale}/admin/clients`),
       },
       {
         href: `/${locale}/admin/settings`,
         label: 'Paramètres',
-        icon: '⚙️',
+        iconClass: 'fi fi-br-settings',
         isActive: pathname.startsWith(`/${locale}/admin/settings`),
       },
     ];
@@ -108,22 +129,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   };
 
   const navigationItems = getNavigationItems(user?.role as UserRole);
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      if (response.ok) {
-        window.location.href = `/${locale}/login`;
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      window.location.href = `/${locale}/login`;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-clean-light">
@@ -170,10 +175,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           {user && (
             <>
               <Typography variant="body" className="font-medium text-clean-dark">
-                {t('header.greeting', { firstName: user.firstName })}
+                {t('header.greeting', { firstName: user.firstname })}
               </Typography>
               <Typography variant="caption" color="muted">
-                {user.role === 'DIRECTOR' ? 'Directeur' : user.role === 'ADVISOR' ? 'Conseiller' : 'Client'}
+                {user.role === 'DIRECTOR' && 'Directeur'}
+                {user.role === 'ADVISOR' && 'Conseiller'}
+                {user.role === 'CLIENT' && 'Client'}
               </Typography>
             </>
           )}
@@ -194,7 +201,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                     }
                   `}
                 >
-                  <span className="text-xl">{item.icon}</span>
+                  <span className="flex-shrink-0">
+                    <i className={`${item.iconClass} ${item.isActive ? 'text-white' : 'text-clean-dark'}`} />
+                  </span>
                   <Typography variant="body" className={item.isActive ? 'text-white' : ''}>
                     {item.label}
                   </Typography>
@@ -202,18 +211,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               </li>
             ))}
           </ul>
-        </nav>
 
-        <div className="p-4 border-t border-gray-200">
-          <button
+          <div className="my-4 border-t border-gray-200"></div>
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleLogout}
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-red-600 hover:bg-red-50 w-full"
+            disabled={logoutLoading}
+            className="w-full flex items-center justify-center space-x-2"
           >
-            <Typography variant="body" className="text-red-600">
-              {t('navigation.logout')}
-            </Typography>
-          </button>
-        </div>
+            <i className="fi fi-br-sign-out-alt" />
+            <span>{getLogoutButtonText()}</span>
+          </Button>
+        </nav>
       </aside>
 
       <main className="lg:ml-64">
@@ -245,24 +256,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   );
 
   function getCurrentPageTitle(): string {
-    // Admin routes
     if (pathname.startsWith(`/${locale}/admin/statistics`)) return 'Statistiques';
     if (pathname.startsWith(`/${locale}/admin/clients`)) return 'Gestion des clients';
     if (pathname.startsWith(`/${locale}/admin/settings`)) return 'Paramètres';
     
-    // Advisor routes
     if (pathname.startsWith(`/${locale}/advisor/clients`)) return 'Mes clients';
     if (pathname.startsWith(`/${locale}/advisor/loans`)) return 'Prêts à valider';
     if (pathname === `/${locale}/advisor/dashboard`) return 'Vue d\'ensemble';
     
-    // Client routes
     if (pathname === `/${locale}/client/dashboard`) return t('overview.title');
     if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
     if (pathname.startsWith(`/${locale}/dashboard/savings`)) return t('savings.title');
     if (pathname.startsWith(`/${locale}/client/dashboard/loans`)) return 'Mes prêts';
     if (pathname.startsWith(`/${locale}/client/dashboard/operations`)) return 'Opérations';
     
-    // Legacy routes (for backward compatibility)
     if (pathname === `/${locale}/dashboard`) return t('overview.title');
     if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
     if (pathname === `/${locale}/dashboard/savings`) return t('savings.title');

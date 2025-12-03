@@ -121,9 +121,6 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Typography variant="h3" color="primary">
-          {t('accountsSummary')}
-        </Typography>
         <div className="flex gap-2">
           <Button 
             variant="primary" 

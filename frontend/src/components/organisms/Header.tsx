@@ -5,14 +5,24 @@ import { usePathname } from "next/navigation";
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { useAuth } from '../../contexts/AuthProvider';
+import { useLogout } from '../../features/auth/useLogin';
 
 export function Header() {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("Header");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const { logout, loading: logoutLoading } = useLogout();
 
-  const currentLocale = pathname.split('/')[1] || 'en'; 
+  const currentLocale = pathname.split('/')[1] || 'en';
+  const isAuthenticatedPage = pathname.includes('/dashboard') || 
+                               pathname.includes('/client') || 
+                               pathname.includes('/advisor') || 
+                               pathname.includes('/admin');
+
+  if (isAuthenticatedPage) {
+    return null;
+  } 
 
 
   const switchLocale = (newLocale: string) => {
@@ -20,9 +30,20 @@ export function Header() {
     segments[0] = newLocale;
     const newPath = "/" + segments.join("/");
     
-    if (typeof window !== 'undefined') {
-      window.location.href = newPath;
+    if (globalThis.window !== undefined) {
+      globalThis.window.location.href = newPath;
     }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  const getLogoutButtonText = () => {
+    if (logoutLoading) {
+      return locale === 'fr' ? 'Déconnexion...' : 'Logging out...';
+    }
+    return t('logout');
   };
 
   return (
@@ -42,15 +63,12 @@ export function Header() {
             <Link href={`/${locale}`} className="text-gray-600 hover:text-clean-dark transition-colors">
               {t('home')}
             </Link>
-            <Link href={`/${locale}/dashboard/accounts`} className="text-gray-600 hover:text-clean-dark transition-colors">
-              {t('accounts')}
-            </Link>
-            <Link href={`/${locale}/transfer`} className="text-gray-600 hover:text-clean-dark transition-colors">
-              {t('transfer')}
-            </Link>
-            <Link href={`/${locale}/support`} className="text-gray-600 hover:text-clean-dark transition-colors">
-              {t('support')}
-            </Link>
+            <a href="#features" className="text-gray-600 hover:text-clean-dark transition-colors">
+              {t('features')}
+            </a>
+            <a href="#stats" className="text-gray-600 hover:text-clean-dark transition-colors">
+              {t('stats')}
+            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -76,7 +94,24 @@ export function Header() {
                 EN
               </button>
             </div>
-            {!isAuthenticated && (
+            
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                {user && (
+                  <Typography variant="body" className="hidden md:block text-gray-700">
+                    {user.firstname}
+                  </Typography>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleLogout}
+                  disabled={logoutLoading}
+                >
+                  {getLogoutButtonText()}
+                </Button>
+              </div>
+            ) : (
               <>
                 <Link href={`/${locale}/auth/login`}>
                   <Button variant="outline" size="sm">

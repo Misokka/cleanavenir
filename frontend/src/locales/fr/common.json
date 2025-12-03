@@ -45,11 +45,12 @@
   },
   "Header": {
     "home": "Accueil",
-    "accounts": "Comptes",
-    "transfer": "Virements",
-    "support": "Support",
+    "features": "Nos atouts",
+    "stats": "Nos chiffres",
+    "support": "Contact",
     "login": "Connexion",
-    "signup": "Inscription"
+    "signup": "Inscription",
+    "logout": "Déconnexion"
   },
   "Footer": {
     "copyright": "© 2025 Clean Avenir — Tous droits réservés",
