@@ -3,7 +3,8 @@ import { Director } from "../../../../domain/entities/Director";
 import { Mapper } from "../MapperInterface";
 
 type DirectorToPersist = {
-  directorIdentifier: string
+  directorIdentifier: string,
+  userIdentifier: string,
 }
 
 export class PrismaDirectorMapper implements Mapper<PrismaDirector, Director, DirectorToPersist>{

@@ -45,9 +45,20 @@ export class PrismaClientRepository implements ClientRepository{
   }
 
   async findByEmail(email: string): Promise<Result<Client, UserNotFoundError>> {
+    const clientUser = await this.prismaClient.user.findUnique({
+      where: {
+        email: email,
+        role: 'CLIENT'
+      }
+    });
+    
+    if(!clientUser){
+      return err(new UserNotFoundError(email));
+    }
+
     const maybeClient = await this.prismaClient.client.findUnique({
       where: {
-        email: email
+        userIdentifier: clientUser.userIdentifier
       }
     });
 

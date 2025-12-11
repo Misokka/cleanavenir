@@ -3,7 +3,8 @@ import { Advisor } from "../../../../domain/entities/Advisor";
 import { Mapper } from "../MapperInterface";
 
 type AdvisorToPersist = {
-  advisorIdentifier: string
+  advisorIdentifier: string,
+  userIdentifier: string,
 }
 
 export class PrismaAdvisorMapper implements Mapper<PrismaAdvisor, Advisor, AdvisorToPersist>{

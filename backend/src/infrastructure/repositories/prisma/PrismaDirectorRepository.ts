@@ -14,10 +14,11 @@ export class PrismaDirectorRepository implements DirectorRepository{
 
   async save(director: Director): Promise<Result<Director, InvalidRoleError>>{
     try{
+
       const directorToPersist = this.prismaDirectorMapper.toPersistence(director)
       const registeredDirector = await this.prismaClient.director.create({
         data: {
-          ...directorToPersist
+          ...directorToPersist,
         }
       });
 

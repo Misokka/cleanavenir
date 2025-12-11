@@ -6,7 +6,7 @@ import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { User } from "../../../domain/entities/User";
 
 export interface UserRepository {
-  save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>>;
+  save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError | Error>>;
 
   findById(id: string): Promise<Result<User, UserNotFoundError>>;
   findByEmail(email: string): Promise<Result<User, UserNotFoundError>>;
