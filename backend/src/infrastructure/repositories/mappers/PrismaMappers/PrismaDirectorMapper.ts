@@ -8,7 +8,7 @@ type DirectorToPersist = {
 
 export class PrismaDirectorMapper implements Mapper<PrismaDirector, Director, DirectorToPersist>{
   toDomain(raw: PrismaDirector): Director {
-    return new Director(raw.directorIdentifier)
+    return Director.create({...raw})
   }
 
   toPersistence(obj: Director): DirectorToPersist {

@@ -1,8 +1,16 @@
 export class Client{
-  constructor(
+  private constructor(
     public clientIdentifier: string,
-    public firstname: string,
-    public lastname: string,
-    public email: string
+    public userIdentifier: string,
   ){}
+
+  public static create(props: {
+    clientIdentifier: string;
+    userIdentifier: string;
+  }): Client {
+    return new Client(
+      props.clientIdentifier,
+      props.userIdentifier
+    );
+  }
 }

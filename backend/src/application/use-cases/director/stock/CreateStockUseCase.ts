@@ -10,14 +10,20 @@ export class CreateStockUseCase{
     private readonly stockRepository: StockRepository
   ){}
 
-  public async execute(companyIdentifier: string, tickerValue: string, isAvailable: boolean = true ){
+  public async execute(companyIdentifier: string, tickerValue: string, price: number, isAvailable: boolean = true ){
     const ticker = Ticker.from(tickerValue);
     if(!ticker.ok){
       return ticker.error
     }
 
     const stockIdentifier = randomUUID();
-    const newStock = new Stock(stockIdentifier, companyIdentifier, ticker.value, isAvailable)
+    const newStock = Stock.create({
+      stockIdentifier,
+      companyIdentifier,
+      price,
+      ticker: ticker.value,
+      isAvailable
+    });
 
     const maybeStock = await this.stockRepository.save(newStock);
 

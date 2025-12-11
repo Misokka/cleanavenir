@@ -8,7 +8,7 @@ type AdvisorToPersist = {
 
 export class PrismaAdvisorMapper implements Mapper<PrismaAdvisor, Advisor, AdvisorToPersist>{
   toDomain(raw: PrismaAdvisor): Advisor {
-    return new Advisor(raw.advisorIdentifier)
+    return Advisor.create({...raw})
   }
 
   toPersistence(obj: Advisor): AdvisorToPersist {

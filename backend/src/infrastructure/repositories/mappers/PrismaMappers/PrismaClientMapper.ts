@@ -4,19 +4,12 @@ import { Mapper } from "../MapperInterface";
 
 type ClientToPersist = {
   clientIdentifier: string,
-  firstname: string,
-  lastname: string,
-  email: string
+  userIdentifier: string,
 }
 
 export class PrismaClientMapper implements Mapper<PrismaClient, Client, ClientToPersist>{
   toDomain(raw: PrismaClient): Client {
-    return new Client(
-      raw.clientIdentifier,
-      raw.firstname,
-      raw.lastname,
-      raw.email
-    )
+    return Client.create({...raw})
   }
 
   toPersistence(obj: Client): ClientToPersist {
