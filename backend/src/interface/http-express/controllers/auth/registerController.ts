@@ -4,6 +4,7 @@ import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 import { generateToken, generateRefreshToken, setTokenCookie, setRefreshTokenCookie } from '../../../../infrastructure/adapters/JwtService';
 
+
 export const registerController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { firstname, lastname, email, password } = req.body;
@@ -41,7 +42,7 @@ export const registerController = asyncHandler(
       email.toLowerCase(),
       password,
       password, 
-      'CLIENT' // Rôle par défaut
+      "CLIENT" // Rôle par défaut
     );
 
     if (!result.ok) {
@@ -74,13 +75,13 @@ export const registerController = asyncHandler(
 
     // Générer de vrais tokens JWT et les poser en cookies httpOnly
     const accessToken = generateToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });
 
     const refreshToken = generateRefreshToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });

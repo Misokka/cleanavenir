@@ -38,7 +38,7 @@ export const banClientController = asyncHandler(
     res.json({
       message: 'Client banni avec succès',
       client: {
-        id: client.userIndentifier,
+        id: client.userIdentifier,
         email: client.email,
         isActive: client.isActive,
       },

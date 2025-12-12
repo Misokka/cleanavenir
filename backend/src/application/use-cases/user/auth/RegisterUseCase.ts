@@ -45,7 +45,7 @@ export class RegisterUseCase{
     }
     
     const hashedPassword = await this.passwordHasher.hash(password);
-    const newUser = new User(userIdentifier, firstname, lastname, email, hashedPassword, role);
+    const newUser = User.create({userIdentifier, firstname, lastname, email, password: hashedPassword, role});
 
     const savedUser = await this.userRepository.save(newUser);
     
@@ -53,7 +53,7 @@ export class RegisterUseCase{
       return err(savedUser.error);
     }
 
-    const newProfile = await this.profileManager.create(newUser.userIndentifier, newUser.role);
+    const newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role);
 
     if(!newProfile.ok){
       return err(newProfile.error);

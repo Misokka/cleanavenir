@@ -39,7 +39,10 @@ export class ClientRepositoryDrizzle implements ClientRepository {
         return err(new UserNotFoundError(userIdentifier));
       }
 
-      const client = new Client(userIdentifier);
+      const client = Client.create({
+        clientIdentifier: userRow[0].id,
+        userIdentifier
+      });
       return ok(client);
     } catch (e: any) {
       return err(new UserNotFoundError(userIdentifier));

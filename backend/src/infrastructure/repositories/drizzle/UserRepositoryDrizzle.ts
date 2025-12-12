@@ -28,7 +28,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       const updatedAt = (user as any).updatedAt ?? now;
 
       await this.db.insert(users).values({
-        id: user.userIndentifier,
+        id: user.userIdentifier,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
@@ -44,7 +44,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       if (e.message?.includes('UNIQUE constraint')) {
         return err(new EmailAlreadyUsedError(user.email));
       }
-      return err(new InvalidRoleError(user.userIndentifier));
+      return err(new InvalidRoleError(user.userIdentifier));
     }
   }
 
@@ -53,7 +53,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       const rows = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
       if (!rows.length) return err(new UserNotFoundError(id));
       const r = rows[0];
-      const u = new User(r.id, r.firstname, r.lastname, r.email, r.password, r.role);
+      const u = User.create({userIdentifier: r.id, firstname: r.firstname, lastname: r.lastname, email: r.email, password: r.password, role: r.role});
       (u as any).id = r.id;
       (u as any).isActive = r.isActive;
       (u as any).emailVerifiedAt = r.emailVerifiedAt;
@@ -70,7 +70,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       const rows = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
       if (!rows.length) return err(new UserNotFoundError(email));
       const r = rows[0];
-      const u = new User(r.id, r.firstname, r.lastname, r.email, r.password, r.role);
+      const u = User.create({userIdentifier: r.id, firstname: r.firstname, lastname: r.lastname, email: r.email, password: r.password, role: r.role});
       (u as any).id = r.id;
       (u as any).isActive = r.isActive;
       (u as any).emailVerifiedAt = r.emailVerifiedAt;
@@ -128,7 +128,7 @@ export class UserRepositoryDrizzle implements UserRepository {
     try {
       const rows = await this.db.select().from(users).where(eq(users.role, role));
       const userList = rows.map((r: any) => 
-        new User(r.id, r.firstname, r.lastname, r.email, r.password, r.role)
+        User.create({userIdentifier: r.id, firstname: r.firstname, lastname: r.lastname, email: r.email, password: r.password, role: r.role})
       );
       return ok(userList);
     } catch (e: any) {

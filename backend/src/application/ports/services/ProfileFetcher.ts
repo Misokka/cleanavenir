@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Advisor } from "../../../domain/entities/Advisor";
 import { Client } from "../../../domain/entities/Client";
 import { Director } from "../../../domain/entities/Director";
@@ -49,9 +50,6 @@ export class ProfileManager {
 
   public async create(
     userIdentifier: string,
-    firstname: string,
-    lastname: string,
-    email: string,
     role: UserRole
   ): Promise<Result<Profile, Error>>{
 
@@ -59,17 +57,17 @@ export class ProfileManager {
 
     switch(role){
       case "CLIENT":
-        const newClient = new Client(userIdentifier, firstname, lastname, email);
+        const newClient = Client.create({clientIdentifier: randomUUID(), userIdentifier});
         newProfile = await this.clientRepository.save(newClient);
         break;
       
       case "ADVISOR":
-        const newAdvisor = new Advisor(userIdentifier);
+        const newAdvisor = Advisor.create({advisorIdentifier: randomUUID(), userIdentifier});
         newProfile = await this.advisorRepository.save(newAdvisor);
         break;
       
       case "DIRECTOR":
-        const newDirector = new Director(userIdentifier);
+        const newDirector = Director.create({directorIdentifier: randomUUID(), userIdentifier});
         newProfile = await this.directorRepository.save(newDirector);
         break;
       
