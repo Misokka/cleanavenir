@@ -40,13 +40,13 @@ export const refreshTokenController = asyncHandler(async (req: Request, res: Res
 
     // Generate new tokens
     const newAccessToken = generateToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });
 
     const newRefreshToken = generateRefreshToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });
@@ -59,13 +59,14 @@ export const refreshTokenController = asyncHandler(async (req: Request, res: Res
       success: true,
       data: {
         user: {
-          id: user.userIndentifier,
+          id: user.userIdentifier,
+          firstname: user.firstname,
+          lastname: user.lastname,
           email: user.email,
           role: user.role,
         },
         profile: {
-          firstName: profile.firstName,
-          lastName: profile.lastName,
+          firstName: profile.userIdentifier,
         },
       },
     });

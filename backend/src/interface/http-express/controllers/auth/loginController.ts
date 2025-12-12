@@ -52,13 +52,13 @@ export const loginController = asyncHandler(
 
     // Générer de vrais tokens JWT et les poser en cookies httpOnly
     const accessToken = generateToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });
 
     const refreshToken = generateRefreshToken({
-      userId: user.userIndentifier,
+      userId: user.userIdentifier,
       email: user.email,
       role: user.role,
     });

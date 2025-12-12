@@ -39,7 +39,10 @@ export class AdvisorRepositoryDrizzle implements AdvisorRepository {
         return err(new UserNotFoundError(userIdentifier));
       }
 
-      const advisor = new Advisor(userIdentifier);
+      const advisor = Advisor.create({
+        advisorIdentifier: userRow[0].id,
+        userIdentifier
+      });
       return ok(advisor);
     } catch (e: any) {
       return err(new UserNotFoundError(userIdentifier));

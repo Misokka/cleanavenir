@@ -33,4 +33,16 @@ export class LoanRepositoryDrizzle implements LoanRepository {
       return err(new Error(`Could not list loans: ${e.message}`));
     }
   }
+
+  findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>> {
+    
+  }
+
+  all(): Promise<Result<Loan[], Error>> {
+    
+  }
+
+  delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>> {
+    
+  }
 }

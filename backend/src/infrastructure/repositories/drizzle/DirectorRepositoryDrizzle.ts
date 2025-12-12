@@ -39,7 +39,10 @@ export class DirectorRepositoryDrizzle implements DirectorRepository {
         return err(new UserNotFoundError(userIdentifier));
       }
 
-      const director = new Director(userIdentifier);
+      const director = Director.create({
+        directorIdentifier: userRow[0].id,
+        userIdentifier
+      });
       return ok(director);
     } catch (e: any) {
       return err(new UserNotFoundError(userIdentifier));
