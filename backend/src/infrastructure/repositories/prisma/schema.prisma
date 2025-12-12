@@ -1,0 +1,244 @@
+datasource db {
+  provider = "postgresql"
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  userIdentifier String   @id @default(cuid())
+  firstname       String
+  lastname       String
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+  emailVerifiedAt  DateTime?
+  role UserRole
+  active Boolean @default(true)
+
+  client Client?
+  director Director?
+  advisor Advisor?
+}
+
+enum UserRole {
+  CLIENT
+  DIRECTOR
+  ADVISOR
+}
+
+model Client {
+  clientIdentifier String   @id @default(cuid())
+  userIdentifier String   @unique
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userIdentifier], references: [userIdentifier])
+  savingAccounts SavingAccount[]
+  orders Order[]
+  portfolio Portfolio?
+  bankAccounts BankAccount[]
+  discussions Discussion[]
+  loans Loan[]
+}
+
+model Director{
+  directorIdentifier            String      @id @default(cuid())
+  userIdentifier String   @unique
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userIdentifier], references: [userIdentifier])
+}
+
+model Advisor{
+  advisorIdentifier            String      @id @default(cuid())
+  userIdentifier String   @unique
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userIdentifier], references: [userIdentifier])
+  discussions Discussion[]
+  loans Loan[]
+}
+
+model BankAccount{
+  accountIdentifier String @id @default(cuid())
+  clientIdentifier String
+  iban String @unique
+  label String
+  balance Float @default(0)
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  transactions Transaction[]
+}
+
+model Transaction{
+  transactionIdentifier String @id @default(cuid())
+  bankAccountIdentifier String
+  amount Float
+  direction TransactionDirection
+  type TransactionType
+  description String
+  date DateTime @default(now())
+
+  bankAccount BankAccount @relation(fields: [bankAccountIdentifier], references: [accountIdentifier])
+}
+
+enum TransactionDirection {
+  TRANSFER
+  LOAN_PAYMENT
+  STOCK_PURCHASE
+  STOCK_SALE
+  SAVINGS_INTEREST
+  INITIAL_DEPOSIT
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+model Company{
+  companyIdentifier String @id @default(cuid())
+  name String
+  description String
+
+  stocks Stock?
+}
+
+model Discussion {
+  discussionIdentifier String @id @default(cuid())
+  clientIdentifier String
+  createdAt DateTime @default(now())
+  advisorIdentifier String?
+  subject String?
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  advisor Advisor? @relation(fields: [advisorIdentifier], references: [advisorIdentifier])
+}
+
+model Loan {
+  loanIdentifier String @id @default(cuid())
+  clientIdentifier String
+  advisorIdentifier String
+  loanAmount Float
+  durationInMonth Float
+  mensualities Float
+  insuranceMensualities Float
+  remainingAmountToPay Float
+  annualInterestRate Float
+  annualInsuranceRate Float
+  status LoanStatus
+  createdAt DateTime @default(now())
+  lastPaidAt DateTime?
+  nextToPayAt DateTime?
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  advisor Advisor @relation(fields: [advisorIdentifier], references: [advisorIdentifier])
+}
+
+enum LoanStatus {
+  ACTIVE
+  PAID_OFF
+}
+
+model Stock {
+  stockIdentifier String @id @default(cuid())
+  companyIdentifier String @unique
+  ticker String @unique
+  price Float
+  isAvailable Boolean @default(true)
+
+  company Company @relation(fields: [companyIdentifier], references: [companyIdentifier])
+  orders Order[]
+  holding Holding[]
+  trades Trade[]
+
+}
+
+model Portfolio {
+  portfolioIdentifier String @id @default(cuid())
+  clientIdentifier String @unique
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  holdings Holding[]
+}
+
+model Holding {
+  holdingIdentifier String @id @default(cuid())
+  portfolioIdentifier String
+  stockIdentifier String
+  quantity Float
+
+  portfolio Portfolio @relation(fields: [portfolioIdentifier], references: [portfolioIdentifier])
+  stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
+
+}
+
+model Order {
+  orderIdentifier String @id @default(cuid())
+  stockIdentifier String
+  clientIdentifier String
+  orderType OrderType
+  quantity Float
+  limitPrice Float
+  status OrderStatus
+  createdAt DateTime @default(now())
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
+
+  buyTrades Trade[] @relation("BuyOrder")
+  sellTrades Trade[] @relation("SellOrder")
+}
+
+enum OrderType {
+  BUY
+  SELL
+}
+
+enum OrderStatus {
+  PENDING
+  EXECUTED
+  CANCELLED
+}
+
+model Trade {
+  tradeIdentifier String @id @default(cuid())
+  stockIdentifier String @default(cuid())
+  buyOrderIdentifier String @default(cuid())
+  sellOrderIdentifier String @default(cuid())
+  quantity Float
+  price Float
+  status TradeStatus
+  timestamp DateTime
+
+  stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
+  buyOrder Order @relation("BuyOrder", fields: [buyOrderIdentifier], references: [orderIdentifier])
+  sellOrder Order @relation("SellOrder", fields: [sellOrderIdentifier], references: [orderIdentifier])
+
+}
+
+enum TradeStatus {
+  PENDING_SETTLEMENT
+  SETTLED
+}
+
+model SavingAccount {
+  accountIdentifier String @id @default(cuid())
+  clientIdentifier String @default(cuid())
+  productIdentifier String @default(cuid())
+  iban String
+  label String
+  balance Float
+  isActive Boolean @default(true)
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
+  savingProduct SavingProduct @relation(fields: [productIdentifier], references: [savingProductIdentifier])
+}
+
+model SavingProduct {
+  savingProductIdentifier String @id @default(cuid())
+  label String @unique
+  rate Float
+
+  savingAccounts SavingAccount[]
+}

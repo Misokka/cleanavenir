@@ -9,21 +9,21 @@ import { SavingAccount } from "../../../domain/entities/SavingAccount";
 
 export interface SavingAccountRepository {
     save(savingAccount: SavingAccount): Promise<Result<SavingAccount, Error>>;
-    saveAll(savingAccounts: SavingAccount[]): Promise<Result<void, Error>>
+    saveAll(savingAccounts: SavingAccount[]): Promise<Result<SavingAccount[], Error>>
     all(): Promise<Result<SavingAccount[], Error>>;
 
     openForAccount(AccountId: string): Promise<
-        Result<SavingAccountDTO, BankAccountNotFoundError | AlreadyHasSavingAccountError>
+        Result<SavingAccount, BankAccountNotFoundError | AlreadyHasSavingAccountError>
     >;
 
     findByAccountId(AccountId: string): Promise<
-        Result<SavingAccountDTO, SavingBankAccountNotFoundError>
+        Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
-    setActive(AccountId: string, active: boolean): Promise<
-        Result<SavingAccountDTO, SavingBankAccountNotFoundError>
+    setActive?(AccountId: string, active: boolean): Promise<
+        Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
-    setGlobalRate(value: number): Promise<Result<SavingRateDTO, never>>;
-    getGlobalRate(): Promise<Result<SavingRateDTO, SavingRateNotSetError>>;
+    setGlobalRate?(value: number): Promise<Result<SavingRateDTO, never>>;
+    getGlobalRate?(): Promise<Result<SavingRateDTO, SavingRateNotSetError>>;
 }

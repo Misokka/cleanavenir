@@ -1,8 +1,11 @@
+import { Holding } from "../../../domain/entities/Holding";
+import { HoldingNotFoundError } from "../../../domain/errors/HoldingNotFoundError";
 import { Result } from "../../../shared/Result";
-import { PositionDTO } from "../../dtos/PositionDTO";
 
 export interface HoldingRepository {
-  getPosition(userId: string, stockId: string): Promise<Result<PositionDTO, never>>; // si pas de position, retourner quantity 0
-  setPosition(userId: string, stockId: string, quantity: number): Promise<Result<PositionDTO, Error>>;
-  listByUser(userId: string): Promise<Result<PositionDTO[], never>>;
+  save(holding: Holding): Promise<Result<Holding, Error>>;
+  findById(holdingIdentifier: string): Promise<Result<Holding, HoldingNotFoundError>>;
+  update(holdingIdentifier: string, quantity: number): Promise<Result<Holding, HoldingNotFoundError | Error>>;
+  listByUserPortfolio(portfolioIdentifier: string): Promise<Result<Map<string, Holding>, never>>;
+  delete(holdingIdentifier: string): Promise<Result<void, HoldingNotFoundError>>;
 }
