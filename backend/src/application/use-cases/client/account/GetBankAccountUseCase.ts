@@ -1,18 +1,19 @@
 import { Result, ok, err } from '../../../../shared/Result';
 import { UserNotFoundError } from '../../../../domain/errors/UserNotFoundError';
+import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 
-export interface BankAccountRepository {
-  findById(id: string): Promise<Result<any, Error>>;
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-  create(account: {
-    id: string;
-    iban: string;
-    name: string;
-    ownerId: string;
-    balance?: number;
-  }): Promise<Result<any, Error>>;
-  updateBalance(id: string, newBalance: number): Promise<Result<number, Error>>;
-}
+// export interface BankAccountRepository {
+//   findById(id: string): Promise<Result<any, Error>>;
+//   findByOwner(ownerId: string): Promise<Result<any[], Error>>;
+//   create(account: {
+//     id: string;
+//     iban: string;
+//     name: string;
+//     ownerId: string;
+//     balance?: number;
+//   }): Promise<Result<any, Error>>;
+//   updateBalance(id: string, newBalance: number): Promise<Result<number, Error>>;
+// }
 
 export class GetBankAccountUseCase {
   constructor(private readonly bankAccountRepository: BankAccountRepository) {}
@@ -26,7 +27,7 @@ export class GetBankAccountUseCase {
 
     const account = accountResult.value;
 
-    if (account.ownerId !== params.userId) {
+    if (account.clientIdentifier !== params.userId) {
       return err(new Error('Accès non autorisé à ce compte'));
     }
 

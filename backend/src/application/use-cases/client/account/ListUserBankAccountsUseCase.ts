@@ -1,8 +1,5 @@
 import { Result, ok } from '../../../../shared/Result';
-
-export interface BankAccountRepository {
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-}
+import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 
 export class ListUserBankAccountsUseCase {
   constructor(private readonly bankAccountRepository: BankAccountRepository) {}

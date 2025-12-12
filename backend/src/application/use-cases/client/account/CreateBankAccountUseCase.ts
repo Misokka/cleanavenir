@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { err, ok, Result } from "../../../../shared/Result";
 import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
-import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
+import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
 export interface CreateBankAccountInput {
   ownerId: string;
@@ -12,7 +12,7 @@ export class CreateBankAccountUseCase {
   private readonly ibanGenerator: IbanGenerator;
 
   constructor(
-    private readonly bankAccountRepository: BankAccountRepositoryDrizzle
+    private readonly bankAccountRepository: BankAccountRepository
   ) {
     this.ibanGenerator = new IbanGenerator();
   }

@@ -1,5 +1,5 @@
 import { err, ok, Result } from "../../../../shared/Result";
-import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
+import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
 export interface DeleteAccountInput {
   accountId: string;
@@ -8,7 +8,7 @@ export interface DeleteAccountInput {
 
 export class DeleteBankAccountUseCase {
   constructor(
-    private readonly bankAccountRepository: BankAccountRepositoryDrizzle
+    private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
   public async execute(input: DeleteAccountInput): Promise<Result<true, Error>> {
