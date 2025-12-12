@@ -4,6 +4,7 @@ import { Holding } from "../../../../domain/entities/Holding";
 
 type HoldingToPersist = {
   holdingIdentifier: string;
+  portfolioIdentifier: string;
   stockIdentifier: string;
   quantity: number;
 }

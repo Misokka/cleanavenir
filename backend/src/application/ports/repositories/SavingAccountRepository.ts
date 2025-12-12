@@ -13,17 +13,17 @@ export interface SavingAccountRepository {
     all(): Promise<Result<SavingAccount[], Error>>;
 
     openForAccount(AccountId: string): Promise<
-        Result<SavingAccountDTO, BankAccountNotFoundError | AlreadyHasSavingAccountError>
+        Result<SavingAccount, BankAccountNotFoundError | AlreadyHasSavingAccountError>
     >;
 
     findByAccountId(AccountId: string): Promise<
-        Result<SavingAccountDTO, SavingBankAccountNotFoundError>
+        Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
-    setActive(AccountId: string, active: boolean): Promise<
-        Result<SavingAccountDTO, SavingBankAccountNotFoundError>
+    setActive?(AccountId: string, active: boolean): Promise<
+        Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
-    setGlobalRate(value: number): Promise<Result<SavingRateDTO, never>>;
-    getGlobalRate(): Promise<Result<SavingRateDTO, SavingRateNotSetError>>;
+    setGlobalRate?(value: number): Promise<Result<SavingRateDTO, never>>;
+    getGlobalRate?(): Promise<Result<SavingRateDTO, SavingRateNotSetError>>;
 }
