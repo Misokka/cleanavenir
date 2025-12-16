@@ -13,13 +13,14 @@ type BankAccountToPersist = {
 export class PrismaBankAccountMapper implements Mapper<PrismaBankAccount, BankAccount, BankAccountToPersist> {
   // Prisma -> Domaine
   toDomain(raw: PrismaBankAccount): BankAccount {
-    return new BankAccount(
-      raw.accountIdentifier,
-      raw.clientIdentifier,
-      new Iban(raw.iban),
-      raw.label,
-      raw.balance,
-    );
+    const ibanResult = Iban.from(raw.iban);
+    if (!ibanResult.ok) {
+      throw new Error('Invalid IBAN format');
+    }
+    return BankAccount.create({
+      ...raw,
+      iban: ibanResult.value,
+    });
   }
 
   // Domaine -> Prisma

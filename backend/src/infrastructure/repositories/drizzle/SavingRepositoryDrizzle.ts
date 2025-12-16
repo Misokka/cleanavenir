@@ -1,9 +1,11 @@
 import { eq, inArray } from 'drizzle-orm';
 import { savings } from '../../drizzle/schema';
 import { ok, err, Result } from '../../../shared/Result';
+import { DrizzleClient } from '../../drizzle/client';
+import { SavingAccountRepository } from '../../../application/ports/repositories/SavingAccountRepository';
 
-export class SavingRepositoryDrizzle {
-  constructor(private readonly db: any) {}
+export class SavingRepositoryDrizzle implements SavingAccountRepository{
+  constructor(private readonly db: DrizzleClient) {}
 
   async create(saving: {
     id: string;

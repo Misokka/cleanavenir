@@ -10,7 +10,7 @@ export interface BankAccountRepository {
     findDefaultAccountByClientId(clientIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     findByOwner(clientIdentifier: string): Promise<Result<BankAccount[], UnexpectedBankAccountError>>;
     findByIban(iban: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
-    updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
+    updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<number, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     rename(accountIdentifier: string, label: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>>;
 }

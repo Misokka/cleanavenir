@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(), // id string (uuid)
   firstname: text('firstname').notNull(),
@@ -13,6 +13,8 @@ export const users = sqliteTable('users', {
   updatedAt: text('updated_at').notNull(),
 });
 
+export type UserDrizzle = InferSelectModel<typeof users>; //pour lecture/fetch
+export type NewUserDrizzle = InferInsertModel<typeof users>; //pour insert
 // Bank accounts table
 export const bankAccounts = sqliteTable('bank_accounts', {
   id: text('id').primaryKey(),
@@ -23,6 +25,9 @@ export const bankAccounts = sqliteTable('bank_accounts', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+export type BankAccountDrizzle = InferSelectModel<typeof bankAccounts>;
+export type NewBankAccountDrizzle = InferInsertModel<typeof bankAccounts>;
 
 // Operations / transactions table
 export const operations = sqliteTable('operations', {
@@ -35,6 +40,9 @@ export const operations = sqliteTable('operations', {
   createdAt: text('created_at').notNull(),
 });
 
+export type OperationDrizzle = InferSelectModel<typeof operations>;
+export type NewOperationDrizzle = InferInsertModel<typeof operations>;
+
 // Savings (epargne)
 export const savings = sqliteTable('savings', {
   id: text('id').primaryKey(),
@@ -44,6 +52,9 @@ export const savings = sqliteTable('savings', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+export type SavingDrizzle = InferSelectModel<typeof savings>;
+export type NewSavingDrizzle = InferInsertModel<typeof savings>;
 
 // Loans (credits)
 export const loans = sqliteTable('loans', {
@@ -57,6 +68,9 @@ export const loans = sqliteTable('loans', {
   createdAt: text('created_at').notNull(),
 });
 
+export type LoanDrizzle = InferSelectModel<typeof loans>;
+export type NewLoanDrizzle = InferInsertModel<typeof loans>;
+
 // Stocks
 export const stocks = sqliteTable('stocks', {
   id: text('id').primaryKey(),
@@ -65,6 +79,9 @@ export const stocks = sqliteTable('stocks', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+export type StockDrizzle = InferSelectModel<typeof stocks>;
+export type NewStockDrizzle = InferInsertModel<typeof stocks>;
 
 // Orders (buy/sell)
 export const orders = sqliteTable('orders', {
@@ -78,6 +95,9 @@ export const orders = sqliteTable('orders', {
   createdAt: text('created_at').notNull(),
 });
 
+export type OrderDrizzle = InferSelectModel<typeof orders>;
+export type NewOrderDrizzle = InferInsertModel<typeof orders>;
+
 // Holdings
 export const holdings = sqliteTable('holdings', {
   id: text('id').primaryKey(),
@@ -89,6 +109,9 @@ export const holdings = sqliteTable('holdings', {
   updatedAt: text('updated_at').notNull(),
 });
 
+export type HoldingDrizzle = InferSelectModel<typeof holdings>;
+export type NewHoldingDrizzle = InferInsertModel<typeof holdings>;
+
 // Portfolio (summary per client)
 export const portfolios = sqliteTable('portfolios', {
   id: text('id').primaryKey(),
@@ -98,6 +121,9 @@ export const portfolios = sqliteTable('portfolios', {
   updatedAt: text('updated_at').notNull(),
 });
 
+export type PortfolioDrizzle = InferSelectModel<typeof portfolios>;
+export type NewPortfolioDrizzle = InferInsertModel<typeof portfolios>;
+
 // Messages / discussions (basic)
 export const discussions = sqliteTable('discussions', {
   id: text('id').primaryKey(),
@@ -106,3 +132,6 @@ export const discussions = sqliteTable('discussions', {
   subject: text('subject'),
   createdAt: text('created_at').notNull(),
 });
+
+export type DiscussionDrizzle = InferSelectModel<typeof discussions>;
+export type NewDiscussionDrizzle = InferInsertModel<typeof discussions>;

@@ -1,9 +1,11 @@
 import { eq } from 'drizzle-orm';
 import { portfolios } from '../../drizzle/schema';
 import { Result } from '../../../shared/Result';
+import { DrizzleClient } from '../../drizzle/client';
+import { PortfolioRepository } from '../../../application/ports/repositories/PortfolioRepository';
 
-export class PortfolioRepositoryDrizzle {
-  constructor(private db: any) {}
+export class PortfolioRepositoryDrizzle implements PortfolioRepository {
+  constructor(private db: DrizzleClient) {}
 
   async save(portfolio: any) {
     try {

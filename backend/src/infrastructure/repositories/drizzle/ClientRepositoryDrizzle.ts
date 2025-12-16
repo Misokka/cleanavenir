@@ -5,9 +5,10 @@ import { ClientRepository } from '../../../application/ports/repositories/Client
 import { InvalidRoleError } from '../../../domain/errors/InvalidRoleError';
 import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { users } from '../../drizzle/schema';
+import { DrizzleClient } from '../../drizzle/client';
 
 export class ClientRepositoryDrizzle implements ClientRepository {
-  constructor(private readonly db: any) {}
+  constructor(private readonly db: DrizzleClient) {}
 
   async save(client: Client): Promise<Result<Client, InvalidRoleError>> {
     try {

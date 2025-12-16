@@ -7,9 +7,10 @@ import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { EmailAlreadyUsedError } from '../../../domain/errors/EmailAlreadyUsedError';
 import { InvalidRoleError } from '../../../domain/errors/InvalidRoleError';
 import { UserRole } from '../../../application/dtos/UserDTO';
+import { DrizzleClient } from '../../drizzle/client';
 
 export class UserRepositoryDrizzle implements UserRepository {
-  constructor(private readonly db: any) {}
+  constructor(private readonly db: DrizzleClient) {}
 
   async save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>> {
     try {
@@ -40,6 +41,42 @@ export class UserRepositoryDrizzle implements UserRepository {
         updatedAt,
       });
       return ok(user);
+    } catch (e: any) {
+      if (e.message?.includes('UNIQUE constraint')) {
+        return err(new EmailAlreadyUsedError(user.email));
+      }
+      return err(new InvalidRoleError(user.userIdentifier));
+    }
+  }
+
+  async update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>> {
+    try {
+      const now = new Date().toISOString();
+      const isActive = (user as any).active ? 1 : 0;
+
+      let emailVerifiedAt = null;
+      const userEmailVerified = (user as any).emailVerifiedAt;
+      if (userEmailVerified) {
+        emailVerifiedAt = userEmailVerified instanceof Date 
+          ? userEmailVerified.toISOString() 
+          : userEmailVerified;
+      }
+
+      await this.db
+        .update(users)
+        .set({
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          password: user.password,
+          role: user.role,
+          isActive,
+          emailVerifiedAt,
+          updatedAt: now,
+        })
+        .where(eq(users.id, user.userIdentifier));
+
+      return this.findById(user.userIdentifier);
     } catch (e: any) {
       if (e.message?.includes('UNIQUE constraint')) {
         return err(new EmailAlreadyUsedError(user.email));

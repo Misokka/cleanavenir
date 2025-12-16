@@ -8,3 +8,4 @@ if (!DB_URL) throw new Error('DB_FILE_NAME non défini dans backend/.env');
 
 const client = createClient({ url: DB_URL });
 export const db = drizzle({ client, schema });
+export type DrizzleClient = typeof db;

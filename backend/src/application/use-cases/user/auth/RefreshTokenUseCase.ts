@@ -30,7 +30,7 @@ export class RefreshTokenUseCase {
 
     const user = userResult.value;
 
-    const profileResult = await this.profileManager.fetch(user.userIndentifier, user.role);
+    const profileResult = await this.profileManager.fetch(user.userIdentifier, user.role);
 
     if (!profileResult.ok) {
       return err(profileResult.error);

@@ -1,9 +1,11 @@
+import { TransactionRepository } from '../../../application/ports/repositories/TransactionRepository';
 import { ok, err, Result } from '../../../shared/Result';
+import { DrizzleClient } from '../../drizzle/client';
 import { operations } from '../../drizzle/schema';
 import { eq, or, desc, inArray, gte, lte, and } from 'drizzle-orm';
 
-export class OperationRepositoryDrizzle {
-  constructor(private readonly db: any) {}
+export class OperationRepositoryDrizzle implements TransactionRepository {
+  constructor(private readonly db: DrizzleClient) {}
 
   async save(op: {
     id: string;

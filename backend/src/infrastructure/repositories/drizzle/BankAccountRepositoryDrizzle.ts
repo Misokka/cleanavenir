@@ -1,24 +1,23 @@
+import { BankAccountRepository } from '../../../application/ports/repositories/BankAccountRepository';
+import { BankAccount } from '../../../domain/entities/BankAccount';
+import { BankAccountNotFoundError } from '../../../domain/errors/BankAccountNotFoundError';
+import { UnexpectedBankAccountError } from '../../../domain/errors/UnexpectedBankAccountError';
 import { ok, err, Result } from '../../../shared/Result';
+import { DrizzleClient } from '../../drizzle/client';
 import { bankAccounts } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-export class BankAccountRepositoryDrizzle {
-  constructor(private readonly db: any) {}
+export class BankAccountRepositoryDrizzle implements BankAccountRepository {
+  constructor(private readonly db: DrizzleClient) {}
 
-  async create(account: {
-    id: string;
-    iban: string;
-    name: string;
-    ownerId: string;
-    balance?: number;
-  }): Promise<Result<any, Error>> {
+  async save(account: BankAccount): Promise<Result<any, Error>> {
     try {
       const now = new Date().toISOString();
       await this.db.insert(bankAccounts).values({
-        id: account.id,
-        iban: account.iban,
-        name: account.name,
-        ownerId: account.ownerId,
+        id: account.accountIdentifier,
+        iban: account.iban.value,
+        name: account.label,
+        ownerId: account.clientIdentifier,
         balance: account.balance ?? 0,
         createdAt: now,
         updatedAt: now,
@@ -29,9 +28,19 @@ export class BankAccountRepositoryDrizzle {
     }
   }
 
+  async findDefaultAccountByClientId(clientIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>> {
+    try {
+      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, clientIdentifier)).limit(1);
+      if (!rows.length) return err(new Error('BankAccount not found'));
+      return ok(rows[0]);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
   async findById(id: string): Promise<Result<any, Error>> {
     try {
-  const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.id, id)).limit(1);
+      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.id, id)).limit(1);
       if (!rows.length) return err(new Error('BankAccount not found'));
       return ok(rows[0]);
     } catch (e: any) {
@@ -82,6 +91,14 @@ export class BankAccountRepositoryDrizzle {
       await this.db.delete(bankAccounts).where(eq(bankAccounts.id, id));
       return ok(true);
     } catch (e: any) {
+      return err(e);
+    }
+  }
+
+  async remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>> {
+    try{
+      return this.delete(accountIdentifier);
+    } catch (e: any){
       return err(e);
     }
   }

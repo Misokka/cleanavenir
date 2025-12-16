@@ -2,9 +2,10 @@ import { eq } from 'drizzle-orm';
 import { loans } from '../../drizzle/schema';
 import { ok, err } from '../../../shared/Result';
 import type { LoanRepository } from '../../../application/ports/repositories/LoanRepository';
+import { DrizzleClient } from '../../drizzle/client';
 
 export class LoanRepositoryDrizzle implements LoanRepository {
-  constructor(private db: any) {}
+  constructor(private db: DrizzleClient) {}
 
   async save(loan: any) {
     try {

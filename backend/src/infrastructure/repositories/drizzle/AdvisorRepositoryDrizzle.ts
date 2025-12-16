@@ -5,9 +5,10 @@ import { AdvisorRepository } from '../../../application/ports/repositories/Advis
 import { InvalidRoleError } from '../../../domain/errors/InvalidRoleError';
 import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { users } from '../../drizzle/schema';
+import { DrizzleClient } from '../../drizzle/client';
 
 export class AdvisorRepositoryDrizzle implements AdvisorRepository {
-  constructor(private readonly db: any) {}
+  constructor(private readonly db: DrizzleClient) {}
 
   async save(advisor: Advisor): Promise<Result<Advisor, InvalidRoleError>> {
     try {

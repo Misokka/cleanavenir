@@ -1,9 +1,11 @@
 import { eq } from 'drizzle-orm';
 import { discussions } from '../../drizzle/schema';
 import { Result } from '../../../shared/Result';
+import { DiscussionRepository } from '../../../application/ports/repositories/DiscussionRepository';
+import { DrizzleClient } from '../../drizzle/client';
 
-export class DiscussionRepositoryDrizzle {
-  constructor(private db: any) {}
+export class DiscussionRepositoryDrizzle implements DiscussionRepository {
+  constructor(private db: DrizzleClient) {}
 
   async save(discussion: any) {
     try {
