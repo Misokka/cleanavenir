@@ -4,29 +4,45 @@ import { BankAccountRepository } from "../../../ports/repositories/BankAccountRe
 import { SavingAccountRepository } from "../../../ports/repositories/SavingAccountRepository";
 import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
 import { Transaction } from "../../../../domain/entities/Transaction";
+import { SavingAccount } from "../../../../domain/entities/SavingAccount";
+import { SavingProductRepository } from "../../../ports/repositories/SavingProductRepository";
+import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
+import { Iban } from "../../../../domain/value-objects/Iban";
 
 export interface CreateSavingAccountInput {
   userId: string;
   sourceAccountId: string; 
   initialAmount: number;
-  rate: number; 
+  savingProductIdentifier: string;
+
 }
 
 export class CreateSavingAccountUseCase {
+  private readonly ibanGenerator: IbanGenerator;
   constructor(
     private readonly savingAccountRepository: SavingAccountRepository,
+    private readonly savingProductRepository: SavingProductRepository,
     private readonly bankAccountRepository: BankAccountRepository,
     private readonly transactionRepository: TransactionRepository
-  ) {}
+  ) {
+    this.ibanGenerator = new IbanGenerator();
+  }
 
   public async execute(input: CreateSavingAccountInput): Promise<Result<any, Error>> {
+    const savingProductResult = await this.savingProductRepository.findById(input.savingProductIdentifier);
+    if (!savingProductResult.ok) {
+      return err(new Error('Produit d\'épargne introuvable'));
+    }
+
+    const savingProduct = savingProductResult.value;
+   
     if (input.initialAmount < 10) {
       return err(new Error('Le montant initial doit être d\'au moins 10€'));
     }
 
-    if (input.rate < 1.5 || input.rate > 3.5) {
-      return err(new Error('Le taux doit être compris entre 1.5% et 3.5%'));
-    }
+    // if (input.rate < 1.5 || input.rate > 3.5) {
+    //   return err(new Error('Le taux doit être compris entre 1.5% et 3.5%'));
+    // }
 
     const amountInCents = Math.round(input.initialAmount * 100);
 
@@ -69,16 +85,16 @@ export class CreateSavingAccountUseCase {
       direction: 'DEBIT',
       currency: 'EUR',
       type: 'TRANSFER',
-      description: `Ouverture compte épargne (${input.rate}% par an)`,
+      description: `Ouverture compte épargne de type ${savingProduct.label}`,
     })
-    const debitOperation = {
-      id: debitOperationId,
-      fromAccountId: input.sourceAccountId,
-      toAccountId: null,
-      amount: amountInCents,
-      type: 'DEBIT',
-      description: `Ouverture compte épargne (${input.rate}% par an)`,
-    };
+    // const debitOperation = {
+    //   id: debitOperationId,
+    //   fromAccountId: input.sourceAccountId,
+    //   toAccountId: null,
+    //   amount: amountInCents,
+    //   type: 'DEBIT',
+    //   description: `Ouverture compte épargne (${input.rate}% par an)`,
+    // };
 
     const createDebitResult = await this.transactionRepository.save(debitOperation);
     if (!createDebitResult.ok) {
@@ -86,18 +102,54 @@ export class CreateSavingAccountUseCase {
         input.sourceAccountId,
         sourceAccount.value.balance
       );
-      return err(new Error('Erreur lors de l\'enregistrement de l\'opération'));
+      return err(new Error("Erreur lors de l'enregistrement de l'opération"));
     }
 
-    const rateInBasisPoints = Math.round(input.rate * 100);
+    // const rateInBasisPoints = Math.round(input.rate * 100);
     const savingId = randomUUID();
-    
-    const createSavingResult = await this.savingAccountRepository.create({
-      id: savingId,
-      accountId: input.sourceAccountId,
-      rate: rateInBasisPoints,
+
+    const generatedIban = this.ibanGenerator.generate();
+
+    let finalIban = generatedIban;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      const ibanCheck = await this.bankAccountRepository.findByIban(finalIban);
+      if (!ibanCheck.ok) {
+        break;
+      }
+      finalIban = this.ibanGenerator.generate();
+      attempts++;
+    }
+
+    if (attempts >= maxAttempts) {
+      return err(new Error('Impossible de générer un IBAN unique'));
+    }
+
+    const finalIbanResult = Iban.from(finalIban);
+    if (!finalIbanResult.ok) {
+      return err(new Error('IBAN généré invalide'));
+    }
+    const finalIbanObject = finalIbanResult.value;
+
+    const newSavingAccount = SavingAccount.create({
+      accountIdentifier: savingId,
+      clientIdentifier: input.userId,
+      productIdentifier: savingProduct.savingProductIdentifier,
+      iban: finalIbanObject,
+      label: "Compte d'Épargne",
       balance: amountInCents,
     });
+
+    const createSavingResult = await this.savingAccountRepository.save(newSavingAccount);
+
+    // const createSavingResult = await this.savingAccountRepository.create({
+    //   id: savingId,
+    //   accountId: input.sourceAccountId,
+    //   rate: rateInBasisPoints,
+    //   balance: amountInCents,
+    // });
 
     if (!createSavingResult.ok) {
       await this.bankAccountRepository.updateBalance(
@@ -107,12 +159,6 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Erreur lors de la création du compte épargne'));
     }
 
-    return ok({
-      id: savingId,
-      accountId: input.sourceAccountId,
-      balance: input.initialAmount, 
-      rate: input.rate, 
-      createdAt: createSavingResult.value.createdAt,
-    });
+    return ok(newSavingAccount);
   }
 }
