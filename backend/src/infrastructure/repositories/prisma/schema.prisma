@@ -78,6 +78,8 @@ model Transaction{
   type TransactionType
   description String
   date DateTime @default(now())
+  fromAccountIdentifier String?
+  toAccountIdentifier String?
 
   bankAccount BankAccount @relation(fields: [bankAccountIdentifier], references: [accountIdentifier])
 }

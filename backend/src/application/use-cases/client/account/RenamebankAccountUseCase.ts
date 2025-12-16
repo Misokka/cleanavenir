@@ -1,5 +1,5 @@
 import { err, ok, Result } from "../../../../shared/Result";
-import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
+import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
 export interface RenameAccountInput {
   accountId: string;
@@ -9,7 +9,7 @@ export interface RenameAccountInput {
 
 export class RenameBankAccountUseCase {
   constructor(
-    private readonly bankAccountRepository: BankAccountRepositoryDrizzle
+    private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
   public async execute(input: RenameAccountInput): Promise<Result<any, Error>> {
@@ -29,7 +29,7 @@ export class RenameBankAccountUseCase {
 
     const bankAccount = maybeBankAccount.value;
 
-    if (bankAccount.ownerId !== input.userId) {
+    if (bankAccount.clientIdentifier !== input.userId) {
       return err(new Error('Accès non autorisé à ce compte'));
     }
 

@@ -9,13 +9,42 @@ export type TransactionType =
 export type TransactionDirection = "DEBIT" | "CREDIT";
 
 export class Transaction {
-  constructor(
+  private constructor(
     public readonly transactionIdentifier: string,
     public readonly bankAccountIdentifier: string,
     public readonly amount: number,
+    public readonly currency: string,
     public readonly direction: TransactionDirection,
     public readonly type: TransactionType,
     public readonly description: string,
-    public readonly date: Date = new Date()
+    public readonly date: Date = new Date(),
+    public readonly fromAccountIdentifier?: string,
+    public readonly toAccountIdentifier?: string
   ) {}
+
+  static create(props: {
+    transactionIdentifier: string;
+    bankAccountIdentifier: string;
+    amount: number;
+    currency: string;
+    direction: TransactionDirection;
+    type: TransactionType;
+    description: string;
+    date?: Date;
+    fromAccountIdentifier?: string,
+    toAccountIdentifier?: string
+  }): Transaction {
+    return new Transaction(
+      props.transactionIdentifier,
+      props.bankAccountIdentifier,
+      props.amount,
+      props.currency,
+      props.direction,
+      props.type,
+      props.description,
+      props.date || new Date(),
+      props.fromAccountIdentifier,
+      props.toAccountIdentifier
+    );
+  }
 }

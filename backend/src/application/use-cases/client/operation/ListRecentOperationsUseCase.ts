@@ -1,16 +1,11 @@
 import { Result, ok } from '../../../../shared/Result';
+import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
+import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 
-export interface OperationRepository {
-  listRecentForUser(userAccountIds: string[], limit: number): Promise<Result<any[], Error>>;
-}
-
-export interface BankAccountRepository {
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-}
 
 export class ListRecentOperationsUseCase {
   constructor(
-    private readonly operationRepository: OperationRepository,
+    private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
@@ -29,8 +24,8 @@ export class ListRecentOperationsUseCase {
       return ok([]);
     }
 
-    const accountIds = accounts.map((account) => account.id);
+    const accountIds = accounts.map((account) => account.accountIdentifier);
 
-    return this.operationRepository.listRecentForUser(accountIds, limit);
+    return this.transactionRepository.listRecentForUser(accountIds, limit);
   }
 }

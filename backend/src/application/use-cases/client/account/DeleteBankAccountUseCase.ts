@@ -19,7 +19,7 @@ export class DeleteBankAccountUseCase {
       return err(new Error('Compte introuvable'));
     }
 
-    if (bankAccount.value.ownerId !== input.userId) {
+    if (bankAccount.value.accountIdentifier !== input.userId) {
       return err(new Error('Accès non autorisé à ce compte'));
     }
 
@@ -27,7 +27,7 @@ export class DeleteBankAccountUseCase {
       return err(new Error('Impossible de supprimer un compte avec un solde non nul'));
     }
 
-    const deletedBankAccount = await this.bankAccountRepository.delete(input.accountId);
+    const deletedBankAccount = await this.bankAccountRepository.remove(input.accountId);
     
     if (!deletedBankAccount.ok) {
       return err(new Error('Erreur lors de la suppression du compte'));

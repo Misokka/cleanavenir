@@ -1,7 +1,9 @@
 import { Result } from "../../../../shared/Result";
-import { OperationRepository } from "../../../ports/repositories/OperationRepository";
+import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
 import { InsufficientFundsError } from "../../../../domain/errors/InsufficientFundsError";
 import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
+import { randomUUID } from "crypto";
+import { Transaction } from "../../../../domain/entities/Transaction";
 
 export type CreateDebitInput = {
   AccountId: string;
@@ -11,7 +13,7 @@ export type CreateDebitInput = {
 };
 
 export class CreateDebitUseCase {
-  constructor(private readonly ops: OperationRepository) {}
+  constructor(private readonly transactionRepositiry: TransactionRepository) {}
 
   async execute(input: CreateDebitInput): Promise<Result<true, BankAccountNotFoundError | InsufficientFundsError | Error>> {
     if (input.amount <= 0) {
@@ -21,12 +23,25 @@ export class CreateDebitUseCase {
       return { ok: false, error: new Error("Currency is required") };
     }
 
-    const created = await this.ops.createDebit({
-      AccountId: input.AccountId,
+    const transactionIdentifier = randomUUID();
+    const creditTransaction = Transaction.create({
+      transactionIdentifier,
+      bankAccountIdentifier: input.AccountId,
       amount: input.amount,
       currency: input.currency,
-      label: input.label || "DEBIT",
-    });
+      direction: "DEBIT",
+      type: "TRANSFER",
+      description: input.label || "DEBIT",
+    })
+
+    // const created = await this.transactionRepositiry.createDebit({
+    //   AccountId: input.AccountId,
+    //   amount: input.amount,
+    //   currency: input.currency,
+    //   label: input.label || "DEBIT",
+    // });
+
+    const created =  await this.transactionRepositiry.save(creditTransaction);
     if (!created.ok) return created;
 
     return { ok: true, value: true };

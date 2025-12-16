@@ -1,4 +1,6 @@
 import { Result, ok, err } from '../../../../shared/Result';
+import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
+import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 
 export interface OperationFilters {
   type?: string[]; // ['CREDIT', 'DEBIT', 'TRANSFER', 'INTEREST']
@@ -9,17 +11,10 @@ export interface OperationFilters {
   accountId?: string; // filtrer par compte spécifique
 }
 
-export interface OperationRepository {
-  listWithFilters(accountIds: string[], filters: OperationFilters): Promise<Result<any[], Error>>;
-}
-
-export interface BankAccountRepository {
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-}
 
 export class GetOperationsHistoryUseCase {
   constructor(
-    private readonly operationRepository: OperationRepository,
+    private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
@@ -39,7 +34,7 @@ export class GetOperationsHistoryUseCase {
       return ok([]);
     }
 
-    const accountIds = accounts.map((account) => account.id);
+    const accountIds = accounts.map((account) => account.accountIdentifier);
 
     if (params.filters?.accountId) {
       const accountBelongsToUser = accountIds.includes(params.filters.accountId);
@@ -48,7 +43,7 @@ export class GetOperationsHistoryUseCase {
       }
     }
 
-    const operationsResult = await this.operationRepository.listWithFilters(
+    const operationsResult = await this.transactionRepository.listWithFilters(
       accountIds,
       params.filters || {}
     );
@@ -58,8 +53,8 @@ export class GetOperationsHistoryUseCase {
     }
 
     const enrichedOperations = operationsResult.value.map((op) => {
-      const isCredit = accountIds.includes(op.toAccountId);
-      const isDebit = accountIds.includes(op.fromAccountId);
+      const isCredit = accountIds.includes(op.toAccountIdentifier as string);
+      const isDebit = accountIds.includes(op.fromAccountIdentifier as string);
       const isInternal = isCredit && isDebit;
 
       let direction = 'OUTGOING';
@@ -72,7 +67,7 @@ export class GetOperationsHistoryUseCase {
       return {
         ...op,
         direction,
-        userAccountId: isCredit ? op.toAccountId : op.fromAccountId,
+        userAccountId: isCredit ? op.toAccountIdentifier : op.fromAccountIdentifier,
       };
     });
 

@@ -5,6 +5,15 @@ import { OperationNotFoundError } from "../../../domain/errors/OperationNotFound
 import { InsufficientFundsError } from "../../../domain/errors/InsufficientFundsError";
 import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 
+export interface OperationFilters {
+  type?: string[]; // ['CREDIT', 'DEBIT', 'TRANSFER', 'INTEREST']
+  dateFrom?: string; // ISO date
+  dateTo?: string; // ISO date
+  amountMin?: number; // en centimes
+  amountMax?: number; // en centimes
+  accountId?: string; // filtrer par compte spécifique
+}
+
 export interface OperationRepository {
     createCredit (input: {
         AccountId: string;
@@ -28,7 +37,7 @@ export interface OperationRepository {
         offset?: number;
     }): Promise<Result<OperationDTO[], BankAccountNotFoundError>>;
 
-    
-
-
+    listWithFilters(accountIds: string[], filters: OperationFilters): Promise<Result<any[], Error>>;
+    listRecentForUser(userAccountIds: string[], limit: number): Promise<Result<any[], Error>>;
+    listForAccount(accountIdentifier: string): Promise<Result<any[], Error>>;
 }

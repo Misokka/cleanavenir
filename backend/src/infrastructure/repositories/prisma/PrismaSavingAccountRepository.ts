@@ -76,6 +76,40 @@ export class PrismaSavingAccountRepository implements SavingAccountRepository {
     return ok(savingAccountToDomain);
   }
 
+  async findByAccountIds(accountIds: string[]): Promise<Result<any[], Error>> {
+    try {
+      const savingAccounts = await this.prismaClient.savingAccount.findMany({
+        where: {
+          accountIdentifier: {
+            in: accountIds
+          }
+        }
+      });
+
+      const savingAccountsToDomain: SavingAccount[] = savingAccounts.map((savingAccount) => {
+        return this.prismaSavingAccountMapper.toDomain(savingAccount);
+      });
+
+      return ok(savingAccountsToDomain);
+    } catch (error) {
+      return err(new Error("An error occured when retrieving saving accounts by account IDs."));
+    }
+  }
+
+  async getGlobalRate(): Promise<Result<SavingRateDTO, SavingRateNotSetError>> {
+    return ok({
+      value: 0,
+      updateAt: "test"
+    })
+  }
+
+  async setGlobalRate(value: number): Promise<Result<SavingRateDTO, never>> {
+    return ok({
+      value: value,
+      updateAt: "test"
+    })
+  }
+
   async openForAccount(accountIdentifier: string): Promise<Result<SavingAccount, BankAccountNotFoundError | AlreadyHasSavingAccountError>> {
     const existing = await this.prismaClient.savingAccount.findUnique({
       where: {

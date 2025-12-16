@@ -1,18 +1,53 @@
 import { randomUUID } from "crypto";
 import { Iban } from "../value-objects/Iban";
-import { BankAccount } from "./BankAccount";
 import { Transaction } from "./Transaction";
+import { InsufficientFundsError } from "../errors/InsufficientFundsError";
 
-export class SavingAccount extends  BankAccount{
-  constructor(
+export class SavingAccount  {
+  private constructor(
+    public accountIdentifier: string,
+    public clientIdentifier: string,
+    public productIdentifier: string,
+    public iban: Iban,
+    public label: string,
+    public balance: number,
+  ){}
+
+  public static create(props: {
     accountIdentifier: string,
     clientIdentifier: string,
-    public productIdentifier: string,
+    productIdentifier: string,
     iban: Iban,
     label: string,
-    balance: number,
-  ){
-    super(accountIdentifier, clientIdentifier, iban, label, balance);
+    balance: number
+  }): SavingAccount {
+    return new SavingAccount(
+      props.accountIdentifier,
+      props.clientIdentifier,
+      props.productIdentifier,
+      props.iban,
+      props.label,
+      props.balance
+    );
+  }
+
+  public withdraw(amount: number): void {
+    if (this.balance < amount) {
+      throw new InsufficientFundsError(this.accountIdentifier);
+    }
+    this.balance -= amount;
+  }
+
+  public deposit(amount: number): void{
+    this.balance += amount;
+  }
+
+  public applyTransaction(transaction: Transaction){
+    if(transaction.direction === "CREDIT"){
+      this.deposit(transaction.amount);
+    } else {
+      this.withdraw(transaction.amount);
+    }
   }
 
 

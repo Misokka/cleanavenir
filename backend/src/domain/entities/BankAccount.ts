@@ -3,13 +3,29 @@ import { Iban } from "../value-objects/Iban";
 import { Transaction } from "./Transaction";
 
 export class BankAccount{
-  constructor(
+  private constructor(
     public accountIdentifier: string,
     public clientIdentifier: string,
     public iban: Iban,
     public label: string,
     public balance: number
   ){}
+
+  public static create(props: {
+    accountIdentifier: string,
+    clientIdentifier: string,
+    iban: Iban,
+    label: string,
+    balance: number
+  }): BankAccount {
+    return new BankAccount(
+      props.accountIdentifier,
+      props.clientIdentifier,
+      props.iban,
+      props.label,
+      props.balance
+    );
+  }
 
   public withdraw(amount: number): void {
     if (this.balance < amount) {

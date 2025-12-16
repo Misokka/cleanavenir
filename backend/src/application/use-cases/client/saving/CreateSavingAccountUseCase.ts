@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { err, ok, Result } from "../../../../shared/Result";
-import { SavingRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/SavingRepositoryDrizzle";
-import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
-import { OperationRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/OperationRepositoryDrizzle";
+import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
+import { SavingAccountRepository } from "../../../ports/repositories/SavingAccountRepository";
+import { OperationRepository } from "../../../ports/repositories/OperationRepository";
 
 export interface CreateSavingAccountInput {
   userId: string;
@@ -13,9 +13,9 @@ export interface CreateSavingAccountInput {
 
 export class CreateSavingAccountUseCase {
   constructor(
-    private readonly savingRepository: SavingRepositoryDrizzle,
-    private readonly bankAccountRepository: BankAccountRepositoryDrizzle,
-    private readonly operationRepository: OperationRepositoryDrizzle
+    private readonly savingAccountRepository: SavingAccountRepository,
+    private readonly bankAccountRepository: BankAccountRepository,
+    private readonly operationRepository: OperationRepository
   ) {}
 
   public async execute(input: CreateSavingAccountInput): Promise<Result<any, Error>> {
@@ -35,7 +35,7 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Compte source introuvable'));
     }
 
-    if (sourceAccount.value.ownerId !== input.userId) {
+    if (sourceAccount.value.clientIdentifier !== input.userId) {
       return err(new Error('Accès non autorisé au compte source'));
     }
 
@@ -43,7 +43,7 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Solde insuffisant sur le compte source'));
     }
 
-    const existingSavings = await this.savingRepository.findByAccountIds([input.sourceAccountId]);
+    const existingSavings = await this.savingAccountRepository.findByAccountIds([input.sourceAccountId]);
     if (existingSavings.ok && existingSavings.value.length > 0) {
       return err(new Error('Ce compte possède déjà une épargne associée'));
     }
@@ -80,7 +80,7 @@ export class CreateSavingAccountUseCase {
     const rateInBasisPoints = Math.round(input.rate * 100);
     const savingId = randomUUID();
     
-    const createSavingResult = await this.savingRepository.create({
+    const createSavingResult = await this.savingAccountRepository.create({
       id: savingId,
       accountId: input.sourceAccountId,
       rate: rateInBasisPoints,

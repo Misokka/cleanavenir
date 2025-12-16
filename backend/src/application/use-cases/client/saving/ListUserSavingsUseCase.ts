@@ -1,16 +1,10 @@
 import { Result, ok } from '../../../../shared/Result';
-
-export interface SavingRepository {
-  findByAccountIds(accountIds: string[]): Promise<Result<any[], Error>>;
-}
-
-export interface BankAccountRepository {
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-}
+import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
+import { SavingAccountRepository } from '../../../ports/repositories/SavingAccountRepository';
 
 export class ListUserSavingsUseCase {
   constructor(
-    private readonly savingRepository: SavingRepository,
+    private readonly savingRepository: SavingAccountRepository,
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
@@ -27,7 +21,7 @@ export class ListUserSavingsUseCase {
       return ok([]);
     }
 
-    const accountIds = accounts.map((account) => account.id);
+    const accountIds = accounts.map((account) => account.accountIdentifier);
 
     return this.savingRepository.findByAccountIds(accountIds);
   }

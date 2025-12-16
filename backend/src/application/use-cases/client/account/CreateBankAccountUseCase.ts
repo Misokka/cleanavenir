@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import { err, ok, Result } from "../../../../shared/Result";
 import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
+import { BankAccount } from "../../../../domain/entities/BankAccount";
+import { Iban } from "../../../../domain/value-objects/Iban";
 
 export interface CreateBankAccountInput {
   ownerId: string;
@@ -57,14 +59,23 @@ export class CreateBankAccountUseCase {
       return err(new Error('Impossible de générer un IBAN unique'));
     }
 
+    const finalIbanResult = Iban.from(finalIban);
+    if (!finalIbanResult.ok) {
+      return err(new Error('IBAN généré invalide'));
+    }
+    const finalIbanObject = finalIbanResult.value;
+
     const accountId = randomUUID();
-    const createResult = await this.bankAccountRepository.create({
-      id: accountId,
-      iban: finalIban,
-      name: input.name.trim(),
-      ownerId: input.ownerId,
-      balance: 0,
+
+    const newBankAccount = BankAccount.create({
+      accountIdentifier: accountId,
+      clientIdentifier: input.ownerId,
+      iban: finalIbanObject,
+      label: input.name.trim(),
+      balance: 0
     });
+    
+    const createResult = await this.bankAccountRepository.save(newBankAccount);
 
     if (!createResult.ok) {
       return err(new Error('Erreur lors de la création du compte'));
