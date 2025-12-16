@@ -22,7 +22,7 @@ export interface TransactionRepository{
           AccountId: string;
           limit?: number;
           offset?: number;
-      }): Promise<Result<Transaction[], BankAccountNotFoundError>>;
+      }): Promise<Result<Transaction[], Error>>;
   
   listWithFilters(accountIds: string[], filters: OperationFilters): Promise<Result<Transaction[], Error>>;
   listRecentForUser(userAccountIds: string[], limit: number): Promise<Result<Transaction[], Error>>;

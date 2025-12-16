@@ -2,7 +2,8 @@ import { randomUUID } from "node:crypto";
 import { err, ok, Result } from "../../../../shared/Result";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 import { SavingAccountRepository } from "../../../ports/repositories/SavingAccountRepository";
-import { OperationRepository } from "../../../ports/repositories/OperationRepository";
+import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
+import { Transaction } from "../../../../domain/entities/Transaction";
 
 export interface CreateSavingAccountInput {
   userId: string;
@@ -15,7 +16,7 @@ export class CreateSavingAccountUseCase {
   constructor(
     private readonly savingAccountRepository: SavingAccountRepository,
     private readonly bankAccountRepository: BankAccountRepository,
-    private readonly operationRepository: OperationRepository
+    private readonly transactionRepository: TransactionRepository
   ) {}
 
   public async execute(input: CreateSavingAccountInput): Promise<Result<any, Error>> {
@@ -59,6 +60,17 @@ export class CreateSavingAccountUseCase {
     }
 
     const debitOperationId = randomUUID();
+    const debitOperation = Transaction.create({
+      transactionIdentifier: debitOperationId,
+      bankAccountIdentifier: input.sourceAccountId,
+      fromAccountIdentifier: input.sourceAccountId,
+      toAccountIdentifier: undefined,
+      amount: amountInCents,
+      direction: 'DEBIT',
+      currency: 'EUR',
+      type: 'TRANSFER',
+      description: `Ouverture compte épargne (${input.rate}% par an)`,
+    })
     const debitOperation = {
       id: debitOperationId,
       fromAccountId: input.sourceAccountId,
@@ -68,7 +80,7 @@ export class CreateSavingAccountUseCase {
       description: `Ouverture compte épargne (${input.rate}% par an)`,
     };
 
-    const createDebitResult = await this.operationRepository.save(debitOperation);
+    const createDebitResult = await this.transactionRepository.save(debitOperation);
     if (!createDebitResult.ok) {
       await this.bankAccountRepository.updateBalance(
         input.sourceAccountId,
