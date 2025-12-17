@@ -6,23 +6,20 @@ import { ok, err, Result } from '../../../shared/Result';
 import { DrizzleClient } from '../../drizzle/client';
 import { bankAccounts } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { DrizzleBankAccountMapper } from '../mappers/DrizzleMappers/DrizzleBankAccountMapper';
 
 export class BankAccountRepositoryDrizzle implements BankAccountRepository {
-  constructor(private readonly db: DrizzleClient) {}
+  constructor(
+    private readonly db: DrizzleClient,
+    private readonly bankAccountMapper: DrizzleBankAccountMapper
+  ) {}
 
-  async save(account: BankAccount): Promise<Result<any, Error>> {
+  async save(account: BankAccount): Promise<Result<BankAccount, Error>> {
     try {
-      const now = new Date().toISOString();
-      await this.db.insert(bankAccounts).values({
-        id: account.accountIdentifier,
-        iban: account.iban.value,
-        name: account.label,
-        ownerId: account.clientIdentifier,
-        balance: account.balance ?? 0,
-        createdAt: now,
-        updatedAt: now,
-      });
-      return ok(account);
+      const bankAccountToPersist = this.bankAccountMapper.toPersistence(account)
+      const registerdBankAccounts = await this.db.insert(bankAccounts).values(bankAccountToPersist).returning();
+      const bankAccountToDomain = this.bankAccountMapper.toDomain(registerdBankAccounts[0]);
+      return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);
     }
@@ -31,56 +28,65 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
   async findDefaultAccountByClientId(clientIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>> {
     try {
       const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, clientIdentifier)).limit(1);
-      if (!rows.length) return err(new Error('BankAccount not found'));
-      return ok(rows[0]);
+      if (!rows.length) return err(new BankAccountNotFoundError(`for client: ${clientIdentifier}`));
+      const bankAccountToDomain = this.bankAccountMapper.toDomain(rows[0])
+      return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);
     }
   }
 
-  async findById(id: string): Promise<Result<any, Error>> {
+  async findById(bankAccountIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError>> {
     try {
-      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.id, id)).limit(1);
-      if (!rows.length) return err(new Error('BankAccount not found'));
-      return ok(rows[0]);
+      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.id, bankAccountIdentifier)).limit(1);
+      if (!rows.length) return err(new BankAccountNotFoundError(bankAccountIdentifier));
+      const bankAccountToDomain = this.bankAccountMapper.toDomain(rows[0]);
+      return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);
     }
   }
 
-  async findByIban(iban: string): Promise<Result<any, Error>> {
+  async findByIban(iban: string): Promise<Result<BankAccount, Error>> {
     try {
       const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.iban, iban)).limit(1);
       if (!rows.length) return err(new Error('BankAccount not found'));
-      return ok(rows[0]);
+      const bankAccountToDomain = this.bankAccountMapper.toDomain(rows[0]);
+      return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);
     }
   }
 
-  async findByOwner(ownerId: string): Promise<Result<any[], Error>> {
+  async findByOwner(clientIdentifier: string): Promise<Result<BankAccount[], Error>> {
     try {
-  const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, ownerId));
-      return ok(rows);
+      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, clientIdentifier));
+      const bankAccountsToDomain = rows.map((row) => {
+        return this.bankAccountMapper.toDomain(row);
+      })
+
+      return ok(bankAccountsToDomain);
     } catch (e: any) {
       return err(e);
     }
   }
 
-  async updateBalance(id: string, newBalance: number): Promise<Result<number, Error>> {
+  async updateBalance(bankAccountIdentifier: string, newBalance: number): Promise<Result<number, Error>> {
     try {
-  await this.db.update(bankAccounts).set({ balance: newBalance }).where(eq(bankAccounts.id, id));
-      return ok(newBalance);
+      const updatedBankAccounts = await this.db.update(bankAccounts).set({ balance: newBalance }).where(eq(bankAccounts.id, bankAccountIdentifier)).returning();
+      const updatedToDomain = this.bankAccountMapper.toDomain(updatedBankAccounts[0])
+      return ok(updatedToDomain.balance);
     } catch (e: any) {
       return err(e);
     }
   }
 
-  async rename(id: string, newName: string): Promise<Result<any, Error>> {
+  async rename(bankAccountIdentifier: string, newName: string): Promise<Result<BankAccount, Error>> {
     try {
       const now = new Date().toISOString();
-      await this.db.update(bankAccounts).set({ name: newName, updatedAt: now }).where(eq(bankAccounts.id, id));
-      return this.findById(id);
+      const updatedBankAccounts = await this.db.update(bankAccounts).set({ name: newName, updatedAt: now }).where(eq(bankAccounts.id, bankAccountIdentifier)).returning();
+       const updatedToDomain = this.bankAccountMapper.toDomain(updatedBankAccounts[0])
+      return ok(updatedToDomain)
     } catch (e: any) {
       return err(e);
     }
@@ -97,7 +103,7 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
 
   async remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>> {
     try{
-      return this.delete(accountIdentifier);
+      return await this.delete(accountIdentifier);
     } catch (e: any){
       return err(e);
     }

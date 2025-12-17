@@ -4,49 +4,45 @@ import { Client } from '../../../domain/entities/Client';
 import { ClientRepository } from '../../../application/ports/repositories/ClientRepository';
 import { InvalidRoleError } from '../../../domain/errors/InvalidRoleError';
 import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
-import { users } from '../../drizzle/schema';
+import { clients } from '../../drizzle/schema';
 import { DrizzleClient } from '../../drizzle/client';
+import { DrizzleClientMapper } from '../mappers/DrizzleMappers/DrizzleClientMapper';
 
 export class ClientRepositoryDrizzle implements ClientRepository {
-  constructor(private readonly db: DrizzleClient) {}
+  constructor(
+    private readonly db: DrizzleClient,
+    private readonly clientMapper: DrizzleClientMapper
+  ) {}
 
   async save(client: Client): Promise<Result<Client, InvalidRoleError>> {
     try {
-      const userRow = await this.db
-        .select()
-        .from(users)
-        .where(eq(users.id, client.userIdentifier))
-        .limit(1);
+      const clientToPersist = this.clientMapper.toPersistence(client);
+      const clientRows = await this.db.insert(clients).values(clientToPersist).returning();
+      const clientToDomain = this.clientMapper.toDomain(clientRows[0]);
 
-      if (!userRow.length || userRow[0].role !== 'CLIENT') {
-        return err(new InvalidRoleError(client.userIdentifier));
-      }
-
-      return ok(client);
+      return ok(clientToDomain);
     } catch (e: any) {
       return err(new InvalidRoleError(client.userIdentifier));
     }
   }
 
-  async findById(userIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
+  async findById(clientIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
     try {
-      const userRow = await this.db
+      const clientRows = await this.db
         .select()
-        .from(users)
-        .where(eq(users.id, userIdentifier))
+        .from(clients)
+        .where(eq(clients.id, clientIdentifier))
         .limit(1);
 
-      if (!userRow.length || userRow[0].role !== 'CLIENT') {
-        return err(new UserNotFoundError(userIdentifier));
+      if (!clientRows.length) {
+        return err(new UserNotFoundError(clientIdentifier));
       }
 
-      const client = Client.create({
-        clientIdentifier: userRow[0].id,
-        userIdentifier
-      });
-      return ok(client);
+      const clientToDomain = this.clientMapper.toDomain(clientRows[0]);
+
+      return ok(clientToDomain);
     } catch (e: any) {
-      return err(new UserNotFoundError(userIdentifier));
+      return err(new UserNotFoundError(clientIdentifier));
     }
   }
 }

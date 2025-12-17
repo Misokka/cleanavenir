@@ -19,7 +19,7 @@ export interface TransactionRepository{
   all(): Promise<Result<Transaction[], Error>>;
 
   listByAccountId (params: {
-          AccountId: string;
+          accountId: string;
           limit?: number;
           offset?: number;
       }): Promise<Result<Transaction[], Error>>;

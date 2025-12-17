@@ -1,5 +1,5 @@
 import { Mapper } from "../MapperInterface";
-import { OrderStatus, OrderType, Prisma, Order as PrismaOrder } from "@prisma/client";
+import { OrderStatus, OrderType, Order as PrismaOrder } from "@prisma/client";
 import { Order } from "../../../../domain/entities/Order";
 
 type OrderToPersist = {

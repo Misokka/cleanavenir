@@ -1,6 +1,6 @@
 import { err, ok, Result } from "../../../../shared/Result";
 import { SavingRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/SavingRepositoryDrizzle";
-import { OperationRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/OperationRepositoryDrizzle";
+import { OperationRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/TransactionRepositoryDrizzle";
 import { randomUUID } from "node:crypto";
 
 export class ApplyDailyInterestUseCase {

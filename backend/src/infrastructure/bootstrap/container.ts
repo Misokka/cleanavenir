@@ -6,7 +6,7 @@ import { ClientRepositoryDrizzle } from '../repositories/drizzle/ClientRepositor
 import { DirectorRepositoryDrizzle } from '../repositories/drizzle/DirectorRepositoryDrizzle';
 import { AdvisorRepositoryDrizzle } from '../repositories/drizzle/AdvisorRepositoryDrizzle';
 import { BankAccountRepositoryDrizzle } from '../repositories/drizzle/BankAccountRepositoryDrizzle';
-import { OperationRepositoryDrizzle } from '../repositories/drizzle/OperationRepositoryDrizzle';
+import { OperationRepositoryDrizzle } from '../repositories/drizzle/TransactionRepositoryDrizzle';
 import { SavingRepositoryDrizzle } from '../repositories/drizzle/SavingRepositoryDrizzle';
 import { LoanRepositoryDrizzle } from '../repositories/drizzle/LoanRepositoryDrizzle';
 
