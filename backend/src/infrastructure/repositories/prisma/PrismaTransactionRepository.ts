@@ -79,12 +79,12 @@ export class PrismaTransactionRepository implements TransactionRepository {
     }
   }
 
-  async listByAccountId(params: { AccountId: string; limit?: number; offset?: number; }): Promise<Result<Transaction[], Error>> {
+  async listByAccountId(params: { accountId: string; limit?: number; offset?: number; }): Promise<Result<Transaction[], Error>> {
     try{
-      const { AccountId, limit, offset } = params;
+      const { accountId, limit, offset } = params;
       const transactions = await this.prismaClient.transaction.findMany({
         where: {
-          bankAccountIdentifier: AccountId
+          bankAccountIdentifier: accountId
         },
         take: limit,
         skip: offset
@@ -97,7 +97,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
 
       return ok(transactionsArray);
     } catch (error) {
-      return err(new Error(`An error occured when retrieving transactions for account: ${params.AccountId}`))
+      return err(new Error(`An error occured when retrieving transactions for account: ${params.accountId}`))
     }
   }
 

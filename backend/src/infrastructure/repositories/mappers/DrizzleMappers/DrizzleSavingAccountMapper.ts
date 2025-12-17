@@ -29,7 +29,7 @@ export class DrizzleSavingAccountMapper implements Mapper<SavingAccountDrizzle, 
       savingProductId: entity.productIdentifier,
       iban: entity.iban.value,
       createdAt: entity.createdAt.toISOString(),
-      updatedAt: entity.updatedAt?.toISOString() as string,
+      updatedAt: new Date().toISOString(),
     };
   }
 }

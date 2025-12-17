@@ -1,6 +1,6 @@
 export class SavingBankAccountNotFoundError extends Error {
-    constructor(public readonly AccountId: string) {
-        super(`Saving account for Account ${AccountId} not found`);
+    constructor(savingAccountIdentifier: string) {
+        super(`Saving account for Account ${savingAccountIdentifier} not found`);
         this.name = "SavingBankAccountNotFoundError";
     }
 }

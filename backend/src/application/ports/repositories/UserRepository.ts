@@ -12,10 +12,5 @@ export interface UserRepository {
   findById(id: string): Promise<Result<User, UserNotFoundError>>;
   findByEmail(email: string): Promise<Result<User, UserNotFoundError>>;
 
-  setRole(id: string, role: UserRole): Promise<Result<User, UserNotFoundError | InvalidRoleError>>;
-
-  setActive(id: string, active: boolean): Promise<Result<User, UserNotFoundError>>;
-  setEmailVerified(id: string, whenISO: string): Promise<Result<User, UserNotFoundError>>;
-
   listByRole(role: UserRole): Promise<Result<User[], never>>;
 }

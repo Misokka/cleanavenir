@@ -4,6 +4,6 @@ import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { Result } from "../../../shared/Result";
 
 export interface PortfolioRepository{
-  save(portfolio: Portfolio): Promise<Result<Portfolio, UserNotFoundError>>;
+  save(portfolio: Portfolio): Promise<Result<Portfolio, Error>>;
   findByClientId(clientIdentifier: string): Promise<Result<Portfolio, PortfolioNotFoundError>>
 }

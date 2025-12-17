@@ -1,9 +1,4 @@
 import { Result } from "../../../shared/Result";
-import { SavingAccountDTO } from "../../dtos/SavingAccountDTO";
-import { SavingRateDTO } from "../../dtos/SavingRateDTO";
-import { AlreadyHasSavingAccountError } from "../../../domain/errors/AlreadyHasSavingAccountError";
-import { SavingRateNotSetError } from "../../../domain/errors/SavingRateNotSetError";
-import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { SavingBankAccountNotFoundError } from "../../../domain/errors/SavingAccountNotFoundError";
 import { SavingAccount } from "../../../domain/entities/SavingAccount";
 
@@ -12,19 +7,9 @@ export interface SavingAccountRepository {
     saveAll(savingAccounts: SavingAccount[]): Promise<Result<SavingAccount[], Error>>
     all(): Promise<Result<SavingAccount[], Error>>;
 
-    openForAccount(accountId: string): Promise<
-        Result<SavingAccount, BankAccountNotFoundError | AlreadyHasSavingAccountError>
-    >;
-
-    findByAccountId(accountId: string): Promise<
+    findById(accountId: string): Promise<
         Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
-    setActive(AccountId: string, active: boolean): Promise<
-        Result<SavingAccount, SavingBankAccountNotFoundError>
-    >;
-
-    setGlobalRate(value: number): Promise<Result<SavingRateDTO, never>>;
-    getGlobalRate(): Promise<Result<SavingRateDTO, SavingRateNotSetError>>;
     findByAccountIds(accountIds: string[]): Promise<Result<SavingAccount[], Error>>;
 }

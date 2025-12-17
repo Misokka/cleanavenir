@@ -104,62 +104,6 @@ export class PrismaUserRepository implements UserRepository {
     }
   }
 
-  async setRole(userIdentifier: string, role: UserRole): Promise<Result<User, UserNotFoundError | InvalidRoleError>> {
-    const existingUser = await this.prismaClient.user.findUnique({
-      where: {userIdentifier}
-    });
-
-    if(!existingUser){
-      return err(new UserNotFoundError(userIdentifier))
-    }
-
-    const updatedUser = await this.prismaClient.user.update({
-      where: {userIdentifier},
-      data: {role}
-    });
-
-    const domainUser = this.prismaUserMapper.toDomain(updatedUser);
-    return ok(domainUser);
-  }
-
-  async setEmailVerified(userIdentifier: string, whenISO: string): Promise<Result<User, UserNotFoundError>> {
-    const existingUser = await this.prismaClient.user.findUnique({
-      where: {userIdentifier}
-    });
-
-    if(!existingUser){
-      return err(new UserNotFoundError(userIdentifier))
-    }
-
-    const updatedUser = await this.prismaClient.user.update({
-      where: {userIdentifier},
-      data: {
-        emailVerifiedAt: new Date(whenISO)
-      }
-    });
-
-    const domainUser = this.prismaUserMapper.toDomain(updatedUser);
-    return ok(domainUser);
-  }
-
-  async setActive(userIdentifier: string, active: boolean): Promise<Result<User, UserNotFoundError>> {
-    const existingUser = await this.prismaClient.user.findUnique({
-      where: {userIdentifier}
-    });
-
-    if(!existingUser){
-      return err(new UserNotFoundError(userIdentifier))
-    }
-
-    const updatedUser = await this.prismaClient.user.update({
-      where: {userIdentifier},
-      data: {active}
-    });
-
-    const domainUser = this.prismaUserMapper.toDomain(updatedUser);
-    return ok(domainUser);
-  }
-
   async listByRole(role: UserRole): Promise<Result<User[], never>> {
     const prismaUsers = await this.prismaClient.user.findMany({
       where: {role}
