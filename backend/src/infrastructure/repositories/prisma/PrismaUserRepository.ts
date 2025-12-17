@@ -59,6 +59,51 @@ export class PrismaUserRepository implements UserRepository {
     return ok(domainUser);
   }
 
+  async update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>> {
+    try {
+      const existingUser = await this.prismaClient.user.findUnique({
+        where: { userIdentifier: user.userIdentifier}
+      });
+
+      if(!existingUser){
+        return err(new UserNotFoundError(user.userIdentifier));
+      }
+
+      if(user.email != existingUser.email){
+        const existingUserWithEmail = await this.prismaClient.user.findFirst({
+          where: {
+            email: user.email, // L'email qu'on veut tester
+            NOT: {
+              userIdentifier: user.userIdentifier // On s'exclut soi-même de la recherche
+            }
+          }
+        });
+
+        if(existingUserWithEmail){
+          return err(new EmailAlreadyUsedError(user.email))
+        }
+      }
+
+      const userToPersist = this.prismaUserMapper.toPersistence(user);
+
+      const updatedUser = await this.prismaClient.user.update({
+        where: { userIdentifier: user.userIdentifier},
+        data: {
+          ...userToPersist
+        }
+      });
+
+      if(!updatedUser){
+        return err(new Error("Couldn't update user"));
+      }
+
+      const toDomainUpdatedUser = this.prismaUserMapper.toDomain(updatedUser);
+      return ok(toDomainUpdatedUser);
+    } catch (error){
+      return err(new Error(`An error occured when updating user ${user.userIdentifier}`))
+    }
+  }
+
   async setRole(userIdentifier: string, role: UserRole): Promise<Result<User, UserNotFoundError | InvalidRoleError>> {
     const existingUser = await this.prismaClient.user.findUnique({
       where: {userIdentifier}

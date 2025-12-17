@@ -15,7 +15,7 @@ export class PrismaTradeRepository implements TradeRepository {
     const registerdTrade = await this.prismaClient.trade.create({
       data: {
         ...tradeToPersist,
-        timestamp: tradeToPersist.timestamp as Date,
+        createdAt: tradeToPersist.createdAt as Date,
         status: $Enums.TradeStatus.PENDING_SETTLEMENT
       }
     });

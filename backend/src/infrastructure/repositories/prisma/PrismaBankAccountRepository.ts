@@ -106,7 +106,7 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
       }
   }
 
-  async updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>> {
+  async updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<number, BankAccountNotFoundError | UnexpectedBankAccountError>> {
       try{
         const updatedBankAccount = await this.prismaClient.bankAccount.update({
           where: {
@@ -119,7 +119,7 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
 
         const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(updatedBankAccount);
 
-        return ok(bankAccountToDomain);
+        return ok(bankAccountToDomain.balance);
       } catch (error){
        return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
       }

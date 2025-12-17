@@ -9,7 +9,7 @@ type TradeToPersist = {
   sellOrderIdentifier: string,
   quantity: number,
   price: number, 
-  timestamp?: Date,
+  createdAt?: Date,
 }
 
 export class PrismaTradeMapper implements Mapper<PrismaTrade, Trade, TradeToPersist>{
@@ -21,7 +21,7 @@ export class PrismaTradeMapper implements Mapper<PrismaTrade, Trade, TradeToPers
       raw.sellOrderIdentifier,
       raw.quantity,
       raw.price,
-      raw.timestamp
+      raw.createdAt
     )
   }
 
