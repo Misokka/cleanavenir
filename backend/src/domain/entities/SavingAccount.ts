@@ -4,6 +4,7 @@ import { Transaction } from "./Transaction";
 import { InsufficientFundsError } from "../errors/InsufficientFundsError";
 
 export class SavingAccount  {
+  public updatedAt: Date | null = null;
   private constructor(
     public accountIdentifier: string,
     public clientIdentifier: string,
@@ -11,6 +12,7 @@ export class SavingAccount  {
     public iban: Iban,
     public label: string,
     public balance: number,
+    public createdAt: Date
   ){}
 
   public static create(props: {
@@ -19,7 +21,8 @@ export class SavingAccount  {
     productIdentifier: string,
     iban: Iban,
     label: string,
-    balance: number
+    balance: number,
+    createdAt: Date
   }): SavingAccount {
     return new SavingAccount(
       props.accountIdentifier,
@@ -27,7 +30,8 @@ export class SavingAccount  {
       props.productIdentifier,
       props.iban,
       props.label,
-      props.balance
+      props.balance,
+      props.createdAt
     );
   }
 
@@ -62,15 +66,16 @@ export class SavingAccount  {
     }
 
     const transactionIdentifier = randomUUID();
-    const interestTransaction = new Transaction(
+    const interestTransaction = Transaction.create({
       transactionIdentifier,
-      this.accountIdentifier,
-      interestAmount * 100, // en centimes
-      "CREDIT",
-      "SAVINGS_INTEREST",
-      "Daily interests",
-      new Date()
-    );
+      bankAccountIdentifier: this.accountIdentifier,
+      amount: interestAmount * 100,
+      currency: "EUR",
+      description: "Daily interest",
+      direction: "CREDIT",
+      type: "SAVINGS_INTEREST",
+      date: new Date()
+    });
 
     // On applique la transaction pour mettre à jour le solde
     this.applyTransaction(interestTransaction);

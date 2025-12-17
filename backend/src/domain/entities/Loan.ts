@@ -1,3 +1,4 @@
+export type LoanStatus = "PENDING" | "ACTIVE" | "PAID_OFF"
 export class Loan{
   private constructor(
     public loanIdentifier: string,
@@ -10,7 +11,7 @@ export class Loan{
     public remainingAmountToPay: number,
     public annualInterestRate: number,
     public annualInsuranceRate: number,
-    public status: "PENDING" | "ACTIVE" | "PAID_OFF",
+    public status: LoanStatus,
     public createdAt: Date,
     public lastPaidAt?: Date,
     public nextToPayAt?: Date,
@@ -27,7 +28,7 @@ export class Loan{
     remainingAmountToPay: number,
     annualInterestRate: number,
     annualInsuranceRate: number,
-    status?: "PENDING" | "ACTIVE" | "PAID_OFF",
+    status?: LoanStatus,
     createdAt?: Date,
     lastPaidAt?: Date,
     nextToPayAt?: Date,

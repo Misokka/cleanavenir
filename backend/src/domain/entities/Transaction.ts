@@ -17,7 +17,7 @@ export class Transaction {
     public readonly direction: TransactionDirection,
     public readonly type: TransactionType,
     public readonly description: string,
-    public readonly date: Date = new Date(),
+    public readonly createdAt: Date = new Date(),
     public readonly fromAccountIdentifier?: string,
     public readonly toAccountIdentifier?: string
   ) {}
@@ -30,7 +30,7 @@ export class Transaction {
     direction: TransactionDirection;
     type: TransactionType;
     description: string;
-    date?: Date;
+    createdAt?: Date;
     fromAccountIdentifier?: string,
     toAccountIdentifier?: string
   }): Transaction {
@@ -42,7 +42,7 @@ export class Transaction {
       props.direction,
       props.type,
       props.description,
-      props.date || new Date(),
+      props.createdAt || new Date(),
       props.fromAccountIdentifier,
       props.toAccountIdentifier
     );
