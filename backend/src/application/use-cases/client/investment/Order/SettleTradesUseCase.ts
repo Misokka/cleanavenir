@@ -60,7 +60,7 @@ export class SettleTradesUseCase {
         direction: "DEBIT",
         type: "STOCK_PURCHASE",
         description: "buy of stocks",
-        date: new Date()
+        createdAt: new Date()
       }
       );
 
@@ -72,7 +72,7 @@ export class SettleTradesUseCase {
         direction: "CREDIT",
         type: "STOCK_SALE",
         description: "Sale of stocks",
-        date: new Date()
+        createdAt: new Date()
       });
 
       // 4. Déplacer les actions

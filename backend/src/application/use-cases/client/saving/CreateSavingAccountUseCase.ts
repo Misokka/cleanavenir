@@ -28,7 +28,7 @@ export class CreateSavingAccountUseCase {
     this.ibanGenerator = new IbanGenerator();
   }
 
-  public async execute(input: CreateSavingAccountInput): Promise<Result<any, Error>> {
+  public async execute(input: CreateSavingAccountInput): Promise<Result<SavingAccount, Error>> {
     const savingProductResult = await this.savingProductRepository.findById(input.savingProductIdentifier);
     if (!savingProductResult.ok) {
       return err(new Error('Produit d\'épargne introuvable'));
@@ -39,10 +39,6 @@ export class CreateSavingAccountUseCase {
     if (input.initialAmount < 10) {
       return err(new Error('Le montant initial doit être d\'au moins 10€'));
     }
-
-    // if (input.rate < 1.5 || input.rate > 3.5) {
-    //   return err(new Error('Le taux doit être compris entre 1.5% et 3.5%'));
-    // }
 
     const amountInCents = Math.round(input.initialAmount * 100);
 
@@ -140,6 +136,7 @@ export class CreateSavingAccountUseCase {
       iban: finalIbanObject,
       label: "Compte d'Épargne",
       balance: amountInCents,
+      createdAt: new Date()
     });
 
     const createSavingResult = await this.savingAccountRepository.save(newSavingAccount);

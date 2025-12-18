@@ -1,3 +1,4 @@
+import { Transaction } from '../../../../domain/entities/Transaction';
 import { Result, ok } from '../../../../shared/Result';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
@@ -9,7 +10,7 @@ export class ListRecentOperationsUseCase {
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
-  async execute(params: {userId: string; limit?: number; }): Promise<Result<any[], Error>> {
+  async execute(params: {userId: string; limit?: number; }): Promise<Result<Transaction[], Error>> {
     const limit = params.limit || 5;
 
     const accountsResult = await this.bankAccountRepository.findByOwner(params.userId);

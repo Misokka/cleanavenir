@@ -3,7 +3,7 @@ import { Result, ok, err } from '../../../../shared/Result';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 
-export class ListAccountOperationsUseCase {
+export class ListAccountTransactionsUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository

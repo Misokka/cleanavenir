@@ -19,7 +19,7 @@ export class CreateBankAccountUseCase {
     this.ibanGenerator = new IbanGenerator();
   }
 
-  public async execute(input: CreateBankAccountInput): Promise<Result<any, Error>> {
+  public async execute(input: CreateBankAccountInput): Promise<Result<BankAccount, Error>> {
     if (!input.name || input.name.trim().length === 0) {
       return err(new Error('Le nom du compte est requis'));
     }
@@ -81,13 +81,6 @@ export class CreateBankAccountUseCase {
       return err(new Error('Erreur lors de la création du compte'));
     }
 
-    return ok({
-      id: accountId,
-      iban: finalIban,
-      label: input.name.trim(),
-      ownerId: input.ownerId,
-      balance: 0,
-      currency: 'EUR',
-    });
+    return ok(createResult.value);
   }
 }

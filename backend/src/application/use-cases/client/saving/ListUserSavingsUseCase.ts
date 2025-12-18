@@ -1,3 +1,4 @@
+import { SavingAccount } from '../../../../domain/entities/SavingAccount';
 import { Result, ok } from '../../../../shared/Result';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 import { SavingAccountRepository } from '../../../ports/repositories/SavingAccountRepository';
@@ -8,8 +9,8 @@ export class ListUserSavingsUseCase {
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
-  async execute(params: { userId: string }): Promise<Result<any[], Error>> {
-    const accountsResult = await this.bankAccountRepository.findByOwner(params.userId);
+  async execute(params: { clientId: string }): Promise<Result<SavingAccount[], Error>> {
+    const accountsResult = await this.bankAccountRepository.findByOwner(params.clientId);
 
     if (!accountsResult.ok) {
       return accountsResult;

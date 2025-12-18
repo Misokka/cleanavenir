@@ -45,7 +45,7 @@ export class RegisterUseCase{
     }
     
     const hashedPassword = await this.passwordHasher.hash(password);
-    const newUser = User.create({userIdentifier, firstname, lastname, email, password: hashedPassword, role});
+    const newUser = User.create({userIdentifier, firstname, lastname, email, password: hashedPassword, role, createdAt: new Date()});
 
     const savedUser = await this.userRepository.save(newUser);
     

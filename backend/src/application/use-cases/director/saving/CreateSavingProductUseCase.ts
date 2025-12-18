@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { InvalidSavingRateError } from "../../../../domain/errors/InvalidSavingRateError";
 import { SavingProductAlreadyExistsError } from "../../../../domain/errors/SavingProductAlreadyExistsError";
-import { err, ok } from "../../../../shared/Result";
+import Result, { err, ok } from "../../../../shared/Result";
 import { SavingProductRepository } from "../../../ports/repositories/SavingProductRepository";
 import { SavingProduct } from "../../../../domain/entities/SavingProduct";
 import { InvalidSavingProductLabelError } from "../../../../domain/errors/InvalidSavingProductLabelError";
@@ -11,8 +11,8 @@ export class CreateSavingProductUseCase{
     private savingProductRepository: SavingProductRepository
   ){}
 
-  public async execute(label: string, rate: number){
-    if(!label || label.length < 2){
+  public async execute(label: string, rate: number): Promise<Result<SavingProduct, Error>>{
+    if(!label || label.length < 3){
       return err(new InvalidSavingProductLabelError("Label must be atleast 2 characters long."))
     }
 
@@ -27,7 +27,7 @@ export class CreateSavingProductUseCase{
     }
 
     const savingProductIdentifier = randomUUID();
-    const savingProduct = new SavingProduct(savingProductIdentifier, label, rate);
+    const savingProduct = SavingProduct.create({savingProductIdentifier, label, rate});
     const saved = await this.savingProductRepository.save(savingProduct);
 
     if(!saved.ok){

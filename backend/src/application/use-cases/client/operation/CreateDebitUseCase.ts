@@ -1,4 +1,4 @@
-import { Result } from "../../../../shared/Result";
+import { ok, Result } from "../../../../shared/Result";
 import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
 import { InsufficientFundsError } from "../../../../domain/errors/InsufficientFundsError";
 import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
@@ -15,7 +15,7 @@ export type CreateDebitInput = {
 export class CreateDebitUseCase {
   constructor(private readonly transactionRepositiry: TransactionRepository) {}
 
-  async execute(input: CreateDebitInput): Promise<Result<true, BankAccountNotFoundError | InsufficientFundsError | Error>> {
+  async execute(input: CreateDebitInput): Promise<Result<Transaction, BankAccountNotFoundError | InsufficientFundsError | Error>> {
     if (input.amount <= 0) {
       return { ok: false, error: new Error("Amount must be > 0") };
     }
@@ -44,6 +44,6 @@ export class CreateDebitUseCase {
     const created =  await this.transactionRepositiry.save(creditTransaction);
     if (!created.ok) return created;
 
-    return { ok: true, value: true };
+    return ok(created.value);
   }
 }

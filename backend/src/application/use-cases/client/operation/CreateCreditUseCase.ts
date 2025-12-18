@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { Transaction } from "../../../../domain/entities/Transaction";
 import { BankAccountNotFoundError } from "../../../../domain/errors/BankAccountNotFoundError";
-import { Result } from "../../../../shared/Result";
+import { ok, Result } from "../../../../shared/Result";
 import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
 
 
@@ -15,7 +15,7 @@ export type CreateCreditInput = {
 export class CreateCreditUseCase {
   constructor(private readonly transactionRepository: TransactionRepository) {}
 
-  async execute(input: CreateCreditInput): Promise<Result<true, BankAccountNotFoundError | Error>> {
+  async execute(input: CreateCreditInput): Promise<Result<Transaction, BankAccountNotFoundError | Error>> {
     if (input.amount <= 0) {
       return { ok: false, error: new Error("Amount must be > 0") };
     }
@@ -44,6 +44,6 @@ export class CreateCreditUseCase {
     const created =  await this.transactionRepository.save(creditTransaction);
     if (!created.ok) return created;
 
-    return { ok: true, value: true };
+    return ok(created.value);
   }
 }

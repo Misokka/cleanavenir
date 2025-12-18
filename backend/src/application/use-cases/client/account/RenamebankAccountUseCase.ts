@@ -1,3 +1,4 @@
+import { BankAccount } from "../../../../domain/entities/BankAccount";
 import { err, ok, Result } from "../../../../shared/Result";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 
@@ -12,7 +13,7 @@ export class RenameBankAccountUseCase {
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
 
-  public async execute(input: RenameAccountInput): Promise<Result<any, Error>> {
+  public async execute(input: RenameAccountInput): Promise<Result<BankAccount, Error>> {
     if (!input.newName || input.newName.trim().length === 0) {
       return err(new Error('Le nouveau nom est requis'));
     }

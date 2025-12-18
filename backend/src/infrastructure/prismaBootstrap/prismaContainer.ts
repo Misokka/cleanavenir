@@ -17,10 +17,10 @@ import { RenameBankAccountUseCase } from '../../application/use-cases/client/acc
 import { DeleteBankAccountUseCase } from '../../application/use-cases/client/account/DeleteBankAccountUseCase';
 
 // Use Cases - Operation
-import { ListAccountOperationsUseCase } from '../../application/use-cases/client/operation/ListAccountOperationsUseCase';
-import { ListRecentOperationsUseCase } from '../../application/use-cases/client/operation/ListRecentOperationsUseCase';
+import { ListAccountOperationsUseCase } from '../../application/use-cases/client/operation/ListAccountTransactionsUseCase';
+import { ListRecentOperationsUseCase } from '../../application/use-cases/client/operation/ListRecentTransactionsUseCase';
 import { TransferUseCase } from '../../application/use-cases/client/operation/TransferUseCase';
-import { GetOperationsHistoryUseCase } from '../../application/use-cases/client/operation/GetOperationsHistoryUseCase';
+import { GetOperationsHistoryUseCase } from '../../application/use-cases/client/operation/GetTransactionsHistoryUseCase';
 
 // Use Cases - Saving
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';

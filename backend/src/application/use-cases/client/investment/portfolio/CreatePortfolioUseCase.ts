@@ -27,6 +27,7 @@ export class CreatePortfolioUseCase {
     const newPortfolio = Portfolio.create({
       portfolioIdentifier,
       clientIdentifier,
+      createdAt: new Date()
     });
 
     const saveResult = await this.protfolioRepository.save(newPortfolio);
