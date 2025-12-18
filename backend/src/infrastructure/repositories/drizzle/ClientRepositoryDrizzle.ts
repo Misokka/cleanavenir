@@ -45,4 +45,17 @@ export class ClientRepositoryDrizzle implements ClientRepository {
       return err(new UserNotFoundError(clientIdentifier));
     }
   }
+
+  async all(): Promise<Result<Client[], Error>> {
+    try {
+      const rows = await this.db.select().from(clients);
+      const clientsToDomain = rows.map((row) => {
+        return this.clientMapper.toDomain(row);
+      })
+
+      return ok(clientsToDomain);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
 }

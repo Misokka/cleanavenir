@@ -25,6 +25,17 @@ export class SavingProductRepositoryDrizzle implements SavingProductRepository {
     }
   }
 
+  async update(savingProduct: SavingProduct): Promise<Result<SavingProduct, Error>> {
+    try{
+      const updatedToPersist = this.savingProductMapper.toPersistence(savingProduct);
+      const registeredUpdatedRows = await this.db.update(savingProducts).set(updatedToPersist).where(eq(savingProducts.id, savingProduct.savingProductIdentifier)).returning();
+      const updatedToDomain = this.savingProductMapper.toDomain(registeredUpdatedRows[0]);
+      return ok(updatedToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when updating savingProduct: ${savingProduct.savingProductIdentifier}`))
+    }
+  }
+
   async findById(savingProductIdentifier: string): Promise<Result<SavingProduct, Error>> {
     try{
       const savingProductRows = await this.db.select().from(savingProducts).where(eq(savingProducts.id, savingProductIdentifier));

@@ -101,19 +101,6 @@ export const transactions = sqliteTable('transactions', {
 export type TransactionDrizzle = InferSelectModel<typeof transactions>;
 export type NewTransactionDrizzle = InferInsertModel<typeof transactions>;
 
-// Savings (epargne)
-export const savings = sqliteTable('savings', {
-  id: text('id').primaryKey(),
-  accountId: text('account_id').notNull(),
-  rate: integer('rate').notNull(), 
-  balance: integer('balance').notNull().default(0),
-  createdAt: text('created_at').notNull(),
-  updatedAt: text('updated_at').notNull(),
-});
-
-export type SavingDrizzle = InferSelectModel<typeof savings>;
-export type NewSavingDrizzle = InferInsertModel<typeof savings>;
-
 // Loans (credits)
 export const loans = sqliteTable('loans', {
   id: text('id').primaryKey(),

@@ -1,105 +1,62 @@
 import { UserDTO } from '../../../application/dtos/UserDTO';
 import { AccountDTO } from '../../../application/dtos/AccountDTO';
-import { OperationDTO } from '../../../application/dtos/OperationDTO';
+import { TransactionDTO } from '../../../application/dtos/TransactionDTO';
 import { SavingAccountDTO } from '../../../application/dtos/SavingAccountDTO';
-import { SavingRateDTO } from '../../../application/dtos/SavingRateDTO';
+import { User, UserRole } from '../../../domain/entities/User';
+import { BankAccount } from '../../../domain/entities/BankAccount';
+import { Transaction } from '../../../domain/entities/Transaction';
+import { SavingAccount } from '../../../domain/entities/SavingAccount';
 
-const toBool = (value: number | null | undefined): boolean => value === 1;
-
-export function toUserDTO(user: {
-  id: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  role: string;
-  isActive: number;
-  emailVerifiedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-}): UserDTO {
+export function toUserDTO(user: User): UserDTO {
   return {
-    id: user.id,
+    id: user.userIdentifier,
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    role: user.role as 'CLIENT' | 'DIRECTOR' | 'ADVISOR',
-    isActive: toBool(user.isActive),
-    emailVerifiedAt: user.emailVerifiedAt,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    role: user.role as UserRole,
+    isActive: user.active,
+    emailVerifiedAt: user.emailVerifiedAt as string | null,
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt?.toISOString() as string,
   };
 }
 
-export function toAccountDTO(account: {
-  id: string;
-  iban: string;
-  name: string;
-  balance: number;
-}): AccountDTO {
+export function toAccountDTO(account: BankAccount): AccountDTO {
   return {
-    id: account.id,
-    iban: account.iban,
-    label: account.name, 
+    id: account.accountIdentifier,
+    iban: account.iban.value,
+    label: account.label, 
     balance: account.balance / 100, 
     currency: 'EUR',
   };
 }
 
-export function toOperationDTO(operation: {
-  id: string;
-  fromAccountId: string | null;
-  toAccountId: string | null;
-  amount: number;
-  type: string;
-  description: string | null;
-  createdAt: string;
-}): OperationDTO {
+export function toOperationDTO(transaction: Transaction): TransactionDTO {
   const kind: 'CREDIT' | 'DEBIT' = 
-    operation.type === 'CREDIT' || !operation.fromAccountId ? 'CREDIT' : 'DEBIT';
+    transaction.direction === 'CREDIT' || !transaction.fromAccountIdentifier ? 'CREDIT' : 'DEBIT';
 
   const accountId = kind === 'CREDIT' 
-    ? (operation.toAccountId || '') 
-    : (operation.fromAccountId || '');
+    ? (transaction.toAccountIdentifier || '') 
+    : (transaction.fromAccountIdentifier || '');
 
   return {
-    id: operation.id,
-    AccountId: accountId,
+    id: transaction.transactionIdentifier,
+    accountId: accountId,
     kind,
-    amount: Math.abs(operation.amount) / 100, 
+    amount: Math.abs(transaction.amount) / 100, 
     currency: 'EUR',
-    label: operation.description || 'Opération',
-    createdAt: operation.createdAt,
+    label: transaction.description || 'Opération',
+    createdAt: transaction.createdAt.toISOString(),
   };
 }
 
-export function toSavingAccountDTO(saving: {
-  id: string;
-  accountId: string;
-  createdAt: string;
-  updatedAt: string;
-}): SavingAccountDTO {
+export function toSavingAccountDTO(saving: SavingAccount): SavingAccountDTO {
   return {
-    id: saving.id,
-    AccountId: saving.accountId,
-    isActive: true, 
-    openedAt: saving.createdAt,
-  };
-}
-
-export function toSavingRateDTO(rate: number, updatedAt: string): SavingRateDTO {
-  return {
-    value: rate / 100,
-    updateAt: updatedAt,
-  };
-}
-
-/**
- * Mock pour le taux d'épargne actuel
- * À remplacer par une vraie query quand la table sera disponible
- */
-export function mockCurrentSavingRate(): SavingRateDTO {
-  return {
-    value: 3, 
-    updateAt: new Date().toISOString(),
+    id: saving.accountIdentifier,
+    iban: saving.iban.value,
+    ownerId: saving.clientIdentifier,
+    label: saving.label,
+    balance: saving.balance, // à voir pour convertir en € ou centimes
+    savingProductId: saving.productIdentifier,
   };
 }

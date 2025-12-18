@@ -8,6 +8,7 @@ export const banClientController = asyncHandler(
 
     const container = getContainer();
     const clientRepository = container.repositories.client;
+    const userRepository = container.repositories.user;
 
     // Récupérer le client
     const clientResult = await clientRepository.findById(clientId);
@@ -22,10 +23,21 @@ export const banClientController = asyncHandler(
 
     const client = clientResult.value;
 
-    // Désactiver le client
-    client.isActive = false;
+    const userResult = await userRepository.findById(client.userIdentifier);
+    if (!userResult.ok) {
+      res.status(404).json({
+        error: 'USER_NOT_FOUND',
+        message: 'Utilisateur introuvable',
+      });
+      return;
+    }
 
-    const updateResult = await clientRepository.update(client);
+    const user = userResult.value
+
+    // Désactiver le client
+    user.active = false;
+
+    const updateResult = await userRepository.update(user);
 
     if (!updateResult.ok) {
       res.status(500).json({
@@ -39,8 +51,8 @@ export const banClientController = asyncHandler(
       message: 'Client banni avec succès',
       client: {
         id: client.userIdentifier,
-        email: client.email,
-        isActive: client.isActive,
+        email: user.email,
+        isActive: user.active,
       },
     });
   }

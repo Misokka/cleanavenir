@@ -30,7 +30,7 @@ export const renameAccountController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.account.rename.execute({
+    const result = await container.useCases.bankAccount.rename.execute({
       accountId,
       newName: name.trim(),
       userId,

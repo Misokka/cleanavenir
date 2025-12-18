@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
-export const setSavingRateController = asyncHandler(
+export const UpdateSavingProductController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { rate } = req.body;
+    const { savingProductId, label, rate } = req.body;
 
     // Validation
     if (rate === undefined || rate < 0) {
@@ -15,10 +15,11 @@ export const setSavingRateController = asyncHandler(
       return;
     }
 
+    // changer la rate pour un savingProduct
     const container = getContainer();
-    const setGlobalSavingRateUseCase = container.useCases.director.savings.setGlobalRate;
+    const setGlobalSavingRateUseCase = container.useCases.saving.updateSavingProduct;
 
-    const result = await setGlobalSavingRateUseCase.execute({ rate });
+    const result = await setGlobalSavingRateUseCase.execute({ savingProductIdentifier: savingProductId, label, rate });
 
     if (!result.ok) {
       res.status(500).json({
@@ -29,8 +30,8 @@ export const setSavingRateController = asyncHandler(
     }
 
     res.json({
-      message: 'Taux d\'épargne modifié avec succès',
-      rate: result.value,
+      message: "Produit d'épargne modifié avec succès",
+      savingProduct: result.value,
     });
   }
 );

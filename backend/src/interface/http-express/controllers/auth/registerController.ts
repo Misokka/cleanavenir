@@ -91,7 +91,7 @@ export const registerController = asyncHandler(
 
     res.status(201).json({
       token: accessToken,
-      user: toUserDTO(user as any),
+      user: toUserDTO(user),
     });
   }
 );

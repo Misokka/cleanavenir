@@ -9,7 +9,7 @@ export const listClientsController = asyncHandler(
     const clientRepository = container.repositories.client;
 
     // Récupérer tous les clients
-    const result = await clientRepository.findAll();
+    const result = await clientRepository.all();
 
     if (!result.ok) {
       res.status(500).json({
@@ -20,15 +20,10 @@ export const listClientsController = asyncHandler(
     }
 
     res.json({
-      clients: result.value.map((client) => ({
-        id: client.userIndentifier,
-        email: client.email,
-        firstname: client.firstname,
-        lastname: client.lastname,
-        role: client.role,
-        isActive: client.isActive,
-        createdAt: client.createdAt,
-      })),
+      clients: result.value.map((client) => {
+        const {password, ...rest} = client;
+        return rest
+      }),
     });
   }
 );

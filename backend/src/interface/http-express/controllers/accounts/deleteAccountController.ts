@@ -16,7 +16,7 @@ export const deleteAccountController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.account.delete.execute({
+    const result = await container.useCases.bankAccount.delete.execute({
       accountId,
       userId,
     });

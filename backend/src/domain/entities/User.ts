@@ -1,4 +1,4 @@
-export type userRole = "CLIENT" | "ADVISOR" | "DIRECTOR"
+export type UserRole = "CLIENT" | "ADVISOR" | "DIRECTOR"
 
 export class User {
   public active: boolean = true;
@@ -10,7 +10,7 @@ export class User {
     public lastname: string,
     public email: string,
     public password: string,
-    public role: userRole,
+    public role: UserRole,
     public createdAt: Date
   ) { }
 
@@ -20,7 +20,7 @@ export class User {
     lastname: string;
     email: string;
     password: string;
-    role: userRole;
+    role: UserRole;
     createdAt: Date;
     active?: boolean;
     emailVerifiedAt?: Date | null;

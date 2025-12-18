@@ -1,6 +1,6 @@
-export type OperationDTO = {
+export type TransactionDTO = {
   id: string;
-  AccountId: string;
+  accountId: string;
   kind: "CREDIT" | "DEBIT";
   amount: number;   
   currency: string; 

@@ -16,7 +16,7 @@ export const listAccountsController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.account.list.execute({ userId });
+    const result = await container.useCases.bankAccount.list.execute({ userId });
 
     if (!result.ok) {
       res.status(500).json({

@@ -71,6 +71,7 @@ import { ApplySavingDailyInterestUseCase } from '../../application/use-cases/cli
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
 import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
 import { CreateSavingProductUseCase } from '../../application/use-cases/director/saving/CreateSavingProductUseCase';
+import { UpdateSavingProductUseCase } from '../../application/use-cases/director/saving/UpdateSavingProductUseCase';
 
 // use Cases - Loan
 import { RequestLoanUseCase } from '../../application/use-cases/client/loan/RequestLoanUseCase';
@@ -194,6 +195,7 @@ export function createContainer() {
     transactionRepository
   );
   const createSavingProductUseCase = new CreateSavingProductUseCase(savingProductRepository);
+  const updateSavingProductUseCase = new UpdateSavingProductUseCase(savingProductRepository);
 
   //loan Use Cases
   const requestLoanUseCase = new RequestLoanUseCase(loanRepository, clientRepository);
@@ -243,7 +245,7 @@ export function createContainer() {
         refreshToken: refreshTokenUseCase,
         resetPassword: resetPasswordUseCase,
       },
-      account: {
+      bankAccount: {
         get: getBankAccountUseCase,
         list: listUserBankAccountsUseCase,
         create: createBankAccountUseCase,
@@ -263,6 +265,7 @@ export function createContainer() {
         create: createSavingAccountUseCase,
         applySavingDailyInterest: applySavingDailyInterestUseCase,
         createSavingProduct: createSavingProductUseCase,
+        updateSavingProduct: updateSavingProductUseCase
       },
       loan: {
         requestLoan: requestLoanUseCase,

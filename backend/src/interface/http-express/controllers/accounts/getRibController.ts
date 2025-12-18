@@ -10,7 +10,9 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
   console.log('[RIB] Requête reçue - userId:', userId, 'accountId:', accountId);
 
   const container = getContainer();
-  const accountResult = await container.useCases.account.get.execute({ userId, accountId });
+  
+  // Récupérer le compte
+  const accountResult = await container.useCases.bankAccount.get.execute({ clientId: userId, accountId });
 
   if (!accountResult.ok) {
     res.status(404).json({ error: 'NOT_FOUND', message: accountResult.error.message });
@@ -39,8 +41,8 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
 
   const iban = account.iban;
   const bic = 'CLEANFRPPXXX';
-  const bankName = 'CleanAvenir';
-  const accountLabel = account.name ?? account.label ?? 'Compte';
+  const bankName = 'Clean Avenir';
+  const accountLabel = account.label;
 
   const doc = new PDFDocument({ margin: 50 });
 
@@ -77,9 +79,15 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
 
   doc.text('Titulaire du compte', 320, startY, { bold: true });
   doc.moveDown(0.5);
-  doc.text(holderName, 320);
-  doc.text(accountLabel, 320);
-
+  
+  const ibanFormatted = iban.value.replace(/(.{4})/g, '$1 ').trim();
+  
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1f2937').text('IBAN', 70);
+  doc.fontSize(14).font('Helvetica').fillColor('#1f2937').text(ibanFormatted, 70);
+  doc.moveDown(0.5);
+  
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1f2937').text('BIC / SWIFT', 70);
+  doc.fontSize(14).font('Helvetica').fillColor('#1f2937').text(bic, 70);
   doc.moveDown(2);
 
   // Bloc RIB

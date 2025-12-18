@@ -1,4 +1,4 @@
-import { User, userRole } from "../../../../domain/entities/User";
+import { User, UserRole } from "../../../../domain/entities/User";
 import { UserDrizzle, NewUserDrizzle } from "../../../drizzle/schema";
 import { Mapper } from "../MapperInterface";
 
@@ -11,7 +11,7 @@ export class DrizzleUserMapper implements Mapper<UserDrizzle, User, NewUserDrizz
       emailVerifiedAt: new Date(raw.emailVerifiedAt as string),
       createdAt: new Date(raw.createdAt),
       updatedAt: new Date(raw.updatedAt),
-      role: raw.role as userRole
+      role: raw.role as UserRole
     };
   }
 

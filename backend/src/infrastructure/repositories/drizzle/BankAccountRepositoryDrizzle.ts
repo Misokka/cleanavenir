@@ -71,6 +71,19 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
     }
   }
 
+  async all(): Promise<Result<BankAccount[], Error>> {
+    try {
+      const rows = await this.db.select().from(bankAccounts);
+      const bankAccountsToDomain = rows.map((row) => {
+        return this.bankAccountMapper.toDomain(row);
+      })
+
+      return ok(bankAccountsToDomain);
+    } catch (e: any) {
+      return err(e);
+    }
+  }
+
   async updateBalance(bankAccountIdentifier: string, newBalance: number): Promise<Result<number, Error>> {
     try {
       const updatedBankAccounts = await this.db.update(bankAccounts).set({ balance: newBalance }).where(eq(bankAccounts.id, bankAccountIdentifier)).returning();
