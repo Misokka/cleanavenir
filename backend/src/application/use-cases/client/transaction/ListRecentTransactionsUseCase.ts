@@ -4,7 +4,7 @@ import { BankAccountRepository } from '../../../ports/repositories/BankAccountRe
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 
 
-export class ListRecentOperationsUseCase {
+export class ListRecentTransactionsUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository

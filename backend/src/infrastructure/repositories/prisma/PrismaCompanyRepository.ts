@@ -27,4 +27,12 @@ export class PrismaCompanyRepository implements CompanyRepository {
       return err(new CouldNotCreateCompanyError());
     }
   }
+
+  async findById(): Promise<Result<Company, CompanyNotFoundError>> {
+    
+  }
+
+  async all(): Promise<Result<Company, CompanyNotFoundError>> {
+    
+  }
 }

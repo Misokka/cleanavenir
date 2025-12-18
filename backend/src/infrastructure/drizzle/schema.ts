@@ -135,6 +135,16 @@ export const loans = sqliteTable('loans', {
 export type LoanDrizzle = InferSelectModel<typeof loans>;
 export type NewLoanDrizzle = InferInsertModel<typeof loans>;
 
+// Companies
+export const companies = sqliteTable('companies', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull()
+});
+
+export type CompanyDrizzle = InferSelectModel<typeof companies>
+export type NewCompanyDrizzle = InferInsertModel<typeof companies>;
+
 // Stocks
 export const stocks = sqliteTable('stocks', {
   id: text('id').primaryKey(),
