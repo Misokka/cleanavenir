@@ -12,7 +12,7 @@ export interface OperationFilters {
 }
 
 
-export class GetOperationsHistoryUseCase {
+export class GetTransactionsHistoryUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository
