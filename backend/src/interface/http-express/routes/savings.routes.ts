@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { 
-  listUserSavingsController,
+  listClientSavingsController,
   createSavingController,
-  getCurrentRateController,
   applyDailyInterestController,
   getSavingController
 } from '../controllers/savings';
@@ -11,11 +10,11 @@ import { requireAuth } from '../middlewares/authMiddleware';
 const router = Router();
 
 // Route publique pour obtenir le taux actuel
-router.get('/rate', getCurrentRateController);
+// router.get('/rate', getCurrentRateController); // transformer la route pour avoir la rate d'un savingproduct
 
 // Routes protégées
 router.use(requireAuth);
-router.get('/', listUserSavingsController);
+router.get('/', listClientSavingsController);
 router.get('/:id', getSavingController);
 router.post('/', createSavingController);
 router.post('/apply-interest', applyDailyInterestController);

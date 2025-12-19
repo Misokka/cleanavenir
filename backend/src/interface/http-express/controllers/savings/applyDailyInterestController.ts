@@ -5,7 +5,7 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 export const applyDailyInterestController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const container = getContainer();
-    const result = await container.useCases.saving.applyDailyInterest.execute();
+    const result = await container.useCases.saving.applySavingDailyInterest.execute();
 
     if (!result.ok) {
       res.status(500).json({
@@ -17,8 +17,6 @@ export const applyDailyInterestController = asyncHandler(
 
     res.json({
       message: 'Intérêts journaliers appliqués avec succès',
-      processed: result.value.processed,
-      totalInterest: result.value.totalInterest / 100,
     });
   }
 );

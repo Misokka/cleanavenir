@@ -11,5 +11,7 @@ export interface SavingAccountRepository {
         Result<SavingAccount, SavingBankAccountNotFoundError>
     >;
 
+    findManyByOwner(clientIdentifier: string): Promise<Result<SavingAccount[], Error>>;
+
     findByAccountIds(accountIds: string[]): Promise<Result<SavingAccount[], Error>>;
 }

@@ -19,7 +19,8 @@ export class Transaction {
     public readonly description: string,
     public readonly createdAt: Date = new Date(),
     public readonly fromAccountIdentifier?: string,
-    public readonly toAccountIdentifier?: string
+    public readonly toAccountIdentifier?: string,
+    public readonly toSavingAccountIdentifier?: string
   ) {}
 
   static create(props: {
@@ -32,7 +33,8 @@ export class Transaction {
     description: string;
     createdAt?: Date;
     fromAccountIdentifier?: string,
-    toAccountIdentifier?: string
+    toAccountIdentifier?: string,
+    toSavingAccountIdentifier?: string
   }): Transaction {
     return new Transaction(
       props.transactionIdentifier,
@@ -44,7 +46,8 @@ export class Transaction {
       props.description,
       props.createdAt || new Date(),
       props.fromAccountIdentifier,
-      props.toAccountIdentifier
+      props.toAccountIdentifier,
+      props.toSavingAccountIdentifier
     );
   }
 }

@@ -7,7 +7,7 @@ export const getStatisticsController = asyncHandler(
     const container = getContainer();
     const clientRepository = container.repositories.client;
     const accountRepository = container.repositories.bankAccount;
-    const operationRepository = container.repositories.transaction;
+    const transactionRepository = container.repositories.transaction;
     const loanRepository = container.repositories.loan;
 
     // Récupérer les statistiques

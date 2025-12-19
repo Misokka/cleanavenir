@@ -66,7 +66,7 @@ export class UserRepositoryDrizzle implements UserRepository {
     }
   }
 
-  async listByRole(role: UserRole): Promise<Result<User[], never>> {
+  async listByRole(role: UserRole): Promise<Result<User[], Error>> {
     try {
       const rows = await this.db.select().from(users).where(eq(users.role, role));
       const userList = rows.map((row) => {
@@ -75,7 +75,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       );
       return ok(userList);
     } catch (e: any) {
-      return ok([]);
+      return err(new Error(`An error occured when fetching user with role: ${role}. \nERROR: ${e}`));
     }
   }
 }

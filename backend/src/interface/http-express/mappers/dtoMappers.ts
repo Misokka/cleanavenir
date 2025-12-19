@@ -56,7 +56,7 @@ export function toSavingAccountDTO(saving: SavingAccount): SavingAccountDTO {
     iban: saving.iban.value,
     ownerId: saving.clientIdentifier,
     label: saving.label,
-    balance: saving.balance, // à voir pour convertir en € ou centimes
+    balance: saving.balance / 100, // à voir pour convertir en € ou centimes
     savingProductId: saving.productIdentifier,
   };
 }

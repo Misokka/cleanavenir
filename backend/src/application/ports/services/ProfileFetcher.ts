@@ -50,14 +50,15 @@ export class ProfileManager {
 
   public async create(
     userIdentifier: string,
-    role: UserRole
+    role: UserRole,
+    advisorIdentifier?: string
   ): Promise<Result<Profile, Error>>{
 
     let newProfile;
 
     switch(role){
       case "CLIENT":
-        const newClient = Client.create({clientIdentifier: randomUUID(), userIdentifier});
+        const newClient = Client.create({clientIdentifier: randomUUID(), userIdentifier, advisorIdentifier: advisorIdentifier as string});
         newProfile = await this.clientRepository.save(newClient);
         break;
       

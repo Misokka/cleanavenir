@@ -30,10 +30,7 @@ export const getSavingController = asyncHandler(
 
     const saving = savingResult.value;
 
-    // Vérifier que l'épargne appartient à un compte de l'utilisateur
-    const accountResult = await container.repositories.bankAccount.findById(saving.accountId);
-
-    if (!accountResult.ok || accountResult.value.ownerId !== userId) {
+    if (!savingResult.ok || savingResult.value.clientIdentifier !== userId) {
       res.status(403).json({
         error: 'UNAUTHORIZED',
         message: 'Accès non autorisé à ce compte épargne',
@@ -43,12 +40,12 @@ export const getSavingController = asyncHandler(
 
     // Convertir centimes → euros et basis points → pourcentage
     const savingDTO = {
-      id: saving.id,
-      accountId: saving.accountId,
-      balance: saving.balance / 100, // centimes → euros
-      rate: saving.rate / 100, // basis points → %
-      createdAt: saving.createdAt,
-      updatedAt: saving.updatedAt,
+      id: saving.accountIdentifier,
+      clientId: saving.clientIdentifier,
+      savingProductId: saving.productIdentifier,
+      iban: saving.iban.value,
+      label: saving.label,
+      balance: saving.balance / 100 // conversion en €
     };
 
     res.json(savingDTO);

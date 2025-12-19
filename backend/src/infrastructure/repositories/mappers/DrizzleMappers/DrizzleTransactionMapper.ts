@@ -13,7 +13,10 @@ export class DrizzleTransactionMapper implements Mapper<TransactionDrizzle, Tran
       type: raw.type as TransactionType,
       currency: raw.currency,
       description: raw.description as string,
-      createdAt: new Date(raw.createdAt)
+      createdAt: new Date(raw.createdAt),
+      fromAccountIdentifier: raw.fromAccountId as string | undefined,
+      toAccountIdentifier: raw.toAccountId as string | undefined,
+      toSavingAccountIdentifier: raw.toSavingAccountId as string | undefined
     };
   }
 
@@ -23,7 +26,10 @@ export class DrizzleTransactionMapper implements Mapper<TransactionDrizzle, Tran
       ...entity,
       id: entity.transactionIdentifier,
       accountId: entity.bankAccountIdentifier,
-      createdAt: entity.createdAt.toISOString()
+      createdAt: entity.createdAt.toISOString(),
+      fromAccountId: entity.fromAccountIdentifier,
+      toAccountId: entity.toAccountIdentifier,
+      toSavingAccountId: entity.toSavingAccountIdentifier
     };
   }
 }

@@ -43,7 +43,7 @@ export const getOperationsHistoryController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.operation.getHistory.execute({
+    const result = await container.useCases.transaction.getHistory.execute({
       userId,
       filters,
     });

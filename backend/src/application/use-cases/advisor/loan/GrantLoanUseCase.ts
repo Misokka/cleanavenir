@@ -46,6 +46,7 @@ export class GrantLoanUseCase{
     const mensualities = loanCalulator.getMensualities(loanAmount, annualInterestRate, durationInMonth, annualInsuranceRate);
     const insuranceMensualities = loanCalulator.computeInsuranceMensualities(loanAmount, annualInsuranceRate);
 
+    // récupérer la loan lié au l'advisor plutôt que d'en créer une nouvelle
     const newLoan = Loan.create({
       loanIdentifier,
       clientIdentifier,

@@ -1,5 +1,5 @@
 import { Result, ok } from '../../../../shared/Result';
-import { StandardLoanCalculator } from '../../../../infrastructure/adapters/StandardLoanCalculator';
+import { LoanCalculator } from '../../../ports/services/LoanCalculator';
 
 export interface SimulateLoanInput {
   amount: number; // en centimes
@@ -16,7 +16,7 @@ export interface LoanSimulation {
 }
 
 export class SimulateLoanUseCase {
-  private calculator = new StandardLoanCalculator();
+  private calculator = new LoanCalculator();
 
   async execute(input: SimulateLoanInput): Promise<Result<LoanSimulation, Error>> {
     const monthlyPayment = this.calculator.getMensualities(

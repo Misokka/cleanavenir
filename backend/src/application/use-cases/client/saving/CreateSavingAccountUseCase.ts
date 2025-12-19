@@ -61,45 +61,7 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Ce compte possède déjà une épargne associée'));
     }
 
-    const newSourceBalance = sourceAccount.value.balance - amountInCents;
-    const updateSourceResult = await this.bankAccountRepository.updateBalance(
-      input.sourceAccountId,
-      newSourceBalance
-    );
-
-    if (!updateSourceResult.ok) {
-      return err(new Error('Erreur lors du débit du compte source'));
-    }
-
-    const debitOperationId = randomUUID();
-    const debitOperation = Transaction.create({
-      transactionIdentifier: debitOperationId,
-      bankAccountIdentifier: input.sourceAccountId,
-      fromAccountIdentifier: input.sourceAccountId,
-      toAccountIdentifier: undefined,
-      amount: amountInCents,
-      direction: 'DEBIT',
-      currency: 'EUR',
-      type: 'TRANSFER',
-      description: `Ouverture compte épargne de type ${savingProduct.label}`,
-    })
-    // const debitOperation = {
-    //   id: debitOperationId,
-    //   fromAccountId: input.sourceAccountId,
-    //   toAccountId: null,
-    //   amount: amountInCents,
-    //   type: 'DEBIT',
-    //   description: `Ouverture compte épargne (${input.rate}% par an)`,
-    // };
-
-    const createDebitResult = await this.transactionRepository.save(debitOperation);
-    if (!createDebitResult.ok) {
-      await this.bankAccountRepository.updateBalance(
-        input.sourceAccountId,
-        sourceAccount.value.balance
-      );
-      return err(new Error("Erreur lors de l'enregistrement de l'opération"));
-    }
+    
 
     // const rateInBasisPoints = Math.round(input.rate * 100);
     const savingId = randomUUID();
@@ -154,6 +116,47 @@ export class CreateSavingAccountUseCase {
         sourceAccount.value.balance
       );
       return err(new Error('Erreur lors de la création du compte épargne'));
+    }
+
+    const newSourceBalance = sourceAccount.value.balance - amountInCents;
+    const updateSourceResult = await this.bankAccountRepository.updateBalance(
+      input.sourceAccountId,
+      newSourceBalance
+    );
+
+    if (!updateSourceResult.ok) {
+      return err(new Error('Erreur lors du débit du compte source'));
+    }
+
+    const debitTransactionId = randomUUID();
+    const debitTransaction = Transaction.create({
+      transactionIdentifier: debitTransactionId,
+      bankAccountIdentifier: input.sourceAccountId,
+      fromAccountIdentifier: input.sourceAccountId,
+      toAccountIdentifier: undefined,
+      toSavingAccountIdentifier: newSavingAccount.accountIdentifier,
+      amount: amountInCents,
+      direction: 'DEBIT',
+      currency: 'EUR',
+      type: 'TRANSFER',
+      description: `Ouverture compte épargne de type ${savingProduct.label}`,
+    })
+    // const debitTransaction = {
+    //   id: debitTransactionId,
+    //   fromAccountId: input.sourceAccountId,
+    //   toAccountId: null,
+    //   amount: amountInCents,
+    //   type: 'DEBIT',
+    //   description: `Ouverture compte épargne (${input.rate}% par an)`,
+    // };
+
+    const createDebitResult = await this.transactionRepository.save(debitTransaction);
+    if (!createDebitResult.ok) {
+      await this.bankAccountRepository.updateBalance(
+        input.sourceAccountId,
+        sourceAccount.value.balance
+      );
+      return err(new Error("Erreur lors de l'enregistrement de l'opération"));
     }
 
     return ok(newSavingAccount);

@@ -7,6 +7,7 @@ import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { clients } from '../../drizzle/schema';
 import { DrizzleClient } from '../../drizzle/client';
 import { DrizzleClientMapper } from '../mappers/DrizzleMappers/DrizzleClientMapper';
+import { ClientNotFoundError } from '../../../domain/errors/ClientNotFoundError';
 
 export class ClientRepositoryDrizzle implements ClientRepository {
   constructor(
@@ -43,6 +44,20 @@ export class ClientRepositoryDrizzle implements ClientRepository {
       return ok(clientToDomain);
     } catch (e: any) {
       return err(new UserNotFoundError(clientIdentifier));
+    }
+  }
+
+  async findByUserId(userIdentifier: string): Promise<Result<Client, ClientNotFoundError>> {
+    try{
+      const clientRows = await this.db.select().from(clients).where(eq(clients.userId, userIdentifier));
+      if(!clientRows.length){
+        return err(new ClientNotFoundError('No client account is linked to this user.'))
+      }
+
+      const clientToDomain = this.clientMapper.toDomain(clientRows[0]);
+      return ok(clientToDomain);
+    } catch {
+      return err(new Error(`An error occured when retrieving client linked to user: ${userIdentifier}`))
     }
   }
 

@@ -20,6 +20,7 @@ export type NewUserDrizzle = InferInsertModel<typeof users>; //pour insert
 export const clients = sqliteTable('clients', {
   id: text('id').primaryKey(), // references users.id
   userId: text('user_id').notNull().unique().references(() => users.id),
+  advisorId: text('advisor_id').notNull().references(() => advisors.id),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
@@ -93,6 +94,7 @@ export const transactions = sqliteTable('transactions', {
   direction: text('direction').notNull(), // DEBIT|| CREDIT
   fromAccountId: text('from_account_id').references(() => bankAccounts.id),
   toAccountId: text('to_account_id').references(() => bankAccounts.id),
+  toSavingAccountId: text('to_saving_account').references(() => savingAccounts.id),
   type: text('type').notNull(), // e.g. | "TRANSFER" | "LOAN_PAYMENT" | "STOCK_PURCHASE" | "STOCK_SALE" | "SAVINGS_INTEREST" | "INITIAL_DEPOSIT";, 
   description: text('description'),
   createdAt: text('created_at').notNull(),
@@ -245,13 +247,19 @@ export const clientsRelations = relations(clients, ({ one, many }) => ({
     references: [portfolios.ownerId]
   }),
 
+  advisor: one(advisors, {
+    fields: [clients.advisorId],
+    references: [advisors.id]
+  }),
+
   discussions: many(discussions),
   loans: many(loans), 
 }));
 
 export const advisorsRelations = relations(advisors, ({ many }) => ({
   loans: many(loans),
-  discussions: many(discussions)
+  discussions: many(discussions),
+  clients: many(clients)
 }));
 
 // export const directorsRelations = relations(directors, ({ one, many }) => ({}));

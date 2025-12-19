@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/authMiddleware';
-import { checkRole } from '../../../infrastructure/http-express/middlewares/roleMiddleware';
+import { checkRole } from '../middlewares/roleMiddleware';
 import { 
   requestLoanController,
   simulateLoanController,

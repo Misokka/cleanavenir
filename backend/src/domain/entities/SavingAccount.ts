@@ -74,7 +74,7 @@ export class SavingAccount  {
       description: "Daily interest",
       direction: "CREDIT",
       type: "SAVINGS_INTEREST",
-      date: new Date()
+      createdAt: new Date()
     });
 
     // On applique la transaction pour mettre à jour le solde

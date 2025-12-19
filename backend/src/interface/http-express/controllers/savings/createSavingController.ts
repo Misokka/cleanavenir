@@ -14,7 +14,7 @@ export const createSavingController = asyncHandler(
       return;
     }
 
-    const { sourceAccountId, initialAmount, rate } = req.body;
+    const { sourceAccountId, savingProductId, initialAmount } = req.body;
 
     if (!sourceAccountId || !initialAmount) {
       res.status(400).json({
@@ -30,7 +30,7 @@ export const createSavingController = asyncHandler(
       userId,
       sourceAccountId,
       initialAmount: Number.parseFloat(initialAmount),
-      rate: rate ? Number.parseFloat(rate) : 2.5, // Taux par défaut 2.5%
+      savingProductIdentifier: savingProductId
     });
 
     if (!result.ok) {

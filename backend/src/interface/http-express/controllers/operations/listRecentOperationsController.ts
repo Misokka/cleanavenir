@@ -17,7 +17,7 @@ export const listRecentOperationsController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.operation.listRecent.execute({
+    const result = await container.useCases.transaction.listRecent.execute({
       userId,
       limit,
     });

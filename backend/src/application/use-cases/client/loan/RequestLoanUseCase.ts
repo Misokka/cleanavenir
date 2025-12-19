@@ -3,10 +3,10 @@ import { Result, ok, err } from '../../../../shared/Result';
 import { Loan } from '../../../../domain/entities/Loan';
 import { LoanRepository } from '../../../ports/repositories/LoanRepository';
 import { ClientRepository } from '../../../ports/repositories/ClientRepository';
+import { LoanCalculator } from '../../../ports/services/LoanCalculator';
 
 export interface RequestLoanInput {
   clientIdentifier: string;
-  advisorIdentifier: string;
   amount: number; // en centimes
   durationInMonth: number;
   annualInterestRate: number; // en basis points
@@ -14,6 +14,7 @@ export interface RequestLoanInput {
 }
 
 export class RequestLoanUseCase {
+  private calculator = new LoanCalculator();
   constructor(
     private readonly loanRepository: LoanRepository,
     private readonly clientRepository: ClientRepository
@@ -26,16 +27,27 @@ export class RequestLoanUseCase {
       return err(new Error('Client introuvable'));
     }
 
+    const client = clientResult.value;
+
+    const mensualities = this.calculator.getMensualities(
+      input.amount,
+      input.annualInterestRate,
+      input.durationInMonth,
+      input.annualInsuranceRate
+    )
+
+    const insuranceMensualities = this.calculator.computeInsuranceMensualities(input.amount, input.annualInsuranceRate)
+
     // Créer le prêt avec statut "PENDING"
 
     const loan = Loan.create({
       loanIdentifier: randomUUID(),
       clientIdentifier: input.clientIdentifier,
-      advisorIdentifier: input.advisorIdentifier, // advisorId vide car pas encore assigné
+      advisorIdentifier: client.advisorIdentifier, // advisor assigné aléatoirement à la création du compte
       loanAmount: input.amount,
       durationInMonth: input.durationInMonth,
-      mensualities: 0, // mensualités calculées par le conseiller lors de l'approbation
-      insuranceMensualities: 0, // assurance calculée par le conseiller lors de l'approbation
+      mensualities: mensualities, // mensualités calculées par le conseiller lors de l'approbation
+      insuranceMensualities: insuranceMensualities, // assurance calculée par le conseiller lors de l'approbation
       remainingAmountToPay: input.amount, // montant restant = montant initial
       annualInterestRate: input.annualInterestRate,
       annualInsuranceRate: input.annualInsuranceRate,

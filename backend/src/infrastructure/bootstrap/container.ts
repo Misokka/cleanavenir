@@ -135,6 +135,7 @@ export function createContainer() {
   
   const registerUseCase = new RegisterUseCase(
     userRepository,
+    advisorRepository,
     profileManager,
     passwordHasher
   );
@@ -181,7 +182,6 @@ export function createContainer() {
   // Saving Use Cases
   const listUserSavingsUseCase = new ListUserSavingsUseCase(
     savingRepository,
-    bankAccountRepository
   );
   const createSavingAccountUseCase = new CreateSavingAccountUseCase(
     savingRepository,

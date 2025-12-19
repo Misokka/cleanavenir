@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { ok, err, Result } from '../../../shared/Result';
 import { Advisor } from '../../../domain/entities/Advisor';
 import { AdvisorRepository } from '../../../application/ports/repositories/AdvisorRepository';
@@ -42,6 +42,18 @@ export class AdvisorRepositoryDrizzle implements AdvisorRepository {
       return ok(advisorToDomain);
     } catch (e: any) {
       return err(new UserNotFoundError(advisorIdentifier));
+    }
+  }
+
+  async findRandom(): Promise<Result<Advisor, Error>> {
+    try{
+      const randomAdvisorRows = await this.db.select().from(advisors)
+      .orderBy(sql`RANDOM()`)
+      .limit(1);
+      const randomAdvisorToDomain = this.advisorMapper.toDomain(randomAdvisorRows[0]);
+      return ok(randomAdvisorToDomain);
+    } catch (error) {
+      return err(new Error("An error occured when retrieving random advisor"))
     }
   }
 }

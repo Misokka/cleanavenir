@@ -17,9 +17,9 @@ export const UpdateSavingProductController = asyncHandler(
 
     // changer la rate pour un savingProduct
     const container = getContainer();
-    const setGlobalSavingRateUseCase = container.useCases.saving.updateSavingProduct;
+    const updateSavingProductUseCase = container.useCases.saving.updateSavingProduct;
 
-    const result = await setGlobalSavingRateUseCase.execute({ savingProductIdentifier: savingProductId, label, rate });
+    const result = await updateSavingProductUseCase.execute({ savingProductIdentifier: savingProductId, label, rate });
 
     if (!result.ok) {
       res.status(500).json({
