@@ -58,7 +58,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
-    "drizzle-kit": "^0.18.1",
+    "drizzle-kit": "^0.31.8",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",

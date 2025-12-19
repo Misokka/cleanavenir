@@ -8,6 +8,13 @@
       "when": 1761422784606,
       "tag": "0000_amazing_overlord",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766158312955,
+      "tag": "0001_glorious_phalanx",
+      "breakpoints": true
     }
   ]
 }

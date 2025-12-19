@@ -62,7 +62,7 @@ export const bankAccounts = sqliteTable('bank_accounts', {
 export type BankAccountDrizzle = InferSelectModel<typeof bankAccounts>;
 export type NewBankAccountDrizzle = InferInsertModel<typeof bankAccounts>;
 
-export const savingProducts = sqliteTable('saving_product', {
+export const savingProducts = sqliteTable('saving_products', {
   id: text('id').primaryKey(),
   label: text('label').notNull().unique(),
   rate: integer('rate').notNull(), // stored as basis points or per-million (decide convention)
@@ -71,7 +71,7 @@ export const savingProducts = sqliteTable('saving_product', {
 export type SavingProductDrizzle = InferSelectModel<typeof savingProducts>;
 export type NewSavingProductDrizzle = InferSelectModel<typeof savingProducts>;
 
-export const savingAccounts = sqliteTable('bank_accounts', {
+export const savingAccounts = sqliteTable('saving_accounts', {
   id: text('id').primaryKey(),
   iban: text('iban').notNull().unique(),
   ownerId: text('owner_id').notNull().unique().references(() => clients.id),
