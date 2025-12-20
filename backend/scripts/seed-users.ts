@@ -24,7 +24,7 @@ async function seed() {
       lastname: 'Martin',
       email: 'bob@example.com',
       password: 'hashedpassword',
-      role: 'CLIENT',
+      role: 'DIRECTOR',
       isActive: 1,
       createdAt: now,
       updatedAt: now,

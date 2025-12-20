@@ -42,7 +42,8 @@ export class LoginUseCase{
       return err(new InvalidCredentialsError("Invalid credentials."))
     }
 
-    const profile = await this.profileManager.fetch(user.value.userIndentifier, user.value.role);
+    // Utiliser la propriété correcte "userIdentifier" (et non "userIndentifier")
+    const profile = await this.profileManager.fetch(user.value.userIdentifier, user.value.role);
 
     if(!profile.ok){
       return err(profile.error)
