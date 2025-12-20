@@ -175,32 +175,24 @@ export class AccountService {
     }
 
     try {
-      // Récupère le RIB (JSON) depuis l'API, puis construit un Blob téléchargeable
-      const response = await httpClient.get(
-        `${API_ENDPOINTS.ACCOUNTS.DETAILS(accountId)}/rib`
-      );
+      const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
-      const data = response.data as {
-        holderName: string;
-        iban: string;
-        bic: string;
-        bankName: string;
-        accountLabel: string;
-      };
+      const response = await fetch(`${baseURL}${API_ENDPOINTS.ACCOUNTS.DETAILS(accountId)}/rib`, {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-      const ribText = [
-        `Banque: ${data.bankName}`,
-        `Titulaire: ${data.holderName}`,
-        `Libellé du compte: ${data.accountLabel}`,
-        `IBAN: ${data.iban}`,
-        `BIC: ${data.bic}`,
-      ].join('\n');
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new NotFoundError(`RIB introuvable pour le compte ${accountId}`, 'rib');
+        }
 
-      return new Blob([ribText], { type: 'text/plain;charset=utf-8' });
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('404')) {
-        throw new NotFoundError(`RIB introuvable pour le compte ${accountId}`, 'rib');
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+
+      const blob = await response.blob();
+      return blob;
+    } catch (error) {
       throw error;
     }
   }
