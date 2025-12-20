@@ -170,7 +170,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           {user && (
             <>
               <Typography variant="body" className="font-medium text-clean-dark">
-                {t('header.greeting', { firstName: user.firstName })}
+                {t('header.greeting', { firstName: user.firstname })}
               </Typography>
               <Typography variant="caption" color="muted">
                 {user.role === 'DIRECTOR' ? 'Directeur' : user.role === 'ADVISOR' ? 'Conseiller' : 'Client'}
