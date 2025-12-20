@@ -8,6 +8,7 @@ import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { useLogin } from '../../features/auth/useLogin';
 import { useAuth } from '../../contexts/AuthProvider';
+import { userAgent } from 'next/server';
 
 interface LoginCredentials {
   email: string;
@@ -77,7 +78,7 @@ export const LoginForm: React.FC = () => {
       
       if (globalThis.window !== undefined) {
         const currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-        router.push(`/${currentLocale}/client/dashboard`);
+        router.push(`/${currentLocale}/${result.user.role.toLocaleLowerCase()}/dashboard`);
       }
     }
   };

@@ -1,8 +1,28 @@
 import 'dotenv/config';
 import { randomUUID } from 'crypto';
 import { db } from '../../src/infrastructure/drizzle/client';
-import { NewUserDrizzle, users } from '../../src/infrastructure/drizzle/schema';
+import { directors, NewDirectorDrizzle, NewUserDrizzle, users } from '../../src/infrastructure/drizzle/schema';
 import { eq } from 'drizzle-orm';
+
+async function seedDirector(now: string){
+  try{
+    const directorUserRows = await db.select().from(users).where(eq(users.role, "DIRECTOR")).limit(1);
+    const directorUser = directorUserRows[0];
+
+    const director: NewDirectorDrizzle = {
+      id: randomUUID(),
+      userId: directorUser.id,
+      createdAt: now,
+      updatedAt: now
+    } 
+
+    await db.insert(directors).values(director);
+    console.log("director created")
+  } catch (error) {
+    console.error('Could not create director user');
+    return
+  }
+}
 
 async function seed() {
   const now = new Date().toISOString();
@@ -81,6 +101,8 @@ async function seed() {
       console.error('Full error details:', JSON.stringify(e, null, 2));
     }
   }
+
+  await seedDirector(now)
 
   console.log('Seeding done');
   process.exit(0);

@@ -6,6 +6,8 @@ import { User, UserRole } from '../../../domain/entities/User';
 import { BankAccount } from '../../../domain/entities/BankAccount';
 import { Transaction } from '../../../domain/entities/Transaction';
 import { SavingAccount } from '../../../domain/entities/SavingAccount';
+import { SavingProduct } from '../../../domain/entities/SavingProduct';
+import { SavingProductDTO } from '../../../application/dtos/SavingProductDTO';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -59,4 +61,11 @@ export function toSavingAccountDTO(saving: SavingAccount): SavingAccountDTO {
     balance: saving.balance / 100, // à voir pour convertir en € ou centimes
     savingProductId: saving.productIdentifier,
   };
+}
+
+export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductDTO{
+  return {
+    ...savingProduct,
+    id: savingProduct.savingProductIdentifier,
+  }
 }

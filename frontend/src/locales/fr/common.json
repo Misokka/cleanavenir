@@ -244,8 +244,8 @@
         "title": "Actions Rapides",
         "manageAccounts": "Gérer les comptes",
         "manageAccountsDesc": "Bannir, débannir, supprimer",
-        "updateRate": "Modifier le taux",
-        "updateRateDesc": "Taux d'épargne actuel",
+        "updateSavingProducts": "Modifier le taux",
+        "updateSavingProductsDesc": "Taux d'épargne actuel",
         "manageCompanies": "Gérer les entreprises",
         "manageCompaniesDesc": "Créer, modifier, supprimer"
       }
@@ -304,6 +304,14 @@
     },
     "savings": {
       "title": "Gestion du Taux d'Épargne",
+      "savingProduct": {
+        "title": "Produit d'épargne",
+        "titlePlural": "Produits d'épargne",
+        "manage": "Gérer les produits d'épargne",
+        "create": "Créer un produit d'épargne",
+        "update": "Modifier un produit d'épargne",
+        "delete": "Supprimer un produit d'épargne"
+      },
       "currentRate": {
         "title": "Taux Actuel",
         "value": "{rate}%",

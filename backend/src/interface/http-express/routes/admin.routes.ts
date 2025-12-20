@@ -5,7 +5,8 @@ import {
   listClientsController,
   banClientController,
   getStatisticsController,
-  UpdateSavingProductController
+  UpdateSavingProductController,
+  CreateSavingProductController
 } from '../controllers/admin';
 
 
@@ -18,6 +19,7 @@ router.use(checkRole(['DIRECTOR']));
 router.get('/clients', listClientsController);
 router.post('/clients/:id/ban', banClientController);
 router.get('/statistics', getStatisticsController);
+router.post('/savings/products', CreateSavingProductController);
 router.post('/savings/rate', UpdateSavingProductController);
 
 export const adminRoutes = router;

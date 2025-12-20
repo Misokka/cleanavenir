@@ -6,8 +6,11 @@ import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { getDirectorStatistics, DirectorStatistics } from '@/lib/api/director/statistics';
+import { useParams } from 'next/navigation';
 
 export default function DirectorDashboardPage() {
+  const params = useParams();
+  const locale = params.locale;
   const t = useTranslations('Director.dashboard');
   const [stats, setStats] = useState<DirectorStatistics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,7 +106,7 @@ export default function DirectorDashboardPage() {
           <Typography variant="h3" className="mb-4">{t('quickActions.title')}</Typography>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <a
-              href="/director/accounts"
+              href={`/${locale}/director/accounts`}
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-clean-dark hover:bg-clean-light transition-colors"
             >
               <div className="flex items-center space-x-3">
@@ -115,19 +118,19 @@ export default function DirectorDashboardPage() {
             </a>
 
             <a
-              href="/director/savings"
+              href={`/${locale}/director/savings`}
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-clean-dark hover:bg-clean-light transition-colors"
             >
               <div className="flex items-center space-x-3">
                 <div>
-                  <Typography variant="body" className="font-medium">{t('quickActions.updateRate')}</Typography>
-                  <Typography variant="caption" color="muted">{t('quickActions.updateRateDesc')}</Typography>
+                  <Typography variant="body" className="font-medium">{t('quickActions.updateSavingProducts')}</Typography>
+                  <Typography variant="caption" color="muted">{t('quickActions.updateSavingProductsDesc')}</Typography>
                 </div>
               </div>
             </a>
 
             <a
-              href="/director/companies"
+              href={`/${locale}/director/companies`}
               className="p-4 border-2 border-gray-200 rounded-lg hover:border-clean-dark hover:bg-clean-light transition-colors"
             >
               <div className="flex items-center space-x-3">

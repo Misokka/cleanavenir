@@ -16,6 +16,12 @@ export interface SavingDTO {
   updatedAt: string;
 }
 
+export interface SavingProductDTO {
+  id: string;
+  rate: number;
+  label: string
+}
+
 export interface CreateSavingRequest {
   sourceAccountId: string;
   initialAmount: number; // en euros
@@ -58,6 +64,16 @@ export class SavingService {
     } catch (error) {
       console.error('Erreur lors de la création de l\'épargne:', error);
       throw error;
+    }
+  }
+
+  async getSavingProducts(): Promise<SavingProductDTO[]>{
+    try{
+      const response = await httpClient.get<SavingProductDTO[]>(API_ENDPOINTS.SAVINGS.PRODUCTS.LIST);
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des produits d'épargne");
+      throw error
     }
   }
 

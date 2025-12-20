@@ -9,8 +9,12 @@ import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
 import { getCurrentSavingsRate, getSavingsRateHistory, updateSavingsRate, SavingsRate } from '@/lib/api/director/savings';
 import { useToast } from '@/contexts/ToastProvider';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 export default function DirectorSavingsPage() {
+  const params = useParams();
+  const locale = params.locale;
   const t = useTranslations('Director.savings');
   const { success, error: showError } = useToast();
   const [currentRate, setCurrentRate] = useState<SavingsRate | null>(null);
@@ -98,7 +102,14 @@ export default function DirectorSavingsPage() {
         <div className="flex items-center justify-between">
           <Typography variant="h2">{t('title')}</Typography>
         </div>
-
+        <div>
+          <Link 
+            href={`/${locale}/director/savings/products`}
+            className="bg-green-950 inline-block px-4 py-3 text-white font-medium rounded-md hover:bg-green-900 transition-all"
+          >
+            {t('savingProduct.manage')}
+          </Link>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <Typography variant="h3" className="mb-4">

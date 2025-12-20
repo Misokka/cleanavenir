@@ -42,7 +42,7 @@ export class CreateBankAccountUseCase {
     
     if (existingAccounts.ok) {
       const duplicateName = existingAccounts.value.some(
-        (account: any) => account.name.toLowerCase() === input.name.trim().toLowerCase()
+        (account) => account.label.toLowerCase() === input.name.trim().toLowerCase()
       );
 
       if (duplicateName) {
