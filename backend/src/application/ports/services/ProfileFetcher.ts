@@ -23,22 +23,23 @@ export class ProfileManager {
   public async fetch(
     userIdentifier: string,
     role: UserRole
-  ): Promise<Result<Profile, UserNotFoundError>> {
+  ): Promise<Result<Profile, Error>> {
     let profileResult: Result<Profile, Error>;
 
     switch (role) {
       case 'CLIENT':
-        profileResult = await this.clientRepository.findById(userIdentifier);
+        profileResult = await this.clientRepository.findByUserId(userIdentifier);
         break;
       case 'DIRECTOR':
-        profileResult = await this.directorRepository.findById(userIdentifier);
+        profileResult = await this.directorRepository.findByUserId(userIdentifier);
         break;
       case 'ADVISOR':
-        profileResult = await this.advisorRepository.findById(userIdentifier);
+        profileResult = await this.advisorRepository.findByUserId(userIdentifier);
         break;
       default:
         // Gérer le cas où le rôle n'a pas de profil associé
         return err(new UserNotFoundError(userIdentifier));
+        
     }
 
     if (!profileResult.ok) {
@@ -73,7 +74,7 @@ export class ProfileManager {
         break;
       
       default:
-        return err(new InvalidRoleError(userIdentifier));
+        return err(new InvalidRoleError(role));
     }
 
     if(!newProfile.ok){

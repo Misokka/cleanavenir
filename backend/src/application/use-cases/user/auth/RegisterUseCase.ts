@@ -66,9 +66,10 @@ export class RegisterUseCase{
       const randomAdvisor = randomAdvisorResult.value;
 
       newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role, randomAdvisor.advisorIdentifier);
+    } else {
+      newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role);
     }
 
-    newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role);
 
     if(!newProfile.ok){
       return err(newProfile.error);

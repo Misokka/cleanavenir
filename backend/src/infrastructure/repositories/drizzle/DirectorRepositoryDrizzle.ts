@@ -7,6 +7,7 @@ import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { directors } from '../../drizzle/schema';
 import { DrizzleClient } from '../../drizzle/client';
 import { DrizzleDirectorMapper } from '../mappers/DrizzleMappers/DrizzleDirectorMapper';
+import { DirectorNotFoundError } from '../../../domain/errors/DirectorNotFoundError';
 
 export class DirectorRepositoryDrizzle implements DirectorRepository {
   constructor(
@@ -40,4 +41,18 @@ export class DirectorRepositoryDrizzle implements DirectorRepository {
       return err(new UserNotFoundError(directorIdentifier));
     }
   }
+
+  async findByUserId(userIdentifier: string): Promise<Result<Director, DirectorNotFoundError>> {
+      try{
+        const directorRows = await this.db.select().from(directors).where(eq(directors.userId, userIdentifier));
+        if(!directorRows.length){
+          return err(new DirectorNotFoundError('No director account is linked to this user.'))
+        }
+  
+        const directorToDomain = this.directorMapper.toDomain(directorRows[0]);
+        return ok(directorToDomain);
+      } catch {
+        return err(new Error(`An error occured when retrieving director linked to user: ${userIdentifier}`))
+      }
+    }
 }

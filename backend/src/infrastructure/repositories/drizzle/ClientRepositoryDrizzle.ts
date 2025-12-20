@@ -15,7 +15,7 @@ export class ClientRepositoryDrizzle implements ClientRepository {
     private readonly clientMapper: DrizzleClientMapper
   ) {}
 
-  async save(client: Client): Promise<Result<Client, InvalidRoleError>> {
+  async save(client: Client): Promise<Result<Client, Error>> {
     try {
       const clientToPersist = this.clientMapper.toPersistence(client);
       const clientRows = await this.db.insert(clients).values(clientToPersist).returning();
@@ -23,7 +23,7 @@ export class ClientRepositoryDrizzle implements ClientRepository {
 
       return ok(clientToDomain);
     } catch (e: any) {
-      return err(new InvalidRoleError(client.userIdentifier));
+      return err(new Error(`An error occured when saving user: ${e}`));
     }
   }
 

@@ -26,7 +26,7 @@ export class UserRepositoryDrizzle implements UserRepository {
       if (e.message?.includes('UNIQUE constraint')) {
         return err(new EmailAlreadyUsedError(user.email));
       }
-      return err(new InvalidRoleError(user.userIdentifier));
+      return err(new InvalidRoleError("test error user repo"));
     }
   }
 

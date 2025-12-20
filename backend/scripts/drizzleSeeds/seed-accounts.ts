@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { randomUUID } from 'node:crypto';
-import { db } from '../src/infrastructure/drizzle/client';
-import { bankAccounts, users } from '../src/infrastructure/drizzle/schema';
+import { db } from '../../src/infrastructure/drizzle/client';
+import { bankAccounts, users } from '../../src/infrastructure/drizzle/schema';
 
 async function seed() {
   const now = new Date().toISOString();

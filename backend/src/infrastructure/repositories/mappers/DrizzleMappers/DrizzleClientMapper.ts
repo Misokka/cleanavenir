@@ -7,6 +7,7 @@ export class DrizzleClientMapper implements Mapper<ClientDrizzle, Client, NewCli
     return {
       clientIdentifier: raw.id,
       userIdentifier: raw.userId,
+      advisorIdentifier: raw.advisorId
     };
   }
 
@@ -14,6 +15,7 @@ export class DrizzleClientMapper implements Mapper<ClientDrizzle, Client, NewCli
     return {
       id: entity.clientIdentifier,
       userId: entity.userIdentifier,
+      advisorId: entity.advisorIdentifier,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

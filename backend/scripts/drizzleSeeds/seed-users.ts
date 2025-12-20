@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import { randomUUID } from 'crypto';
-import { db } from '../src/infrastructure/drizzle/client';
-import { users } from '../src/infrastructure/drizzle/schema';
+import { db } from '../../src/infrastructure/drizzle/client';
+import { NewUserDrizzle, users } from '../../src/infrastructure/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 async function seed() {
   const now = new Date().toISOString();
-  const rows = [
+  const rows: NewUserDrizzle[] = [
     {
       id: randomUUID(),
       firstname: 'Alice',
@@ -25,6 +25,28 @@ async function seed() {
       email: 'bob@example.com',
       password: 'hashedpassword',
       role: 'DIRECTOR',
+      isActive: 1,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: randomUUID(),
+      firstname: 'Tom',
+      lastname: 'François',
+      email: 'tom@example.com',
+      password: 'hashedpassword',
+      role: 'ADVISOR',
+      isActive: 1,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: randomUUID(),
+      firstname: 'Didier',
+      lastname: 'Douglas',
+      email: 'didier@example.com',
+      password: 'hashedpassword',
+      role: 'ADVISOR',
       isActive: 1,
       createdAt: now,
       updatedAt: now,
