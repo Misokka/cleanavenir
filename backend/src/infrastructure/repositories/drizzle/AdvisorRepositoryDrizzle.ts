@@ -7,6 +7,7 @@ import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { advisors } from '../../drizzle/schema';
 import { DrizzleClient } from '../../drizzle/client';
 import { DrizzleAdvisorMapper } from '../mappers/DrizzleMappers/DrizzleAdvisorMapper';
+import { AdvisorNotFoundError } from '../../../domain/errors/AdvisorNotFoundError';
 
 export class AdvisorRepositoryDrizzle implements AdvisorRepository {
   constructor(
@@ -44,6 +45,20 @@ export class AdvisorRepositoryDrizzle implements AdvisorRepository {
       return err(new UserNotFoundError(advisorIdentifier));
     }
   }
+
+    async findByUserId(userIdentifier: string): Promise<Result<Advisor, AdvisorNotFoundError>> {
+      try{
+        const advisorRows = await this.db.select().from(advisors).where(eq(advisors.userId, userIdentifier));
+        if(!advisorRows.length){
+          return err(new AdvisorNotFoundError('No client account is linked to this user.'))
+        }
+  
+        const advisorToDomain = this.advisorMapper.toDomain(advisorRows[0]);
+        return ok(advisorToDomain);
+      } catch {
+        return err(new Error(`An error occured when retrieving client linked to user: ${userIdentifier}`))
+      }
+    }
 
   async findRandom(): Promise<Result<Advisor, Error>> {
     try{

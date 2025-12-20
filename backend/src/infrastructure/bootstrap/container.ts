@@ -152,10 +152,10 @@ export function createContainer() {
 
   // Account Use Cases
   const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository);
-  const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository);
-  const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository);
+  const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository, clientRepository);
+  const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository, clientRepository);
   const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository);
-  const deleteBankAccountUseCase = new DeleteBankAccountUseCase(bankAccountRepository);
+  const deleteBankAccountUseCase = new DeleteBankAccountUseCase(bankAccountRepository, clientRepository);
 
   // Transaction Use Cases
   const listAccountTransactionsUseCase = new ListAccountTransactionsUseCase(

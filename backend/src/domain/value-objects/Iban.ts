@@ -6,7 +6,7 @@ export class Iban{
   private constructor(public value: string){}
 
   public static from(value: string){
-    if(value.length < 34){
+    if(value.length < 27){
       return err(new IbanTooShortError(value));
     }
 
@@ -16,4 +16,7 @@ export class Iban{
 
     return ok(new Iban(value));
   }
+
+  // alice@example.com
+  // hashedpassword
 }

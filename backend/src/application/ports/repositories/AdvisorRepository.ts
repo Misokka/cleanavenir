@@ -1,4 +1,5 @@
 import { Advisor } from "../../../domain/entities/Advisor";
+import { AdvisorNotFoundError } from "../../../domain/errors/AdvisorNotFoundError";
 import { CouldNotCreateAdvisorError } from "../../../domain/errors/CouldNotCreateAdvisorError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { Result } from "../../../shared/Result";
@@ -6,6 +7,6 @@ import { Result } from "../../../shared/Result";
 export interface AdvisorRepository{
   save(advisor: Advisor): Promise<Result<Advisor, CouldNotCreateAdvisorError>>
   findById(advisorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>;
-  findByUserId(userIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>;
+  findByUserId(userIdentifier: string): Promise<Result<Advisor, AdvisorNotFoundError>>;
   findRandom(): Promise<Result<Advisor, Error>>;
 }

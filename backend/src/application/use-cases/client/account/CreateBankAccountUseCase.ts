@@ -4,9 +4,10 @@ import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
 import { BankAccount } from "../../../../domain/entities/BankAccount";
 import { Iban } from "../../../../domain/value-objects/Iban";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 
 export interface CreateBankAccountInput {
-  ownerId: string;
+  userId: string;
   name: string;
 }
 
@@ -14,7 +15,8 @@ export class CreateBankAccountUseCase {
   private readonly ibanGenerator: IbanGenerator;
 
   constructor(
-    private readonly bankAccountRepository: BankAccountRepository
+    private readonly bankAccountRepository: BankAccountRepository,
+    private readonly clientRepository: ClientRepository,
   ) {
     this.ibanGenerator = new IbanGenerator();
   }
@@ -28,7 +30,15 @@ export class CreateBankAccountUseCase {
       return err(new Error('Le nom du compte doit contenir au moins 3 caractères'));
     }
 
-    const existingAccounts = await this.bankAccountRepository.findByOwner(input.ownerId);
+    const clientResult = await this.clientRepository.findByUserId(input.userId);
+
+    if(!clientResult.ok){
+      return err(clientResult.error);
+    }
+
+    const client = clientResult.value;
+
+    const existingAccounts = await this.bankAccountRepository.findByOwner(client.clientIdentifier);
     
     if (existingAccounts.ok) {
       const duplicateName = existingAccounts.value.some(
@@ -69,7 +79,7 @@ export class CreateBankAccountUseCase {
 
     const newBankAccount = BankAccount.create({
       accountIdentifier: accountId,
-      clientIdentifier: input.ownerId,
+      clientIdentifier: client.clientIdentifier,
       iban: finalIbanObject,
       label: input.name.trim(),
       balance: 0
@@ -78,7 +88,8 @@ export class CreateBankAccountUseCase {
     const createResult = await this.bankAccountRepository.save(newBankAccount);
 
     if (!createResult.ok) {
-      return err(new Error('Erreur lors de la création du compte'));
+      // return err(new Error('Erreur lors de la création du compte'));
+      return err(createResult.error)
     }
 
     return ok(createResult.value);
