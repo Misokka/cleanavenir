@@ -3,9 +3,10 @@ import { API_ENDPOINTS } from '../endpoints';
 import { UserDTO } from '../types';
 import { SavingProductDTO } from './savingService';
 
-export interface ClientDTO extends UserDTO {
-  isActive: boolean;
-  createdAt: string;
+export interface ClientDTO {
+  id: string;
+  userId: string;
+  user: UserDTO;
 }
 
 export interface StatisticsDTO {

@@ -71,52 +71,52 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ clients, onClientBan
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-blue-600 font-semibold">
-                        {client.firstname?.[0]}{client.lastname?.[0]}
+                        {client.user.firstname?.[0]}{client.user.lastname?.[0]}
                       </span>
                     </div>
                     <div className="ml-4">
                       <Typography variant="body" className="font-medium text-gray-900">
-                        {client.firstname} {client.lastname}
+                        {client.user.firstname} {client.user.lastname}
                       </Typography>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Typography variant="caption" color="muted">
-                    {client.email}
+                    {client.user.email}
                   </Typography>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                    {client.role}
+                    {client.user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      client.isActive
+                      client.user.isActive
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {client.isActive ? 'Actif' : 'Banni'}
+                    {client.user.isActive ? 'Actif' : 'Banni'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Typography variant="caption" color="muted">
-                    {formatDate(client.createdAt)}
+                    {formatDate(client.user.createdAt)}
                   </Typography>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  {client.isActive ? (
+                  {client.user.isActive ? (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleBanClient(client.id)}
-                      disabled={loading && banningClientId === client.id}
+                      onClick={() => handleBanClient(client.user.id)}
+                      disabled={loading && banningClientId === client.user.id}
                       className="text-red-600 hover:text-red-700 border-red-300"
                     >
-                      {loading && banningClientId === client.id ? 'En cours...' : 'Bannir'}
+                      {loading && banningClientId === client.user.id ? 'En cours...' : 'Bannir'}
                     </Button>
                   ) : (
                     <Typography variant="caption" color="muted">

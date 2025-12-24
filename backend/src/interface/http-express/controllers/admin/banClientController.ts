@@ -4,14 +4,14 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const banClientController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { id: clientId } = req.params;
+    const { id: userId } = req.params;
 
     const container = getContainer();
     const clientRepository = container.repositories.client;
     const userRepository = container.repositories.user;
 
     // Récupérer le client
-    const clientResult = await clientRepository.findById(clientId);
+    const clientResult = await clientRepository.findByUserId(userId);
 
     if (!clientResult.ok) {
       res.status(404).json({

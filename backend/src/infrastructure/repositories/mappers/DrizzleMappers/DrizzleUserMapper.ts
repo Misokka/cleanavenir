@@ -20,6 +20,7 @@ export class DrizzleUserMapper implements Mapper<UserDrizzle, User, NewUserDrizz
       ...entity,
       id: entity.userIdentifier,
       createdAt: entity.createdAt.toISOString(),
+      isActive: entity.active ? 1 : 0,
       updatedAt: new Date().toISOString(),
       emailVerifiedAt: entity.emailVerifiedAt?.toISOString(),
     };

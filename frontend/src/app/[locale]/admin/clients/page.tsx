@@ -41,8 +41,8 @@ export default function AdminClientsPage() {
     );
   }
 
-  const activeClients = clients?.filter((c) => c.isActive) || [];
-  const bannedClients = clients?.filter((c) => !c.isActive) || [];
+  const activeClients = clients?.filter((c) => c.user.isActive) || [];
+  const bannedClients = clients?.filter((c) => !c.user.isActive) || [];
 
   return (
     <DashboardLayout>

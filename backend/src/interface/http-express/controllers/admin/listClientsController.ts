@@ -45,8 +45,6 @@ export const listClientsController = asyncHandler(
       }
     });
 
-    
-
     res.json({
       clients: clientsWithUserArr
     });
