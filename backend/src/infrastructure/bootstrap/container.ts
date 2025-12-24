@@ -187,6 +187,7 @@ export function createContainer() {
     clientRepository
   );
   const createSavingAccountUseCase = new CreateSavingAccountUseCase(
+    clientRepository,
     savingRepository,
     savingProductRepository,
     bankAccountRepository,

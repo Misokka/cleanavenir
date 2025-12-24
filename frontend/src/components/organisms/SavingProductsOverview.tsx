@@ -1,5 +1,5 @@
 'use client';
-import { useGetSavingProducts } from '@/features/admin/useGetSavingProducts';
+import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
 import React, { useEffect, useState } from 'react'
 import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';

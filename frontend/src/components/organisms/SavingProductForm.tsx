@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '../atoms/Button'
 import { savingProductErrosType, savingProductType, useCreateSavingProduct } from '@/features/admin/useCreateSavingProduct'
 import { Typography } from '../atoms/Typography';
-import { useGetSavingProducts } from '@/features/admin/useGetSavingProducts';
+import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
 import { SavingProductDTO } from '@/infrastructure/web/services/savingService';
 
 interface SavingProductFormProps {

@@ -8,6 +8,7 @@ import { SavingAccount } from "../../../../domain/entities/SavingAccount";
 import { SavingProductRepository } from "../../../ports/repositories/SavingProductRepository";
 import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
 import { Iban } from "../../../../domain/value-objects/Iban";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 
 export interface CreateSavingAccountInput {
   userId: string;
@@ -20,6 +21,7 @@ export interface CreateSavingAccountInput {
 export class CreateSavingAccountUseCase {
   private readonly ibanGenerator: IbanGenerator;
   constructor(
+    private readonly clientRepository: ClientRepository,
     private readonly savingAccountRepository: SavingAccountRepository,
     private readonly savingProductRepository: SavingProductRepository,
     private readonly bankAccountRepository: BankAccountRepository,
@@ -29,6 +31,12 @@ export class CreateSavingAccountUseCase {
   }
 
   public async execute(input: CreateSavingAccountInput): Promise<Result<SavingAccount, Error>> {
+    const clientResult = await this.clientRepository.findByUserId(input.userId);
+    if (!clientResult.ok) {
+      return err(clientResult.error);
+    }
+
+    const client = clientResult.value;
     const savingProductResult = await this.savingProductRepository.findById(input.savingProductIdentifier);
     if (!savingProductResult.ok) {
       return err(new Error('Produit d\'épargne introuvable'));
@@ -48,7 +56,7 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Compte source introuvable'));
     }
 
-    if (sourceAccount.value.clientIdentifier !== input.userId) {
+    if (sourceAccount.value.clientIdentifier !== client.clientIdentifier) {
       return err(new Error('Accès non autorisé au compte source'));
     }
 
@@ -93,7 +101,7 @@ export class CreateSavingAccountUseCase {
 
     const newSavingAccount = SavingAccount.create({
       accountIdentifier: savingId,
-      clientIdentifier: input.userId,
+      clientIdentifier: client.clientIdentifier,
       productIdentifier: savingProduct.savingProductIdentifier,
       iban: finalIbanObject,
       label: "Compte d'Épargne",
@@ -115,7 +123,7 @@ export class CreateSavingAccountUseCase {
         input.sourceAccountId,
         sourceAccount.value.balance
       );
-      return err(new Error('Erreur lors de la création du compte épargne'));
+      return err(new Error(createSavingResult.error.message));
     }
 
     const newSourceBalance = sourceAccount.value.balance - amountInCents;

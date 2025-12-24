@@ -4,7 +4,7 @@ import { Typography } from '@/components/atoms/Typography'
 import SavingProductForm from '@/components/organisms/SavingProductForm';
 import SavingProductsOverview from '@/components/organisms/SavingProductsOverview';
 import DashboardLayout from '@/components/templates/DashboardLayout'
-import { useGetSavingProducts } from '@/features/admin/useGetSavingProducts';
+import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
-import { toSavingAccountDTO } from '../../mappers/dtoMappers';
+import { toSavingAccountDTO, toSavingProductDTO } from '../../mappers/dtoMappers';
 
 export const listClientSavingsController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -40,8 +40,25 @@ export const listClientSavingsController = asyncHandler(
     }
 
     const savingsAccounts = savingsResult.value;
+    const savingProductsResult = await container.repositories.savingProduct.all();
+    if (!savingProductsResult.ok) {
+      res.status(500).json({
+        error: 'SAVING_PRODUCT_NOT_FOUND',
+        message: "Une erreur est survenu lors de la récupération des produits d'épargne.",
+      });
+      return;
+    }
+    const savingProducts = savingProductsResult.value;
 
-    const processedSavingAccounts = savingsAccounts.map((savingAccount) => toSavingAccountDTO(savingAccount))
+    const processedSavingAccounts = savingsAccounts.map((savingAccount) => {
+      const baseSavingAccount = toSavingAccountDTO(savingAccount);
+      const savingProduct = savingProducts.find(product => product.savingProductIdentifier === savingAccount.productIdentifier);
+      const savingProductDTO = savingProduct ? toSavingProductDTO(savingProduct) : null;
+      return {
+        ...baseSavingAccount,
+        savingProduct: savingProductDTO
+      };
+    })
 
     res.status(200).json(processedSavingAccounts);
   }

@@ -45,7 +45,8 @@ export const getSavingController = asyncHandler(
       savingProductId: saving.productIdentifier,
       iban: saving.iban.value,
       label: saving.label,
-      balance: saving.balance / 100 // conversion en €
+      balance: saving.balance / 100, // conversion en €
+      createdAt: saving.createdAt.toISOString(),
     };
 
     res.json(savingDTO);

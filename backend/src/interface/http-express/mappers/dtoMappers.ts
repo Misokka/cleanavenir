@@ -60,6 +60,7 @@ export function toSavingAccountDTO(saving: SavingAccount): SavingAccountDTO {
     label: saving.label,
     balance: saving.balance / 100, // à voir pour convertir en € ou centimes
     savingProductId: saving.productIdentifier,
+    createdAt: saving.createdAt.toISOString(),
   };
 }
 
@@ -67,5 +68,6 @@ export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductD
   return {
     ...savingProduct,
     id: savingProduct.savingProductIdentifier,
+    rate: savingProduct.rate / 1_000_000, // conversion de micro pourcent à pourcent
   }
 }

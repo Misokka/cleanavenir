@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { adminService } from "@/infrastructure/web/services/adminService";
-import { SavingProductDTO } from "@/infrastructure/web/services/savingService";
-import { get } from "http";
+import { SavingProductDTO, savingService } from "@/infrastructure/web/services/savingService";
 
 export function useGetSavingProducts(){
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +10,7 @@ export function useGetSavingProducts(){
 
   const getSavingProducts = useCallback(async () => {
     try{
-      const products = await adminService.getSavingProducts();
+      const products = await savingService.getSavingProducts();
       setSavingProducts(products);
       return products;
     } catch (error: any) {

@@ -14,6 +14,7 @@ export interface SavingDTO {
   rate: number; // en pourcentage (ex: 2.5)
   createdAt: string;
   updatedAt: string;
+  savingProduct?: SavingProductDTO;
 }
 
 export interface SavingProductDTO {
@@ -24,8 +25,9 @@ export interface SavingProductDTO {
 
 export interface CreateSavingRequest {
   sourceAccountId: string;
+  savingProductId: string;
   initialAmount: number; // en euros
-  rate?: number; // optionnel, défaut 2.5%
+  // rate?: number; // optionnel, défaut 2.5%
 }
 
 export interface CurrentRateDTO {

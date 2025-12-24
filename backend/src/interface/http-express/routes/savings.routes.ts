@@ -3,7 +3,8 @@ import {
   listClientSavingsController,
   createSavingController,
   applyDailyInterestController,
-  getSavingController
+  getSavingController,
+  ListSavingProductsController
 } from '../controllers/savings';
 import { requireAuth } from '../middlewares/authMiddleware';
 
@@ -15,6 +16,7 @@ const router = Router();
 // Routes protégées
 router.use(requireAuth);
 router.get('/', listClientSavingsController);
+router.get('/products', ListSavingProductsController);
 router.get('/:id', getSavingController);
 router.post('/', createSavingController);
 router.post('/apply-interest', applyDailyInterestController);
