@@ -12,6 +12,7 @@ export interface SavingAccountRepository {
     >;
 
     findManyByOwner(clientIdentifier: string): Promise<Result<SavingAccount[], Error>>;
+    findByOwnerAndProductId(ownerId: string, productId: string): Promise<Result<SavingAccount | null, Error>>;
 
     findByAccountIds(accountIds: string[]): Promise<Result<SavingAccount[], Error>>;
 }

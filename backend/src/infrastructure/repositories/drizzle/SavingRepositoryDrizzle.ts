@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { savingAccounts } from '../../drizzle/schema';
 import { ok, err, Result } from '../../../shared/Result';
 import { DrizzleClient } from '../../drizzle/client';
@@ -63,6 +63,26 @@ export class SavingRepositoryDrizzle implements SavingAccountRepository{
       return ok(savingAccountsToDomain);
     } catch (error) {
       return err(new Error(`An error occured when fetching all saving accounts for this user. [ERROR]: ${error}`))
+    }
+  }
+
+  async findByOwnerAndProductId(ownerId: string, productId: string): Promise<Result<SavingAccount | null, Error>> {
+    try {
+      const row = await this.db.select().from(savingAccounts)
+      .where(
+        and(
+          eq(savingAccounts.ownerId, ownerId),
+          eq(savingAccounts.savingProductId, productId)
+        ))
+      .limit(1);
+      
+      if (!row || row.length === 0) {
+        return ok(null);
+      }
+      const savingAccountToDomain = this.savingAccountMapper.toDomain(row[0]);
+      return ok(savingAccountToDomain);
+    } catch (e: any) {
+      return err(new Error(`Could not find saving by owner and product id: ${e.message}`));
     }
   }
 

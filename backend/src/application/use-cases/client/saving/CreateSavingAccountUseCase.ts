@@ -64,9 +64,9 @@ export class CreateSavingAccountUseCase {
       return err(new Error('Solde insuffisant sur le compte source'));
     }
 
-    const existingSavings = await this.savingAccountRepository.findByAccountIds([input.sourceAccountId]);
-    if (existingSavings.ok && existingSavings.value.length > 0) {
-      return err(new Error('Ce compte possède déjà une épargne associée'));
+    const existingSaving = await this.savingAccountRepository.findByOwnerAndProductId(client.clientIdentifier, input.savingProductIdentifier);
+    if (existingSaving.ok && existingSaving.value !== null) {
+      return err(new Error('Ce compte possède déjà une épargne de ce type.'));
     }
 
     

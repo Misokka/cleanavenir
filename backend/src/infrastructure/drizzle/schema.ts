@@ -74,7 +74,7 @@ export type NewSavingProductDrizzle = InferSelectModel<typeof savingProducts>;
 export const savingAccounts = sqliteTable('saving_accounts', {
   id: text('id').primaryKey(),
   iban: text('iban').notNull().unique(),
-  ownerId: text('owner_id').notNull().unique().references(() => clients.id),
+  ownerId: text('owner_id').notNull().references(() => clients.id),
   savingProductId: text('saving_product_id').notNull().references(() => savingProducts.id),
   label: text('label').notNull(),
   balance: integer('balance').notNull().default(0),
