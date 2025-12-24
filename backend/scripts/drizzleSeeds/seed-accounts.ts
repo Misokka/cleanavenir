@@ -1,50 +1,49 @@
-import 'dotenv/config';
-import { randomUUID } from 'node:crypto';
-import { db } from '../../src/infrastructure/drizzle/client';
-import { bankAccounts, users } from '../../src/infrastructure/drizzle/schema';
+import { eq } from "drizzle-orm";
+import { db } from "../../src/infrastructure/drizzle/client";
+import { bankAccounts, NewBankAccountDrizzle, users } from "../../src/infrastructure/drizzle/schema";
+import { randomUUID } from "crypto";
 
-async function seed() {
-  const now = new Date().toISOString();
+async function seed(){
+  try{
+    const now = new Date().toISOString();
+    const validIBANS = [
+      "FR7630003020540000050608945",
+      "FR7630006000011234567890189",
+      "FR7630041010051234567890143"
+    ];
 
-  // try to pick an existing user as owner
-  const found = await db.select().from(users).limit(1);
-  const ownerId = found && found.length ? found[0].id : 'owner-placeholder';
+    const clientUsers = await db.query.users.findMany({
+      where: eq(users.role, "CLIENT"),
+      with: {clientProfile: true}
+    });
 
-  const rows = [
-    {
-      id: randomUUID(),
-      iban: 'FR76 3000 6000 0112 3456 7890 189',
-      name: 'Courant Principal',
-      ownerId,
-      balance: 100000, // in cents
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: randomUUID(),
-      iban: 'FR14 4000 6000 0212 3456 7890 456',
-      name: 'Epargne',
-      ownerId,
-      balance: 500000,
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
-
-  for (const r of rows) {
-    try {
-      await db.insert(bankAccounts).values(r);
-      console.log(`Inserted account ${r.iban}`);
-    } catch (e: any) {
-      console.warn(`Could not insert ${r.iban}:`, e.message);
+    if(!clientUsers) {
+      console.log(clientUsers);
+      throw new Error("No user with CLIENT role found. Cannot seed bank accounts.");
     }
-  }
 
-  console.log('Seeding accounts done');
-  process.exit(0);
+    clientUsers.forEach(async (client, index) => {
+      const bankAccountData: NewBankAccountDrizzle = {
+        id: randomUUID(),
+        ownerId: client.clientProfile.id,
+        name: "Checking Account",
+        iban: validIBANS[index],
+        balance: 500000, // in cents
+        createdAt: now,
+        updatedAt: now
+      }
+
+      await db.insert(bankAccounts).values(bankAccountData);
+    })
+    console.log("Bank account seeding done");
+  } catch (error){
+    console.error("An error occured when seeding bank accounts", error)
+  }
+  
+  process.exit(0)
 }
 
-seed().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+seed().catch((error) => {
+  console.error(error);
+  process.exit(1)
+})

@@ -12,7 +12,7 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
   const container = getContainer();
   
   // Récupérer le compte
-  const accountResult = await container.useCases.bankAccount.get.execute({ clientId: userId, accountId });
+  const accountResult = await container.useCases.bankAccount.get.execute({ userId, accountId });
 
   if (!accountResult.ok) {
     res.status(404).json({ error: 'NOT_FOUND', message: accountResult.error.message });
