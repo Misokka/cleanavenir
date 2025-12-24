@@ -47,6 +47,22 @@ export class PrismaLoanRepository implements LoanRepository {
     return ok(loanToDomain);
   }
 
+  async findAllByUserId(clientIdentifier: string): Promise<Result<Loan[], Error>> {
+    try{
+      const allClientLoans = await this.prismaClient.loan.findMany({
+        where: {clientIdentifier}
+      });
+
+      const allLoansToDomain = allClientLoans.map((loan) => {
+        return this.prismaLoanMapper.toDomain(loan);
+      });
+
+      return ok(allLoansToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving loans for client: ${clientIdentifier}`))
+    }
+  }
+
   async findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>> {
     try{
       const activeLoans = await this.prismaClient.loan.findMany({
@@ -104,4 +120,6 @@ export class PrismaLoanRepository implements LoanRepository {
       return err(new Error(`An error occured when deleting loan: ${loanIdentifier}.`))
     }
   }
+
+
 }

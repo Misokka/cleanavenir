@@ -29,7 +29,7 @@ export function createServer(): { app: Application; container: Container } {
       origin: [
         'http://localhost:3001',
         'http://127.0.0.1:3001',
-        process.env.FRONTEND_URL
+        process.env.FRONTEND_URL as string
       ].filter(Boolean),
       credentials: true,
     })

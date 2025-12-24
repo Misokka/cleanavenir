@@ -9,6 +9,27 @@ export class Trade {
     public readonly sellOrderIdentifier: string,
     public readonly quantity: number,
     public readonly price: number, // Le prix où l'échange s'est fait
-    public readonly timestamp: Date = new Date()
+    public readonly createdAt: Date = new Date()
   ) {}
+
+  public static create(props: {
+    tradeIdentifier: string,
+    stockIdentifier: string,
+    buyOrderIdentifier: string,
+    sellOrderIdentifier: string,
+    quantity: number,
+    price: number, // Le prix où l'échange s'est fait
+    createdAt: Date,
+    status?: TradeStatus
+  }): Trade{
+    return new Trade(
+      props.tradeIdentifier,
+      props.stockIdentifier,
+      props.buyOrderIdentifier,
+      props.sellOrderIdentifier,
+      props.quantity,
+      props.price,
+      props.createdAt
+    )
+  }
 }

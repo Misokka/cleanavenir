@@ -5,15 +5,17 @@ export class Portfolio {
   private constructor(
     public readonly portfolioIdentifier: string,
     public readonly clientIdentifier: string,
-    private holdings: Map<string, Holding> = new Map()
+    public createdAt: Date,
+    private holdings: Map<string, Holding> = new Map(),
   ) {}
 
-  public static create({portfolioIdentifier, clientIdentifier, holdings = new Map()}: {
+  public static create({portfolioIdentifier, clientIdentifier, createdAt, holdings = new Map()}: {
     portfolioIdentifier: string,
     clientIdentifier: string,
+    createdAt: Date,
     holdings?: Map<string, Holding>
   }): Portfolio {
-    return new Portfolio(portfolioIdentifier, clientIdentifier, holdings);
+    return new Portfolio(portfolioIdentifier, clientIdentifier, createdAt, holdings);
   }
 
   // Ajoute des actions au portefeuille

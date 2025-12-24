@@ -52,23 +52,28 @@ export class SettleTradesUseCase {
       // 3. Créer les traces de paiement (Ton entité Transaction)
       const buyerTransactionIdentifier = randomUUID();
       const sellerTransactionIdentifier = randomUUID();
-      const buyerTransaction = new Transaction(
-        buyerTransactionIdentifier,
-        buyerAccount.value.accountIdentifier,
-        totalDebit,
-        "DEBIT",
-        "STOCK_PURCHASE",
-        "buy of stocks"
+      const buyerTransaction = Transaction.create({
+        transactionIdentifier: buyerTransactionIdentifier,
+        bankAccountIdentifier: buyerAccount.value.accountIdentifier,
+        amount: totalDebit,
+        currency: "EUR",
+        direction: "DEBIT",
+        type: "STOCK_PURCHASE",
+        description: "buy of stocks",
+        createdAt: new Date()
+      }
       );
 
-      const sellerTransaction = new Transaction(
-        sellerTransactionIdentifier,
-        sellerAccount.value.accountIdentifier,
-        tradeValue,
-        "CREDIT",
-        "STOCK_SALE",
-        "Sale of stocks"
-      );
+      const sellerTransaction = Transaction.create({
+        transactionIdentifier: sellerTransactionIdentifier,
+        bankAccountIdentifier: sellerAccount.value.accountIdentifier,
+        amount: tradeValue,
+        currency: "EUR",
+        direction: "CREDIT",
+        type: "STOCK_SALE",
+        description: "Sale of stocks",
+        createdAt: new Date()
+      });
 
       // 4. Déplacer les actions
       sellerPortfolio.value.removeHolding(trade.stockIdentifier, trade.quantity);

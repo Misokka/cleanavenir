@@ -61,7 +61,7 @@ export class PrismaSavingAccountRepository implements SavingAccountRepository {
     }
   }
 
-  async findByAccountId(accountIdentifier: string): Promise<Result<SavingAccount, SavingBankAccountNotFoundError>> {
+  async findById(accountIdentifier: string): Promise<Result<SavingAccount, SavingBankAccountNotFoundError>> {
     const foundSavingAccount = await this.prismaClient.savingAccount.findUnique({
       where: {
         accountIdentifier: accountIdentifier
@@ -76,43 +76,25 @@ export class PrismaSavingAccountRepository implements SavingAccountRepository {
     return ok(savingAccountToDomain);
   }
 
-  async openForAccount(accountIdentifier: string): Promise<Result<SavingAccount, BankAccountNotFoundError | AlreadyHasSavingAccountError>> {
-    const existing = await this.prismaClient.savingAccount.findUnique({
-      where: {
-        accountIdentifier: accountIdentifier
-      }
-    });
+  async findByAccountIds(accountIds: string[]): Promise<Result<any[], Error>> {
+    try {
+      const savingAccounts = await this.prismaClient.savingAccount.findMany({
+        where: {
+          accountIdentifier: {
+            in: accountIds
+          }
+        }
+      });
 
-    if(existing){
-      return err(new AlreadyHasSavingAccountError(accountIdentifier));
+      const savingAccountsToDomain: SavingAccount[] = savingAccounts.map((savingAccount) => {
+        return this.prismaSavingAccountMapper.toDomain(savingAccount);
+      });
+
+      return ok(savingAccountsToDomain);
+    } catch (error) {
+      return err(new Error("An error occured when retrieving saving accounts by account IDs."));
     }
-
-    // Here you would normally check if the bank account exists in another table.
-    // For simplicity, we will assume it does not exist and return an error.
-    return err(new BankAccountNotFoundError(accountIdentifier));
   }
 
-  async setActive(accountIdentifier: string, active: boolean): Promise<Result<SavingAccount, SavingBankAccountNotFoundError>> {
-    const existing = await this.prismaClient.savingAccount.findUnique({
-      where: {
-        accountIdentifier: accountIdentifier
-      }
-    });
 
-    if(!existing){
-      return err(new SavingBankAccountNotFoundError(accountIdentifier));
-    }
-
-    const updatedSavingAccount = await this.prismaClient.savingAccount.update({
-      where: {
-        accountIdentifier: accountIdentifier
-      },
-      data: {
-        isActive: active,
-      }
-    });
-
-    const savingAccountToDomain = this.prismaSavingAccountMapper.toDomain(updatedSavingAccount);
-    return ok(savingAccountToDomain);
-  }
 }

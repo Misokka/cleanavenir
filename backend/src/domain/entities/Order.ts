@@ -10,17 +10,19 @@ export class Order {
     public readonly quantity: number,
     public readonly limitPrice: number, // Le prix maximum (pour un BUY) ou minimum (pour un SELL)
     public status: OrderStatus = "PENDING",
+    public createdAt: Date
   ) {}
 
-  public static create({orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, status = "PENDING"}: {
+  public static create({orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, createdAt, status = "PENDING"}: {
     orderIdentifier: string,
     stockIdentifier: string,
     clientIdentifier: string,
     orderType: OrderType,
     quantity: number,
     limitPrice: number,
-    status?: OrderStatus
+    createdAt: Date
+    status?: OrderStatus,
   }): Order {
-    return new Order(orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, status);
+    return new Order(orderIdentifier, stockIdentifier, clientIdentifier, orderType, quantity, limitPrice, status, createdAt);
   }
 }

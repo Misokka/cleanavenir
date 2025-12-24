@@ -1,34 +1,92 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { orders } from '../../drizzle/schema';
-import { ok, err } from '../../../shared/Result';
+import Result, { ok, err } from '../../../shared/Result';
+import { DrizzleClient } from '../../drizzle/client';
+import { OrderRepository } from '../../../application/ports/repositories/OrderRepository';
+import { DrizzleOrderMapper } from '../mappers/DrizzleMappers/DrizzleOrderMapper';
+import { Order, OrderStatus } from '../../../domain/entities/Order';
+import { OrderNotFoundError } from '../../../domain/errors/OrderNotFoundError';
 
-export class OrderRepositoryDrizzle {
-  constructor(private db: any) {}
+export class OrderRepositoryDrizzle implements OrderRepository{
+  constructor(
+    private db: DrizzleClient,
+    private orderMapper: DrizzleOrderMapper
+  ) {}
 
-  async save(order: any) {
+  async save(order: Order): Promise<Result<Order, Error>> {
     try {
-      await this.db.insert(orders).values(order);
-      return ok(order);
+      const orderToPersist = this.orderMapper.toPersistence(order);
+      const registeredOrderRows = await this.db.insert(orders).values(orderToPersist).returning();
+      const orderToDomain = this.orderMapper.toDomain(registeredOrderRows[0]);
+      return ok(orderToDomain);
     } catch (e: any) {
       return err(new Error(`Could not insert order: ${e.message}`));
     }
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Result<Order, OrderNotFoundError>> {
     try {
       const row = await this.db.select().from(orders).where(eq(orders.id, id)).limit(1);
-      return ok(row?.[0] ?? null);
+      if(!row.length) return err(new OrderNotFoundError(id));
+
+      const orderToDomain = this.orderMapper.toDomain(row[0])
+      return ok(orderToDomain);
     } catch (e: any) {
-      return err(new Error(`Could not find order by id: ${e.message}`));
+      return err(new Error(`Could not find order by id: ${id}`));
     }
   }
 
-  async listOpenForStock(stockId: string) {
-    try {
-      const rows = await this.db.select().from(orders).where(eq(orders.stockId, stockId));
-      return ok(rows);
-    } catch (e: any) {
-      return err(new Error(`Could not list orders: ${e.message}`));
+  async listByUser(clientIdentifier: string): Promise<Result<Order[], Error>> {
+    try{
+      const clientOrderRows = await this.db.select().from(orders).where(eq(orders.ownerId, clientIdentifier));
+      const ordersToDomain = clientOrderRows.map((row) => {
+        return this.orderMapper.toDomain(row);
+      });
+
+      return ok(ordersToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving orders for client: ${clientIdentifier}`))
+    }
+  }
+
+  async listPendingBuysByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
+    try{
+      const buyOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")));
+      const ordersToDomain = buyOrderRows.map((row) => {
+        return this.orderMapper.toDomain(row);
+      });
+
+      return ok(ordersToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving orders for stock: ${stockIdentifier}`))
+    }
+  }
+
+  async listPendingSellsByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
+    try{
+      const sellOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")));
+      const ordersToDomain = sellOrderRows.map((row) => {
+        return this.orderMapper.toDomain(row);
+      });
+
+      return ok(ordersToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving orders for stock: ${stockIdentifier}`))
+    }
+  }
+
+  async setStatus(orderIdentifier: string, status: OrderStatus): Promise<Result<Order, OrderNotFoundError>> {
+    try{
+      const orderRows = await this.db.select({id: orders.id}).from(orders).where(eq(orders.id, orderIdentifier)).limit(1);
+      if(!orderRows.length){
+        return err(new OrderNotFoundError(orderIdentifier));
+      }
+
+      const updatedOrderRows = await this.db.update(orders).set({status: status}).where(eq(orders.id, orderIdentifier)).returning();
+      const orderToDomain = this.orderMapper.toDomain(updatedOrderRows[0]);
+      return ok(orderToDomain);
+    } catch (error) {
+      return err(new Error(`Couldn't set new status for order ${orderIdentifier}`))
     }
   }
 }

@@ -10,6 +10,7 @@ import { ProfileManager } from "../../../ports/services/ProfileFetcher";
 import { Client } from "../../../../domain/entities/Client";
 import { Director } from "../../../../domain/entities/Director";
 import { Advisor } from "../../../../domain/entities/Advisor";
+import { AdvisorRepository } from "../../../ports/repositories/AdvisorRepository";
 
 type RegisterResult = {
   user: User;
@@ -19,6 +20,7 @@ type RegisterResult = {
 export class RegisterUseCase{
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly advisorRepository: AdvisorRepository,
     private readonly profileManager: ProfileManager,
     private readonly passwordHasher: PasswordHasher
   ){}
@@ -45,7 +47,7 @@ export class RegisterUseCase{
     }
     
     const hashedPassword = await this.passwordHasher.hash(password);
-    const newUser = User.create({userIdentifier, firstname, lastname, email, password: hashedPassword, role});
+    const newUser = User.create({userIdentifier, firstname, lastname, email, password: hashedPassword, role, createdAt: new Date()});
 
     const savedUser = await this.userRepository.save(newUser);
     
@@ -53,7 +55,21 @@ export class RegisterUseCase{
       return err(savedUser.error);
     }
 
-    const newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role);
+    let newProfile;
+
+    if(role === "CLIENT"){
+      const randomAdvisorResult = await this.advisorRepository.findRandom();
+      if(!randomAdvisorResult.ok){
+        return err(randomAdvisorResult.error);
+      }
+
+      const randomAdvisor = randomAdvisorResult.value;
+
+      newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role, randomAdvisor.advisorIdentifier);
+    } else {
+      newProfile = await this.profileManager.create(newUser.userIdentifier, newUser.role);
+    }
+
 
     if(!newProfile.ok){
       return err(newProfile.error);

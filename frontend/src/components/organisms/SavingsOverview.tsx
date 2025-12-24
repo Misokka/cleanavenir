@@ -20,7 +20,11 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
   const t = useTranslations('Dashboard.savings');
   const locale = useLocale();
   const { savings, loading: savingsLoading, error: savingsError, refetch: refetchSavings } = useGetSavingsNew();
-  const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRateNew();
+  // const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRateNew();
+  const currentRate = {
+    rate: 2.5,
+    updatedAt: new Date().toISOString()
+  }
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -38,8 +42,8 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
     }).format(amount);
   };
 
-  const loading = savingsLoading || rateLoading;
-  const error = savingsError || rateError;
+  const loading = savingsLoading // || rateLoading;
+  const error = savingsError // || rateError;
 
   if (loading) {
     return (
@@ -60,33 +64,33 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
     );
   }
 
-  if (error) {
-    return (
-      <div className="space-y-6">
-        <Typography variant="h3" color="primary">
-          {t('title')}
-        </Typography>
+  // if (error) {
+  //   return (
+  //     <div className="space-y-6">
+  //       <Typography variant="h3" color="primary">
+  //         {t('title')}
+  //       </Typography>
         
-        <Card className="text-center py-12 border-red-200 bg-red-50">
-          <div className="text-6xl mb-4"></div>
-          <Typography variant="h4" className="mb-2 text-red-700">
-            Erreur de chargement
-          </Typography>
-          <Typography color="muted" className="mb-4">
-            {error}
-          </Typography>
-          <div className="space-x-2">
-            <Button variant="primary" onClick={refetchSavings}>
-              {t('retrySaving')}
-            </Button>
-            <Button variant="secondary" onClick={refetchRate}>
-              {t('retryRate')}
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
+  //       <Card className="text-center py-12 border-red-200 bg-red-50">
+  //         <div className="text-6xl mb-4"></div>
+  //         <Typography variant="h4" className="mb-2 text-red-700">
+  //           Erreur de chargement
+  //         </Typography>
+  //         <Typography color="muted" className="mb-4">
+  //           {error}
+  //         </Typography>
+  //         <div className="space-x-2">
+  //           <Button variant="primary" onClick={refetchSavings}>
+  //             {t('retrySaving')}
+  //           </Button>
+  //           <Button variant="secondary" onClick={refetchRate}>
+  //             {t('retryRate')}
+  //           </Button>
+  //         </div>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-6">
@@ -101,7 +105,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
         )}
       </div>
 
-      {currentRate && (
+      {/* {currentRate && (
         <div className="grid md:grid-cols-2 gap-4">
           <Card className="text-center bg-green-50 border-green-200">
             <Typography variant="caption" color="muted" className="mb-2">
@@ -124,7 +128,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
             </Typography>
           </Card>
         </div>
-      )}
+      )} */}
 
       {savings && savings.length > 0 ? (
         <div>
@@ -144,10 +148,10 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                       <span className="text-2xl"></span>
                       <div>
                         <Typography variant="body" className="font-medium">
-                          Compte Épargne
+                          {saving.savingProduct?.label ?? "Compte d'Épargne"}
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          Taux: {saving.rate}%
+                          Taux: {saving.savingProduct?.rate}%
                         </Typography>
                       </div>
                     </div>
@@ -189,7 +193,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
         </Card>
       )}
 
-      {currentRate && (
+      {/* {currentRate && (
         <Card className="bg-blue-50 border-blue-200">
           <div className="flex items-start space-x-3">
             <span className="text-2xl"></span>
@@ -206,7 +210,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
             </div>
           </div>
         </Card>
-      )}
+      )} */}
 
       <CreateSavingModal
         isOpen={isCreateModalOpen}

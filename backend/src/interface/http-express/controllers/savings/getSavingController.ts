@@ -16,6 +16,17 @@ export const getSavingController = asyncHandler(
     }
 
     const container = getContainer();
+
+    const clientResult = await container.repositories.client.findByUserId(userId);
+    if (!clientResult.ok) {
+      res.status(401).json({
+        error: 'UNAUTHORIZED',
+        message: 'Client non trouvé',
+      });
+      return;
+    }
+
+    const client = clientResult.value;
     
     // Récupérer l'épargne
     const savingResult = await container.repositories.saving.findById(savingId);
@@ -30,10 +41,7 @@ export const getSavingController = asyncHandler(
 
     const saving = savingResult.value;
 
-    // Vérifier que l'épargne appartient à un compte de l'utilisateur
-    const accountResult = await container.repositories.bankAccount.findById(saving.accountId);
-
-    if (!accountResult.ok || accountResult.value.ownerId !== userId) {
+    if (!savingResult.ok || savingResult.value.clientIdentifier !== client.clientIdentifier) {
       res.status(403).json({
         error: 'UNAUTHORIZED',
         message: 'Accès non autorisé à ce compte épargne',
@@ -41,14 +49,31 @@ export const getSavingController = asyncHandler(
       return;
     }
 
+    const savingProductResult = await container.repositories.savingProduct.findById(saving.productIdentifier);
+    if (!savingProductResult.ok) {
+      res.status(500).json({
+        error: 'SAVING_PRODUCT_NOT_FOUND',
+        message: "Une erreur est survenu lors de la récupération du produit d'épargne.",
+      });
+      return;
+    }
+
+    const savingProduct = savingProductResult.value;
+
     // Convertir centimes → euros et basis points → pourcentage
     const savingDTO = {
-      id: saving.id,
-      accountId: saving.accountId,
-      balance: saving.balance / 100, // centimes → euros
-      rate: saving.rate / 100, // basis points → %
-      createdAt: saving.createdAt,
-      updatedAt: saving.updatedAt,
+      id: saving.accountIdentifier,
+      clientId: saving.clientIdentifier,
+      savingProductId: saving.productIdentifier,
+      iban: saving.iban.value,
+      label: saving.label,
+      balance: saving.balance / 100, // conversion en €
+      createdAt: saving.createdAt.toISOString(),
+      updatedAt: saving.updatedAt ? saving.updatedAt.toISOString() : null,
+      savingProduct: {
+        ...savingProduct,
+        rate: savingProduct.rate / 1_000_000, // conversion en %
+      }
     };
 
     res.json(savingDTO);

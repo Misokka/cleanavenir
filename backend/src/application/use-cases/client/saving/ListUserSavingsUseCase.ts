@@ -1,34 +1,30 @@
-import { Result, ok } from '../../../../shared/Result';
-
-export interface SavingRepository {
-  findByAccountIds(accountIds: string[]): Promise<Result<any[], Error>>;
-}
-
-export interface BankAccountRepository {
-  findByOwner(ownerId: string): Promise<Result<any[], Error>>;
-}
+import { SavingAccount } from '../../../../domain/entities/SavingAccount';
+import { Result, err, ok } from '../../../../shared/Result';
+import { ClientRepository } from '../../../ports/repositories/ClientRepository';
+import { SavingAccountRepository } from '../../../ports/repositories/SavingAccountRepository';
 
 export class ListUserSavingsUseCase {
   constructor(
-    private readonly savingRepository: SavingRepository,
-    private readonly bankAccountRepository: BankAccountRepository
+    private readonly savingRepository: SavingAccountRepository,
+    private readonly clientRepository: ClientRepository
   ) {}
 
-  async execute(params: { userId: string }): Promise<Result<any[], Error>> {
-    const accountsResult = await this.bankAccountRepository.findByOwner(params.userId);
-
-    if (!accountsResult.ok) {
-      return accountsResult;
+  async execute(params: { userId: string }): Promise<Result<SavingAccount[], Error>> {
+    const clientResult = await this.clientRepository.findByUserId(params.userId);
+    if(!clientResult.ok){
+      return err(clientResult.error);
     }
 
-    const accounts = accountsResult.value;
+    const client = clientResult.value;
 
-    if (accounts.length === 0) {
-      return ok([]);
+    const savingAccountsResult = await this.savingRepository.findManyByOwner(client.clientIdentifier);
+
+    if (!savingAccountsResult.ok) {
+      return err(savingAccountsResult.error);
     }
 
-    const accountIds = accounts.map((account) => account.id);
+    const accounts = savingAccountsResult.value;
 
-    return this.savingRepository.findByAccountIds(accountIds);
+    return ok(accounts);
   }
 }

@@ -29,8 +29,8 @@ export const createAccountController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.account.create.execute({
-      ownerId: userId,
+    const result = await container.useCases.bankAccount.create.execute({
+      userId: userId,
       name: name.trim(),
     });
 

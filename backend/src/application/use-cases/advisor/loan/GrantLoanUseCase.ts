@@ -2,10 +2,18 @@ import { randomUUID } from "crypto";
 import { AdvisorRepository } from "../../../ports/repositories/AdvisorRepository";
 import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 import { LoanRepository } from "../../../ports/repositories/LoanRepository";
-import { err, ok } from "../../../../shared/Result";
+import Result, { err, ok } from "../../../../shared/Result";
 import { Loan } from "../../../../domain/entities/Loan";
 import { LoanCalculator } from "../../../ports/services/LoanCalculator";
 
+type LoanUseCaseProps = {
+  clientIdentifier: string, 
+  advisorIdentifier: string, 
+  loanAmount: number, 
+  durationInMonth: number, 
+  annualInterestRate: number, 
+  annualInsuranceRate: number
+}
 export class GrantLoanUseCase{
   constructor(
     private readonly loanRepository: LoanRepository,
@@ -13,7 +21,14 @@ export class GrantLoanUseCase{
     private readonly advisorRepository: AdvisorRepository
   ){}
 
-  public async execute(clientIdentifier: string, advisorIdentifier: string, loanAmount: number, durationInMonth: number, annualInterestRate: number, annualInsuranceRate: number){
+  public async execute({
+    clientIdentifier,
+    advisorIdentifier,
+    loanAmount,
+    durationInMonth,
+    annualInterestRate,
+    annualInsuranceRate
+  }: LoanUseCaseProps): Promise<Result<Loan, Error>>{
     const loanIdentifier = randomUUID();
 
     const client = await this.clientRepository.findById(clientIdentifier);
@@ -31,7 +46,8 @@ export class GrantLoanUseCase{
     const mensualities = loanCalulator.getMensualities(loanAmount, annualInterestRate, durationInMonth, annualInsuranceRate);
     const insuranceMensualities = loanCalulator.computeInsuranceMensualities(loanAmount, annualInsuranceRate);
 
-    const newLoan = new Loan(
+    // récupérer la loan lié au l'advisor plutôt que d'en créer une nouvelle
+    const newLoan = Loan.create({
       loanIdentifier,
       clientIdentifier,
       advisorIdentifier,
@@ -39,13 +55,14 @@ export class GrantLoanUseCase{
       durationInMonth,
       mensualities, // mensualities à calculer
       insuranceMensualities,
-      loanAmount, // remainingAmountToPay commene à la même valeur que loanAmount
+      remainingAmountToPay: loanAmount,
       annualInterestRate,
       annualInsuranceRate,
-      "ACTIVE",
-      new Date(),
-      undefined,
-      new Date(), // faire new date + 1 mois
+      status: "ACTIVE",
+      createdAt: new Date(),
+      lastPaidAt: undefined,
+      nextToPayAt: new Date(), // faire new date + 1 mois
+    }
     );
 
     const loan = await this.loanRepository.save(newLoan);
@@ -54,7 +71,7 @@ export class GrantLoanUseCase{
       return err(loan.error);
     }
 
-    return ok(loan);
+    return ok(loan.value);
   }
 
 }

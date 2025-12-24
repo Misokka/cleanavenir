@@ -68,7 +68,7 @@ export const loginController = asyncHandler(
 
     res.json({
       token: accessToken,
-      user: toUserDTO(user as any),
+      user: toUserDTO(user),
       rememberMe: rememberMe || false,
     });
   }

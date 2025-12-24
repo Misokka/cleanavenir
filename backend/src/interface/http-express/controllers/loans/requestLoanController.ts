@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
-import crypto from 'crypto';
 
 export const requestLoanController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -26,40 +25,27 @@ export const requestLoanController = asyncHandler(
     }
 
     const container = getContainer();
-    const loanRepository = container.repositories.loan;
+    const requestLoanUseCase = container.useCases.loan.requestLoan;
 
-    // Calcul simplifié de la mensualité (hors assurance)
-    const monthlyRate = annualInterestRate / 12 / 100;
-    const n = durationInMonth;
-    const principal = amount;
-    const monthlyPayment = monthlyRate > 0
-      ? Math.round(principal * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -n))))
-      : Math.round(principal / n);
+    const requestedLoan = await requestLoanUseCase.execute({
+      clientIdentifier: clientId,
+      amount,
+      durationInMonth,
+      annualInterestRate,
+      annualInsuranceRate,
+    })
 
-    const loan = {
-      id: crypto.randomUUID(),
-      clientId,
-      principal,
-      annualRate: Math.round(annualInterestRate),
-      termMonths: n,
-      monthlyPayment,
-      outstanding: principal,
-      createdAt: new Date().toISOString(),
-    };
-
-    const saveResult = await loanRepository.save(loan as any);
-
-    if (!saveResult.ok) {
+    if (!requestedLoan.ok) {
       res.status(500).json({
         error: 'INTERNAL_ERROR',
-        message: saveResult.error.message,
+        message: requestedLoan.error.message,
       });
       return;
     }
 
     res.status(201).json({
       message: 'Demande de prêt créée avec succès',
-      loan: saveResult.value,
+      loan: requestedLoan.value,
     });
   }
 );

@@ -244,8 +244,8 @@
         "title": "Quick Actions",
         "manageAccounts": "Manage accounts",
         "manageAccountsDesc": "Ban, unban, delete",
-        "updateRate": "Update rate",
-        "updateRateDesc": "Current savings rate",
+        "updateSavingProducts": "Update saving products",
+        "updateSavingProductsDesc": "Lower or higher saving products rates",
         "manageCompanies": "Manage companies",
         "manageCompaniesDesc": "Create, edit, delete"
       }
@@ -304,6 +304,14 @@
     },
     "savings": {
       "title": "Savings Rate Management",
+      "savingProduct": {
+        "title": "Saving product",
+        "titlePlural": "Saving products",
+        "manage": "Manage saving products",
+        "create": "Create a saving product",
+        "update": "Update a saving product",
+        "delete": "Delete a saving product"
+      },
       "currentRate": {
         "title": "Current Rate",
         "value": "{rate}%",

@@ -1,5 +1,5 @@
 import { OperationRepository } from '../../../application/ports/repositories/OperationRepository';
-import { OperationDTO } from '../../../application/dtos/OperationDTO';
+import { OperationDTO } from '../../../application/dtos/TransactionDTO';
 import { Result, ok, err } from '../../../shared/Result';
 import { BankAccountNotFoundError } from '../../../domain/errors/BankAccountNotFoundError';
 import { OperationNotFoundError } from '../../../domain/errors/OperationNotFoundError';

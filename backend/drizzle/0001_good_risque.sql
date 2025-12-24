@@ -1,0 +1,1 @@
+DROP INDEX `saving_accounts_owner_id_unique`;

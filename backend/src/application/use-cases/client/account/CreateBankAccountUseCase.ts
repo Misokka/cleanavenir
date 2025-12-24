@@ -1,10 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { err, ok, Result } from "../../../../shared/Result";
 import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
-import { BankAccountRepositoryDrizzle } from "../../../../infrastructure/repositories/drizzle/BankAccountRepositoryDrizzle";
+import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
+import { BankAccount } from "../../../../domain/entities/BankAccount";
+import { Iban } from "../../../../domain/value-objects/Iban";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 
 export interface CreateBankAccountInput {
-  ownerId: string;
+  userId: string;
   name: string;
 }
 
@@ -12,12 +15,13 @@ export class CreateBankAccountUseCase {
   private readonly ibanGenerator: IbanGenerator;
 
   constructor(
-    private readonly bankAccountRepository: BankAccountRepositoryDrizzle
+    private readonly bankAccountRepository: BankAccountRepository,
+    private readonly clientRepository: ClientRepository,
   ) {
     this.ibanGenerator = new IbanGenerator();
   }
 
-  public async execute(input: CreateBankAccountInput): Promise<Result<any, Error>> {
+  public async execute(input: CreateBankAccountInput): Promise<Result<BankAccount, Error>> {
     if (!input.name || input.name.trim().length === 0) {
       return err(new Error('Le nom du compte est requis'));
     }
@@ -26,11 +30,19 @@ export class CreateBankAccountUseCase {
       return err(new Error('Le nom du compte doit contenir au moins 3 caractères'));
     }
 
-    const existingAccounts = await this.bankAccountRepository.findByOwner(input.ownerId);
+    const clientResult = await this.clientRepository.findByUserId(input.userId);
+
+    if(!clientResult.ok){
+      return err(clientResult.error);
+    }
+
+    const client = clientResult.value;
+
+    const existingAccounts = await this.bankAccountRepository.findByOwner(client.clientIdentifier);
     
     if (existingAccounts.ok) {
       const duplicateName = existingAccounts.value.some(
-        (account: any) => account.name.toLowerCase() === input.name.trim().toLowerCase()
+        (account) => account.label.toLowerCase() === input.name.trim().toLowerCase()
       );
 
       if (duplicateName) {
@@ -57,26 +69,29 @@ export class CreateBankAccountUseCase {
       return err(new Error('Impossible de générer un IBAN unique'));
     }
 
+    const finalIbanResult = Iban.from(finalIban);
+    if (!finalIbanResult.ok) {
+      return err(new Error('IBAN généré invalide'));
+    }
+    const finalIbanObject = finalIbanResult.value;
+
     const accountId = randomUUID();
-    const createResult = await this.bankAccountRepository.create({
-      id: accountId,
-      iban: finalIban,
-      name: input.name.trim(),
-      ownerId: input.ownerId,
-      balance: 0,
+
+    const newBankAccount = BankAccount.create({
+      accountIdentifier: accountId,
+      clientIdentifier: client.clientIdentifier,
+      iban: finalIbanObject,
+      label: input.name.trim(),
+      balance: 0
     });
+    
+    const createResult = await this.bankAccountRepository.save(newBankAccount);
 
     if (!createResult.ok) {
-      return err(new Error('Erreur lors de la création du compte'));
+      // return err(new Error('Erreur lors de la création du compte'));
+      return err(createResult.error)
     }
 
-    return ok({
-      id: accountId,
-      iban: finalIban,
-      label: input.name.trim(),
-      ownerId: input.ownerId,
-      balance: 0,
-      currency: 'EUR',
-    });
+    return ok(createResult.value);
   }
 }

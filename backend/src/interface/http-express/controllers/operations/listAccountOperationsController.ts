@@ -17,7 +17,7 @@ export const listAccountOperationsController = asyncHandler(
     }
 
     const container = getContainer();
-    const result = await container.useCases.operation.listForAccount.execute({
+    const result = await container.useCases.transaction.listForAccount.execute({
       userId,
       accountId,
     });

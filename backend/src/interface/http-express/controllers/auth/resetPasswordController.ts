@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
-import { ResetPasswordUseCase } from '../../../../application/use-cases/user/auth/ResetPasswordUseCase';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 
 export const resetPasswordController = asyncHandler(async (req: Request, res: Response) => {

@@ -3,10 +3,10 @@ import { IbanTooLongError } from "../errors/IbanTooLongError";
 import { IbanTooShortError } from "../errors/IbanTooShortError";
 
 export class Iban{
-  constructor(public value: string){}
+  private constructor(public value: string){}
 
   public static from(value: string){
-    if(value.length < 34){
+    if(value.length < 27){
       return err(new IbanTooShortError(value));
     }
 
@@ -16,4 +16,7 @@ export class Iban{
 
     return ok(new Iban(value));
   }
+
+  // alice@example.com
+  // hashedpassword
 }

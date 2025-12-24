@@ -34,6 +34,7 @@ export class PlaceOrderUseCase {
       quantity,
       orderType,
       limitPrice: stockResult.value.price, // Prix du marché au moment de la commande
+      createdAt: new Date()
     });
 
     const savedOrderResult = await this.orderRepository.save(newOrder);

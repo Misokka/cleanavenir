@@ -78,6 +78,8 @@ model Transaction{
   type TransactionType
   description String
   date DateTime @default(now())
+  fromAccountIdentifier String?
+  toAccountIdentifier String?
 
   bankAccount BankAccount @relation(fields: [bankAccountIdentifier], references: [accountIdentifier])
 }
@@ -209,7 +211,7 @@ model Trade {
   quantity Float
   price Float
   status TradeStatus
-  timestamp DateTime
+  createdAt DateTime
 
   stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
   buyOrder Order @relation("BuyOrder", fields: [buyOrderIdentifier], references: [orderIdentifier])

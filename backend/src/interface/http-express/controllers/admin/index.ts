@@ -1,4 +1,8 @@
 export { listClientsController } from './listClientsController';
 export { banClientController } from './banClientController';
+export { unbanClientController } from './unbanClientController';
 export { getStatisticsController } from './getStatisticsController';
-export { setSavingRateController } from './setSavingRateController';
+export { UpdateSavingProductController } from './UpdateSavingProductController';
+export { CreateSavingProductController } from './CreateSavingProductController';
+export { ListSavingProductsController } from './ListSavingProductsController';
+

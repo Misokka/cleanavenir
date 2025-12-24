@@ -42,7 +42,7 @@ export const transferController = asyncHandler(
     const amountInCents = Math.round(amount * 100);
 
     const container = getContainer();
-    const result = await container.useCases.operation.transfer.execute({
+    const result = await container.useCases.transaction.transfer.execute({
       fromAccountId,
       toAccountId,
       amount: amountInCents,

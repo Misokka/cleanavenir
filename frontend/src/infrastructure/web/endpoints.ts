@@ -41,6 +41,9 @@ export const API_ENDPOINTS = {
     RATES: '/savings/rates',
     CREATE_ACCOUNT: '/savings/accounts',
     ACCOUNT_DETAILS: (id: string) => `/savings/accounts/${id}`,
+    PRODUCTS: {
+      LIST: "/savings/products"
+    }
   },
 
   INVESTMENTS: {
@@ -61,8 +64,16 @@ export const API_ENDPOINTS = {
   ADMIN: {
     CLIENTS: '/admin/clients',
     BAN_CLIENT: (id: string) => `/admin/clients/${id}/ban`,
+    UNBAN_CLIENT: (id: string) => `/admin/clients/${id}/unban`,
     STATISTICS: '/admin/statistics',
     SET_SAVING_RATE: '/admin/savings/rate',
+    SAVINGS: {
+      PRODUCTS: {
+        CREATE: "/admin/savings/products",
+        LIST: "/admin/savings/products",
+        UPDATE: (id: string) => `/admin/savings/products/${id}`
+      }
+    }
   },
 } as const;
 

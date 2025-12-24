@@ -4,7 +4,7 @@ import { accountRoutes } from './account.routes';
 import { operationRoutes } from './operation.routes';
 import { savingsRoutes } from './savings.routes';
 import { loanRoutes } from './loan.routes';
-import { adminRoutes } from '../../../infrastructure/http-express/routes/admin.routes';
+import { adminRoutes } from './admin.routes';
 
 const router = Router();
 

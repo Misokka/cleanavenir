@@ -6,6 +6,7 @@ import { Typography } from '../atoms/Typography';
 import { useCreateSavingNew } from '../../features/savings/useGetSavings';
 import { useGetAccounts } from '../../features/account/useGetAccounts';
 import { useToast } from '../../contexts/ToastProvider';
+import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
 
 interface CreateSavingModalProps {
   isOpen: boolean;
@@ -19,10 +20,12 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
   onSuccess,
 }) => {
   const [sourceAccountId, setSourceAccountId] = useState('');
+  const [savingProductId, setSavingProductId] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
   const [rate, setRate] = useState('2.5'); 
 
   const { accounts, loading: accountsLoading } = useGetAccounts();
+  const { savingProducts, isLoading} = useGetSavingProducts();
   const { createSaving, loading, error, success, reset } = useCreateSavingNew();
   const { addToast } = useToast();
 
@@ -71,8 +74,9 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
 
     await createSaving({
       sourceAccountId,
+      savingProductId,
       initialAmount: amount,
-      rate: rateValue,
+      // rate: rateValue,
     });
   };
 
@@ -123,6 +127,33 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
           </div>
 
           <div>
+            <label htmlFor="sourceAccount" className="block text-sm font-medium text-gray-700 mb-1">
+              Produit d'épargne (taux annuel) *
+            </label>
+            {isLoading ? (
+              <div className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
+                Chargement des produits d'épargne...
+              </div>
+            ) : (
+              <select
+                id="savingProduct"
+                value={savingProductId}
+                onChange={(e) => setSavingProductId(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-clean-primary focus:border-transparent"
+                required
+                disabled={loading}
+              >
+                <option value="">Sélectionnez un produit d'épargne</option>
+                {savingProducts?.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.label} - {product.rate}%
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div>
             <label htmlFor="initialAmount" className="block text-sm font-medium text-gray-700 mb-1">
               Montant initial (€) *
             </label>
@@ -143,7 +174,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
             </p>
           </div>
 
-          <div>
+          {/* <div>
             <label htmlFor="rate" className="block text-sm font-medium text-gray-700 mb-1">
               Taux d'intérêt annuel (%) *
             </label>
@@ -163,7 +194,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
             <p className="text-xs text-gray-500 mt-1">
               Entre 1.5% et 3.5%
             </p>
-          </div>
+          </div> */}
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start space-x-3">

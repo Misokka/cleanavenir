@@ -84,15 +84,18 @@ export default function SavingDetailPage() {
   };
 
   const calculateDailyInterest = () => {
-    return Math.round((saving.balance * (saving.rate / 100)) / 365 * 100) / 100;
+    if(!saving.savingProduct) return 0;
+    return Math.ceil((saving.balance * (saving.savingProduct.rate / 100)) / 365 * 100) / 100;
   };
 
   const calculateMonthlyInterest = () => {
-    return Math.round((saving.balance * (saving.rate / 100)) / 12 * 100) / 100;
+    if(!saving.savingProduct) return 0;
+    return Math.round((saving.balance * (saving.savingProduct.rate / 100)) / 12 * 100) / 100;
   };
 
   const calculateYearlyInterest = () => {
-    return Math.round(saving.balance * (saving.rate / 100) * 100) / 100;
+    if(!saving.savingProduct) return 0;
+    return Math.round(saving.balance * (saving.savingProduct.rate / 100) * 100) / 100;
   };
 
   return (
@@ -123,10 +126,10 @@ export default function SavingDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
             <div>
               <Typography variant="caption" className="text-green-100 mb-1">
-                Taux annuel
+                {saving.savingProduct?.label}
               </Typography>
               <Typography variant="body" className="font-semibold">
-                {saving.rate}%
+                Taux: {saving.savingProduct?.rate}%
               </Typography>
             </div>
             <div>

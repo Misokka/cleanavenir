@@ -13,12 +13,12 @@ export function startSavingsInterestCron() {
     
     try {
       const container = getContainer();
-      const result = await container.useCases.saving.applyDailyInterest.execute();
+      const result = await container.useCases.saving.applySavingDailyInterest.execute();
 
       if (result.ok) {
         console.log(`[CRON] Intérêts appliqués avec succès !`);
-        console.log(`[CRON] - Comptes traités : ${result.value.processed}`);
-        console.log(`[CRON] - Total intérêts : ${(result.value.totalInterest / 100).toFixed(2)}€`);
+        // console.log(`[CRON] - Comptes traités : ${result.value.processed}`);
+        // console.log(`[CRON] - Total intérêts : ${(result.value.totalInterest / 100).toFixed(2)}€`);
       } else {
         console.error(`[CRON] Erreur lors du calcul des intérêts :`, result.error.message);
       }

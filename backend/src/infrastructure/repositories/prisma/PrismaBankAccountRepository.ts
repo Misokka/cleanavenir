@@ -89,6 +89,41 @@ export class PrismaBankAccountRepository implements BankAccountRepository{
         return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
       }
   }
+
+  async findByOwner(clientIdentifier: string): Promise<Result<BankAccount[], UnexpectedBankAccountError>> {
+      try{
+        const bankAccounts = await this.prismaClient.bankAccount.findMany({
+          where: {
+            clientIdentifier: clientIdentifier
+          }
+        });
+
+        const bankAccountsToDomain = bankAccounts.map((bankAccount) => this.prismaBankAccountMapper.toDomain(bankAccount));
+
+        return ok(bankAccountsToDomain);
+      } catch (error){
+        return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
+      }
+  }
+
+  async updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<number, BankAccountNotFoundError | UnexpectedBankAccountError>> {
+      try{
+        const updatedBankAccount = await this.prismaClient.bankAccount.update({
+          where: {
+            accountIdentifier: accountIdentifier
+          },
+          data: {
+            balance: newBalance
+          }
+        });
+
+        const bankAccountToDomain = this.prismaBankAccountMapper.toDomain(updatedBankAccount);
+
+        return ok(bankAccountToDomain.balance);
+      } catch (error){
+       return err(new UnexpectedBankAccountError("Unexpected error retrieving bank account by ID"));
+      }
+  }
   
   async rename(accountIdentifier: string, label: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>> {
       try{

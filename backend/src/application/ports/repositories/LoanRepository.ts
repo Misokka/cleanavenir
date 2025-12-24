@@ -9,6 +9,7 @@ export interface LoanRepository{
   save(loan: Loan): Promise<Result<Loan, InsufficientFundsError | BankAccountNotFoundError | UnexpectedBankAccountError>>;
   findById(loanIdentifier: string): Promise<Result<Loan, LoanNotFoundError>>;
   findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>>;
+  findAllByUserId(userId: string): Promise<Result<Loan[], Error>>;
   all(): Promise<Result<Loan[], Error>>;
   delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>>;
 }
