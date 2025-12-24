@@ -4,7 +4,8 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 export const UpdateSavingProductController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { savingProductId, label, rate } = req.body;
+    const { label, rate } = req.body;
+    const id = req.params.id;
 
     // Validation
     if (rate === undefined || rate < 0) {
@@ -19,7 +20,7 @@ export const UpdateSavingProductController = asyncHandler(
     const container = getContainer();
     const updateSavingProductUseCase = container.useCases.saving.updateSavingProduct;
 
-    const result = await updateSavingProductUseCase.execute({ savingProductIdentifier: savingProductId, label, rate });
+    const result = await updateSavingProductUseCase.execute({ savingProductIdentifier: id, label, rate });
 
     if (!result.ok) {
       res.status(500).json({

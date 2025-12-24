@@ -105,7 +105,7 @@ export default function DirectorSavingsPage() {
         <div>
           <Link 
             href={`/${locale}/director/savings/products`}
-            className="bg-green-950 inline-block px-4 py-3 text-white font-medium rounded-md hover:bg-green-900 transition-all"
+            className="bg-clean-dark inline-block px-4 py-3 text-white font-medium rounded-md hover:bg-clean-secondary transition-all"
           >
             {t('savingProduct.manage')}
           </Link>

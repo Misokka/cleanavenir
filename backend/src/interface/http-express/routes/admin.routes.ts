@@ -6,7 +6,8 @@ import {
   banClientController,
   getStatisticsController,
   UpdateSavingProductController,
-  CreateSavingProductController
+  CreateSavingProductController,
+  ListSavingProductsController
 } from '../controllers/admin';
 
 
@@ -20,6 +21,7 @@ router.get('/clients', listClientsController);
 router.post('/clients/:id/ban', banClientController);
 router.get('/statistics', getStatisticsController);
 router.post('/savings/products', CreateSavingProductController);
-router.post('/savings/rate', UpdateSavingProductController);
+router.get('/savings/products', ListSavingProductsController);
+router.put('/savings/products/:id', UpdateSavingProductController);
 
 export const adminRoutes = router;

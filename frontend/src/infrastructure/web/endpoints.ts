@@ -69,6 +69,8 @@ export const API_ENDPOINTS = {
     SAVINGS: {
       PRODUCTS: {
         CREATE: "/admin/savings/products",
+        LIST: "/admin/savings/products",
+        UPDATE: (id: string) => `/admin/savings/products/${id}`
       }
     }
   },

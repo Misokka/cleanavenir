@@ -1,4 +1,4 @@
-import { SavingProduct } from "@prisma/client";
+import { SavingProduct } from "../../../../domain/entities/SavingProduct";
 import { InvalidSavingRateError } from "../../../../domain/errors/InvalidSavingRateError";
 import Result, { err, ok } from "../../../../shared/Result";
 import { SavingProductRepository } from "../../../ports/repositories/SavingProductRepository";
@@ -26,6 +26,7 @@ export class UpdateSavingProductUseCase {
     }
 
     const savingProduct = savingProductResult.value;
+    savingProduct.label = props.label;
     savingProduct.rate = props.rate; // à voir pour stocker en décimal
 
     const updatedSavingProductResult = await this.savingProductRepository.update(savingProduct);

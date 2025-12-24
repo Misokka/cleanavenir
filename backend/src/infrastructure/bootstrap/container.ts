@@ -72,6 +72,7 @@ import { ListUserSavingsUseCase } from '../../application/use-cases/client/savin
 import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
 import { CreateSavingProductUseCase } from '../../application/use-cases/director/saving/CreateSavingProductUseCase';
 import { UpdateSavingProductUseCase } from '../../application/use-cases/director/saving/UpdateSavingProductUseCase';
+import { ListSavingProductsUseCase } from '../../application/use-cases/director/saving/ListSavingProductsUseCase';
 
 // use Cases - Loan
 import { RequestLoanUseCase } from '../../application/use-cases/client/loan/RequestLoanUseCase';
@@ -85,6 +86,7 @@ import { SettleTradesUseCase } from '../../application/use-cases/client/investme
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
+
 
 export function createContainer() {
 
@@ -182,6 +184,7 @@ export function createContainer() {
   // Saving Use Cases
   const listUserSavingsUseCase = new ListUserSavingsUseCase(
     savingRepository,
+    clientRepository
   );
   const createSavingAccountUseCase = new CreateSavingAccountUseCase(
     savingRepository,
@@ -189,6 +192,8 @@ export function createContainer() {
     bankAccountRepository,
     transactionRepository
   );
+
+  const listSavingProductsUseCase = new ListSavingProductsUseCase(savingProductRepository);
   const applySavingDailyInterestUseCase = new ApplySavingDailyInterestUseCase(
     savingProductRepository,
     savingRepository,
@@ -265,7 +270,8 @@ export function createContainer() {
         create: createSavingAccountUseCase,
         applySavingDailyInterest: applySavingDailyInterestUseCase,
         createSavingProduct: createSavingProductUseCase,
-        updateSavingProduct: updateSavingProductUseCase
+        updateSavingProduct: updateSavingProductUseCase,
+        listSavingProducts: listSavingProductsUseCase
       },
       loan: {
         requestLoan: requestLoanUseCase,

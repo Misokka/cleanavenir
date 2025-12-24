@@ -21,6 +21,12 @@ export interface CreateSavingProductRequest {
   rate: number;
 }
 
+export interface EditSavingProductRequest {
+  id: string;
+  label: string;
+  rate: number;
+}
+
 export class AdminService {
   async getClients(): Promise<ClientDTO[]> {
     try {
@@ -71,18 +77,45 @@ export class AdminService {
     }
   }
 
-    async createSavingProduct(data: CreateSavingProductRequest): Promise<SavingProductDTO>{
-      try{
-        const response = await httpClient.post<SavingProductDTO>(
-          API_ENDPOINTS.ADMIN.SAVINGS.PRODUCTS.CREATE,
-          data
-        )
-        return response.data;
-      } catch (error) {
-        console.error("Erreur lors de la création du produit d'épargne", error);
-        throw error
-      }
+  async createSavingProduct(data: CreateSavingProductRequest): Promise<SavingProductDTO>{
+    try{
+      const response = await httpClient.post<SavingProductDTO>(
+        API_ENDPOINTS.ADMIN.SAVINGS.PRODUCTS.CREATE,
+        data
+      )
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la création du produit d'épargne", error);
+      throw error
     }
+  }
+
+  async getSavingProducts(): Promise<SavingProductDTO[]> {
+    try{
+      const response = await httpClient.get<SavingProductDTO[]>(
+        API_ENDPOINTS.ADMIN.SAVINGS.PRODUCTS.LIST
+      )
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des produits d'épargne", error);
+      throw error
+    }
+  }
+
+  async updateSavingProduct(data: EditSavingProductRequest): Promise<SavingProductDTO>{
+    try{
+      const response = await httpClient.put<SavingProductDTO>(
+        API_ENDPOINTS.ADMIN.SAVINGS.PRODUCTS.UPDATE(data.id),
+        data
+      )
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la modification du produit d'épargne", error);
+      throw error
+    }
+  }
+
+  
 }
 
 export const adminService = new AdminService();

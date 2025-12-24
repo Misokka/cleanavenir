@@ -23,14 +23,14 @@ export const CreateSavingProductController = asyncHandler(
     if(!result.ok){
       res.status(500).json({
         error: "INTERNAL_ERROR",
-        message: result.error
+        message: result.error.message
       });
       return;
     };
 
     const savingProduct = result.value;
 
-    res.send(200).json({
+    res.status(200).json({
       savingProduct: toSavingProductDTO(savingProduct)
     })
   }

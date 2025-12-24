@@ -1,23 +1,47 @@
 import { adminService } from "@/infrastructure/web/services/adminService";
 import { useCallback, useState } from "react";
 
-export async function useCreateSavingProduct(){
+export type savingProductType = {
+  id: string
+  label: string,
+  rate: number,
+}
+
+export type savingProductErrosType = {
+  id: string, // not editable
+  label: string,
+  rate: string
+}
+
+export function useCreateSavingProduct(){
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createSavingProduct = useCallback(async (label: string, rate: number) => {
+  const createSavingProduct = useCallback(async ({label, rate}: savingProductType) => {
     try{
-      await adminService.createSavingProduct({label, rate})
+      return await adminService.createSavingProduct({label, rate})
     } catch (error: any) {
       setError(error);
     } finally {
       setIsLoading(false);
     }
-  }, []) 
+  }, []);
+
+  const updateSavingProduct = useCallback(async ({id, label, rate}: savingProductType) => {
+   try{
+      return await adminService.updateSavingProduct({id, label, rate})
+    } catch (error: any) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return {
     isLoading,
     error,
-    createSavingProduct
+    setError,
+    createSavingProduct,
+    updateSavingProduct
   }
 }
