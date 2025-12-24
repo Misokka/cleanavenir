@@ -74,9 +74,9 @@ export const DashboardClient: React.FC<DashboardClientProps> = ({ locale }) => {
           limit={5}
         />
         
-        {/* <SavingsOverview 
+        <SavingsOverview 
           showCreateButton={true}
-        /> */}
+        />
       </div>
     </DashboardLayout>
   );

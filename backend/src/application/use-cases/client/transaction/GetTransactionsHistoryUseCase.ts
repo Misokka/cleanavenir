@@ -1,5 +1,6 @@
 import { Result, ok, err } from '../../../../shared/Result';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
+import { ClientRepository } from '../../../ports/repositories/ClientRepository';
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 
 export interface OperationFilters {
@@ -14,6 +15,7 @@ export interface OperationFilters {
 
 export class GetTransactionsHistoryUseCase {
   constructor(
+    private readonly clientRepository: ClientRepository,
     private readonly transactionRepository: TransactionRepository,
     private readonly bankAccountRepository: BankAccountRepository
   ) {}
@@ -22,7 +24,13 @@ export class GetTransactionsHistoryUseCase {
     userId: string;
     filters?: OperationFilters;
   }): Promise<Result<any[], Error>> {
-    const accountsResult = await this.bankAccountRepository.findByOwner(params.userId);
+    const clientResult = await this.clientRepository.findByUserId(params.userId);
+    if (!clientResult.ok) {
+      return err(new Error('Client non trouvé'));
+    }
+
+    const client = clientResult.value;
+    const accountsResult = await this.bankAccountRepository.findByOwner(client.clientIdentifier);
 
     if (!accountsResult.ok) {
       return accountsResult;

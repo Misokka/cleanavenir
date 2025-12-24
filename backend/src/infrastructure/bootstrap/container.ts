@@ -86,6 +86,7 @@ import { SettleTradesUseCase } from '../../application/use-cases/client/investme
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
+import { cli } from 'winston/lib/winston/config';
 
 
 export function createContainer() {
@@ -153,7 +154,7 @@ export function createContainer() {
   const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, passwordHasher);
 
   // Account Use Cases
-  const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository);
+  const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository, clientRepository);
   const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository, clientRepository);
   const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository, clientRepository);
   const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository);
@@ -161,6 +162,7 @@ export function createContainer() {
 
   // Transaction Use Cases
   const listAccountTransactionsUseCase = new ListAccountTransactionsUseCase(
+    clientRepository,
     transactionRepository,
     bankAccountRepository
   );
@@ -173,6 +175,7 @@ export function createContainer() {
     bankAccountRepository
   );
   const getTransactionsHistoryUseCase = new GetTransactionsHistoryUseCase(
+    clientRepository,
     transactionRepository,
     bankAccountRepository
   );

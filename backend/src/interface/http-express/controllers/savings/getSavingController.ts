@@ -16,6 +16,17 @@ export const getSavingController = asyncHandler(
     }
 
     const container = getContainer();
+
+    const clientResult = await container.repositories.client.findByUserId(userId);
+    if (!clientResult.ok) {
+      res.status(401).json({
+        error: 'UNAUTHORIZED',
+        message: 'Client non trouvé',
+      });
+      return;
+    }
+
+    const client = clientResult.value;
     
     // Récupérer l'épargne
     const savingResult = await container.repositories.saving.findById(savingId);
@@ -30,13 +41,24 @@ export const getSavingController = asyncHandler(
 
     const saving = savingResult.value;
 
-    if (!savingResult.ok || savingResult.value.clientIdentifier !== userId) {
+    if (!savingResult.ok || savingResult.value.clientIdentifier !== client.clientIdentifier) {
       res.status(403).json({
         error: 'UNAUTHORIZED',
         message: 'Accès non autorisé à ce compte épargne',
       });
       return;
     }
+
+    const savingProductResult = await container.repositories.savingProduct.findById(saving.productIdentifier);
+    if (!savingProductResult.ok) {
+      res.status(500).json({
+        error: 'SAVING_PRODUCT_NOT_FOUND',
+        message: "Une erreur est survenu lors de la récupération du produit d'épargne.",
+      });
+      return;
+    }
+
+    const savingProduct = savingProductResult.value;
 
     // Convertir centimes → euros et basis points → pourcentage
     const savingDTO = {
@@ -47,6 +69,11 @@ export const getSavingController = asyncHandler(
       label: saving.label,
       balance: saving.balance / 100, // conversion en €
       createdAt: saving.createdAt.toISOString(),
+      updatedAt: saving.updatedAt ? saving.updatedAt.toISOString() : null,
+      savingProduct: {
+        ...savingProduct,
+        rate: savingProduct.rate / 1_000_000, // conversion en %
+      }
     };
 
     res.json(savingDTO);

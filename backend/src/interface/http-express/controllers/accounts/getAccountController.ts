@@ -18,7 +18,7 @@ export const getAccountController = asyncHandler(
 
     const container = getContainer();
     const result = await container.useCases.bankAccount.get.execute({
-      clientId: userId,
+      userId,
       accountId,
     });
 
