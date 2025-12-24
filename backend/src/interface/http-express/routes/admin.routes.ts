@@ -4,6 +4,7 @@ import { checkRole } from '../middlewares/roleMiddleware';
 import {  
   listClientsController,
   banClientController,
+  unbanClientController,
   getStatisticsController,
   UpdateSavingProductController,
   CreateSavingProductController,
@@ -19,6 +20,7 @@ router.use(checkRole(['DIRECTOR']));
 
 router.get('/clients', listClientsController);
 router.post('/clients/:id/ban', banClientController);
+router.post('/clients/:id/unban', unbanClientController);
 router.get('/statistics', getStatisticsController);
 router.post('/savings/products', CreateSavingProductController);
 router.get('/savings/products', ListSavingProductsController);

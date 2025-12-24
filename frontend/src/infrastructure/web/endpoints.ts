@@ -64,6 +64,7 @@ export const API_ENDPOINTS = {
   ADMIN: {
     CLIENTS: '/admin/clients',
     BAN_CLIENT: (id: string) => `/admin/clients/${id}/ban`,
+    UNBAN_CLIENT: (id: string) => `/admin/clients/${id}/unban`,
     STATISTICS: '/admin/statistics',
     SET_SAVING_RATE: '/admin/savings/rate',
     SAVINGS: {

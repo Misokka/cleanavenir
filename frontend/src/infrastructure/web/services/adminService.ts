@@ -53,6 +53,18 @@ export class AdminService {
     }
   }
 
+  async unbanClient(clientId: string): Promise<ClientDTO> {
+    try {
+      const response = await httpClient.post<{ client: ClientDTO }>(
+        API_ENDPOINTS.ADMIN.UNBAN_CLIENT(clientId)
+      );
+      return response.data.client;
+    } catch (error) {
+      console.error('Erreur lors de la réintégration du client:', error);
+      throw error;
+    }
+  }
+
   async getStatistics(): Promise<StatisticsDTO> {
     try {
       const response = await httpClient.get<{ statistics: StatisticsDTO }>(

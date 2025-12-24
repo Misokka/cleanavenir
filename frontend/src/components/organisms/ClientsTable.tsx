@@ -13,7 +13,7 @@ interface ClientsTableProps {
 }
 
 export const ClientsTable: React.FC<ClientsTableProps> = ({ clients, onClientBanned }) => {
-  const { banClient, loading } = useBanClient();
+  const { banClient, unbanClient, loading } = useBanClient();
   const [banningClientId, setBanningClientId] = useState<string | null>(null);
 
   const handleBanClient = async (clientId: string) => {
@@ -24,6 +24,18 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ clients, onClientBan
     setBanningClientId(clientId);
     const result = await banClient(clientId);
     setBanningClientId(null);
+
+    if (result && onClientBanned) {
+      onClientBanned();
+    }
+  };
+
+  const handleUnbanClient = async (clientId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir réintégrer ce client ?')) {
+      return;
+    }
+
+    const result = await unbanClient(clientId);
 
     if (result && onClientBanned) {
       onClientBanned();
@@ -119,9 +131,9 @@ export const ClientsTable: React.FC<ClientsTableProps> = ({ clients, onClientBan
                       {loading && banningClientId === client.user.id ? 'En cours...' : 'Bannir'}
                     </Button>
                   ) : (
-                    <Typography variant="caption" color="muted">
-                      Déjà banni
-                    </Typography>
+                    <Button variant="outline" size="sm" onClick={() => handleUnbanClient(client.user.id)}>
+                      Réintégrer
+                    </Button>
                   )}
                 </td>
               </tr>

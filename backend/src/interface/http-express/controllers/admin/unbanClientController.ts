@@ -1,0 +1,59 @@
+import { Request, Response } from "express";
+import { asyncHandler } from "../../middlewares/errorMiddleware";
+import { getContainer } from "../../../../infrastructure/bootstrap/instance";
+
+export const unbanClientController = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id: userId } = req.params;
+
+    const container = getContainer();
+    const clientRepository = container.repositories.client;
+    const userRepository = container.repositories.user;
+
+    // Récupérer le client
+    const clientResult = await clientRepository.findByUserId(userId);
+
+    if (!clientResult.ok) {
+      res.status(404).json({
+        error: 'CLIENT_NOT_FOUND',
+        message: 'Client introuvable',
+      });
+      return;
+    }
+
+    const client = clientResult.value;
+
+    const userResult = await userRepository.findById(client.userIdentifier);
+    if (!userResult.ok) {
+      res.status(404).json({
+        error: 'USER_NOT_FOUND',
+        message: 'Utilisateur introuvable',
+      });
+      return;
+    }
+
+    const user = userResult.value;
+
+    // Réactiver le client
+    user.active = true;
+
+    const updateResult = await userRepository.update(user);
+
+    if (!updateResult.ok) {
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: updateResult.error.message,
+      });
+      return;
+    }
+
+    res.json({
+      message: 'Client réintégré avec succès',
+      client: {
+        id: client.userIdentifier,
+        email: user.email,
+        isActive: user.active,
+      },
+    });
+  }
+);
