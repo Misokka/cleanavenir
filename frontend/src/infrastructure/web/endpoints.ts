@@ -61,6 +61,10 @@ export const API_ENDPOINTS = {
     APPROVE: (id: string) => `/loans/${id}/approve`,
   },
 
+  COMPANIES: {
+    LIST: '/admin/companies',
+  },
+
   ADMIN: {
     CLIENTS: '/admin/clients',
     BAN_CLIENT: (id: string) => `/admin/clients/${id}/ban`,

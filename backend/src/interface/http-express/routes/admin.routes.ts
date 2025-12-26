@@ -11,6 +11,8 @@ import {
   ListSavingProductsController
 } from '../controllers/admin';
 
+import { ListCompaniesController } from '../controllers/companies'; 
+
 
 const router = Router();
 
@@ -25,5 +27,6 @@ router.get('/statistics', getStatisticsController);
 router.post('/savings/products', CreateSavingProductController);
 router.get('/savings/products', ListSavingProductsController);
 router.put('/savings/products/:id', UpdateSavingProductController);
+router.get('/companies', ListCompaniesController)
 
 export const adminRoutes = router;

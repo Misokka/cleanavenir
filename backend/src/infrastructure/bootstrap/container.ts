@@ -86,7 +86,8 @@ import { SettleTradesUseCase } from '../../application/use-cases/client/investme
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
-import { cli } from 'winston/lib/winston/config';
+import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
+import { list } from 'pdfkit';
 
 
 export function createContainer() {
@@ -219,6 +220,7 @@ export function createContainer() {
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository)
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
   const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
+  const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
 
 
   
@@ -289,7 +291,8 @@ export function createContainer() {
         createStock: createStockUseCase,
         placeOrder: placeOrderUseCase,
         createPortfolio: createPortfolioUseCase,
-        settleTrade: settleTradeUseCase
+        settleTrade: settleTradeUseCase,
+        listCompanies: listCompaniesUseCase
       }
     },
   };

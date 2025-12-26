@@ -8,6 +8,8 @@ import { Transaction } from '../../../domain/entities/Transaction';
 import { SavingAccount } from '../../../domain/entities/SavingAccount';
 import { SavingProduct } from '../../../domain/entities/SavingProduct';
 import { SavingProductDTO } from '../../../application/dtos/SavingProductDTO';
+import { CompanyDTO } from '../../../application/dtos/CompanyDTO';
+import { Company } from '../../../domain/entities/Company';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -70,4 +72,12 @@ export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductD
     id: savingProduct.savingProductIdentifier,
     rate: savingProduct.rate / 1_000_000, // conversion de micro pourcent à pourcent
   }
+}
+
+export function toCompanyDTO(company: Company): CompanyDTO {
+  return {
+    id: company.companyIdentifier,
+    name: company.name,
+    description: company.description,
+  };
 }

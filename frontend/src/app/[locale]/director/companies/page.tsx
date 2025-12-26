@@ -7,15 +7,18 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getAllCompanies, deleteCompany, Company } from '@/lib/api/director/companies';
+import { getAllCompanies, deleteCompany } from '@/lib/api/director/companies';
 import { useToast } from '@/contexts/ToastProvider';
 import Link from 'next/link';
+import { useGetCompanies } from '@/features/companies/useGetCompanies';
+import { Company } from '@/infrastructure/web/services/companiesService';
 
 export default function DirectorCompaniesPage() {
   const t = useTranslations('Director.companies');
   const locale = useLocale();
   const { success, error: showError } = useToast();
-  const [companies, setCompanies] = useState<Company[]>([]);
+  // const [companies, setCompanies] = useState<Company[]>([]);
+  const { companies, fetchCompanies, fetchLoading, error } = useGetCompanies();
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,20 +26,21 @@ export default function DirectorCompaniesPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    loadCompanies();
-  }, []);
+  // useEffect(() => {
+  //   loadCompanies();
+  // }, []);
 
   useEffect(() => {
     filterCompanies();
   }, [companies, searchQuery]);
 
-  const loadCompanies = async () => {
-    setLoading(true);
-    const data = await getAllCompanies();
-    setCompanies(data);
-    setLoading(false);
-  };
+  console.log('Companies:', companies);
+  // const loadCompanies = async () => {
+  //   setLoading(true);
+  //   const data = await getAllCompanies();
+  //   setCompanies(data);
+  //   setLoading(false);
+  // };
 
   const filterCompanies = () => {
     let filtered = companies;
@@ -59,7 +63,7 @@ export default function DirectorCompaniesPage() {
       await deleteCompany(selectedCompany.id);
       success(t('toasts.deleteSuccess'));
       setShowDeleteModal(false);
-      await loadCompanies();
+      await fetchCompanies();
     } catch (err) {
       console.error('Error deleting company:', err);
       showError(t('toasts.deleteError'));
@@ -76,7 +80,7 @@ export default function DirectorCompaniesPage() {
     });
   };
 
-  if (loading) {
+  if (fetchLoading) {
     return (
       <DashboardLayout>
         <div className="space-y-6">
@@ -123,9 +127,6 @@ export default function DirectorCompaniesPage() {
                     {t('list.description')}
                   </th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">
-                    {t('list.createdAt')}
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
                     {t('list.actions')}
                   </th>
                 </tr>
@@ -145,9 +146,6 @@ export default function DirectorCompaniesPage() {
                         {company.description.length > 100
                           ? `${company.description.substring(0, 100)}...`
                           : company.description}
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">
-                        {formatDate(company.createdAt)}
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
