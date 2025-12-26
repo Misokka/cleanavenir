@@ -171,6 +171,7 @@ export function createContainer() {
     bankAccountRepository
   );
   const transferUseCase = new TransferUseCase(
+    clientRepository,
     transactionRepository,
     bankAccountRepository
   );

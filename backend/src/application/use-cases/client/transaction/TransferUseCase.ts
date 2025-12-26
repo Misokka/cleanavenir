@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 import { Transaction } from '../../../../domain/entities/Transaction';
+import { ClientRepository } from '../../../ports/repositories/ClientRepository';
 
 export interface TransferInput {
   fromAccountId: string;
@@ -15,6 +16,7 @@ export interface TransferInput {
 
 export class TransferUseCase {
   constructor(
+    private readonly clientRepository: ClientRepository,
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: BankAccountRepository
   ) {}
@@ -34,7 +36,14 @@ export class TransferUseCase {
     }
     const sourceAccount = sourceResult.value;
 
-    if (sourceAccount.accountIdentifier !== input.userId) {
+    const clientResult = await this.clientRepository.findByUserId(input.userId);
+    if (!clientResult.ok) {
+      return err(clientResult.error);
+    }
+
+    const client = clientResult.value;
+
+    if (sourceAccount.clientIdentifier !== client.clientIdentifier) {
       return err(new Error("Vous n'êtes pas autorisé à effectuer cette opération"));
     }
 
@@ -53,9 +62,11 @@ export class TransferUseCase {
 
     const debitTransaction = Transaction.create({
       transactionIdentifier: debitId,
-      bankAccountIdentifier: input.fromAccountId,
+      bankAccountIdentifier: sourceAccount.accountIdentifier,
+      fromAccountIdentifier: sourceAccount.accountIdentifier,
+      toAccountIdentifier: destResult.value.accountIdentifier,
       amount: -input.amount,
-      currency: input.currency as string,
+      currency: input.currency as string ?? "EUR",
       direction: 'DEBIT',
       type: 'TRANSFER',
       description: description,
@@ -63,14 +74,17 @@ export class TransferUseCase {
 
     const debitResult = await this.transactionRepository.save(debitTransaction);
     if (!debitResult.ok) {
-      return err(new Error('Erreur lors de la création de l\'opération de débit'));
+      // return err(new Error('Erreur lors de la création de l\'opération de débit'));
+      return err(debitResult.error);
     }
 
     const creditTransaction = Transaction.create({
       transactionIdentifier: creditId,
-      bankAccountIdentifier: input.toAccountId,
+      bankAccountIdentifier: destResult.value.accountIdentifier,
+      fromAccountIdentifier: sourceAccount.accountIdentifier,
+      toAccountIdentifier: destResult.value.accountIdentifier,
       amount: input.amount,
-      currency: input.currency as string,
+      currency: input.currency as string ?? "EUR",
       direction: 'CREDIT',
       type: 'TRANSFER',
       description: description,
