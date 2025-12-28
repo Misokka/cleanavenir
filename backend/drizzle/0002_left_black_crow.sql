@@ -1,0 +1,1 @@
+ALTER TABLE `stocks` ADD `is_available` integer DEFAULT 1 NOT NULL;

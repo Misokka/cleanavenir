@@ -19,6 +19,7 @@
     "migrate:push": "npx drizzle-kit push",
     "migrate:generate": "npx drizzle-kit generate",
     "migrate:up": "npx drizzle-kit migrate",
+    "db:reset": "rm -f dev.sqlite && touch dev.sqlite && npm run migrate:up && npm run db:seed:all:drizzle",
     "db:seed:users:drizzle": "npx tsx scripts/drizzleSeeds/seed-users.ts",
     "db:seed:advisors:drizzle": "npx tsx scripts/drizzleSeeds/seed-advisors.ts",
     "db:seed:clients:drizzle": "npx tsx scripts/drizzleSeeds/seed-clients.ts",

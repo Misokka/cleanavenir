@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { InferSelectModel, InferInsertModel, relations } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel, relations, is } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(), // id string (uuid)
@@ -29,7 +29,7 @@ export type ClientDrizzle = InferSelectModel<typeof clients>;
 export type NewClientDrizzle = InferInsertModel<typeof clients>;
 
 export const advisors = sqliteTable('advisors', {
-  id: text('id').primaryKey(), // references users.id
+  id: text('id').primaryKey(),
   userId: text('user_id').notNull().unique().references(() => users.id),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
@@ -39,7 +39,7 @@ export type AdvisorDrizzle = InferSelectModel<typeof advisors>;
 export type NewAdvisorDrizzle = InferInsertModel<typeof advisors>;
 
 export const directors = sqliteTable('directors', {
-  id: text('id').primaryKey(), // references users.id
+  id: text('id').primaryKey(),
   userId: text('user_id').notNull().unique().references(() => users.id),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
@@ -140,6 +140,7 @@ export const stocks = sqliteTable('stocks', {
   ticker: text('ticker').notNull().unique(),
   companyId: text('company_id').notNull().references(() => companies.id),
   price: integer('price').notNull(),
+  isAvailable: integer('is_available').notNull().default(1),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });

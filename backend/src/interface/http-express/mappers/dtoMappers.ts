@@ -10,6 +10,8 @@ import { SavingProduct } from '../../../domain/entities/SavingProduct';
 import { SavingProductDTO } from '../../../application/dtos/SavingProductDTO';
 import { CompanyDTO } from '../../../application/dtos/CompanyDTO';
 import { Company } from '../../../domain/entities/Company';
+import { Stock } from '../../../domain/entities/Stock';
+import { StockDTO } from '../../../application/dtos/StockDTO';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -80,4 +82,16 @@ export function toCompanyDTO(company: Company): CompanyDTO {
     name: company.name,
     description: company.description,
   };
+}
+
+export function toStockDTO(stock: Stock, company: Company): StockDTO{
+  return{
+    id: stock.stockIdentifier,
+    ticker: stock.ticker.value,
+    price: stock.price / 100, // conversion en euros
+    isAvailable: stock.isAvailable,
+    createdAt: stock.createdAt.toISOString(),
+    updatedAt: stock.updatedAt?.toISOString() as string,
+    company: toCompanyDTO(company),
+  }
 }

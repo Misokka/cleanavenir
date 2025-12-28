@@ -48,7 +48,11 @@ export const API_ENDPOINTS = {
 
   INVESTMENTS: {
     PORTFOLIOS: '/investments/portfolios',
-    STOCKS: '/investments/stocks',
+    STOCKS: {
+      LIST: '/stocks',
+      DETAILS: (id: string) => `/stocks/${id}`,
+      UPDATE: (id: string) => `/stocks/${id}/update`,
+    },
     ORDERS: '/investments/orders',
     POSITIONS: '/investments/positions',
   },

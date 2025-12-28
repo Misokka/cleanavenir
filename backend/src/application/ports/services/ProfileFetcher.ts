@@ -43,7 +43,7 @@ export class ProfileManager {
     }
 
     if (!profileResult.ok) {
-      return err(new UserNotFoundError(userIdentifier));
+      return err(profileResult.error);
     }
 
     return ok(profileResult.value);
