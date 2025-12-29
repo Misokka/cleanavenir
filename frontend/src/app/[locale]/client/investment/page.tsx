@@ -1,4 +1,5 @@
 import { Typography } from '@/components/atoms/Typography'
+import MyPortfolioOverview from '@/components/organisms/MyPortfolioOverview'
 import StockOverview from '@/components/organisms/StockOverview'
 import DashboardLayout from '@/components/templates/DashboardLayout'
 import React from 'react'
@@ -20,7 +21,7 @@ function page() {
 
         <section>
           <Typography variant="h2" className='mt-6 mb-2'>My portfolio</Typography>
-          {/* List all holdings */}
+          <MyPortfolioOverview />
         </section>
       </DashboardLayout>
     </>

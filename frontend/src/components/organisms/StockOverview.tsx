@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetStocks } from '@/features/stocks/useGetStocks';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   LineChart,
   Line,
@@ -55,6 +55,12 @@ function StockOverview() {
   
   // État pour savoir quelle action est sélectionnée pour afficher le graphe
   const [selectedStockId, setSelectedStockId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if(!error){
+      setSelectedStockId(stocks.length > 0 ? stocks[0].id : null);
+    }
+  }, [stocks, error]);
 
   // Trouver l'action sélectionnée
   const selectedStock = stocks.find(s => s.id === selectedStockId);
