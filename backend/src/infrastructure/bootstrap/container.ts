@@ -17,6 +17,7 @@ import { PortfolioRepositoryDrizzle } from '../repositories/drizzle/PortfolioRep
 import { HoldingRepositoryDrizzle } from '../repositories/drizzle/HoldingRepositoryDrizzle';
 import { TradeRepositoryDrizzle } from '../repositories/drizzle/TradeRepositoryDrizzle';
 import { DiscussionRepositoryDrizzle } from '../repositories/drizzle/DiscussionRepositoryDrizzle';
+import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/StockPriceHistoryRepositoryDrizzle';
 
 
 // Mappers Drizzle
@@ -37,6 +38,7 @@ import { DrizzlePortfolioMapper } from '../repositories/mappers/DrizzleMappers/D
 import { DrizzleHoldingMapper } from '../repositories/mappers/DrizzleMappers/DrizzleHoldingMapper';
 import { DrizzleTradeMapper } from '../repositories/mappers/DrizzleMappers/DrizzleTradeMapper';
 import { DrizzleDiscussionMapper } from '../repositories/mappers/DrizzleMappers/DrizzleDiscussionMapper';
+import { DrizzleStockPriceHistoryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleStockPriceHistoryMapper';
 
 
 // Services/Adapters
@@ -109,6 +111,7 @@ export function createContainer() {
   const drizzleHoldingMapper = new DrizzleHoldingMapper();
   const drizzleTradeMapper = new DrizzleTradeMapper();
   const drizzleDiscussionMapper = new DrizzleDiscussionMapper();
+  const drizzleStockPriceHistoryMapper = new DrizzleStockPriceHistoryMapper();
   
 
   const userRepository = new UserRepositoryDrizzle(db, drizzleUserMapper);
@@ -123,10 +126,11 @@ export function createContainer() {
   const companyRepository = new CompanyRepositoryDrizzle(db, drizzleCompanyMapper);
   const orderRepository = new OrderRepositoryDrizzle(db, drizzleOrderMapper);
   const stockRepository = new StockRepositoryDrizzle(db, drizzleStockMapper);
-  const portfolioRepository = new PortfolioRepositoryDrizzle(db, drizzlePortfolioMapper);
+  const portfolioRepository = new PortfolioRepositoryDrizzle(db, drizzlePortfolioMapper, drizzleHoldingMapper);
   const holdingRepository = new HoldingRepositoryDrizzle(db, drizzleHoldingMapper);
   const tradeRepository = new TradeRepositoryDrizzle(db, drizzleTradeMapper);
   const discussionRepository = new DiscussionRepositoryDrizzle(db, drizzleDiscussionMapper);
+  const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
   
   const passwordHasher = new SimplePasswordHasher();
 
@@ -242,7 +246,8 @@ export function createContainer() {
       holding: holdingRepository,
       trade: tradeRepository,
       discussion: discussionRepository,
-      company: companyRepository
+      company: companyRepository,
+      stockPriceHistory: stockPriceHistoryRepository,
     },
 
     services: {

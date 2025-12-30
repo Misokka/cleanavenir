@@ -22,6 +22,13 @@
       "when": 1766878538396,
       "tag": "0002_left_black_crow",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1767098421798,
+      "tag": "0003_sour_mordo",
+      "breakpoints": true
     }
   ]
 }

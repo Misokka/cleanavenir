@@ -148,6 +148,16 @@ export const stocks = sqliteTable('stocks', {
 export type StockDrizzle = InferSelectModel<typeof stocks>;
 export type NewStockDrizzle = InferInsertModel<typeof stocks>;
 
+export const stockPricesHistory = sqliteTable('stock_prices_history', {
+  id: text('id').primaryKey(),
+  stockId: text('stock_id').notNull().references(() => stocks.id),
+  price: integer('price').notNull(),
+  recordedAt: text('recorded_at').notNull(),
+});
+
+export type StockPriceHistoryDrizzle = InferSelectModel<typeof stockPricesHistory>;
+export type NewStockPriceHistoryDrizzle = InferInsertModel<typeof stockPricesHistory>;
+
 // Orders (buy/sell)
 export const orders = sqliteTable('orders', {
   id: text('id').primaryKey(),

@@ -42,14 +42,18 @@ export class OrderMatchingService {
     if (!stockResult.ok) return err(stockResult.error);
     const stock = stockResult.value;
 
-    stock.updatePrice(executionPrice);
-    await this.stockRepository.save(stock);
+    stock.updatePrice(executionPrice); // met à jour le prix du stock
+    const updatedStockResult = await this.stockRepository.update(stock); // persiste le nouveau prix
+    if (!updatedStockResult.ok) return err(updatedStockResult.error);
 
     bestBuy.status = "EXECUTED";
     bestSell.status = "EXECUTED";
 
-    await this.orderRepository.save(bestBuy);
-    await this.orderRepository.save(bestSell);
+    const buyOrderResult = await this.orderRepository.save(bestBuy);
+    if (!buyOrderResult.ok) return err(buyOrderResult.error);
+
+    const sellOrderResult = await this.orderRepository.save(bestSell);
+    if (!sellOrderResult.ok) return err(sellOrderResult.error);
 
     const buyerPortfolioResult = await this.portfolioRepository.findByClientId(bestBuy.clientIdentifier);
     const sellerPortfolioResult = await this.portfolioRepository.findByClientId(bestSell.clientIdentifier);
