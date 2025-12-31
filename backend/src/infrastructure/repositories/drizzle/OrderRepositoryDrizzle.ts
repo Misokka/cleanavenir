@@ -1,4 +1,4 @@
-import { and, eq, or } from 'drizzle-orm';
+import { and, asc, desc, eq, or } from 'drizzle-orm';
 import { orders } from '../../drizzle/schema';
 import Result, { ok, err } from '../../../shared/Result';
 import { DrizzleClient } from '../../drizzle/client';
@@ -51,7 +51,9 @@ export class OrderRepositoryDrizzle implements OrderRepository{
 
   async listPendingBuysByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
-      const buyOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")));
+      const buyOrderRows = await this.db.select().from(orders)
+      .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")))
+      .orderBy(desc(orders.price));
       const ordersToDomain = buyOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });
@@ -64,7 +66,9 @@ export class OrderRepositoryDrizzle implements OrderRepository{
 
   async listPendingSellsByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
-      const sellOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")));
+      const sellOrderRows = await this.db.select().from(orders)
+      .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")))
+      .orderBy(asc(orders.price));
       const ordersToDomain = sellOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });

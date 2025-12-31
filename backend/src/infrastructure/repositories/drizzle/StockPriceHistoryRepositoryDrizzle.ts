@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm";
-import { StockPriceRepository } from "../../../application/ports/repositories/StockPriceRepository";
+import { StockPriceHistoryRepository } from "../../../application/ports/repositories/StockPriceHistoryRepository";
 import { StockPriceHistory } from "../../../domain/entities/StockPriceHistory";
 import Result, { err, ok } from "../../../shared/Result";
 import { DrizzleClient } from "../../drizzle/client";
 import { stockPricesHistory } from "../../drizzle/schema";
 import { DrizzleStockPriceHistoryMapper } from "../mappers/DrizzleMappers/DrizzleStockPriceHistoryMapper";
 
-export class StockPriceHistoryRepositoryDrizzle implements StockPriceRepository {
+export class StockPriceHistoryRepositoryDrizzle implements StockPriceHistoryRepository {
   constructor(
     private readonly db: DrizzleClient,
     private readonly stockPriceHistoryMapper: DrizzleStockPriceHistoryMapper,

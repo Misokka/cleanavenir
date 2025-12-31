@@ -12,7 +12,9 @@ export class DrizzleOrderMapper implements Mapper<OrderDrizzle, Order, NewOrderD
       orderType: raw.type as OrderType,
       limitPrice: raw.price,
       status: raw.status as OrderStatus,
-      createdAt: new Date(raw.createdAt)
+      createdAt: new Date(raw.createdAt),
+      blockedMoneyAmount: raw.blockedMoneyAmount as number | undefined,
+      blockedStockQuantity: raw.blockedStockQuantity as number | undefined
     }) ;
   }
 
