@@ -9,6 +9,8 @@ import { StockPriceHistory } from "../../../domain/entities/StockPriceHistory";
 import { randomUUID } from "crypto";
 import { TradeRepository } from "../repositories/TradeRepository";
 import { Trade } from "../../../domain/entities/Trade";
+import { TransactionRepository } from "../repositories/TransactionRepository";
+import { Transaction } from "../../../domain/entities/Transaction";
 
 
 export class OrderMatchingService {
@@ -19,6 +21,7 @@ export class OrderMatchingService {
     private portfolioRepository: PortfolioRepository,
     private readonly tradeRepository: TradeRepository,
     private bankAccountRepository: BankAccountRepository,
+    private transactionRepository: TransactionRepository,
   ) {}
 
   async match(stockId: string): Promise<Result<void, Error>> {
@@ -102,7 +105,30 @@ export class OrderMatchingService {
       const updatedBankAccountResult = await this.bankAccountRepository.updateBalance(sellerBankAccount.accountIdentifier, sellerBankAccount.balance);
       if(!updatedBankAccountResult.ok) return err(updatedBankAccountResult.error);
 
-      //Créer une transaction ici
+      const systemBankAccountResult = await this.bankAccountRepository.getSystemBankAccount();
+      if(!systemBankAccountResult.ok) return err(systemBankAccountResult.error);
+      const systemBankAccount = systemBankAccountResult.value;
+
+      systemBankAccount.withdraw(totalSaleAmount);
+
+      const updatedSystemBankAccountResult = await this.bankAccountRepository.updateBalance(systemBankAccount.accountIdentifier, systemBankAccount.balance);
+      if(!updatedSystemBankAccountResult.ok) return err(updatedSystemBankAccountResult.error);
+
+      const newTransaction = Transaction.create({
+        transactionIdentifier: randomUUID(),
+        bankAccountIdentifier: sellerBankAccount.accountIdentifier,
+        fromAccountIdentifier: "",
+        toAccountIdentifier: sellerBankAccount.accountIdentifier,
+        amount: totalSaleAmount,
+        currency: "EUR",
+        direction: "CREDIT",
+        type: "STOCK_SALE",
+        description : `${stock.ticker.value} stock sale benefits.`,
+        createdAt: new Date()
+      });
+
+      const savedTransactionResult = await this.transactionRepository.save(newTransaction);
+      if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
       // mise à jour des ordres
       bestBuy.quantity -= tradedQuantity;

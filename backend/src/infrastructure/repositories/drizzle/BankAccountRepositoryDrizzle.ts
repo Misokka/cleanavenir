@@ -4,7 +4,7 @@ import { BankAccountNotFoundError } from '../../../domain/errors/BankAccountNotF
 import { UnexpectedBankAccountError } from '../../../domain/errors/UnexpectedBankAccountError';
 import { ok, err, Result } from '../../../shared/Result';
 import { DrizzleClient } from '../../drizzle/client';
-import { bankAccounts } from '../../drizzle/schema';
+import { bankAccounts, users } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { DrizzleBankAccountMapper } from '../mappers/DrizzleMappers/DrizzleBankAccountMapper';
 
@@ -22,6 +22,27 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
       return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);
+    }
+  }
+
+  async getSystemBankAccount(): Promise<Result<BankAccount, Error>> {
+    try{
+      const systemUserWithClient = await this.db.query.users.findFirst({
+        where: eq(users.email, "sys@example.com"),
+        with: { clientProfile: true}
+      });
+
+      if(!systemUserWithClient){
+        return err(new Error("System account not found."))
+      }
+
+      const systemClient = systemUserWithClient.clientProfile
+
+      const systemBankAccount = await this.db.select().from(bankAccounts).where(eq(bankAccounts.ownerId, systemClient.id));
+      const toDomain = this.bankAccountMapper.toDomain(systemBankAccount[0]);
+      return ok(toDomain);
+    } catch (error){
+      return err(new BankAccountNotFoundError("system bank account"))
     }
   }
 

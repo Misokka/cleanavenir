@@ -140,7 +140,7 @@ export function createContainer() {
     advisorRepository
   );
 
-  const orderMatchingService = new OrderMatchingService(orderRepository, stockRepository, portfolioRepository)
+  const orderMatchingService = new OrderMatchingService(orderRepository, stockRepository, stockPriceHistoryRepository, portfolioRepository, tradeRepository, bankAccountRepository, transactionRepository)
   
   const registerUseCase = new RegisterUseCase(
     userRepository,
@@ -220,7 +220,7 @@ export function createContainer() {
   const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository)
 
   //Investment Use Cases
-  const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, orderMatchingService);
+  const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
   const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository)
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);

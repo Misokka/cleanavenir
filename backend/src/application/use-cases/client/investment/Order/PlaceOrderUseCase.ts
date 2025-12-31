@@ -11,6 +11,9 @@ import { BankAccountRepository } from "../../../../ports/repositories/BankAccoun
 import { InsufficientFundsError } from "../../../../../domain/errors/InsufficientFundsError";
 import { PortfolioRepository } from "../../../../ports/repositories/PortfolioRepository";
 import { InsufficientStockQuantityError } from "../../../../../domain/errors/InsufficientStockQuantityError";
+import { UserRepository } from "../../../../ports/repositories/UserRepository";
+import { TransactionRepository } from "../../../../ports/repositories/TransactionRepository";
+import { Transaction } from "../../../../../domain/entities/Transaction";
 
 export class PlaceOrderUseCase {
   constructor(
@@ -19,7 +22,8 @@ export class PlaceOrderUseCase {
     private readonly clientRepository: ClientRepository,
     private readonly bankAccountRepository: BankAccountRepository,
     private readonly portfolioRepository: PortfolioRepository,
-    private readonly orderMatchingService: OrderMatchingService
+    private readonly transactionRepository: TransactionRepository,
+    private readonly orderMatchingService: OrderMatchingService,
   ){}
 
   async execute({userIdentifier, stockIdentifier, quantity, orderType}: PlaceOrderRequest): Promise<Result<Order, Error>> {
@@ -29,6 +33,10 @@ export class PlaceOrderUseCase {
     }
 
     const client = clientResult.value;
+
+    const systemBankAccountResult =  await this.bankAccountRepository.getSystemBankAccount();
+    if(!systemBankAccountResult.ok) return err(systemBankAccountResult.error);
+    const systemBankAccount = systemBankAccountResult.value;
 
     const stockResult = await this.stockRepository.findById(stockIdentifier);
     if(!stockResult.ok) return err(stockResult.error);
@@ -51,6 +59,23 @@ export class PlaceOrderUseCase {
 
       clientBankAccount.withdraw(totalCost) // money withdrawn but reserved
       //créer une transaction et savoir vers où va l'argent
+
+      const newTransaction = Transaction.create({
+        transactionIdentifier: randomUUID(),
+        bankAccountIdentifier: clientBankAccount.accountIdentifier,
+        fromAccountIdentifier: clientBankAccount.clientIdentifier,
+        toAccountIdentifier: systemBankAccount.accountIdentifier,
+        amount: totalCost,
+        currency: "EUR",
+        direction: "DEBIT",
+        type: "STOCK_PURCHASE",
+        description: `Reserved funds for purchase of ${stock.ticker.value} stocks`,
+        createdAt: new Date()
+      });
+
+      const savedTransactionResult = await this.transactionRepository.save(newTransaction);
+      if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
+
 
       const newOrder = Order.create({
         orderIdentifier,

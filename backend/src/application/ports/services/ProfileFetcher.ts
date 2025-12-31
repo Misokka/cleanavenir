@@ -5,10 +5,10 @@ import { Director } from "../../../domain/entities/Director";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { err, ok, Result } from "../../../shared/Result";
-import { UserRole } from "../../dtos/UserDTO";
 import { AdvisorRepository } from "../repositories/AdvisorRepository";
 import { ClientRepository } from "../repositories/ClientRepository";
 import { DirectorRepository } from "../repositories/DirectorRepository";
+import { UserRole } from "../../../domain/entities/User";
 
 
 type Profile = Client | Director | Advisor;
@@ -30,7 +30,7 @@ export class ProfileManager {
       case 'CLIENT':
         profileResult = await this.clientRepository.findByUserId(userIdentifier);
         break;
-      case 'DIRECTOR':
+      case "DIRECTOR":
         profileResult = await this.directorRepository.findByUserId(userIdentifier);
         break;
       case 'ADVISOR':

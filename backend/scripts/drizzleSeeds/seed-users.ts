@@ -82,6 +82,17 @@ async function seed() {
       createdAt: now,
       updatedAt: now,
     },
+    {
+      id: randomUUID(),
+      firstname: 'SYSTEM',
+      lastname: 'SYSTEM',
+      email: 'sys@example.com',
+      password: 'hashedpassword',
+      role: 'CLIENT',
+      isActive: 1,
+      createdAt: now,
+      updatedAt: now,
+    },
   ];
 
   for (const r of rows) {

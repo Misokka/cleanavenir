@@ -8,6 +8,7 @@ export interface BankAccountRepository {
     save(bankAccount: BankAccount): Promise<Result<BankAccount, Error>>;
     findById(accountIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     findDefaultAccountByClientId(clientIdentifier: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
+    getSystemBankAccount(): Promise<Result<BankAccount, Error>>
     findByOwner(clientIdentifier: string): Promise<Result<BankAccount[], UnexpectedBankAccountError>>;
     findByIban(iban: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     all(): Promise<Result<BankAccount[], Error>>;
