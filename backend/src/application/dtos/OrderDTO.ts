@@ -10,5 +10,8 @@ export type OrderDTO = {
   fees: number;         
   status: OrderStatus;
   createdAt: string;    
-  updatedAt: string;    
+  updatedAt: string;
+  blockedMoneyAmount?: number;
+  blockedStockQuantity?: number;
+  stockName: string
 }

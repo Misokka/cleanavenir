@@ -6,6 +6,7 @@ import { savingsRoutes } from './savings.routes';
 import { loanRoutes } from './loan.routes';
 import { adminRoutes } from './admin.routes';
 import { stocksRoutes } from './stocks.routes';
+import { orderRoutes } from './order.routes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/savings', savingsRoutes);
 router.use('/loans', loanRoutes);
 router.use('/admin', adminRoutes);
 router.use('/stocks', stocksRoutes)
+router.use("/orders", orderRoutes)
 
 export { router as mainRouter };

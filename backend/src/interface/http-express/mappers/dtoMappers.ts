@@ -12,6 +12,9 @@ import { CompanyDTO } from '../../../application/dtos/CompanyDTO';
 import { Company } from '../../../domain/entities/Company';
 import { Stock } from '../../../domain/entities/Stock';
 import { StockDTO } from '../../../application/dtos/StockDTO';
+import { Order } from '../../../domain/entities/Order';
+import { OrderDTO } from '../../../application/dtos/OrderDTO';
+import { ORDER_FEES } from '../../../shared/constants/Investment';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -93,5 +96,23 @@ export function toStockDTO(stock: Stock, company: Company): StockDTO{
     createdAt: stock.createdAt.toISOString(),
     updatedAt: stock.updatedAt?.toISOString() as string,
     company: toCompanyDTO(company),
+  }
+}
+
+export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
+  return {
+    id: order.orderIdentifier,
+    userId: order.clientIdentifier,
+    stockId: order.stockIdentifier,
+    stockName: stock.ticker.value,
+    type: order.orderType,
+    quantity: order.quantity,
+    status: order.status,
+    limitPrice: order.limitPrice,
+    fees: ORDER_FEES,
+    blockedMoneyAmount: order.blockedMoneyAmount,
+    blockedStockQuantity: order.blockedStockQuantity,
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: new Date().toISOString()
   }
 }

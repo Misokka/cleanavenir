@@ -13,6 +13,8 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import CreateOrderForm from './CreateOrderForm';
+import { Stock } from '@/infrastructure/web/services/stocksService';
 
 // Type pour nos données simulées de graphique
 type ChartDataPoint = {
@@ -56,6 +58,18 @@ function StockOverview() {
   // État pour savoir quelle action est sélectionnée pour afficher le graphe
   const [selectedStockId, setSelectedStockId] = useState<string | null>(null);
 
+  //pour le formulaire de création d'ordre
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [selectedStockForForm, setSelectedStockForForm] = useState<Stock | null>(null)
+  function handleClose(){
+    setIsFormOpen(false);
+  }
+
+  function selectStockForForm(stock: Stock){
+    setSelectedStockForForm(stock);
+    setIsFormOpen(true);
+  }
+
   useEffect(() => {
     if(!error){
       setSelectedStockId(stocks.length > 0 ? stocks[0].id : null);
@@ -89,6 +103,9 @@ function StockOverview() {
 
   return (
     <div className="space-y-8">
+     
+      <CreateOrderForm isOpen={isFormOpen} onClose={handleClose} selectedStock={selectedStockForForm}/>
+
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -133,7 +150,7 @@ function StockOverview() {
                     onClick={(e) => {
                       e.stopPropagation(); // Empêche le clic de ligne
                       // Logique d'achat ici
-                      console.log("Acheter", stock.ticker);
+                      selectStockForForm(stock);
                     }}
                   >
                     Acheter
