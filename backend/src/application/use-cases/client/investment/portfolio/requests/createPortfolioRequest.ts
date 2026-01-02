@@ -1,3 +1,3 @@
 export interface CreatePortfolioRequest {
-  clientIdentifier: string;
+  userId: string;
 }

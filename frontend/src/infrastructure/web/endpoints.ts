@@ -47,7 +47,10 @@ export const API_ENDPOINTS = {
   },
 
   INVESTMENTS: {
-    PORTFOLIOS: '/investments/portfolios',
+    PORTFOLIOS: {
+      MY_PORTFOLIO: "/portfolios/my-portfolio",
+      CREATE: "/portfolios/create",
+    },
     STOCKS: {
       LIST: '/stocks',
       DETAILS: (id: string) => `/stocks/${id}`,

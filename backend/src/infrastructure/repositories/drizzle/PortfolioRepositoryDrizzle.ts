@@ -86,7 +86,7 @@ export class PortfolioRepositoryDrizzle implements PortfolioRepository {
     try {
       const rows = await this.db.select().from(portfolios).where(eq(portfolios.ownerId, clientIdentifier));
       if(!rows.length){
-        return err(new PortfolioNotFoundError(`Portfolio not found for client with id: ${clientIdentifier}`))
+        return err(new PortfolioNotFoundError(clientIdentifier)) // faire gaffe car id client et pas id portfolio
       }
 
       const portfolioToDomain = this.portfolioMapper.toDomain(rows[0]);

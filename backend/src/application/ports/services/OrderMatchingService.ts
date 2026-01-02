@@ -86,7 +86,21 @@ export class OrderMatchingService {
       if(!buyerPortfolioResult.ok) return err(buyerPortfolioResult.error);
   
       const buyerPortfolio = buyerPortfolioResult.value;
-      buyerPortfolio.addHolding(stockId, tradedQuantity);
+      const holding = buyerPortfolio.getHolding(stockId);
+
+      let averagePrice: number;
+      if(holding){
+        const oldQuantity = holding.quantity
+        const newQuantity = oldQuantity + tradedQuantity;
+
+        const oldAveragePrice = holding.averagePrice;
+        const newTotalCost = (oldAveragePrice * oldQuantity) + (executionPrice * tradedQuantity);
+        averagePrice = newTotalCost / newQuantity
+      }
+
+      averagePrice = tradedQuantity / executionPrice;
+
+      buyerPortfolio.addHolding(stockId, tradedQuantity, averagePrice);
   
       const updatedPortfolioResult = await this.portfolioRepository.update(buyerPortfolio);
       if(!updatedPortfolioResult.ok){
@@ -117,7 +131,7 @@ export class OrderMatchingService {
       const newTransaction = Transaction.create({
         transactionIdentifier: randomUUID(),
         bankAccountIdentifier: sellerBankAccount.accountIdentifier,
-        fromAccountIdentifier: "",
+        fromAccountIdentifier: systemBankAccount.accountIdentifier,
         toAccountIdentifier: sellerBankAccount.accountIdentifier,
         amount: totalSaleAmount,
         currency: "EUR",

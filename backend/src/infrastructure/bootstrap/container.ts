@@ -91,6 +91,8 @@ import { CreateStockUseCase } from '../../application/use-cases/director/stock/C
 import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
 import { ListStocksUseCase } from '../../application/use-cases/client/investment/ListStocksUseCase';
 import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
+import { GetMyPortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
+import { cli } from 'winston/lib/winston/config';
 
 
 export function createContainer() {
@@ -222,7 +224,8 @@ export function createContainer() {
   //Investment Use Cases
   const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
   const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
-  const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository)
+  const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
+  const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository);
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
   const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
@@ -298,6 +301,7 @@ export function createContainer() {
         createStock: createStockUseCase,
         placeOrder: placeOrderUseCase,
         createPortfolio: createPortfolioUseCase,
+        getMyPortfolio: getMyPortfolioUseCase,
         settleTrade: settleTradeUseCase,
         listCompanies: listCompaniesUseCase,
         listStocks: listStockUseCase,

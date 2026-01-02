@@ -9,16 +9,18 @@ import { CreatePortfolioRequest } from "./requests/createPortfolioRequest";
 export class CreatePortfolioUseCase {
   constructor(
     private readonly clientRepository: ClientRepository,
-    private readonly protfolioRepository: PortfolioRepository
+    private readonly portfolioRepository: PortfolioRepository
   ){}
 
-  async execute({clientIdentifier}: CreatePortfolioRequest): Promise<Result<Portfolio, Error>>{
-    const clientResult = await this.clientRepository.findById(clientIdentifier);
+  async execute({userId}: CreatePortfolioRequest): Promise<Result<Portfolio, Error>>{
+    const clientResult = await this.clientRepository.findByUserId(userId);
     if(!clientResult.ok){
       return err(clientResult.error);
     }
 
-    const portfolioExistsResult = await this.protfolioRepository.findByClientId(clientIdentifier);
+    const client = clientResult.value;
+
+    const portfolioExistsResult = await this.portfolioRepository.findByClientId(client.clientIdentifier);
     if(portfolioExistsResult.ok){
       return err(new Error("Portfolio already exists for this client"));
     }
@@ -26,11 +28,11 @@ export class CreatePortfolioUseCase {
     const portfolioIdentifier = randomUUID();
     const newPortfolio = Portfolio.create({
       portfolioIdentifier,
-      clientIdentifier,
+      clientIdentifier: client.clientIdentifier,
       createdAt: new Date()
     });
 
-    const saveResult = await this.protfolioRepository.save(newPortfolio);
+    const saveResult = await this.portfolioRepository.save(newPortfolio);
     if(!saveResult.ok){
       return err(saveResult.error);
     }

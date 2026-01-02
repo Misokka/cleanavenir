@@ -15,6 +15,9 @@ import { StockDTO } from '../../../application/dtos/StockDTO';
 import { Order } from '../../../domain/entities/Order';
 import { OrderDTO } from '../../../application/dtos/OrderDTO';
 import { ORDER_FEES } from '../../../shared/constants/Investment';
+import { Portfolio } from '../../../domain/entities/Portfolio';
+import { holdings } from '../../../infrastructure/drizzle/schema';
+import { Holding } from '../../../domain/entities/Holding';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -114,5 +117,23 @@ export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
     blockedStockQuantity: order.blockedStockQuantity,
     createdAt: order.createdAt.toISOString(),
     updatedAt: new Date().toISOString()
+  }
+}
+
+export function toPortfolioDTO(portfolio: Portfolio) {
+  return {
+    id: portfolio.portfolioIdentifier,
+    ownerId: portfolio.clientIdentifier,
+    holdings: portfolio.allHoldings().map(toHoldingPortfolioDTO),
+    createdAt: portfolio.createdAt
+  }
+}
+
+export function toHoldingPortfolioDTO(holding: Holding){
+  return {
+    id: holding.holdingIdentifier,
+    portfolioId: holding.portfolioIdentifier,
+    stockId: holding.stockIdentifier,
+    quantity: holding.quantity
   }
 }

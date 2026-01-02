@@ -25,12 +25,12 @@ export class Portfolio {
   }
 
   // Ajoute des actions au portefeuille
-  public addHolding(stockIdentifier: string, quantity: number): void {
+  public addHolding(stockIdentifier: string, quantity: number, averagePrice: number): void {
     const holding = this.holdings.has(stockIdentifier)
     if (!holding) {
       const holdingIdentifier = randomUUID();
       
-      this.holdings.set(stockIdentifier, Holding.create({holdingIdentifier, stockIdentifier, portfolioIdentifier: this.portfolioIdentifier, quantity}));
+      this.holdings.set(stockIdentifier, Holding.create({holdingIdentifier, stockIdentifier, portfolioIdentifier: this.portfolioIdentifier, quantity, averagePrice}));
     } else {
       this.holdings.get(stockIdentifier)!.quantity += quantity;
     }
