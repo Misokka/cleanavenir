@@ -4,5 +4,6 @@ export interface PlaceOrderRequest {
   userIdentifier: string;
   stockIdentifier: string;
   orderType: OrderType;
-  quantity: number
+  quantity: number,
+  limitPrice: number
 }

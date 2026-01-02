@@ -63,7 +63,14 @@ export class OrderRepositoryDrizzle implements OrderRepository{
   async listPendingBuysByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
       const buyOrderRows = await this.db.select().from(orders)
-      .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")))
+      .where(
+        and(
+          eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY"),
+          and(
+            or(eq(orders.status, "PENDING"), eq(orders.status, "PARTIALLY_FILLED"))
+          )
+        )
+      )
       .orderBy(desc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = buyOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
@@ -78,7 +85,14 @@ export class OrderRepositoryDrizzle implements OrderRepository{
   async listPendingSellsByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
       const sellOrderRows = await this.db.select().from(orders)
-      .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")))
+      .where(
+        and(
+          eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL"),
+          and(
+            or(eq(orders.status, "PENDING"), eq(orders.status, "PARTIALLY_FILLED"))
+          )
+        )
+      )
       .orderBy(asc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = sellOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);

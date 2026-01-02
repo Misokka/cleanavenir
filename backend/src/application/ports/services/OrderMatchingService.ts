@@ -3,7 +3,7 @@ import { OrderRepository } from "../repositories/OrderRepository";
 import { StockRepository } from "../repositories/StockRepository";
 import { PortfolioRepository } from "../repositories/PortfolioRepository";
 import { BankAccountRepository } from "../repositories/BankAccountRepository";
-import { ORDER_FEES } from "../../../shared/constants/Investment";
+import { ORDER_FEES_IN_CENTS } from "../../../shared/constants/Investment";
 import { StockPriceHistoryRepository } from "../repositories/StockPriceHistoryRepository";
 import { StockPriceHistory } from "../../../domain/entities/StockPriceHistory";
 import { randomUUID } from "crypto";
@@ -42,12 +42,13 @@ export class OrderMatchingService {
       const bestBuy = buyOrders[0];
       const bestSell = sellOrders[0];
   
+      // limitPrice est en centime
       if (bestBuy.limitPrice < bestSell.limitPrice) {
         break;
       }
 
       const tradedQuantity = Math.min(bestBuy.remainingQuantity, bestSell.remainingQuantity);
-      const executionPrice = bestSell.limitPrice; // logique d’équilibre
+      const executionPrice = bestSell.limitPrice; // logique d’équilibre en centimes
   
       const stockResult = await this.stockRepository.findById(stockId);
       if (!stockResult.ok) return err(stockResult.error);
@@ -83,8 +84,8 @@ export class OrderMatchingService {
 
       const buyerPortfolioResult = await this.portfolioRepository.findByClientId(bestBuy.clientIdentifier);
       if(!buyerPortfolioResult.ok) return err(buyerPortfolioResult.error);
-  
       const buyerPortfolio = buyerPortfolioResult.value;
+      
       const holding = buyerPortfolio.getHolding(stockId);
 
       let averagePrice = executionPrice;
@@ -94,7 +95,7 @@ export class OrderMatchingService {
         const oldAveragePrice = holding.averagePrice;
 
         const newTotalCost = (oldAveragePrice * oldQuantity) + (executionPrice * tradedQuantity);
-        averagePrice = newTotalCost / newQuantity
+        averagePrice = newTotalCost / newQuantity // in cents
       }
 
       buyerPortfolio.addHolding(stockId, tradedQuantity, averagePrice);
@@ -110,7 +111,7 @@ export class OrderMatchingService {
       }
   
       const sellerBankAccount = sellerBankAccountResult.value;
-      const totalSaleAmount = (tradedQuantity * executionPrice - ORDER_FEES) * 100;
+      const totalSaleAmount = tradedQuantity * executionPrice - ORDER_FEES_IN_CENTS; // in cents
       sellerBankAccount.deposit(totalSaleAmount);
   
       const updatedBankAccountResult = await this.bankAccountRepository.updateBalance(sellerBankAccount.accountIdentifier, sellerBankAccount.balance);

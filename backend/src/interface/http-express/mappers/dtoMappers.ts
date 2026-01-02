@@ -14,7 +14,7 @@ import { Stock } from '../../../domain/entities/Stock';
 import { StockDTO } from '../../../application/dtos/StockDTO';
 import { Order } from '../../../domain/entities/Order';
 import { OrderDTO } from '../../../application/dtos/OrderDTO';
-import { ORDER_FEES } from '../../../shared/constants/Investment';
+import { ORDER_FEES_IN_CENTS } from '../../../shared/constants/Investment';
 import { Portfolio } from '../../../domain/entities/Portfolio';
 import { holdings } from '../../../infrastructure/drizzle/schema';
 import { Holding } from '../../../domain/entities/Holding';
@@ -114,7 +114,7 @@ export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
     remainingQuanity: order.remainingQuantity,
     status: order.status,
     limitPrice: order.limitPrice / 100,
-    fees: ORDER_FEES,
+    fees: ORDER_FEES_IN_CENTS,
     blockedMoneyAmount: (order.blockedMoneyAmount ?? 0) / 100,
     blockedStockQuantity: order.blockedStockQuantity,
     createdAt: order.createdAt.toISOString(),

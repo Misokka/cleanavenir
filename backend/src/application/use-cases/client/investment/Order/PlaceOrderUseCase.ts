@@ -6,7 +6,7 @@ import { StockRepository } from "../../../../ports/repositories/StockRepository"
 import { PlaceOrderRequest } from "./requests/PlaceOrderRequest";
 import { Order } from "../../../../../domain/entities/Order";
 import { OrderMatchingService } from "../../../../ports/services/OrderMatchingService";
-import { ORDER_FEES } from "../../../../../shared/constants/Investment";
+import { ORDER_FEES_IN_CENTS } from "../../../../../shared/constants/Investment";
 import { BankAccountRepository } from "../../../../ports/repositories/BankAccountRepository";
 import { InsufficientFundsError } from "../../../../../domain/errors/InsufficientFundsError";
 import { PortfolioRepository } from "../../../../ports/repositories/PortfolioRepository";
@@ -14,6 +14,7 @@ import { InsufficientStockQuantityError } from "../../../../../domain/errors/Ins
 import { UserRepository } from "../../../../ports/repositories/UserRepository";
 import { TransactionRepository } from "../../../../ports/repositories/TransactionRepository";
 import { Transaction } from "../../../../../domain/entities/Transaction";
+import { toCents, toEuros } from "../../../../../shared/moneyUtilities";
 
 export class PlaceOrderUseCase {
   constructor(
@@ -26,7 +27,8 @@ export class PlaceOrderUseCase {
     private readonly orderMatchingService: OrderMatchingService,
   ){}
 
-  async execute({userIdentifier, stockIdentifier, quantity, orderType}: PlaceOrderRequest): Promise<Result<Order, Error>> {
+  async execute({userIdentifier, stockIdentifier, quantity, orderType, limitPrice}: PlaceOrderRequest): Promise<Result<Order, Error>> {
+    const limiPriceInCents = toCents(limitPrice);
     const clientResult = await this.clientRepository.findByUserId(userIdentifier);
     if(!clientResult.ok){
       return err(clientResult.error);
@@ -50,16 +52,16 @@ export class PlaceOrderUseCase {
     if(orderType === "BUY"){
       const buyerPortfolio = await this.portfolioRepository.findByClientId(client.clientIdentifier);
       if(!buyerPortfolio.ok) return err(new Error("You can't place an order without a portfolio."))
-      const totalCost = stock.price * quantity + (ORDER_FEES * 100) // total cost in cents
+      const totalCostInCents = limiPriceInCents * quantity + ORDER_FEES_IN_CENTS // total cost in cents
 
       const clientBankAccountResult = await this.bankAccountRepository.findDefaultAccountByClientId(client.clientIdentifier)
       if(!clientBankAccountResult.ok) return err(clientBankAccountResult.error);
 
       const clientBankAccount = clientBankAccountResult.value;
 
-      if(!clientBankAccount.checkBalance(totalCost)) return err(new InsufficientFundsError(clientBankAccount.accountIdentifier))
+      if(!clientBankAccount.checkBalance(totalCostInCents)) return err(new InsufficientFundsError(clientBankAccount.accountIdentifier))
 
-      clientBankAccount.withdraw(totalCost) // money withdrawn but reserved
+      clientBankAccount.withdraw(totalCostInCents) // money withdrawn but reserved
       //créer une transaction et savoir vers où va l'argent
 
       const newTransaction = Transaction.create({
@@ -67,7 +69,7 @@ export class PlaceOrderUseCase {
         bankAccountIdentifier: clientBankAccount.accountIdentifier,
         fromAccountIdentifier: clientBankAccount.accountIdentifier,
         toAccountIdentifier: systemBankAccount.accountIdentifier,
-        amount: totalCost,
+        amount: totalCostInCents,
         currency: "EUR",
         direction: "DEBIT",
         type: "STOCK_PURCHASE",
@@ -87,8 +89,8 @@ export class PlaceOrderUseCase {
         initialQuantity: quantity,
         remainingQuantity: quantity,
         orderType,
-        blockedMoneyAmount: totalCost,
-        limitPrice: stock.price, // Prix du marché au moment de la commande
+        blockedMoneyAmount: totalCostInCents,
+        limitPrice: limiPriceInCents,
         createdAt: new Date()
       });
 
@@ -119,7 +121,7 @@ export class PlaceOrderUseCase {
         remainingQuantity: quantity,
         orderType,
         blockedStockQuantity: quantity,
-        limitPrice: stock.price, // Prix du marché au moment de la commande
+        limitPrice: limiPriceInCents, // Prix du marché au moment de la commande
         createdAt: new Date()
       });
 
