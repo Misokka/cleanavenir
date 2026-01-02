@@ -1,36 +1,53 @@
 'use client';
-import React, { useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { Typography } from '../atoms/Typography'
 import { createOrderRequest } from '@/infrastructure/web/services/orderService';
 import { XMarkIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, BanknotesIcon, LockClosedIcon } from '@heroicons/react/24/outline'; // Icônes optionnelles
 import { Stock } from '@/infrastructure/web/services/stocksService';
+import { useCreateOrder } from '@/features/orders/useCreateOrder';
 
-// J'ajoute juste ces props pour que tu puisses fermer la modale et savoir quelle action est cliquée
-// C'est de la "props" React standard, pas de la structure de données métier complexe.
+
 type CreateOrderFormProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedStock: Stock | null;
-  stockTicker?: string; // Juste pour l'affichage (ex: "AAPL")
 }
 
 function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProps) {
-  
-  // Ta structure de données reste INCHANGÉE
+  const {createOrder, order, loading, error, reset} = useCreateOrder();
+  const [formError, setFormError] = useState<string | null>(null)
   const [formData, setFormData] = useState<createOrderRequest>({
-    stockId: "", // Tu le rempliras sans doute via les props ou un useEffect
+    stockId: selectedStock?.id ?? "", 
     quantity: 1,
     type: "BUY"
   });
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (selectedStock) {
+      setFormData(prev => ({
+        ...prev,
+        stockId: selectedStock.id
+      }));
+    }
+  }, [selectedStock]);
 
   const withdrawnAmount = ((selectedStock?.price ?? 0 ) * formData.quantity).toFixed(2)
 
+  async function handleSubmit(e: FormEvent){
+    e.preventDefault();
+    await createOrder(formData);
+    if(error){
+      setFormError(error.message);
+    } else {
+      onClose();
+    }
+
+  }
+
+  if (!isOpen) return null;
+
   return (
     <div className='fixed inset-0 z-50 flex justify-center items-center p-4 sm:p-0'>
-      
-      
       <div 
         className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity' 
         onClick={onClose}
@@ -53,9 +70,7 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
         </div>
 
         {/* Formulaire */}
-        <form className='p-6 space-y-6'>
-          
-          
+        <form className='p-6 space-y-6' onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Type d'ordre</label>
             <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
@@ -103,7 +118,7 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
 
           {/* Bouton de confirmation */}
           <button
-            type="button"
+            type="submit"
             className={`w-full rounded-lg px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors ${
               formData.type === 'BUY' 
                 ? 'bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600' 

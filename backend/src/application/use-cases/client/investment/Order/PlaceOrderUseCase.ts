@@ -48,7 +48,7 @@ export class PlaceOrderUseCase {
     const orderIdentifier = randomUUID();
 
     if(orderType === "BUY"){
-      const totalCost = (stock.price * quantity + ORDER_FEES) * 100 // total cost in cents
+      const totalCost = stock.price * quantity + ORDER_FEES // total cost in cents
 
       const clientBankAccountResult = await this.bankAccountRepository.findDefaultAccountByClientId(client.clientIdentifier)
       if(!clientBankAccountResult.ok) return err(clientBankAccountResult.error);
@@ -63,7 +63,7 @@ export class PlaceOrderUseCase {
       const newTransaction = Transaction.create({
         transactionIdentifier: randomUUID(),
         bankAccountIdentifier: clientBankAccount.accountIdentifier,
-        fromAccountIdentifier: clientBankAccount.clientIdentifier,
+        fromAccountIdentifier: clientBankAccount.accountIdentifier,
         toAccountIdentifier: systemBankAccount.accountIdentifier,
         amount: totalCost,
         currency: "EUR",
@@ -74,6 +74,7 @@ export class PlaceOrderUseCase {
       });
 
       const savedTransactionResult = await this.transactionRepository.save(newTransaction);
+      // if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
       if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
 

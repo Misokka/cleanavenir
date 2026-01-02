@@ -5,7 +5,7 @@ import { toOrderDTO } from "../../mappers/dtoMappers";
 
 export const PlaceOrderControlller = asyncHandler(
   async (req: Request, res: Response) => {
-    const {stockIdentifier, quantity, orderType} = req.body
+    const {stockId, quantity, type} = req.body
     const userId = req.userId;
 
     const container = getContainer();
@@ -14,9 +14,9 @@ export const PlaceOrderControlller = asyncHandler(
 
     const orderResult = await placeOrderUseCase.execute({
       userIdentifier: userId as string,
-      stockIdentifier,
+      stockIdentifier: stockId,
       quantity,
-      orderType
+      orderType: type
     });
 
     if(!orderResult.ok){

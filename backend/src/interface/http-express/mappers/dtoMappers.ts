@@ -108,9 +108,9 @@ export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
     type: order.orderType,
     quantity: order.quantity,
     status: order.status,
-    limitPrice: order.limitPrice,
+    limitPrice: order.limitPrice / 100,
     fees: ORDER_FEES,
-    blockedMoneyAmount: order.blockedMoneyAmount,
+    blockedMoneyAmount: (order.blockedMoneyAmount ?? 0) / 100,
     blockedStockQuantity: order.blockedStockQuantity,
     createdAt: order.createdAt.toISOString(),
     updatedAt: new Date().toISOString()

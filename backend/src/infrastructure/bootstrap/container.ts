@@ -89,8 +89,8 @@ import { CreatePortfolioUseCase } from '../../application/use-cases/client/inves
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
 import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
-import { list } from 'pdfkit';
 import { ListStocksUseCase } from '../../application/use-cases/client/investment/ListStocksUseCase';
+import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
 
 
 export function createContainer() {
@@ -227,6 +227,7 @@ export function createContainer() {
   const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
   const listStockUseCase = new ListStocksUseCase(stockRepository);
+  const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
 
   
   return {
@@ -299,7 +300,8 @@ export function createContainer() {
         createPortfolio: createPortfolioUseCase,
         settleTrade: settleTradeUseCase,
         listCompanies: listCompaniesUseCase,
-        listStocks: listStockUseCase
+        listStocks: listStockUseCase,
+        listMyOrders: listMyOrdersUseCase
       }
     },
   };

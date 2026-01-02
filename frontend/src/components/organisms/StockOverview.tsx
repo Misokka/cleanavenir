@@ -153,7 +153,7 @@ function StockOverview() {
                       selectStockForForm(stock);
                     }}
                   >
-                    Acheter
+                    Acheter ou vendre
                   </button>
                 </td>
               </tr>
