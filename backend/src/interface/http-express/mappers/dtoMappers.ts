@@ -18,6 +18,7 @@ import { ORDER_FEES } from '../../../shared/constants/Investment';
 import { Portfolio } from '../../../domain/entities/Portfolio';
 import { holdings } from '../../../infrastructure/drizzle/schema';
 import { Holding } from '../../../domain/entities/Holding';
+import { ChargedPortfolio, HoldingWithStock } from '../../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -134,6 +135,27 @@ export function toHoldingPortfolioDTO(holding: Holding){
     id: holding.holdingIdentifier,
     portfolioId: holding.portfolioIdentifier,
     stockId: holding.stockIdentifier,
-    quantity: holding.quantity
+    quantity: holding.quantity,
+    averagePrice: holding.averagePrice / 100
+  }
+}
+
+export function toChargedPortfolioDTO(chargedPortfolio: ChargedPortfolio){
+  return {
+    id: chargedPortfolio.portfolioIdentifier,
+    ownerId: chargedPortfolio.clientIdentifier,
+    holdings: chargedPortfolio.holdingsWithStock.map(toHoldingWithStockDTO),
+    createdAt: chargedPortfolio.createdAt
+  }
+}
+
+export function toHoldingWithStockDTO(holding: HoldingWithStock){
+  return{
+    id: holding.holdingIdentifier,
+    portfolioId: holding.portfolioIdentifier,
+    quantity: holding.quantity,
+    averagePrice: holding.averagePrice / 100,
+    stock: toStockDTO(holding.stockWithCompany.stock, holding.stockWithCompany.company)
+
   }
 }

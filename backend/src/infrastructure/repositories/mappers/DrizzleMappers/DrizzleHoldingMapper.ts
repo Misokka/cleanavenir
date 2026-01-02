@@ -9,6 +9,7 @@ export class DrizzleHoldingMapper implements Mapper<HoldingDrizzle, Holding, New
       portfolioIdentifier: raw.portfolioId,
       quantity: raw.quantity,
       stockIdentifier: raw.stockId,
+      averagePrice: raw.averagePrice
     };
   }
 
@@ -18,6 +19,7 @@ export class DrizzleHoldingMapper implements Mapper<HoldingDrizzle, Holding, New
       portfolioId: entity.portfolioIdentifier,
       quantity: entity.quantity,
       stockId: entity.stockIdentifier,
+      averagePrice: entity.averagePrice,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

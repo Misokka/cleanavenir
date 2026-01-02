@@ -225,7 +225,7 @@ export function createContainer() {
   const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
   const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
-  const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository);
+  const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository, stockRepository, companyRepository);
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
   const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);

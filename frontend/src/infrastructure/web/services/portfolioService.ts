@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from "../endpoints";
 import { httpClient } from "../httpClient";
+import { Stock } from "./stocksService";
 
 type CreatePortfolioResponse = {
   sucess: boolean,
@@ -16,8 +17,9 @@ export type Portfolio = {
 export type Holding = {
   id: string,
   portfolioId: string,
-  stockId: string,
-  quantity: number
+  quantity: number,
+  averagePrice: number
+  stock: Stock,
 }
 
 export class PortfolioService {

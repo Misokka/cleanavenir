@@ -174,12 +174,12 @@ if(loading){
           <>
             <div className="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl overflow-hidden">
               <ul className="divide-y divide-gray-100">
-                {MOCK_HOLDINGS.map((holding) => {
-                  const currentValue = holding.quantity * holding.currentPrice;
-                  const investValue = holding.quantity * holding.avgPrice;
-                  const pnl = currentValue - investValue;
-                  const pnlPercent = investValue > 0 ? pnl / investValue : 0;
-                  const isProfit = pnl >= 0;
+                {portfolio.holdings.map((holding) => {
+                  const currentValue = holding.quantity * holding.stock.price;
+                  const investValue = holding.quantity * holding.averagePrice;
+                  const profitAndLoss = currentValue - investValue;
+                  const profitAndLossPercent = investValue > 0 ? profitAndLoss / investValue : 0;
+                  const isProfit = profitAndLoss >= 0;
 
                   return (
                     <li key={holding.id} className="p-4 hover:bg-gray-50 transition-colors">
@@ -188,12 +188,12 @@ if(loading){
                         {/* Gauche: Info Action */}
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-gray-600 border border-gray-200">
-                            {holding.ticker}
+                            {holding.stock.ticker}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{holding.name}</p>
+                            <p className="font-medium text-gray-900">{holding.stock.company.name}</p>
                             <p className="text-sm text-gray-500">
-                              {holding.quantity} part{holding.quantity > 1 ? 's' : ''} • PRU {formatCurrency(holding.avgPrice)}
+                              {holding.quantity} part{holding.quantity > 1 ? 's' : ''} • PRU {formatCurrency(holding.averagePrice)}
                             </p>
                           </div>
                         </div>
@@ -202,7 +202,7 @@ if(loading){
                         <div className="text-right">
                           <p className="font-medium text-gray-900">{formatCurrency(currentValue)}</p>
                           <p className={`text-sm flex items-center justify-end gap-1 ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
-                            {isProfit ? '▲' : '▼'} {formatPercent(pnlPercent)}
+                            {isProfit ? '▲' : '▼'} {formatPercent(profitAndLossPercent)}
                           </p>
                         </div>
 

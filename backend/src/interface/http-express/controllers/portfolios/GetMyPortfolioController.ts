@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../../middlewares/errorMiddleware";
 import { getContainer } from "../../../../infrastructure/bootstrap/instance";
-import { toPortfolioDTO } from "../../mappers/dtoMappers";
+import { toChargedPortfolioDTO } from "../../mappers/dtoMappers";
 
 export const GetMyPortfolioController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const GetMyPortfolioController = asyncHandler(
     const portfolio = portfolioResult.value;
 
     return res.status(200).json({
-      portfolio: toPortfolioDTO(portfolio)
+      portfolio: toChargedPortfolioDTO(portfolio)
     })
 
   }
