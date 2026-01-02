@@ -36,6 +36,20 @@
       "when": 1767182095768,
       "tag": "0004_aberrant_alex_power",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1767375557881,
+      "tag": "0005_dazzling_amazoness",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1767379553776,
+      "tag": "0006_flat_mephisto",
+      "breakpoints": true
     }
   ]
 }

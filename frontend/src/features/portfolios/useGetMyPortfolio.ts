@@ -6,7 +6,7 @@ export function useGetMyPortfolio(){
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchMyPortfolio = useCallback(async() => {
+  const fetchMyPortfolio = async() => {
     try{
       const response = await portfolioService.getMyportfolio();
       setPortfolio(response.portfolio);
@@ -15,7 +15,7 @@ export function useGetMyPortfolio(){
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
 
   useEffect(() => {

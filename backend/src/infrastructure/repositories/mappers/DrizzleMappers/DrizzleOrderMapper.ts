@@ -10,7 +10,7 @@ export class DrizzleOrderMapper implements Mapper<OrderDrizzle, Order, NewOrderD
       clientIdentifier: raw.ownerId,
       stockIdentifier: raw.stockId,
       orderType: raw.type as OrderType,
-      limitPrice: raw.price,
+      limitPrice: raw.limitPrice,
       status: raw.status as OrderStatus,
       createdAt: new Date(raw.createdAt),
       blockedMoneyAmount: raw.blockedMoneyAmount as number | undefined,
@@ -25,7 +25,7 @@ export class DrizzleOrderMapper implements Mapper<OrderDrizzle, Order, NewOrderD
       ownerId: entity.clientIdentifier,
       stockId: entity.stockIdentifier,
       type: entity.orderType,
-      price: entity.limitPrice,
+      limitPrice: entity.limitPrice,
       status: entity.status,
       createdAt: entity.createdAt.toISOString()
     };

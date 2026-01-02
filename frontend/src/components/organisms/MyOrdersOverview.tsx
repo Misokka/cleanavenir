@@ -10,6 +10,7 @@ import {
   BanknotesIcon,
   LockClosedIcon
 } from '@heroicons/react/24/outline';
+import { Order } from '@/infrastructure/web/services/orderService';
 
 
 const formatCurrency = (value: number | undefined) => {
@@ -26,8 +27,13 @@ const formatDate = (dateString: string) => {
   });
 };
 
-function MyOrdersOverview() {
-  const { myOrders, loading, error } = useGetMyOrders();
+interface MyOrdersOverviewProps {
+  orders: Order[] | undefined,
+  loading: boolean,
+  error: Error | null
+}
+
+function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
 
   if (loading) {
     return (
@@ -45,7 +51,7 @@ function MyOrdersOverview() {
     );
   }
 
-  if (!myOrders || myOrders.length === 0) {
+  if (!orders || orders.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
         <p className="text-gray-500">Aucun ordre récent.</p>
@@ -55,7 +61,7 @@ function MyOrdersOverview() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {myOrders.map((order) => {
+      {orders.map((order) => {
         const isBuy = order.type === 'BUY';
         
         return (
@@ -85,8 +91,12 @@ function MyOrdersOverview() {
             {/* --- BODY --- */}
             <div className="p-5 space-y-4 flex-1">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Quantité</span>
-                <span className="font-medium text-gray-900">{order.quantity} titres</span>
+                <span className="text-gray-500">Quantité initiale</span>
+                <span className="font-medium text-gray-900">{order.initialQuantity} titres</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-500">Quantité restante</span>
+                <span className="font-medium text-gray-900">{order.remainingQuanity} titres</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">Prix limite</span>

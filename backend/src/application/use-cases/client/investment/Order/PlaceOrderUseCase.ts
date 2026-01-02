@@ -48,7 +48,9 @@ export class PlaceOrderUseCase {
     const orderIdentifier = randomUUID();
 
     if(orderType === "BUY"){
-      const totalCost = stock.price * quantity + ORDER_FEES // total cost in cents
+      const buyerPortfolio = await this.portfolioRepository.findByClientId(client.clientIdentifier);
+      if(!buyerPortfolio.ok) return err(new Error("You can't place an order without a portfolio."))
+      const totalCost = stock.price * quantity + (ORDER_FEES * 100) // total cost in cents
 
       const clientBankAccountResult = await this.bankAccountRepository.findDefaultAccountByClientId(client.clientIdentifier)
       if(!clientBankAccountResult.ok) return err(clientBankAccountResult.error);
@@ -82,7 +84,8 @@ export class PlaceOrderUseCase {
         orderIdentifier,
         stockIdentifier,
         clientIdentifier: client.clientIdentifier,
-        quantity,
+        initialQuantity: quantity,
+        remainingQuantity: quantity,
         orderType,
         blockedMoneyAmount: totalCost,
         limitPrice: stock.price, // Prix du marché au moment de la commande
@@ -112,7 +115,8 @@ export class PlaceOrderUseCase {
         orderIdentifier,
         stockIdentifier,
         clientIdentifier: client.clientIdentifier,
-        quantity,
+        initialQuantity: quantity,
+        remainingQuantity: quantity,
         orderType,
         blockedStockQuantity: quantity,
         limitPrice: stock.price, // Prix du marché au moment de la commande
@@ -122,7 +126,7 @@ export class PlaceOrderUseCase {
       const savedOrderResult = await this.orderRepository.save(newOrder);
       if(!savedOrderResult.ok) return err(savedOrderResult.error);
 
-      const updatedPortfolioResult = await this.portfolioRepository.save(sellClientPortfolio);
+      const updatedPortfolioResult = await this.portfolioRepository.update(sellClientPortfolio);
       if(!updatedPortfolioResult.ok) return err(updatedPortfolioResult.error);
 
       savedOrder = savedOrderResult.value;

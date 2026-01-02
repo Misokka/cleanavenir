@@ -5,6 +5,7 @@ import { useGetMyPortfolio } from '@/features/portfolios/useGetMyPortfolio';
 import { useCreatePortfolio } from '@/features/portfolios/useCreatePortfolio';
 import { BriefcaseIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Portfolio } from '@/infrastructure/web/services/portfolioService';
 
 // --- 1. MOCK DATA (Données en Euros) ---
 const MOCK_HOLDINGS = [
@@ -42,27 +43,33 @@ const formatCurrency = (value: number) =>
 const formatPercent = (value: number) => 
   new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(value);
 
-function MyPortfolioOverview() {
+interface MyPortfolioOverviewProps{
+  portfolio: Portfolio | null,
+  fetchPortfolio: () => void,
+  loading: boolean,
+  error: Error | null
+}
 
-  const {portfolio, fetchMyPortfolio, loading, error} = useGetMyPortfolio();
+function MyPortfolioOverview({portfolio, fetchPortfolio, loading, error}: MyPortfolioOverviewProps) {
+
   const {createPortfolio, success, error: createPortfolioError} = useCreatePortfolio();
 
   // Calculs (inchangés, fonctionnent pareil avec des entiers ou des floats)
   const totalPortfolioValue = MOCK_HOLDINGS.reduce((acc, h) => acc + (h.quantity * h.currentPrice), 0);
   const totalInvested = MOCK_HOLDINGS.reduce((acc, h) => acc + (h.quantity * h.avgPrice), 0);
-  const totalPnl = totalPortfolioValue - totalInvested;
+  const totalProfitAndLoss = totalPortfolioValue - totalInvested;
   
   // Protection contre la division par zéro si totalInvested = 0
-  const totalPnlPercent = totalInvested > 0 ? totalPnl / totalInvested : 0;
+  const totalProfitAndLossPercent = totalInvested > 0 ? totalProfitAndLoss / totalInvested : 0;
 
 
   async function handleCreatePortfolio(e: FormEvent){
     e.preventDefault();
-    await createPortfolio();
-    if(success){
-      fetchMyPortfolio();
+    const response = await createPortfolio();
+    if(response && response.success){
+      fetchPortfolio();
     } else {
-      console.error(createPortfolioError)
+      console.error(createPortfolioError, "hello");
     }
   }
 

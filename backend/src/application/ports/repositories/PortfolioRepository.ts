@@ -6,5 +6,5 @@ import { Result } from "../../../shared/Result";
 export interface PortfolioRepository{
   save(portfolio: Portfolio): Promise<Result<Portfolio, Error>>;
   update(portfolio: Portfolio): Promise<Result<Portfolio, Error>>;
-  findByClientId(clientIdentifier: string): Promise<Result<Portfolio, PortfolioNotFoundError>>;
+  findByClientId(clientIdentifier: string): Promise<Result<Portfolio, Error>>;
 }

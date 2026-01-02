@@ -46,7 +46,7 @@ export class OrderMatchingService {
         break;
       }
 
-      const tradedQuantity = Math.min(bestBuy.quantity, bestSell.quantity);
+      const tradedQuantity = Math.min(bestBuy.remainingQuantity, bestSell.remainingQuantity);
       const executionPrice = bestSell.limitPrice; // logique d’équilibre
   
       const stockResult = await this.stockRepository.findById(stockId);
@@ -82,23 +82,20 @@ export class OrderMatchingService {
       if(!savedTradeResult.ok) return err(savedTradeResult.error);
 
       const buyerPortfolioResult = await this.portfolioRepository.findByClientId(bestBuy.clientIdentifier);
-  
       if(!buyerPortfolioResult.ok) return err(buyerPortfolioResult.error);
   
       const buyerPortfolio = buyerPortfolioResult.value;
       const holding = buyerPortfolio.getHolding(stockId);
 
-      let averagePrice: number;
+      let averagePrice = executionPrice;
       if(holding){
         const oldQuantity = holding.quantity
         const newQuantity = oldQuantity + tradedQuantity;
-
         const oldAveragePrice = holding.averagePrice;
+
         const newTotalCost = (oldAveragePrice * oldQuantity) + (executionPrice * tradedQuantity);
         averagePrice = newTotalCost / newQuantity
       }
-
-      averagePrice = tradedQuantity / executionPrice;
 
       buyerPortfolio.addHolding(stockId, tradedQuantity, averagePrice);
   
@@ -145,28 +142,29 @@ export class OrderMatchingService {
       if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
       // mise à jour des ordres
-      bestBuy.quantity -= tradedQuantity;
-      bestSell.quantity -= tradedQuantity;
+      bestBuy.remainingQuantity -= tradedQuantity;
+      bestSell.remainingQuantity -= tradedQuantity;
 
-      if(bestBuy.quantity === 0){
+      if(bestBuy.remainingQuantity === 0){
         bestBuy.status = "EXECUTED";
         buyOrders.shift(); 
       } else {
         bestBuy.status = "PARTIALLY_FILLED";
       }
 
-      const buyOrderResult = await this.orderRepository.setStatus(bestBuy.orderIdentifier, bestBuy.status);
+      //Créer une fonction update
+      const buyOrderResult = await this.orderRepository.update(bestBuy);
       if (!buyOrderResult.ok) return err(buyOrderResult.error);
 
 
-      if (bestSell.quantity === 0) {
+      if (bestSell.remainingQuantity === 0) {
         bestSell.status = "EXECUTED";
         sellOrders.shift();
       } else {
         bestSell.status = "PARTIALLY_FILLED";
       }
 
-      const sellOrderResult = await this.orderRepository.setStatus(bestSell.orderIdentifier, bestSell.status);
+      const sellOrderResult = await this.orderRepository.update(bestSell);
       if (!sellOrderResult.ok) return err(sellOrderResult.error);
     }
 

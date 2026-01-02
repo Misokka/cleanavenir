@@ -10,8 +10,10 @@ export function useCreateOrder(){
     try{
       const response = await orderService.create(props);
       setOrder(response);
+      return null;
     } catch (e: any) {
-      setError(e)
+      setError(e);
+      return e
     } finally {
       setLoading(false);
     }

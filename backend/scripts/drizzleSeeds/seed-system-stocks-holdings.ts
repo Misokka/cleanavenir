@@ -38,7 +38,7 @@ async function createHoldingsForSystemPortfolio(systemPortfolio: PortfolioDrizzl
         id: randomUUID(),
         portfolioId: systemPortfolio.id,
         stockId: stock.id,
-        quantity: 1_000_000,
+        quantity: 10,
         averagePrice: stock.price,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -63,8 +63,9 @@ async function createSellOrdersForSystem(systemClient: ClientDrizzle, systemHold
         id: randomUUID(),
         ownerId: systemClient.id,
         stockId: holding.stockId,
-        price: holding.averagePrice,
-        quantity: holding.quantity,
+        limitPrice: holding.averagePrice,
+        initialQuantity: holding.quantity,
+        remainingQuantity: holding.quantity,
         type: "SELL",
         status: "PENDING",
         blockedMoneyAmount: null,
@@ -73,7 +74,14 @@ async function createSellOrdersForSystem(systemClient: ClientDrizzle, systemHold
       }
 
       await db.insert(orders).values(newSellOrder);
-      console.log(`${newSellOrder.id} order inserted.`)
+      console.log(`${newSellOrder.id} order inserted.`);
+
+      const currentHolding = holding;
+      currentHolding.quantity -= currentHolding.quantity;
+
+      await db.update(holdings).set(currentHolding).where(eq(holdings.id, currentHolding.id));
+      console.log(`updated holding ${currentHolding.id}`);
+      
     }
   } catch (error) {
     console.error("Unexpected Error when creating sell orders for system", error);

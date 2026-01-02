@@ -5,7 +5,8 @@ export type OrderDTO = {
   stockId: string;
   userId: string;        
   type: OrderType;    
-  quantity: number;   
+  initialQuantity: number,
+  remainingQuanity: number,
   limitPrice: number;  
   fees: number;         
   status: OrderStatus;

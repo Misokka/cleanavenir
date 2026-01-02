@@ -3,7 +3,7 @@ import { httpClient } from "../httpClient";
 import { Stock } from "./stocksService";
 
 type CreatePortfolioResponse = {
-  sucess: boolean,
+  success: boolean,
   message: string
 }
 

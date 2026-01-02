@@ -9,7 +9,7 @@ export function useCreatePortfolio(){
     const createPortfolio = useCallback(async() => {
       try{
         const response = await portfolioService.createPortfolio();
-        setSuccess(response.sucess);
+        return response
       } catch(error: any){
         setError(error)
       } finally {

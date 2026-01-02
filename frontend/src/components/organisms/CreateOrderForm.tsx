@@ -5,20 +5,25 @@ import { createOrderRequest } from '@/infrastructure/web/services/orderService';
 import { XMarkIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, BanknotesIcon, LockClosedIcon } from '@heroicons/react/24/outline'; // Icônes optionnelles
 import { Stock } from '@/infrastructure/web/services/stocksService';
 import { useCreateOrder } from '@/features/orders/useCreateOrder';
+import { useGetMyOrders } from '@/features/orders/useGetMyOrders';
+import { useShowBestBuyAndSellOrderForStock } from '@/features/orders/useShowBestBuyAndSellOrderForStock';
 
 
 type CreateOrderFormProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedStock: Stock | null;
+  onOrderCreated: () => void;
 }
 
-function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProps) {
-  const {createOrder, order, loading, error, reset} = useCreateOrder();
+function CreateOrderForm({ isOpen, onClose, selectedStock, onOrderCreated}: CreateOrderFormProps) {
+  const {createOrder, order, loading, error: createOrderError, reset} = useCreateOrder();
+  const {fetchBestOrdersForStock, bestOrders, loading: bestOrdersLoading, error: bestOrdersError} = useShowBestBuyAndSellOrderForStock()
   const [formError, setFormError] = useState<string | null>(null)
   const [formData, setFormData] = useState<createOrderRequest>({
     stockId: selectedStock?.id ?? "", 
     quantity: 1,
+    limitPrice: selectedStock?.price ?? 0,
     type: "BUY"
   });
 
@@ -26,19 +31,24 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
     if (selectedStock) {
       setFormData(prev => ({
         ...prev,
-        stockId: selectedStock.id
+        stockId: selectedStock.id,
+        limitPrice: selectedStock.price
       }));
+
+      fetchBestOrdersForStock(selectedStock.id);
     }
   }, [selectedStock]);
 
-  const withdrawnAmount = ((selectedStock?.price ?? 0 ) * formData.quantity).toFixed(2)
+  const withdrawnAmount = ((formData.limitPrice ?? 0 ) * formData.quantity).toFixed(2)
 
   async function handleSubmit(e: FormEvent){
     e.preventDefault();
-    await createOrder(formData);
-    if(error){
-      setFormError(error.message);
+    const createOrderError = await createOrder(formData);
+    
+    if(createOrderError){
+      setFormError(createOrderError.message);
     } else {
+      onOrderCreated();
       onClose();
     }
 
@@ -67,6 +77,49 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200 transition'>
             <XMarkIcon className="w-5 h-5" />
           </button>
+        </div>
+
+        {/*BLOCK RAJOUTÉ POUR L'UTILISATEUR */}
+        <div className='px-6 pt-5 pb-1'>
+          <h4 className="block text-sm font-medium mb-2 text-gray-700">Carnet d'ordres</h4>
+          
+          {bestOrdersLoading ? (
+            // Skeleton loader simple
+            <div className="grid grid-cols-2 gap-3 animate-pulse">
+                <div className="h-16 bg-gray-100 rounded-lg"></div>
+                <div className="h-16 bg-gray-100 rounded-lg"></div>
+            </div>
+          ) : bestOrders ? (
+             <div className="grid grid-cols-2 gap-3">
+               
+               {/* Carte ASK (Vendeurs) - Rouge */}
+               <div className="bg-red-50/60 p-3 rounded-lg border border-red-100 flex flex-col items-center justify-center text-center">
+                 <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">Meilleur Vendeur</span>
+                 {bestOrders.bestSellOrder ? (
+                   <>
+                     <span className="text-lg font-bold text-gray-900">{bestOrders.bestSellOrder.limitPrice} €</span>
+                     <span className="text-xs text-gray-500">{bestOrders.bestSellOrder.remainingQuanity} titres dispo</span>
+                   </>
+                 ) : (
+                   <span className="text-xs text-gray-400 italic">Aucune offre</span>
+                 )}
+               </div>
+
+               {/* Carte BID (Acheteurs) - Vert */}
+               <div className="bg-emerald-50/60 p-3 rounded-lg border border-emerald-100 flex flex-col items-center justify-center text-center">
+                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Meilleur Acheteur</span>
+                 {bestOrders.bestBuyOrder ? (
+                   <>
+                     <span className="text-lg font-bold text-gray-900">{bestOrders.bestBuyOrder.limitPrice} €</span>
+                     <span className="text-xs text-gray-500">{bestOrders.bestBuyOrder.remainingQuanity} demandés</span>
+                   </>
+                 ) : (
+                   <span className="text-xs text-gray-400 italic">Aucune demande</span>
+                 )}
+               </div>
+
+             </div>
+          ) : null}
         </div>
 
         {/* Formulaire */}
@@ -100,6 +153,7 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
           </div>
 
           <div className="space-y-2">
+            {/* input quantité */}
             <label htmlFor="qty" className="block text-sm font-medium text-gray-700">Quantité</label>
             <div className="relative">
               <input
@@ -114,7 +168,28 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
                 <span className="text-gray-500 text-xs font-medium uppercase">Titres</span>
               </div>
             </div>
+
+            {/* input prix limit */}
+            <div className="space-y-2">
+              <label htmlFor="limitPrice" className="block text-sm font-medium text-gray-700">Prix Limite</label>
+              <div className="relative">
+                <input
+                  id="limitPrice"
+                  type="number"
+                  step="0.01" // Permet les centimes
+                  min="0.01"
+                  value={formData.limitPrice}
+                  onChange={(e) => setFormData({ ...formData, limitPrice: Number(e.target.value) })}
+                  className="block w-full rounded-lg border-0 py-2.5 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white shadow-sm"
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <span className="text-gray-400 text-xs font-medium">€</span>
+                </div>
+              </div>
+            </div>
           </div>
+
+
 
           {/* Bouton de confirmation */}
           <button
@@ -138,7 +213,7 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
                   <h3 className="text-sm font-medium text-blue-800">Impact sur solde</h3>
                   <div className="mt-1 text-sm text-blue-700">
                     <p>
-                      Un montant de <span className="font-bold">{withdrawnAmount}€</span> sera débité immédiatement de votre compte courant.
+                      Un montant de <span className="font-bold">{withdrawnAmount}€ + 1€ (frais d'achat/vente)</span> seront débité immédiatement de votre compte courant.
                     </p>
                   </div>
                 </div>
@@ -164,6 +239,11 @@ function CreateOrderForm({ isOpen, onClose, selectedStock }: CreateOrderFormProp
             </div>
           )}
 
+          {formError && (
+            <div className="text-red-600 text-sm text-center bg-red-50 p-2 rounded">
+              {formError}
+            </div>
+          )}
         </form>
       </div>    
     </div>

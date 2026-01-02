@@ -24,6 +24,17 @@ export class OrderRepositoryDrizzle implements OrderRepository{
     }
   }
 
+  async update(order: Order): Promise<Result<Order, Error>> {
+    try{
+      const orderToPersist = this.orderMapper.toPersistence(order);
+      const updatedOrderRows = await this.db.update(orders).set(orderToPersist).where(eq(orders.id, order.orderIdentifier)).returning();
+      const toDomain = this.orderMapper.toDomain(updatedOrderRows[0]);
+      return ok(toDomain);
+    } catch (error: any) {
+      return err(new Error(`Couldn't update order ${order.orderIdentifier} message: ${error.message}`))
+    }
+  }
+
   async findById(id: string): Promise<Result<Order, OrderNotFoundError>> {
     try {
       const row = await this.db.select().from(orders).where(eq(orders.id, id)).limit(1);
@@ -53,7 +64,7 @@ export class OrderRepositoryDrizzle implements OrderRepository{
     try{
       const buyOrderRows = await this.db.select().from(orders)
       .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")))
-      .orderBy(desc(orders.price));
+      .orderBy(desc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = buyOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });
@@ -68,7 +79,7 @@ export class OrderRepositoryDrizzle implements OrderRepository{
     try{
       const sellOrderRows = await this.db.select().from(orders)
       .where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")))
-      .orderBy(asc(orders.price));
+      .orderBy(asc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = sellOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });

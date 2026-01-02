@@ -164,8 +164,9 @@ export const orders = sqliteTable('orders', {
   stockId: text('stock_id').notNull().references(() => stocks.id),
   ownerId: text('owner_id').notNull().references(() => clients.id),
   type: text('type').notNull(), // BUY or SELL
-  quantity: integer('quantity').notNull(),
-  price: integer('price').notNull(), // price in cents
+  initialQuantity: integer('initial_quantity').notNull(),
+  remainingQuantity: integer('remaining_quantity').notNull(),
+  limitPrice: integer('limit_price').notNull(), // price in cents
   status: text('status').notNull().default('OPEN'),
   blockedMoneyAmount: integer('blocked_money_amount'),
   blockedStockQuantity: integer('blocked_stock_quantity'),

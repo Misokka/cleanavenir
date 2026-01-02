@@ -13,7 +13,7 @@ export const CreatePortfolioController = asyncHandler(
     if(!portfolioResult.ok){
       return res.status(500).json({
         error: "INTERNAL_ERROR",
-        message: portfolioResult.error.message
+        message: portfolioResult.error.stack
       })
     }
 

@@ -6,7 +6,8 @@ export type Order = {
   stockId: string;
   userId: string;        
   type: "BUY" | "SELL";    
-  quantity: number;   
+  initialQuantity: number,
+  remainingQuanity: number,
   limitPrice: number;  
   fees: number;         
   status: "PENDING" | "PARTIALLY_FILLED" | "EXECUTED" | "CANCELLED";
@@ -20,7 +21,13 @@ export type Order = {
 export interface createOrderRequest{
   stockId: string,
   type: "BUY" | "SELL",
-  quantity: number
+  quantity: number,
+  limitPrice: number
+}
+
+export interface BestBuyAndSellOrder{
+  bestBuyOrder: Order | null,
+  bestSellOrder: Order | null
 }
 
 export class OrderService {
@@ -41,6 +48,16 @@ export class OrderService {
     } catch (error) {
       console.error("Erreur lors de la récupération  de vos ordres", error);
       throw error;      
+    }
+  }
+
+  async showBestBuyAndSellForStock(stockId: string){
+    try{
+      const response = await httpClient.get<BestBuyAndSellOrder>(API_ENDPOINTS.INVESTMENTS.ORDERS.SHOW_BEST_BUY_AND_SELL(stockId));
+      return response.data
+    } catch (error) {
+      console.error("Erreur lors de la récupération  de vos ordres", error);
+      throw error;
     }
   }
 }

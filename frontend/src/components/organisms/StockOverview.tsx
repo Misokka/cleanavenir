@@ -52,7 +52,12 @@ const generateMockHistory = (currentPrice: number): ChartDataPoint[] => {
   return data;
 };
 
-function StockOverview() {
+interface StockOverviewProps{
+  fetchOrders: () => void;
+  fetchPortfolio: () => void;
+}
+
+function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
   const { stocks, fetchStocks, loading, error } = useGetStocks();
   
   // État pour savoir quelle action est sélectionnée pour afficher le graphe
@@ -104,7 +109,16 @@ function StockOverview() {
   return (
     <div className="space-y-8">
      
-      <CreateOrderForm isOpen={isFormOpen} onClose={handleClose} selectedStock={selectedStockForForm}/>
+      <CreateOrderForm 
+        isOpen={isFormOpen}
+        onClose={handleClose}
+        selectedStock={selectedStockForForm}
+        
+        onOrderCreated={() => {
+          fetchOrders();
+          fetchPortfolio();
+        }}
+      />
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">

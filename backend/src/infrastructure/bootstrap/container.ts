@@ -93,6 +93,7 @@ import { ListStocksUseCase } from '../../application/use-cases/client/investment
 import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
 import { GetMyPortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
 import { cli } from 'winston/lib/winston/config';
+import { ShowBestBuyAndSellOrderForStockUseCase } from '../../application/use-cases/client/investment/Order/ShowBestBuyAndSellOrderForStock';
 
 
 export function createContainer() {
@@ -231,6 +232,7 @@ export function createContainer() {
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
   const listStockUseCase = new ListStocksUseCase(stockRepository);
   const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
+  const showBestBuyAndSellOrderUseCase = new ShowBestBuyAndSellOrderForStockUseCase(orderRepository, stockRepository);
 
   
   return {
@@ -305,7 +307,8 @@ export function createContainer() {
         settleTrade: settleTradeUseCase,
         listCompanies: listCompaniesUseCase,
         listStocks: listStockUseCase,
-        listMyOrders: listMyOrdersUseCase
+        listMyOrders: listMyOrdersUseCase,
+        showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase
       }
     },
   };
