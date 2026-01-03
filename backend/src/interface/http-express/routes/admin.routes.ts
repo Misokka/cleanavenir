@@ -8,7 +8,8 @@ import {
   getStatisticsController,
   UpdateSavingProductController,
   CreateSavingProductController,
-  ListSavingProductsController
+  ListSavingProductsController,
+  EditStockController
 } from '../controllers/admin';
 
 import { ListCompaniesController } from '../controllers/companies'; 
@@ -28,5 +29,6 @@ router.post('/savings/products', CreateSavingProductController);
 router.get('/savings/products', ListSavingProductsController);
 router.put('/savings/products/:id', UpdateSavingProductController);
 router.get('/companies', ListCompaniesController)
+router.put('/stocks/:stockId/edit', EditStockController)
 
 export const adminRoutes = router;

@@ -62,6 +62,19 @@ export class StockRepositoryDrizzle implements StockRepository {
     }
   }
 
+  // récupérer les action dispo
+  async allAvailableStocks() : Promise<Result<Stock[], Error>>{
+    try{
+      const stockRows = await this.db.select().from(stocks).where(eq(stocks.isAvailable, 1));
+      const stocksToDomain = stockRows.map((row) => {
+        return this.stockMapper.toDomain(row);
+      });
+      return ok(stocksToDomain);
+    } catch {
+      return err(new Error(`An error occured retrieving stocks.`));
+    }
+  }
+
   async update(stock: Stock): Promise<Result<Stock, StockNotFoundError>> {
     try{
       const stockToPersist = this.stockMapper.toPersistence(stock);

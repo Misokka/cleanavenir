@@ -27,7 +27,7 @@ export class CreateSavingProductUseCase{
     }
 
     const savingProductIdentifier = randomUUID();
-    const savingProduct = SavingProduct.create({savingProductIdentifier, label, rate});
+    const savingProduct = SavingProduct.create({savingProductIdentifier, label, rate: rate});
     const saved = await this.savingProductRepository.save(savingProduct);
 
     if(!saved.ok){

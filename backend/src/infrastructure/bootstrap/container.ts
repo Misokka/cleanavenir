@@ -95,6 +95,8 @@ import { GetMyPortfolioUseCase } from '../../application/use-cases/client/invest
 import { cli } from 'winston/lib/winston/config';
 import { ShowBestBuyAndSellOrderForStockUseCase } from '../../application/use-cases/client/investment/Order/ShowBestBuyAndSellOrderForStock';
 import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/investment/stock/GetStockPriceHistoryUseCase';
+import { EditStockUseCase } from '../../application/use-cases/director/stock/EditStockUseCase';
+import { GetStockUseCase } from '../../application/use-cases/client/investment/stock/GetStockUseCase';
 
 
 export function createContainer() {
@@ -235,6 +237,8 @@ export function createContainer() {
   const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
   const showBestBuyAndSellOrderUseCase = new ShowBestBuyAndSellOrderForStockUseCase(orderRepository, stockRepository);
   const getStockPriceHistoryUseCase = new GetStockPriceHistoryUseCase(stockRepository, stockPriceHistoryRepository);
+  const editStockUseCase = new EditStockUseCase(stockRepository);
+  const getStockUseCase = new GetStockUseCase(stockRepository, companyRepository);
 
   
   return {
@@ -311,7 +315,9 @@ export function createContainer() {
         listStocks: listStockUseCase,
         listMyOrders: listMyOrdersUseCase,
         showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase,
-        getStockPriceHistory: getStockPriceHistoryUseCase
+        getStockPriceHistory: getStockPriceHistoryUseCase,
+        editStock: editStockUseCase,
+        getStock: getStockUseCase
       }
     },
   };

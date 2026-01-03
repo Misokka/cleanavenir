@@ -5,4 +5,4 @@ export { getStatisticsController } from './getStatisticsController';
 export { UpdateSavingProductController } from './UpdateSavingProductController';
 export { CreateSavingProductController } from './CreateSavingProductController';
 export { ListSavingProductsController } from './ListSavingProductsController';
-
+export { EditStockController } from "./EditStockController";

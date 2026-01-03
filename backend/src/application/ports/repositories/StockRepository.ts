@@ -10,4 +10,5 @@ export interface StockRepository {
   update(stock: Stock): Promise<Result<Stock, StockNotFoundError>>;
   remove(id: string): Promise<Result<true, StockNotFoundError>>;
   all(): Promise<Result<Stock[], Error>>;
+  allAvailableStocks(): Promise<Result<Stock[], Error>>;
 }

@@ -1,5 +1,5 @@
 import { asyncHandler } from "../../middlewares/errorMiddleware";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { getContainer } from "../../../../infrastructure/bootstrap/instance";
 import { Company } from "../../../../domain/entities/Company";
 import { Stock } from "../../../../domain/entities/Stock";
@@ -7,12 +7,14 @@ import { toStockDTO } from "../../mappers/dtoMappers";
 import { StockDTO } from "../../../../application/dtos/StockDTO";
 
 export const ListStocksController = asyncHandler(
-  async(_, res: Response) => {
+  async(req: Request, res: Response) => {
+    const user = req.user;
     const container = getContainer();
 
     const listStocksUseCase = container.useCases.investment.listStocks;
     
-    const result = await listStocksUseCase.execute();
+    const stockType = user?.role === "DIRECTOR" ? "ALL" : "AVAILABLE_ONLY"
+    const result = await listStocksUseCase.execute({stockType});
     if(!result.ok){
       return res.status(500).json({
         error: "INTERNAL_ERROR",
