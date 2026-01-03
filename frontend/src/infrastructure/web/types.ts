@@ -46,10 +46,33 @@ export interface OperationDTO {
   id: string;
   AccountId: string;
   kind: OperationKind;
+  type: "TRANSFER" | "LOAN_PAYMENT" | "STOCK_PURCHASE" | "STOCK_SALE" | "SAVINGS_INTEREST" | "INITIAL_DEPOSIT";
   amount: number;
   currency: string;
   label: string;
   createdAt: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+}
+
+export interface BeneficiaryDTO {
+  id: string;
+  beneficiaryIdentifier: string;
+  clientIdentifier: string;
+  iban: string;
+  label: string;
+  accountName?: string;
+  createdAt: string;
+}
+
+export interface CreateBeneficiaryDTO {
+  iban: string;
+  label: string;
+  accountName?: string;
+}
+
+export interface UpdateBeneficiaryLabelDTO {
+  label: string;
 }
 
 export interface SavingAccountDTO {

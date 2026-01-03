@@ -92,7 +92,7 @@ export class TransactionRepositoryDrizzle implements TransactionRepository {
       const rows = await this.db
         .select()
         .from(transactions)
-        .where(or(eq(transactions.fromAccountId, accountId), eq(transactions.toAccountId, accountId)))
+        .where(eq(transactions.accountId, accountId))
         .orderBy(desc(transactions.createdAt));
 
       const transactionsToDomain = rows.map((row) => {
@@ -109,12 +109,7 @@ export class TransactionRepositoryDrizzle implements TransactionRepository {
       const rows = await this.db
         .select()
         .from(transactions)
-        .where(
-          or(
-            inArray(transactions.fromAccountId, accountIds),
-            inArray(transactions.toAccountId, accountIds)
-          )
-        )
+        .where(inArray(transactions.accountId, accountIds))
         .orderBy(desc(transactions.createdAt))
         .limit(limit);
       const transactionsToDomain = rows.map((row) => {
@@ -139,10 +134,7 @@ export class TransactionRepositoryDrizzle implements TransactionRepository {
   ): Promise<Result<Transaction[], Error>> {
     try {
       const conditions: any[] = [
-        or(
-          inArray(transactions.fromAccountId, accountIds),
-          inArray(transactions.toAccountId, accountIds)
-        )
+        inArray(transactions.accountId, accountIds)
       ];
 
       if (filters.type && filters.type.length > 0) {
@@ -174,12 +166,7 @@ export class TransactionRepositoryDrizzle implements TransactionRepository {
       }
 
       if (filters.accountId) {
-        conditions.push(
-          or(
-            eq(transactions.fromAccountId, filters.accountId),
-            eq(transactions.toAccountId, filters.accountId)
-          )
-        );
+        conditions.push(eq(transactions.accountId, filters.accountId));
       }
 
       const rows = await this.db

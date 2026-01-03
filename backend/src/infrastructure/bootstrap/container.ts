@@ -18,6 +18,7 @@ import { HoldingRepositoryDrizzle } from '../repositories/drizzle/HoldingReposit
 import { TradeRepositoryDrizzle } from '../repositories/drizzle/TradeRepositoryDrizzle';
 import { DiscussionRepositoryDrizzle } from '../repositories/drizzle/DiscussionRepositoryDrizzle';
 import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/StockPriceHistoryRepositoryDrizzle';
+import { BeneficiaryRepositoryDrizzle } from '../repositories/drizzle/BeneficiaryRepositoryDrizzle';
 
 
 // Mappers Drizzle
@@ -39,6 +40,7 @@ import { DrizzleHoldingMapper } from '../repositories/mappers/DrizzleMappers/Dri
 import { DrizzleTradeMapper } from '../repositories/mappers/DrizzleMappers/DrizzleTradeMapper';
 import { DrizzleDiscussionMapper } from '../repositories/mappers/DrizzleMappers/DrizzleDiscussionMapper';
 import { DrizzleStockPriceHistoryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleStockPriceHistoryMapper';
+import { DrizzleBeneficiaryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleBeneficiaryMapper';
 
 
 // Services/Adapters
@@ -98,6 +100,12 @@ import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/
 import { EditStockUseCase } from '../../application/use-cases/director/stock/EditStockUseCase';
 import { GetStockUseCase } from '../../application/use-cases/client/investment/stock/GetStockUseCase';
 
+// Use Cases - Beneficiary
+import { AddBeneficiaryUseCase } from '../../application/use-cases/client/beneficiary/AddBeneficiaryUseCase';
+import { ListUserBeneficiariesUseCase } from '../../application/use-cases/client/beneficiary/ListUserBeneficiariesUseCase';
+import { DeleteBeneficiaryUseCase } from '../../application/use-cases/client/beneficiary/DeleteBeneficiaryUseCase';
+import { UpdateBeneficiaryLabelUseCase } from '../../application/use-cases/client/beneficiary/UpdateBeneficiaryLabelUseCase';
+
 
 export function createContainer() {
 
@@ -118,6 +126,7 @@ export function createContainer() {
   const drizzleTradeMapper = new DrizzleTradeMapper();
   const drizzleDiscussionMapper = new DrizzleDiscussionMapper();
   const drizzleStockPriceHistoryMapper = new DrizzleStockPriceHistoryMapper();
+  const drizzleBeneficiaryMapper = new DrizzleBeneficiaryMapper();
   
 
   const userRepository = new UserRepositoryDrizzle(db, drizzleUserMapper);
@@ -137,6 +146,7 @@ export function createContainer() {
   const tradeRepository = new TradeRepositoryDrizzle(db, drizzleTradeMapper);
   const discussionRepository = new DiscussionRepositoryDrizzle(db, drizzleDiscussionMapper);
   const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
+  const beneficiaryRepository = new BeneficiaryRepositoryDrizzle(db, drizzleBeneficiaryMapper);
   
   const passwordHasher = new SimplePasswordHasher();
 
@@ -240,6 +250,12 @@ export function createContainer() {
   const editStockUseCase = new EditStockUseCase(stockRepository);
   const getStockUseCase = new GetStockUseCase(stockRepository, companyRepository);
 
+  // Beneficiary Use Cases
+  const addBeneficiaryUseCase = new AddBeneficiaryUseCase(beneficiaryRepository, clientRepository, bankAccountRepository);
+  const listUserBeneficiariesUseCase = new ListUserBeneficiariesUseCase(beneficiaryRepository, clientRepository);
+  const deleteBeneficiaryUseCase = new DeleteBeneficiaryUseCase(beneficiaryRepository, clientRepository);
+  const updateBeneficiaryLabelUseCase = new UpdateBeneficiaryLabelUseCase(beneficiaryRepository, clientRepository);
+
   
   return {
     repositories: {
@@ -260,6 +276,7 @@ export function createContainer() {
       discussion: discussionRepository,
       company: companyRepository,
       stockPriceHistory: stockPriceHistoryRepository,
+      beneficiary: beneficiaryRepository,
     },
 
     services: {
@@ -318,6 +335,13 @@ export function createContainer() {
         getStockPriceHistory: getStockPriceHistoryUseCase,
         editStock: editStockUseCase,
         getStock: getStockUseCase
+        getStockPriceHistory: getStockPriceHistoryUseCase
+      },
+      beneficiary: {
+        add: addBeneficiaryUseCase,
+        list: listUserBeneficiariesUseCase,
+        delete: deleteBeneficiaryUseCase,
+        update: updateBeneficiaryLabelUseCase,
       }
     },
   };

@@ -7,7 +7,8 @@ import { ClientRepository } from '../../../ports/repositories/ClientRepository';
 
 export interface TransferInput {
   fromAccountId: string;
-  toAccountId: string;
+  toAccountId?: string;
+  toIban?: string;
   amount: number;
   description?: string;
   userId: string;
@@ -26,7 +27,25 @@ export class TransferUseCase {
       return err(new Error('Le montant doit être positif'));
     }
 
-    if (input.fromAccountId === input.toAccountId) {
+    if (!input.toAccountId && !input.toIban) {
+      return err(new Error('Compte ou IBAN de destination requis'));
+    }
+
+    let toAccountId = input.toAccountId;
+
+    if (input.toIban && !toAccountId) {
+      const destByIbanResult = await this.accountRepository.findByIban(input.toIban);
+      if (!destByIbanResult.ok) {
+        return err(new Error('Compte destination introuvable dans notre banque'));
+      }
+      toAccountId = destByIbanResult.value.accountIdentifier;
+    }
+
+    if (!toAccountId) {
+      return err(new Error('Compte destination invalide'));
+    }
+
+    if (input.fromAccountId === toAccountId) {
       return err(new Error('Les comptes source et destination doivent être différents'));
     }
 
@@ -47,7 +66,7 @@ export class TransferUseCase {
       return err(new Error("Vous n'êtes pas autorisé à effectuer cette opération"));
     }
 
-    const destResult = await this.accountRepository.findById(input.toAccountId);
+    const destResult = await this.accountRepository.findById(toAccountId);
     if (!destResult.ok) {
       return err(new Error('Compte destination introuvable'));
     }
@@ -74,7 +93,6 @@ export class TransferUseCase {
 
     const debitResult = await this.transactionRepository.save(debitTransaction);
     if (!debitResult.ok) {
-      // return err(new Error('Erreur lors de la création de l\'opération de débit'));
       return err(debitResult.error);
     }
 
@@ -108,7 +126,7 @@ export class TransferUseCase {
     const destAccount = destResult.value;
     const newDestBalance = destAccount.balance + input.amount;
     const updateDestResult = await this.accountRepository.updateBalance(
-      input.toAccountId,
+      toAccountId,
       newDestBalance
     );
 

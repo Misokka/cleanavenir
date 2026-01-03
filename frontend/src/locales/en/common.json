@@ -428,5 +428,94 @@
         "toggleError": "Error updating availability"
       }
     }
+  },
+  "Beneficiaries": {
+    "title": "My beneficiaries",
+    "subtitle": "Manage your beneficiaries for quick transfers",
+    "add": "Add a beneficiary",
+    "empty": "No beneficiaries registered",
+    "emptyDescription": "Add beneficiaries to make transfers faster",
+    "fields": {
+      "label": "Label",
+      "iban": "IBAN",
+      "accountName": "Account name (optional)"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "transfer": "Make a transfer"
+    },
+    "modals": {
+      "addTitle": "Add a beneficiary",
+      "editTitle": "Edit beneficiary",
+      "deleteTitle": "Delete beneficiary",
+      "deleteMessage": "Are you sure you want to delete this beneficiary?",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "submit": "Save"
+    },
+    "messages": {
+      "addSuccess": "Beneficiary added successfully",
+      "updateSuccess": "Beneficiary updated successfully",
+      "deleteSuccess": "Beneficiary deleted successfully",
+      "addError": "Error adding beneficiary",
+      "updateError": "Error updating beneficiary",
+      "deleteError": "Error deleting beneficiary"
+    },
+    "errors": {
+      "invalidIban": "Invalid IBAN",
+      "labelRequired": "Label is required",
+      "ibanRequired": "IBAN is required",
+      "alreadyExists": "This beneficiary already exists",
+      "notFound": "Beneficiary not found",
+      "cannotAddSelf": "You cannot add your own account"
+    }
+  },
+  "Transfer": {
+    "title": "Make a transfer",
+    "subtitle": "Transfer funds to another account",
+    "destinationType": {
+      "label": "Recipient type",
+      "myAccount": "To my account",
+      "beneficiary": "To a beneficiary",
+      "newIban": "To a new IBAN"
+    },
+    "fields": {
+      "fromAccount": "Source account",
+      "toAccount": "Destination account",
+      "beneficiary": "Beneficiary",
+      "iban": "IBAN",
+      "amount": "Amount",
+      "description": "Description (optional)",
+      "selectAccount": "Select an account",
+      "selectBeneficiary": "Select a beneficiary"
+    },
+    "errors": {
+      "fromAccountRequired": "Source account required",
+      "destinationRequired": "Recipient required",
+      "amountRequired": "Amount required",
+      "amountPositive": "Amount must be positive",
+      "sameAccount": "Source and destination accounts must be different",
+      "invalidIban": "Invalid IBAN",
+      "insufficientBalance": "Insufficient balance"
+    },
+    "summary": {
+      "title": "Transfer summary",
+      "from": "From",
+      "to": "To",
+      "amount": "Amount",
+      "description": "Description",
+      "confirm": "Confirm transfer",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "success": "Transfer completed successfully",
+      "error": "Error processing transfer"
+    },
+    "actions": {
+      "submit": "Make transfer",
+      "cancel": "Cancel",
+      "back": "Back"
+    }
   }
 }

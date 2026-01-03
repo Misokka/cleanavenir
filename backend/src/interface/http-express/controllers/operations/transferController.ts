@@ -4,7 +4,8 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
 interface TransferRequestBody {
   fromAccountId: string;
-  toAccountId: string;
+  toAccountId?: string;
+  toIban?: string;
   amount: number;
   description?: string;
 }
@@ -21,12 +22,20 @@ export const transferController = asyncHandler(
       return;
     }
 
-    const { fromAccountId, toAccountId, amount, description } = req.body as TransferRequestBody;
+    const { fromAccountId, toAccountId, toIban, amount, description } = req.body as TransferRequestBody;
 
-    if (!fromAccountId || !toAccountId) {
+    if (!fromAccountId) {
       res.status(400).json({
         error: 'VALIDATION_ERROR',
-        message: 'Les comptes source et destination sont requis',
+        message: 'Le compte source est requis',
+      });
+      return;
+    }
+
+    if (!toAccountId && !toIban) {
+      res.status(400).json({
+        error: 'VALIDATION_ERROR',
+        message: 'Le compte destination (accountId ou IBAN) est requis',
       });
       return;
     }
@@ -45,6 +54,7 @@ export const transferController = asyncHandler(
     const result = await container.useCases.transaction.transfer.execute({
       fromAccountId,
       toAccountId,
+      toIban,
       amount: amountInCents,
       description,
       userId,

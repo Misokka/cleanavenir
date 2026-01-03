@@ -246,19 +246,28 @@ export class OperationService {
 
   async transfer(payload: {
     fromAccountId: string;
-    toAccountId: string;
+    toAccountId?: string;
+    toIban?: string;
     amount: number;
     description?: string;
   }): Promise<{ success: boolean; message?: string }> {
-    if (!payload.fromAccountId || !payload.toAccountId) {
-      throw new Error('Les comptes source et destination sont requis');
+    if (!payload.fromAccountId) {
+      throw new Error('Le compte source est requis');
+    }
+
+    if (!payload.toAccountId && !payload.toIban) {
+      throw new Error('Le compte destinataire ou l\'IBAN est requis');
+    }
+
+    if (payload.toAccountId && payload.toIban) {
+      throw new Error('Fournir soit un compte destinataire, soit un IBAN, pas les deux');
     }
 
     if (payload.amount <= 0) {
       throw new Error('Le montant doit être supérieur à 0');
     }
 
-    if (payload.fromAccountId === payload.toAccountId) {
+    if (payload.toAccountId && payload.fromAccountId === payload.toAccountId) {
       throw new Error('Les comptes source et destination doivent être différents');
     }
 

@@ -428,5 +428,94 @@
         "toggleError": "Erreur lors du changement"
       }
     }
+  },
+  "Beneficiaries": {
+    "title": "Mes bénéficiaires",
+    "subtitle": "Gérez vos bénéficiaires pour des virements rapides",
+    "add": "Ajouter un bénéficiaire",
+    "empty": "Aucun bénéficiaire enregistré",
+    "emptyDescription": "Ajoutez des bénéficiaires pour effectuer des virements plus rapidement",
+    "fields": {
+      "label": "Libellé",
+      "iban": "IBAN",
+      "accountName": "Nom du compte (optionnel)"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "transfer": "Faire un virement"
+    },
+    "modals": {
+      "addTitle": "Ajouter un bénéficiaire",
+      "editTitle": "Modifier le bénéficiaire",
+      "deleteTitle": "Supprimer le bénéficiaire",
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce bénéficiaire ?",
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "submit": "Enregistrer"
+    },
+    "messages": {
+      "addSuccess": "Bénéficiaire ajouté avec succès",
+      "updateSuccess": "Bénéficiaire modifié avec succès",
+      "deleteSuccess": "Bénéficiaire supprimé avec succès",
+      "addError": "Erreur lors de l'ajout du bénéficiaire",
+      "updateError": "Erreur lors de la modification",
+      "deleteError": "Erreur lors de la suppression"
+    },
+    "errors": {
+      "invalidIban": "IBAN invalide",
+      "labelRequired": "Le libellé est requis",
+      "ibanRequired": "L'IBAN est requis",
+      "alreadyExists": "Ce bénéficiaire existe déjà",
+      "notFound": "Bénéficiaire introuvable",
+      "cannotAddSelf": "Vous ne pouvez pas ajouter votre propre compte"
+    }
+  },
+  "Transfer": {
+    "title": "Effectuer un virement",
+    "subtitle": "Transférer des fonds vers un autre compte",
+    "destinationType": {
+      "label": "Type de destinataire",
+      "myAccount": "Vers mon compte",
+      "beneficiary": "Vers un bénéficiaire",
+      "newIban": "Vers un nouvel IBAN"
+    },
+    "fields": {
+      "fromAccount": "Compte source",
+      "toAccount": "Compte destinataire",
+      "beneficiary": "Bénéficiaire",
+      "iban": "IBAN",
+      "amount": "Montant",
+      "description": "Description (optionnel)",
+      "selectAccount": "Sélectionner un compte",
+      "selectBeneficiary": "Sélectionner un bénéficiaire"
+    },
+    "errors": {
+      "fromAccountRequired": "Compte source requis",
+      "destinationRequired": "Destinataire requis",
+      "amountRequired": "Montant requis",
+      "amountPositive": "Le montant doit être positif",
+      "sameAccount": "Les comptes source et destination doivent être différents",
+      "invalidIban": "IBAN invalide",
+      "insufficientBalance": "Solde insuffisant"
+    },
+    "summary": {
+      "title": "Récapitulatif du virement",
+      "from": "De",
+      "to": "Vers",
+      "amount": "Montant",
+      "description": "Description",
+      "confirm": "Confirmer le virement",
+      "cancel": "Annuler"
+    },
+    "messages": {
+      "success": "Virement effectué avec succès",
+      "error": "Erreur lors du virement"
+    },
+    "actions": {
+      "submit": "Effectuer le virement",
+      "cancel": "Annuler",
+      "back": "Retour"
+    }
   }
 }

@@ -13,6 +13,7 @@ import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useAccountWithOperations } from '../../../../../features/account/useAccountWithOperations';
 import { formatCurrency, formatDate, maskIBAN } from '../../../../../lib/formatters';
 import { formatIban } from '../../../../../utils/formatIban';
+import { getOperationTypeLabel, getPaymentMethod, getOperationDescription } from '../../../../../lib/operationHelpers';
 import { accountService } from '@/infrastructure/web';
 
 export default function AccountDetailPage() {
@@ -22,9 +23,30 @@ export default function AccountDetailPage() {
   const accountId = params.id as string;
   
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { account, operations, loading, error, refetch } = useAccountWithOperations(accountId, 10);
+  const [displayLimit, setDisplayLimit] = useState(10);
+  const { account, operations, loading, error, refetch } = useAccountWithOperations(accountId, displayLimit);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [accountsMap, setAccountsMap] = useState<Record<string, { label: string; iban: string }>>({});
+
+  // Fetch all accounts to map IDs to labels and IBANs
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const allAccounts = await accountService.getAccounts();
+        const map: Record<string, { label: string; iban: string }> = {};
+        allAccounts.forEach(acc => {
+          map[acc.id] = { label: acc.label, iban: acc.iban };
+        });
+        setAccountsMap(map);
+      } catch (err) {
+        console.error('Failed to fetch accounts:', err);
+      }
+    };
+    if (isAuthenticated) {
+      fetchAccounts();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -175,9 +197,6 @@ export default function AccountDetailPage() {
           >
             Télécharger le RIB
           </Button>
-          <Button variant="outline">
-            Historique complet
-          </Button>
         </div>
 
         {account && (
@@ -206,30 +225,72 @@ export default function AccountDetailPage() {
               <div className="divide-y divide-gray-200">
                 {operations.map((operation) => {
                   const isCredit = operation.kind === 'CREDIT';
+                  const otherAccountId = isCredit ? operation.fromAccountId : operation.toAccountId;
+                  const otherAccount = otherAccountId ? accountsMap[otherAccountId] : null;
+                  const operationType = getOperationTypeLabel(operation.type);
+                  const paymentMethod = getPaymentMethod(operation.type, isCredit);
+                  const description = getOperationDescription({
+                    label: operation.label,
+                    type: operation.type,
+                    fromAccountLabel: isCredit && otherAccount ? otherAccount.label : undefined,
+                    toAccountLabel: !isCredit && otherAccount ? otherAccount.label : undefined,
+                    isCredit,
+                  });
+                  
                   return (
                     <div key={operation.id} className="py-4 first:pt-0 last:pb-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="flex-shrink-0">
-                            <span className="text-2xl">{isCredit ? '' : ''}</span>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start space-x-4 flex-1 min-w-0">
+                          <div className="flex-shrink-0 mt-1">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                              isCredit ? 'bg-green-100' : 'bg-red-100'
+                            }`}>
+                              <span className="text-xl">{isCredit ? '↓' : '↑'}</span>
+                            </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <Typography variant="body" className="font-medium text-gray-900 mb-1">
-                              {operation.label}
-                            </Typography>
-                            <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <span>{formatDate(operation.createdAt, locale === 'fr' ? 'fr-FR' : 'en-US')}</span>
-                              <span>•</span>
-                              <span className={`capitalize ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Typography variant="body" className="font-semibold text-gray-900">
+                                {description}
+                              </Typography>
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                                isCredit ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              }`}>
                                 {isCredit ? 'Crédit' : 'Débit'}
                               </span>
                             </div>
+                            
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <span className="font-medium">Type:</span>
+                                <span>{operationType}</span>
+                                <span>•</span>
+                                <span className="text-gray-500">{paymentMethod}</span>
+                              </div>
+                              
+                              {otherAccount && (
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="font-medium text-gray-600">
+                                    {isCredit ? 'De:' : 'Vers:'}
+                                  </span>
+                                  <span className="text-gray-900">{otherAccount.label}</span>
+                                  <span className="text-xs font-mono text-gray-500">
+                                    ({maskIBAN(otherAccount.iban)})
+                                  </span>
+                                </div>
+                              )}
+                              
+                              <div className="text-xs text-gray-500">
+                                {formatDate(operation.createdAt, locale === 'fr' ? 'fr-FR' : 'en-US')}
+                              </div>
+                            </div>
                           </div>
                         </div>
+                        
                         <div className="flex-shrink-0 text-right">
                           <Typography 
-                            variant="body" 
-                            className={`font-semibold ${isCredit ? 'text-green-600' : 'text-red-500'}`}
+                            variant="h4" 
+                            className={`font-bold ${isCredit ? 'text-green-600' : 'text-red-500'}`}
                           >
                             {isCredit ? '+' : '-'}{formatCurrency(operation.amount, locale === 'fr' ? 'fr-FR' : 'en-US', operation.currency)}
                           </Typography>
@@ -240,6 +301,28 @@ export default function AccountDetailPage() {
                 })}
               </div>
             </Card>
+            {displayLimit === 10 && operations.length >= 10 && (
+              <div className="mt-4 text-center">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDisplayLimit(50)}
+                  className="w-full md:w-auto"
+                >
+                  Voir toutes les opérations
+                </Button>
+              </div>
+            )}
+            {displayLimit > 10 && (
+              <div className="mt-4 text-center">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setDisplayLimit(10)}
+                  className="w-full md:w-auto"
+                >
+                  Voir moins
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <Card className="text-center py-12">
