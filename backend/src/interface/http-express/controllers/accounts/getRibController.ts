@@ -43,6 +43,7 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
   const bic = 'CLEANFRPPXXX';
   const bankName = 'Clean Avenir';
   const accountLabel = account.label;
+  const startY = 200;
 
   const doc = new PDFDocument({ margin: 50 });
 
@@ -68,17 +69,23 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
     .moveDown(1.5);
 
   // Infos banque et titulaire sur deux colonnes simples
-  const startY = doc.y;
-  doc
-    .fontSize(12)
-    .text('Établissement', 50, startY, { bold: true })
-    .moveDown(0.5);
-  doc.text(bankName);
-  doc.text('Banque en ligne');
+  const leftX = 50;
+  const rightX = 320;
+  let y = doc.y;
+
+  doc.fontSize(12).text('Établissement', leftX, y, { bold: true });
+  doc.fontSize(12).text('Titulaire du compte', rightX, y, { bold: true });
+
+  y += 18; // Décale vers le bas (ajuste selon la taille de police)
+
+  doc.fontSize(12).text(bankName, leftX, y);
+  doc.fontSize(12).text(holderName, rightX, y);
+
+  y += 14;
+  doc.fontSize(12).text('Banque en ligne', leftX, y);
   doc.moveDown(1);
 
-  doc.text('Titulaire du compte', 320, startY, { bold: true });
-  doc.moveDown(0.5);
+
   
   const ibanFormatted = iban.value.replace(/(.{4})/g, '$1 ').trim();
   
@@ -90,13 +97,7 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
   doc.fontSize(14).font('Helvetica').fillColor('#1f2937').text(bic, 70);
   doc.moveDown(2);
 
-  // Bloc RIB
-  doc.fontSize(14).text('Coordonnées bancaires', { underline: true });
-  doc.moveDown(1);
 
-  doc.fontSize(12).text(`IBAN : ${iban}`);
-  doc.text(`BIC : ${bic}`);
-  doc.moveDown(1.5);
 
   // Date et mention
   doc.text(`Document généré le : ${today}`);
