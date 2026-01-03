@@ -47,8 +47,8 @@ export function toAccountDTO(account: BankAccount): AccountDTO {
 }
 
 export function toOperationDTO(transaction: Transaction): TransactionDTO {
-  const kind: 'CREDIT' | 'DEBIT' = 
-    transaction.direction === 'CREDIT' || !transaction.fromAccountIdentifier ? 'CREDIT' : 'DEBIT';
+  // Use transaction direction directly (DEBIT = money out, CREDIT = money in)
+  const kind: 'CREDIT' | 'DEBIT' = transaction.direction;
 
   const accountId = kind === 'CREDIT' 
     ? (transaction.toAccountIdentifier || '') 
@@ -58,10 +58,13 @@ export function toOperationDTO(transaction: Transaction): TransactionDTO {
     id: transaction.transactionIdentifier,
     accountId: accountId,
     kind,
+    type: transaction.type,
     amount: Math.abs(transaction.amount) / 100, 
     currency: 'EUR',
     label: transaction.description || 'Opération',
     createdAt: transaction.createdAt.toISOString(),
+    fromAccountId: transaction.fromAccountIdentifier,
+    toAccountId: transaction.toAccountIdentifier,
   };
 }
 

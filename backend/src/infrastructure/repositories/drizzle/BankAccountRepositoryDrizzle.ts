@@ -70,9 +70,15 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
 
   async findByIban(iban: string): Promise<Result<BankAccount, Error>> {
     try {
-      const rows = await this.db.select().from(bankAccounts).where(eq(bankAccounts.iban, iban)).limit(1);
-      if (!rows.length) return err(new Error('BankAccount not found'));
-      const bankAccountToDomain = this.bankAccountMapper.toDomain(rows[0]);
+      // Normalize IBAN by removing spaces for comparison
+      const normalizedSearchIban = iban.replace(/\s/g, '');
+      
+      // Get all accounts and filter by normalized IBAN
+      const allRows = await this.db.select().from(bankAccounts);
+      const matchingRow = allRows.find(row => row.iban.replace(/\s/g, '') === normalizedSearchIban);
+      
+      if (!matchingRow) return err(new Error('BankAccount not found'));
+      const bankAccountToDomain = this.bankAccountMapper.toDomain(matchingRow);
       return ok(bankAccountToDomain);
     } catch (e: any) {
       return err(e);

@@ -56,6 +56,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         isActive: pathname.startsWith(`/${locale}/dashboard/accounts`),
       },
       {
+        href: `/${locale}/dashboard/operations/transfer`,
+        label: 'Transferts',
+        iconClass: 'fi fi-br-paper-plane',
+        isActive: pathname === `/${locale}/dashboard/operations/transfer`,
+      },
+      {
+        href: `/${locale}/dashboard/beneficiaries`,
+        label: 'Bénéficiaires',
+        iconClass: 'fi fi-br-users-alt',
+        isActive: pathname.startsWith(`/${locale}/dashboard/beneficiaries`),
+      },
+      {
         href: `/${locale}/dashboard/savings`,
         label: t('navigation.savings'),
         iconClass: 'fi fi-br-piggy-bank',
@@ -70,13 +82,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       {
         href: `/${locale}/dashboard/operations/history`,
         label: 'Opérations',
-        iconClass: 'fi fi-br-list-check',
-        isActive: pathname.startsWith(`/${locale}/dashboard/operations`),
+        iconClass: 'fi fi-br-exchange-alt',
+        isActive: pathname === `/${locale}/dashboard/operations/history`,
       },
       {
         href: `/${locale}/client/investment`,
         label: 'Investissements',
-        iconClass: 'fi fi-br-list-check',
+        iconClass: 'fi fi-br-chart-line-up',
         isActive: pathname.startsWith(`/${locale}/client/investment`),
       },
     ];

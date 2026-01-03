@@ -10,6 +10,8 @@ import { OperationsHistorySkeleton } from '../../../../../components/molecules/O
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useOperationsHistory } from '../../../../../features/operations/useOperationsHistory';
 import { useGetAccounts } from '../../../../../features/account/useGetAccounts';
+import { getOperationTypeLabel, getPaymentMethod, getOperationDescription } from '../../../../../lib/operationHelpers';
+import { maskIBAN } from '../../../../../lib/formatters';
 import type { OperationFilters } from '../../../../../infrastructure/web/services/operationService';
 
 export default function OperationsHistoryPage() {
@@ -22,8 +24,19 @@ export default function OperationsHistoryPage() {
   
   const [filters, setFilters] = useState<OperationFilters>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [accountsMap, setAccountsMap] = useState<Record<string, { label: string; iban: string }>>({});
   
   const { operations, loading, error, statistics, refetch } = useOperationsHistory(filters);
+
+  useEffect(() => {
+    if (accounts && accounts.length > 0) {
+      const map: Record<string, { label: string; iban: string }> = {};
+      accounts.forEach(acc => {
+        map[acc.id] = { label: acc.label, iban: acc.iban };
+      });
+      setAccountsMap(map);
+    }
+  }, [accounts]);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -339,40 +352,80 @@ export default function OperationsHistoryPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4">Date</th>
-                    <th className="text-left p-4">Type</th>
-                    <th className="text-left p-4">Description</th>
-                    <th className="text-right p-4">Montant</th>
+                  <tr className="border-b border-gray-300 bg-gray-50">
+                    <th className="text-left p-4 font-semibold">Date</th>
+                    <th className="text-left p-4 font-semibold">Type</th>
+                    <th className="text-left p-4 font-semibold">Description</th>
+                    <th className="text-left p-4 font-semibold">Moyen de paiement</th>
+                    <th className="text-left p-4 font-semibold">Compte associé</th>
+                    <th className="text-right p-4 font-semibold">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
                   {operations.map((op) => {
                     const badge = getOperationBadge(op.direction, op.type);
                     const isPositive = op.direction === 'INCOMING';
+                    const otherAccountId = isPositive ? op.fromAccountId : op.toAccountId;
+                    const otherAccount = otherAccountId ? accountsMap[otherAccountId] : null;
+                    const operationType = getOperationTypeLabel(op.type);
+                    const paymentMethod = getPaymentMethod(op.type, isPositive);
+                    const description = getOperationDescription({
+                      label: op.description || 'Sans description',
+                      type: op.type,
+                      fromAccountLabel: isPositive && otherAccount ? otherAccount.label : undefined,
+                      toAccountLabel: !isPositive && otherAccount ? otherAccount.label : undefined,
+                      isCredit: isPositive,
+                    });
 
                     return (
                       <tr key={op.id} className="border-b hover:bg-gray-50 transition-colors">
                         <td className="p-4">
-                          <Typography variant="caption" color="muted">
+                          <Typography variant="caption" color="muted" className="whitespace-nowrap">
                             {formatDate(op.createdAt)}
                           </Typography>
                         </td>
                         <td className="p-4">
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${badge.color}`}>
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${badge.color}`}>
                             <span>{badge.icon}</span>
                             {badge.label}
                           </span>
                         </td>
                         <td className="p-4">
-                          <Typography variant="body">
-                            {op.description || 'Sans description'}
+                          <div className="space-y-1">
+                            <Typography variant="body" className="font-medium">
+                              {description}
+                            </Typography>
+                            <Typography variant="caption" color="muted" className="text-xs">
+                              {operationType}
+                            </Typography>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Typography variant="caption" className="text-sm">
+                            {paymentMethod}
                           </Typography>
+                        </td>
+                        <td className="p-4">
+                          {otherAccount ? (
+                            <div className="flex flex-col space-y-1">
+                              <Typography variant="caption" className="font-medium text-sm">
+                                {isPositive ? 'De: ' : 'Vers: '}
+                                {otherAccount.label}
+                              </Typography>
+                              <Typography variant="caption" color="muted" className="text-xs font-mono">
+                                {maskIBAN(otherAccount.iban)}
+                              </Typography>
+                            </div>
+                          ) : (
+                            <Typography variant="caption" color="muted">
+                              —
+                            </Typography>
+                          )}
                         </td>
                         <td className="p-4 text-right">
                           <Typography
                             variant="body"
-                            className={`font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}
+                            className={`font-bold text-lg ${isPositive ? 'text-green-600' : 'text-red-600'}`}
                           >
                             {isPositive ? '+' : '-'}{formatCurrency(op.amount)}
                           </Typography>

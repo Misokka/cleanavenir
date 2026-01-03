@@ -32,6 +32,14 @@ export const API_ENDPOINTS = {
     HISTORY: '/operations/history',
   },
 
+  BENEFICIARIES: {
+    LIST: '/beneficiaries',
+    DETAILS: (id: string) => `/beneficiaries/${id}`,
+    CREATE: '/beneficiaries',
+    UPDATE: (id: string) => `/beneficiaries/${id}`,
+    DELETE: (id: string) => `/beneficiaries/${id}`,
+  },
+
   SAVINGS: {
     LIST: '/savings',
     CREATE: '/savings',

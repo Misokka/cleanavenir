@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { InferSelectModel, InferInsertModel, relations, is } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
@@ -61,6 +61,22 @@ export const bankAccounts = sqliteTable('bank_accounts', {
 
 export type BankAccountDrizzle = InferSelectModel<typeof bankAccounts>;
 export type NewBankAccountDrizzle = InferInsertModel<typeof bankAccounts>;
+
+// Beneficiaries table
+export const beneficiaries = sqliteTable('beneficiaries', {
+  id: text('id').primaryKey(),
+  clientId: text('client_id').notNull().references(() => clients.id),
+  iban: text('iban').notNull(),
+  label: text('label').notNull(),
+  accountName: text('account_name'),
+  createdAt: text('created_at').notNull(),
+}, (table) => ({
+  clientIdIdx: index('idx_beneficiaries_client_id').on(table.clientId),
+  clientIbanUnique: index('idx_beneficiaries_client_iban').on(table.clientId, table.iban),
+}));
+
+export type BeneficiaryDrizzle = InferSelectModel<typeof beneficiaries>;
+export type NewBeneficiaryDrizzle = InferInsertModel<typeof beneficiaries>;
 
 export const savingProducts = sqliteTable('saving_products', {
   id: text('id').primaryKey(),
@@ -256,6 +272,7 @@ export const clientsRelations = relations(clients, ({ one, many }) => ({
   bankAccounts: many(bankAccounts),
   savingAccounts: many(savingAccounts),
   orders: many(orders),
+  beneficiaries: many(beneficiaries),
   portfolios: one(portfolios, {
     fields: [clients.id],
     references: [portfolios.ownerId]
@@ -437,6 +454,13 @@ export const discussionsRelations = relations(discussions, ({ one, many }) => ({
   advisor: one(advisors, {
     fields: [discussions.advisorId],
     references: [advisors.id]
+  })
+}));
+
+export const beneficiariesRelations = relations(beneficiaries, ({ one }) => ({
+  client: one(clients, {
+    fields: [beneficiaries.clientId],
+    references: [clients.id]
   })
 }));
 
