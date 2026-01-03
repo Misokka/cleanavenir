@@ -1,3 +1,5 @@
+# Ignorer le fichier de base de données SQLite
+dev.sqlite
 # Logs
 logs
 *.log
