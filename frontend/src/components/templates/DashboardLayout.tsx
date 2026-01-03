@@ -30,6 +30,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   const { user } = useAuth();
   const { logout, loading: logoutLoading } = useLogout();
 
+  const currentLocale = pathname.split('/')[1] || 'en';
+
+  const switchLocale = (newLocale: string) => {
+    const segments = pathname.split('/').filter(Boolean);
+    segments[0] = newLocale;
+    const newPath = '/' + segments.join('/');
+    if (globalThis.window !== undefined) {
+      globalThis.window.location.href = newPath;
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
   };
@@ -265,15 +276,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 {getCurrentPageTitle()}
               </Typography>
             </div>
-            <div className="text-right">
-              <Typography variant="caption" color="muted">
-                {new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </Typography>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <Typography variant="caption" color="muted">
+                  {new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </Typography>
+              </div>
+
+              <div className="hidden md:flex rounded-lg border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => switchLocale('fr')}
+                  className={`px-3 py-1 text-sm transition-colors ${
+                    currentLocale === 'fr'
+                      ? 'bg-clean-dark text-white'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  FR
+                </button>
+                <button
+                  onClick={() => switchLocale('en')}
+                  className={`px-3 py-1 text-sm transition-colors ${
+                    currentLocale === 'en'
+                      ? 'bg-clean-dark text-white'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
             </div>
           </div>
         </header>
