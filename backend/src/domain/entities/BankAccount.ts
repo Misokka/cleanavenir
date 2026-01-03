@@ -29,7 +29,7 @@ export class BankAccount{
 
   public withdraw(amount: number): void {
     if (this.balance < amount) {
-      throw new InsufficientFundsError(`${this.accountIdentifier} ${amount / 100}`);
+      throw new InsufficientFundsError(this.accountIdentifier);
     }
     this.balance -= amount;
   }

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { StockPriceHistoryRepository } from "../../../application/ports/repositories/StockPriceHistoryRepository";
 import { StockPriceHistory } from "../../../domain/entities/StockPriceHistory";
 import Result, { err, ok } from "../../../shared/Result";
@@ -37,7 +37,23 @@ export class StockPriceHistoryRepositoryDrizzle implements StockPriceHistoryRepo
 
   async getByStockId(stockId: string): Promise<Result<StockPriceHistory[], Error>> {
     try{
-      const stockPriceHistoryRows = await this.db.select().from(stockPricesHistory).where(eq(stockPricesHistory.stockId, stockId));
+      const thirtyDaysAgoDate = new Date();
+      thirtyDaysAgoDate.setDate(thirtyDaysAgoDate.getDate() - 30);
+
+      const dayGrouping = sql`strftime('%Y-%m-%d', ${stockPricesHistory.recordedAt})`;
+      const stockPriceHistoryRows = await this.db.select({
+        id: stockPricesHistory.id,
+        stockId: stockPricesHistory.stockId,
+        price: stockPricesHistory.price,
+        // On prend la date la plus récente du groupe (la clôture)
+        recordedAt: sql<string>`MAX(${stockPricesHistory.recordedAt})`,
+      })
+      .from(stockPricesHistory)
+      .where(and(
+        eq(stockPricesHistory.stockId, stockId),
+        gt(stockPricesHistory.recordedAt, thirtyDaysAgoDate.toISOString())
+      ))
+      .groupBy(dayGrouping);
       const stockPriceHistoriesToDomain = stockPriceHistoryRows.map((row) => {
         return this.stockPriceHistoryMapper.toDomain(row)
       });

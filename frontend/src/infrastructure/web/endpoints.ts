@@ -55,13 +55,13 @@ export const API_ENDPOINTS = {
       LIST: '/stocks',
       DETAILS: (id: string) => `/stocks/${id}`,
       UPDATE: (id: string) => `/stocks/${id}/update`,
+      GET_STOCK_PRICE_HISTORY: (stockId: string) => `/stocks/stock-price-history/${stockId}`,
     },
     ORDERS: {
       LIST_MY_ORDERS: '/orders/list-my-orders',
       CREATE: "/orders/create",
       SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`
     },
-    POSITIONS: '/investments/positions',
   },
 
   LOANS: {

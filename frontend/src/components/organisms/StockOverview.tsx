@@ -14,7 +14,8 @@ import {
   Area
 } from 'recharts';
 import CreateOrderForm from './CreateOrderForm';
-import { Stock } from '@/infrastructure/web/services/stocksService';
+import { Stock, StockWithPriceHistory } from '@/infrastructure/web/services/stocksService';
+import { useGetStockPriceHistory } from '@/features/stocks/useGetStockPriceHistory';
 
 // Type pour nos données simulées de graphique
 type ChartDataPoint = {
@@ -30,27 +31,21 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-// Fonction pour générer de la fausse donnée historique (en attendant ton backend)
-// Cela crée une courbe réaliste autour du prix actuel
-const generateMockHistory = (currentPrice: number): ChartDataPoint[] => {
-  const data: ChartDataPoint[] = [];
-  let price = currentPrice;
-  
-  for (let i = 30; i >= 0; i--) {
-    // Variation aléatoire entre -2% et +2%
-    const variation = price * (Math.random() * 0.04 - 0.02);
-    price = price - variation; 
-    
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    
-    data.push({
-      time: date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
-      value: Number(price.toFixed(2)),
-    });
-  }
-  return data;
-};
+
+function generateHistoryPoints(history: StockWithPriceHistory){
+  const historyPoints = history.stockPriceHistory.map((priceHistory) => {
+    const date = new Date(priceHistory.recordedAt);
+
+    const chartPoint: ChartDataPoint = {
+      time: date.toLocaleDateString('fr-FR', {day: '2-digit', month: "2-digit", timeZone: 'UTC'}),
+      value : priceHistory.price
+    }
+
+    return chartPoint
+  });
+
+  return historyPoints
+}
 
 interface StockOverviewProps{
   fetchOrders: () => void;
@@ -59,6 +54,7 @@ interface StockOverviewProps{
 
 function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
   const { stocks, fetchStocks, loading, error } = useGetStocks();
+  const {history, getStockPriceHistory, loading: priceHistoryLoading, error: priceHistoryError} = useGetStockPriceHistory()
   
   // État pour savoir quelle action est sélectionnée pour afficher le graphe
   const [selectedStockId, setSelectedStockId] = useState<string | null>(null);
@@ -81,14 +77,22 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
     }
   }, [stocks, error]);
 
+  useEffect(() => {
+    if(selectedStockId){
+      getStockPriceHistory(selectedStockId);
+    }
+  }, [selectedStockId])
+
   // Trouver l'action sélectionnée
   const selectedStock = stocks.find(s => s.id === selectedStockId);
 
   // Générer les données du graphique seulement quand la sélection change
   const chartData = useMemo(() => {
     if (!selectedStock) return [];
-    return generateMockHistory(selectedStock.price);
-  }, [selectedStock]);
+    if (!history) return []; 
+    
+    return generateHistoryPoints(history)
+  }, [selectedStock, history])
 
   if (loading) {
     return (
@@ -117,6 +121,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
         onOrderCreated={() => {
           fetchOrders();
           fetchPortfolio();
+          fetchStocks();
         }}
       />
 
@@ -187,8 +192,19 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
           </div>
 
           <div className="h-[300px] w-full">
+            {priceHistoryLoading ? (
+               <div className="flex h-full w-full items-center justify-center">
+                 {/* Petit spinner spécifique pour le graphique */}
+                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+               </div>
+            ) : !chartData || chartData.length === 0 ? (
+               <div className="flex h-full w-full items-center justify-center text-gray-400">
+                 Pas de données disponibles pour cette période.
+               </div>
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
+                {/* ... tout le reste de ta configuration Recharts inchangé ... */}
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.3}/>
@@ -208,12 +224,12 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                   axisLine={false}
                   tickLine={false}
                   tick={{fontSize: 12, fill: '#6B7280'}}
-                  tickFormatter={(value: string) => `${value}€`}
-                  domain={['auto', 'auto']} // Zoom automatique sur la variation
+                  tickFormatter={(value: number) => `${value}€`} // Correction type string -> number si besoin
+                  domain={['auto', 'auto']} 
                 />
                 <Tooltip 
                   contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                  formatter={(value: number) => [`${value} €`, 'Prix']}
+                  formatter={(value: number) => [formatPrice(value), 'Prix']} // Utilise ton formateur ici
                 />
                 <Area 
                   type="monotone" 
@@ -225,6 +241,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </div>
       )}

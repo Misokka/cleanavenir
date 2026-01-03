@@ -89,11 +89,12 @@ import { CreatePortfolioUseCase } from '../../application/use-cases/client/inves
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
 import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
-import { ListStocksUseCase } from '../../application/use-cases/client/investment/ListStocksUseCase';
+import { ListStocksUseCase } from '../../application/use-cases/client/investment/stock/ListStocksUseCase';
 import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
 import { GetMyPortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
 import { cli } from 'winston/lib/winston/config';
 import { ShowBestBuyAndSellOrderForStockUseCase } from '../../application/use-cases/client/investment/Order/ShowBestBuyAndSellOrderForStock';
+import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/investment/stock/GetStockPriceHistoryUseCase';
 
 
 export function createContainer() {
@@ -233,6 +234,7 @@ export function createContainer() {
   const listStockUseCase = new ListStocksUseCase(stockRepository);
   const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
   const showBestBuyAndSellOrderUseCase = new ShowBestBuyAndSellOrderForStockUseCase(orderRepository, stockRepository);
+  const getStockPriceHistoryUseCase = new GetStockPriceHistoryUseCase(stockRepository, stockPriceHistoryRepository);
 
   
   return {
@@ -308,7 +310,8 @@ export function createContainer() {
         listCompanies: listCompaniesUseCase,
         listStocks: listStockUseCase,
         listMyOrders: listMyOrdersUseCase,
-        showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase
+        showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase,
+        getStockPriceHistory: getStockPriceHistoryUseCase
       }
     },
   };

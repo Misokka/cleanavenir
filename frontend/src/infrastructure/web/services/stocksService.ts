@@ -13,6 +13,17 @@ export type Stock = {
   company: Company;
 }
 
+export type StockWithPriceHistory = {
+  stock: Stock
+  stockPriceHistory: StockPriceHistory[]
+}
+
+export type StockPriceHistory = {
+  id: string,
+  price: number,
+  recordedAt: string
+}
+
 class StockService {
   async listStocks(){
     try{
@@ -23,6 +34,18 @@ class StockService {
       return response.data.stocks;
     } catch (error){
       console.log("An error occured when listing stocks", error);
+      throw error;
+    }
+  }
+
+  async getStockPriceHistory(stockId: string){
+    try{
+      const response = await httpClient.get<{stockPriceHistory: StockWithPriceHistory}>(
+        API_ENDPOINTS.INVESTMENTS.STOCKS.GET_STOCK_PRICE_HISTORY(stockId)
+      );
+      return response.data.stockPriceHistory
+    } catch (error) {
+      console.log("An error occured when listing stock price history", error);
       throw error;
     }
   }

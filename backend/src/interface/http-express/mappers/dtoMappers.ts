@@ -19,6 +19,8 @@ import { Portfolio } from '../../../domain/entities/Portfolio';
 import { holdings } from '../../../infrastructure/drizzle/schema';
 import { Holding } from '../../../domain/entities/Holding';
 import { ChargedPortfolio, HoldingWithStock } from '../../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
+import { StockPriceHistory } from '../../../domain/entities/StockPriceHistory';
+import { toEuros } from '../../../shared/moneyUtilities';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -103,6 +105,17 @@ export function toStockDTO(stock: Stock, company: Company): StockDTO{
   }
 }
 
+export function toStockWithOutCompanyDTO(stock: Stock){
+    return{
+    id: stock.stockIdentifier,
+    ticker: stock.ticker.value,
+    price: stock.price / 100, // conversion en euros
+    isAvailable: stock.isAvailable,
+    createdAt: stock.createdAt.toISOString(),
+    updatedAt: stock.updatedAt?.toISOString() as string,
+  }
+}
+
 export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
   return {
     id: order.orderIdentifier,
@@ -158,5 +171,18 @@ export function toHoldingWithStockDTO(holding: HoldingWithStock){
     averagePrice: holding.averagePrice / 100,
     stock: toStockDTO(holding.stockWithCompany.stock, holding.stockWithCompany.company)
 
+  }
+}
+
+export function toStockHistoryDTO(stock: Stock, stockPriceHistory: StockPriceHistory[]){
+  return {
+    stockPriceHistory: stockPriceHistory.map((history) => {
+      return {
+        id: history.stockPriceIdentifier,
+        price: toEuros(history.price),
+        recordedAt: history.recordedAt
+      }
+    }),
+    stock: toStockWithOutCompanyDTO(stock),
   }
 }
