@@ -334,8 +334,7 @@ export function createContainer() {
         showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase,
         getStockPriceHistory: getStockPriceHistoryUseCase,
         editStock: editStockUseCase,
-        getStock: getStockUseCase
-        getStockPriceHistory: getStockPriceHistoryUseCase
+        getStock: getStockUseCase,
       },
       beneficiary: {
         add: addBeneficiaryUseCase,
