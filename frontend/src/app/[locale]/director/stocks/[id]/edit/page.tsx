@@ -11,6 +11,9 @@ import Input from '@/components/atoms/Input';
 import { getStockById, updateStock, Stock } from '@/lib/api/director/stocks';
 import { getAllCompanies, Company } from '@/lib/api/director/companies';
 import { useToast } from '@/contexts/ToastProvider';
+import { useGetStock } from '@/features/admin/useGetStock';
+import { EditStockRequest } from '@/infrastructure/web/services/adminService';
+import { useEditStock } from '@/features/admin/useEditStock';
 
 interface EditStockPageProps {
   readonly params: Promise<{ id: string }>;
@@ -22,58 +25,75 @@ export default function EditStockPage({ params }: EditStockPageProps) {
   const locale = useLocale();
   const router = useRouter();
   const { success, error: showError } = useToast();
-  const [stock, setStock] = useState<Stock | null>(null);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [companyId, setCompanyId] = useState('');
-  const [ticker, setTicker] = useState('');
-  const [isAvailable, setIsAvailable] = useState(true);
-  const [loading, setLoading] = useState(true);
+  // const [stock, setStock] = useState<Stock | null>(null);
+  // const [companies, setCompanies] = useState<Company[]>([]);
+  // const [companyId, setCompanyId] = useState('');
+  // const [ticker, setTicker] = useState('');
+  // const [isAvailable, setIsAvailable] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  const {getStock, stock, loading, error} = useGetStock();
+  const {editStock, success: editSuccess, error: editError, loading: editLoading} = useEditStock();
+
+  const [formData, setFormData] = useState<EditStockRequest>({
+    isAvailable: stock?.isAvailable ?? true,
+    ticker: stock?.ticker ?? ""
+  })
+
   useEffect(() => {
-    loadData();
+    // loadData();
+    getStock(id)
   }, [id]);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [stockData, companiesData] = await Promise.all([
-        getStockById(id),
-        getAllCompanies(),
-      ]);
-      
-      if (stockData) {
-        setStock(stockData);
-        setCompanyId(stockData.companyId);
-        setTicker(stockData.ticker);
-        setIsAvailable(stockData.isAvailable);
-      }
-      setCompanies(companiesData);
-    } catch (err) {
-      console.error('Error loading data:', err);
-      showError(t('toasts.loadError'));
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if(stock){
+      setFormData((prev) => ({
+        ...prev,
+        isAvailable: stock.isAvailable,
+        ticker: stock.ticker
+      }))
     }
-  };
+  }, [stock])
+
+  // const loadData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const [stockData, companiesData] = await Promise.all([
+  //       getStockById(id),
+  //       getAllCompanies(),
+  //     ]);
+      
+  //     if (stockData) {
+  //       setStock(stockData);
+  //       setCompanyId(stockData.companyId);
+  //       setTicker(stockData.ticker);
+  //       setIsAvailable(stockData.isAvailable);
+  //     }
+  //     setCompanies(companiesData);
+  //   } catch (err) {
+  //     console.error('Error loading data:', err);
+  //     showError(t('toasts.loadError'));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!companyId || !ticker.trim()) {
+    if (!formData.ticker.trim()) {
       showError('Tous les champs requis doivent être remplis');
       return;
     }
 
     setSubmitting(true);
     try {
-      await updateStock(id, {
-        companyId,
-        ticker: ticker.trim().toUpperCase(),
-        isAvailable,
-      });
-      success(t('toasts.updateSuccess'));
-      router.push(`/${locale}/director/stocks`);
+      const response = await editStock(id, formData);
+      if(response && response.success){
+        success(t('toasts.updateSuccess'));
+        router.push(`/${locale}/director/stocks`);
+      }
     } catch (err) {
       console.error('Error updating stock:', err);
       showError(t('toasts.updateError'));
@@ -112,18 +132,18 @@ export default function EditStockPage({ params }: EditStockPageProps) {
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-6">
         <div>
-          <Typography variant="h2">{t('form.editTitle')}</Typography>
+          <Typography variant="h2">{t('form.editTitle')} {stock.ticker}</Typography>
         </div>
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block mb-2">
+              {/* <label className="block mb-2">
                 <Typography variant="caption" className="font-medium">
                   {t('form.company')} *
                 </Typography>
-              </label>
-              <select
+              </label> */}
+              {/* <select
                 value={companyId}
                 onChange={(e) => setCompanyId(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-clean-dark focus:ring-clean-dark"
@@ -135,7 +155,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
                     {company.name}
                   </option>
                 ))}
-              </select>
+              </select> */}
             </div>
 
             <div>
@@ -146,8 +166,11 @@ export default function EditStockPage({ params }: EditStockPageProps) {
               </label>
               <Input
                 type="text"
-                value={ticker}
-                onChange={(e) => setTicker(e.target.value.toUpperCase())}
+                value={formData.ticker}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  ticker: e.target.value.toUpperCase()
+                })}
                 fullWidth
                 placeholder="AAPL"
                 required
@@ -159,8 +182,11 @@ export default function EditStockPage({ params }: EditStockPageProps) {
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={isAvailable}
-                  onChange={(e) => setIsAvailable(e.target.checked)}
+                  checked={formData.isAvailable}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    isAvailable: e.target.checked
+                  })}
                   className="w-5 h-5 text-clean-dark border-gray-300 rounded focus:ring-clean-dark"
                 />
                 <Typography variant="caption" className="font-medium">
@@ -183,7 +209,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={submitting || !companyId || !ticker.trim()}
+                disabled={submitting || !formData.ticker.trim()}
                 className="flex-1"
               >
                 {t('form.submit')}

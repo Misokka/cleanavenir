@@ -2,6 +2,7 @@ import { httpClient } from '../httpClient';
 import { API_ENDPOINTS } from '../endpoints';
 import { UserDTO } from '../types';
 import { SavingProductDTO } from './savingService';
+import { Stock } from './stocksService';
 
 export interface ClientDTO {
   id: string;
@@ -26,6 +27,16 @@ export interface EditSavingProductRequest {
   id: string;
   label: string;
   rate: number;
+}
+
+export interface EditStockRequest {
+  isAvailable: boolean;
+  ticker: string;
+}
+
+export interface EditStockResponse {
+  success: boolean,
+  message: string
 }
 
 export class AdminService {
@@ -124,6 +135,28 @@ export class AdminService {
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la modification du produit d'épargne", error);
+      throw error
+    }
+  }
+
+  async getStock(stockId: string){
+    try{
+      const response = await httpClient.get<{stock: Stock}>(API_ENDPOINTS.INVESTMENTS.STOCKS.DETAILS(stockId));
+      return response.data.stock
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'action", error);
+      throw error
+    }
+  }
+
+  async editStock(stockId: string, data: EditStockRequest): Promise<EditStockResponse>{
+    try{
+      const response = await httpClient.put<EditStockResponse>(
+        API_ENDPOINTS.ADMIN.STOCKS.EDIT_STOCK(stockId), data
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la modifiction de l'action", error);
       throw error
     }
   }

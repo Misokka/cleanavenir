@@ -15,6 +15,7 @@ export class DrizzleStockMapper implements Mapper<StockDrizzle, Stock, NewStockD
       stockIdentifier: raw.id,
       companyIdentifier: raw.companyId,
       ticker: tickerResult.value,
+      isAvailable: raw.isAvailable === 1 ? true : false,
       createdAt: new Date(raw.createdAt)
     });
   }
@@ -28,6 +29,7 @@ export class DrizzleStockMapper implements Mapper<StockDrizzle, Stock, NewStockD
       ticker: entity.ticker.value,
       createdAt: entity.createdAt.toISOString(),
       updatedAt: entity.updatedAt?.toISOString() as string,
+      isAvailable: entity.isAvailable ? 1 : 0
     };
   }
 }
