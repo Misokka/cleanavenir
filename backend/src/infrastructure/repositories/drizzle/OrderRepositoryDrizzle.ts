@@ -1,4 +1,4 @@
-import { and, eq, or } from 'drizzle-orm';
+import { and, asc, desc, eq, or } from 'drizzle-orm';
 import { orders } from '../../drizzle/schema';
 import Result, { ok, err } from '../../../shared/Result';
 import { DrizzleClient } from '../../drizzle/client';
@@ -21,6 +21,17 @@ export class OrderRepositoryDrizzle implements OrderRepository{
       return ok(orderToDomain);
     } catch (e: any) {
       return err(new Error(`Could not insert order: ${e.message}`));
+    }
+  }
+
+  async update(order: Order): Promise<Result<Order, Error>> {
+    try{
+      const orderToPersist = this.orderMapper.toPersistence(order);
+      const updatedOrderRows = await this.db.update(orders).set(orderToPersist).where(eq(orders.id, order.orderIdentifier)).returning();
+      const toDomain = this.orderMapper.toDomain(updatedOrderRows[0]);
+      return ok(toDomain);
+    } catch (error: any) {
+      return err(new Error(`Couldn't update order ${order.orderIdentifier} message: ${error.message}`))
     }
   }
 
@@ -51,7 +62,16 @@ export class OrderRepositoryDrizzle implements OrderRepository{
 
   async listPendingBuysByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
-      const buyOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY")));
+      const buyOrderRows = await this.db.select().from(orders)
+      .where(
+        and(
+          eq(orders.stockId, stockIdentifier), eq(orders.type, "BUY"),
+          and(
+            or(eq(orders.status, "PENDING"), eq(orders.status, "PARTIALLY_FILLED"))
+          )
+        )
+      )
+      .orderBy(desc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = buyOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });
@@ -64,7 +84,16 @@ export class OrderRepositoryDrizzle implements OrderRepository{
 
   async listPendingSellsByStock(stockIdentifier: string): Promise<Result<Order[], Error>> {
     try{
-      const sellOrderRows = await this.db.select().from(orders).where(and(eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL")));
+      const sellOrderRows = await this.db.select().from(orders)
+      .where(
+        and(
+          eq(orders.stockId, stockIdentifier), eq(orders.type, "SELL"),
+          and(
+            or(eq(orders.status, "PENDING"), eq(orders.status, "PARTIALLY_FILLED"))
+          )
+        )
+      )
+      .orderBy(asc(orders.limitPrice), asc(orders.createdAt));
       const ordersToDomain = sellOrderRows.map((row) => {
         return this.orderMapper.toDomain(row);
       });

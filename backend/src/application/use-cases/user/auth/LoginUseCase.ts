@@ -46,6 +46,7 @@ export class LoginUseCase{
 
     if(!profile.ok){
       return err(profile.error)
+      // return err(new Error("Could not fetch user profile."))
     }
 
     return ok({

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db } from "../../src/infrastructure/drizzle/client";
 import { bankAccounts, NewBankAccountDrizzle, users } from "../../src/infrastructure/drizzle/schema";
 import { randomUUID } from "crypto";
@@ -17,24 +17,31 @@ async function seed(){
       with: {clientProfile: true}
     });
 
-    if(!clientUsers) {
+    if(!clientUsers || clientUsers.length === 0) {
       console.log(clientUsers);
       throw new Error("No user with CLIENT role found. Cannot seed bank accounts.");
     }
 
-    clientUsers.forEach(async (client, index) => {
+    for (const [index, client] of clientUsers.entries()) {
+      
+      if (!validIBANS[index]) {
+        console.warn(`No IBAN available for client ${client.email}, skipping.`);
+        continue;
+      }
+
       const bankAccountData: NewBankAccountDrizzle = {
         id: randomUUID(),
         ownerId: client.clientProfile.id,
         name: "Checking Account",
         iban: validIBANS[index],
-        balance: 500000, // in cents
+        balance: 500000, 
         createdAt: now,
         updatedAt: now
-      }
+      };
 
       await db.insert(bankAccounts).values(bankAccountData);
-    })
+      console.log(`Bank account created for client: ${client.email}`);
+    }
     console.log("Bank account seeding done");
   } catch (error){
     console.error("An error occured when seeding bank accounts", error)

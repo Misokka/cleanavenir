@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db } from "../../src/infrastructure/drizzle/client";
 import { advisors, clients, NewClientDrizzle, users } from "../../src/infrastructure/drizzle/schema";
 import { randomUUID } from "crypto";

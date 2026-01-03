@@ -47,10 +47,21 @@ export const API_ENDPOINTS = {
   },
 
   INVESTMENTS: {
-    PORTFOLIOS: '/investments/portfolios',
-    STOCKS: '/investments/stocks',
-    ORDERS: '/investments/orders',
-    POSITIONS: '/investments/positions',
+    PORTFOLIOS: {
+      MY_PORTFOLIO: "/portfolios/my-portfolio",
+      CREATE: "/portfolios/create",
+    },
+    STOCKS: {
+      LIST: '/stocks',
+      DETAILS: (id: string) => `/stocks/${id}`,
+      UPDATE: (id: string) => `/stocks/${id}/update`,
+      GET_STOCK_PRICE_HISTORY: (stockId: string) => `/stocks/stock-price-history/${stockId}`,
+    },
+    ORDERS: {
+      LIST_MY_ORDERS: '/orders/list-my-orders',
+      CREATE: "/orders/create",
+      SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`
+    },
   },
 
   LOANS: {
@@ -59,6 +70,10 @@ export const API_ENDPOINTS = {
     REQUEST: '/loans/request',
     DETAILS: (id: string) => `/loans/${id}`,
     APPROVE: (id: string) => `/loans/${id}/approve`,
+  },
+
+  COMPANIES: {
+    LIST: '/admin/companies',
   },
 
   ADMIN: {

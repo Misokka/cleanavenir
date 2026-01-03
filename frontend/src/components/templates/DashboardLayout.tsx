@@ -73,6 +73,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         iconClass: 'fi fi-br-list-check',
         isActive: pathname.startsWith(`/${locale}/dashboard/operations`),
       },
+      {
+        href: `/${locale}/client/investment`,
+        label: 'Investissements',
+        iconClass: 'fi fi-br-list-check',
+        isActive: pathname.startsWith(`/${locale}/client/investment`),
+      },
     ];
 
     const advisorItems: NavigationItem[] = [

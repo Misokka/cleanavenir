@@ -25,6 +25,7 @@ enum UserRole {
   CLIENT
   DIRECTOR
   ADVISOR
+  SYSTEM
 }
 
 model Client {

@@ -61,8 +61,7 @@ export class SettleTradesUseCase {
         type: "STOCK_PURCHASE",
         description: "buy of stocks",
         createdAt: new Date()
-      }
-      );
+      });
 
       const sellerTransaction = Transaction.create({
         transactionIdentifier: sellerTransactionIdentifier,

@@ -1,6 +1,6 @@
 export class CouldNotCreateCompanyError extends Error{
-  constructor(){
-    super();
+  constructor(message: string){
+    super(message);
     this.name = "CouldNotCreateCompanyError";
   }
 }

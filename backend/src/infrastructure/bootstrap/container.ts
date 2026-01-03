@@ -17,6 +17,7 @@ import { PortfolioRepositoryDrizzle } from '../repositories/drizzle/PortfolioRep
 import { HoldingRepositoryDrizzle } from '../repositories/drizzle/HoldingRepositoryDrizzle';
 import { TradeRepositoryDrizzle } from '../repositories/drizzle/TradeRepositoryDrizzle';
 import { DiscussionRepositoryDrizzle } from '../repositories/drizzle/DiscussionRepositoryDrizzle';
+import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/StockPriceHistoryRepositoryDrizzle';
 
 
 // Mappers Drizzle
@@ -37,6 +38,7 @@ import { DrizzlePortfolioMapper } from '../repositories/mappers/DrizzleMappers/D
 import { DrizzleHoldingMapper } from '../repositories/mappers/DrizzleMappers/DrizzleHoldingMapper';
 import { DrizzleTradeMapper } from '../repositories/mappers/DrizzleMappers/DrizzleTradeMapper';
 import { DrizzleDiscussionMapper } from '../repositories/mappers/DrizzleMappers/DrizzleDiscussionMapper';
+import { DrizzleStockPriceHistoryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleStockPriceHistoryMapper';
 
 
 // Services/Adapters
@@ -86,7 +88,13 @@ import { SettleTradesUseCase } from '../../application/use-cases/client/investme
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
+import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
+import { ListStocksUseCase } from '../../application/use-cases/client/investment/stock/ListStocksUseCase';
+import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
+import { GetMyPortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
 import { cli } from 'winston/lib/winston/config';
+import { ShowBestBuyAndSellOrderForStockUseCase } from '../../application/use-cases/client/investment/Order/ShowBestBuyAndSellOrderForStock';
+import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/investment/stock/GetStockPriceHistoryUseCase';
 
 
 export function createContainer() {
@@ -107,6 +115,7 @@ export function createContainer() {
   const drizzleHoldingMapper = new DrizzleHoldingMapper();
   const drizzleTradeMapper = new DrizzleTradeMapper();
   const drizzleDiscussionMapper = new DrizzleDiscussionMapper();
+  const drizzleStockPriceHistoryMapper = new DrizzleStockPriceHistoryMapper();
   
 
   const userRepository = new UserRepositoryDrizzle(db, drizzleUserMapper);
@@ -121,10 +130,11 @@ export function createContainer() {
   const companyRepository = new CompanyRepositoryDrizzle(db, drizzleCompanyMapper);
   const orderRepository = new OrderRepositoryDrizzle(db, drizzleOrderMapper);
   const stockRepository = new StockRepositoryDrizzle(db, drizzleStockMapper);
-  const portfolioRepository = new PortfolioRepositoryDrizzle(db, drizzlePortfolioMapper);
+  const portfolioRepository = new PortfolioRepositoryDrizzle(db, drizzlePortfolioMapper, drizzleHoldingMapper);
   const holdingRepository = new HoldingRepositoryDrizzle(db, drizzleHoldingMapper);
   const tradeRepository = new TradeRepositoryDrizzle(db, drizzleTradeMapper);
   const discussionRepository = new DiscussionRepositoryDrizzle(db, drizzleDiscussionMapper);
+  const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
   
   const passwordHasher = new SimplePasswordHasher();
 
@@ -134,7 +144,7 @@ export function createContainer() {
     advisorRepository
   );
 
-  const orderMatchingService = new OrderMatchingService(orderRepository, stockRepository, portfolioRepository)
+  const orderMatchingService = new OrderMatchingService(orderRepository, stockRepository, stockPriceHistoryRepository, portfolioRepository, tradeRepository, bankAccountRepository, transactionRepository)
   
   const registerUseCase = new RegisterUseCase(
     userRepository,
@@ -214,12 +224,17 @@ export function createContainer() {
   const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository)
 
   //Investment Use Cases
-  const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, orderMatchingService);
+  const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
   const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
-  const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository)
+  const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
+  const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository, stockRepository, companyRepository);
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
   const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
-
+  const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
+  const listStockUseCase = new ListStocksUseCase(stockRepository);
+  const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
+  const showBestBuyAndSellOrderUseCase = new ShowBestBuyAndSellOrderForStockUseCase(orderRepository, stockRepository);
+  const getStockPriceHistoryUseCase = new GetStockPriceHistoryUseCase(stockRepository, stockPriceHistoryRepository);
 
   
   return {
@@ -239,7 +254,8 @@ export function createContainer() {
       holding: holdingRepository,
       trade: tradeRepository,
       discussion: discussionRepository,
-      company: companyRepository
+      company: companyRepository,
+      stockPriceHistory: stockPriceHistoryRepository,
     },
 
     services: {
@@ -289,7 +305,13 @@ export function createContainer() {
         createStock: createStockUseCase,
         placeOrder: placeOrderUseCase,
         createPortfolio: createPortfolioUseCase,
-        settleTrade: settleTradeUseCase
+        getMyPortfolio: getMyPortfolioUseCase,
+        settleTrade: settleTradeUseCase,
+        listCompanies: listCompaniesUseCase,
+        listStocks: listStockUseCase,
+        listMyOrders: listMyOrdersUseCase,
+        showBestBuyAndSellOrder: showBestBuyAndSellOrderUseCase,
+        getStockPriceHistory: getStockPriceHistoryUseCase
       }
     },
   };

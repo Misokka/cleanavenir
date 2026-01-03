@@ -1,8 +1,9 @@
 import { OrderType } from "../../../../../../domain/entities/Order";
 
 export interface PlaceOrderRequest {
-  clientIdentifier: string;
+  userIdentifier: string;
   stockIdentifier: string;
   orderType: OrderType;
-  quantity: number
+  quantity: number,
+  limitPrice: number
 }

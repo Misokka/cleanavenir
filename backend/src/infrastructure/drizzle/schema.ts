@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { InferSelectModel, InferInsertModel, relations } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel, relations, is } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(), // id string (uuid)
@@ -29,7 +29,7 @@ export type ClientDrizzle = InferSelectModel<typeof clients>;
 export type NewClientDrizzle = InferInsertModel<typeof clients>;
 
 export const advisors = sqliteTable('advisors', {
-  id: text('id').primaryKey(), // references users.id
+  id: text('id').primaryKey(),
   userId: text('user_id').notNull().unique().references(() => users.id),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
@@ -39,7 +39,7 @@ export type AdvisorDrizzle = InferSelectModel<typeof advisors>;
 export type NewAdvisorDrizzle = InferInsertModel<typeof advisors>;
 
 export const directors = sqliteTable('directors', {
-  id: text('id').primaryKey(), // references users.id
+  id: text('id').primaryKey(),
   userId: text('user_id').notNull().unique().references(() => users.id),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
@@ -140,6 +140,7 @@ export const stocks = sqliteTable('stocks', {
   ticker: text('ticker').notNull().unique(),
   companyId: text('company_id').notNull().references(() => companies.id),
   price: integer('price').notNull(),
+  isAvailable: integer('is_available').notNull().default(1),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
@@ -147,15 +148,28 @@ export const stocks = sqliteTable('stocks', {
 export type StockDrizzle = InferSelectModel<typeof stocks>;
 export type NewStockDrizzle = InferInsertModel<typeof stocks>;
 
+export const stockPricesHistory = sqliteTable('stock_prices_history', {
+  id: text('id').primaryKey(),
+  stockId: text('stock_id').notNull().references(() => stocks.id),
+  price: integer('price').notNull(),
+  recordedAt: text('recorded_at').notNull(),
+});
+
+export type StockPriceHistoryDrizzle = InferSelectModel<typeof stockPricesHistory>;
+export type NewStockPriceHistoryDrizzle = InferInsertModel<typeof stockPricesHistory>;
+
 // Orders (buy/sell)
 export const orders = sqliteTable('orders', {
   id: text('id').primaryKey(),
   stockId: text('stock_id').notNull().references(() => stocks.id),
   ownerId: text('owner_id').notNull().references(() => clients.id),
   type: text('type').notNull(), // BUY or SELL
-  quantity: integer('quantity').notNull(),
-  price: integer('price').notNull(), // price in cents
+  initialQuantity: integer('initial_quantity').notNull(),
+  remainingQuantity: integer('remaining_quantity').notNull(),
+  limitPrice: integer('limit_price').notNull(), // price in cents
   status: text('status').notNull().default('OPEN'),
+  blockedMoneyAmount: integer('blocked_money_amount'),
+  blockedStockQuantity: integer('blocked_stock_quantity'),
   createdAt: text('created_at').notNull(),
 });
 

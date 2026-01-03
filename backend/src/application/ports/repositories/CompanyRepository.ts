@@ -6,5 +6,5 @@ import { Result } from "../../../shared/Result";
 export interface CompanyRepository{
   save(company: Company): Promise<Result<Company, CouldNotCreateCompanyError>>;
   findById(companyIdentifier: string): Promise<Result<Company, CompanyNotFoundError>>;
-  all(): Promise<Result<Company, CompanyNotFoundError>>;
+  all(): Promise<Result<Company[], Error>>;
 }

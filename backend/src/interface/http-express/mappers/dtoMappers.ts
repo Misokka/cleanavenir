@@ -8,6 +8,19 @@ import { Transaction } from '../../../domain/entities/Transaction';
 import { SavingAccount } from '../../../domain/entities/SavingAccount';
 import { SavingProduct } from '../../../domain/entities/SavingProduct';
 import { SavingProductDTO } from '../../../application/dtos/SavingProductDTO';
+import { CompanyDTO } from '../../../application/dtos/CompanyDTO';
+import { Company } from '../../../domain/entities/Company';
+import { Stock } from '../../../domain/entities/Stock';
+import { StockDTO } from '../../../application/dtos/StockDTO';
+import { Order } from '../../../domain/entities/Order';
+import { OrderDTO } from '../../../application/dtos/OrderDTO';
+import { ORDER_FEES_IN_CENTS } from '../../../shared/constants/Investment';
+import { Portfolio } from '../../../domain/entities/Portfolio';
+import { holdings } from '../../../infrastructure/drizzle/schema';
+import { Holding } from '../../../domain/entities/Holding';
+import { ChargedPortfolio, HoldingWithStock } from '../../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
+import { StockPriceHistory } from '../../../domain/entities/StockPriceHistory';
+import { toEuros } from '../../../shared/moneyUtilities';
 
 export function toUserDTO(user: User): UserDTO {
   return {
@@ -69,5 +82,107 @@ export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductD
     ...savingProduct,
     id: savingProduct.savingProductIdentifier,
     rate: savingProduct.rate / 1_000_000, // conversion de micro pourcent à pourcent
+  }
+}
+
+export function toCompanyDTO(company: Company): CompanyDTO {
+  return {
+    id: company.companyIdentifier,
+    name: company.name,
+    description: company.description,
+  };
+}
+
+export function toStockDTO(stock: Stock, company: Company): StockDTO{
+  return{
+    id: stock.stockIdentifier,
+    ticker: stock.ticker.value,
+    price: stock.price / 100, // conversion en euros
+    isAvailable: stock.isAvailable,
+    createdAt: stock.createdAt.toISOString(),
+    updatedAt: stock.updatedAt?.toISOString() as string,
+    company: toCompanyDTO(company),
+  }
+}
+
+export function toStockWithOutCompanyDTO(stock: Stock){
+    return{
+    id: stock.stockIdentifier,
+    ticker: stock.ticker.value,
+    price: stock.price / 100, // conversion en euros
+    isAvailable: stock.isAvailable,
+    createdAt: stock.createdAt.toISOString(),
+    updatedAt: stock.updatedAt?.toISOString() as string,
+  }
+}
+
+export function toOrderDTO(order: Order, stock: Stock): OrderDTO{
+  return {
+    id: order.orderIdentifier,
+    userId: order.clientIdentifier,
+    stockId: order.stockIdentifier,
+    stockName: stock.ticker.value,
+    type: order.orderType,
+    initialQuantity: order.initialQuantity,
+    remainingQuanity: order.remainingQuantity,
+    status: order.status,
+    limitPrice: order.limitPrice / 100,
+    fees: ORDER_FEES_IN_CENTS,
+    blockedMoneyAmount: (order.blockedMoneyAmount ?? 0) / 100,
+    blockedStockQuantity: order.blockedStockQuantity,
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+}
+
+export function toPortfolioDTO(portfolio: Portfolio) {
+  return {
+    id: portfolio.portfolioIdentifier,
+    ownerId: portfolio.clientIdentifier,
+    holdings: portfolio.allHoldings().map(toHoldingPortfolioDTO),
+    createdAt: portfolio.createdAt
+  }
+}
+
+export function toHoldingPortfolioDTO(holding: Holding){
+  return {
+    id: holding.holdingIdentifier,
+    portfolioId: holding.portfolioIdentifier,
+    stockId: holding.stockIdentifier,
+    quantity: holding.quantity,
+    averagePrice: holding.averagePrice / 100
+  }
+}
+
+export function toChargedPortfolioDTO(chargedPortfolio: ChargedPortfolio){
+  return {
+    id: chargedPortfolio.portfolioIdentifier,
+    ownerId: chargedPortfolio.clientIdentifier,
+    holdings: chargedPortfolio.holdingsWithStock.map(toHoldingWithStockDTO),
+    createdAt: chargedPortfolio.createdAt
+  }
+}
+
+export function toHoldingWithStockDTO(holding: HoldingWithStock){
+  return{
+    id: holding.holdingIdentifier,
+    portfolioId: holding.portfolioIdentifier,
+    quantity: holding.quantity,
+    averagePrice: holding.averagePrice / 100,
+    stock: toStockDTO(holding.stockWithCompany.stock, holding.stockWithCompany.company)
+
+  }
+}
+
+export function toStockHistoryDTO(stock: Stock, stockPriceHistory: StockPriceHistory[]){
+  return {
+    stockPriceHistory: stockPriceHistory.map((history) => {
+      return {
+        id: history.stockPriceIdentifier,
+        price: toEuros(history.price),
+        recordedAt: history.recordedAt
+      }
+    }),
+    stock: toStockWithOutCompanyDTO(stock),
   }
 }

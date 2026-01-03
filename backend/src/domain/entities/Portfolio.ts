@@ -18,13 +18,19 @@ export class Portfolio {
     return new Portfolio(portfolioIdentifier, clientIdentifier, createdAt, holdings);
   }
 
+  public setHoldings(holdings: Holding[]): void {
+    holdings.forEach((holding) => {
+      this.holdings.set(holding.stockIdentifier, holding);
+    });
+  }
+
   // Ajoute des actions au portefeuille
-  public addHolding(stockIdentifier: string, quantity: number): void {
+  public addHolding(stockIdentifier: string, quantity: number, averagePrice: number): void {
     const holding = this.holdings.has(stockIdentifier)
     if (!holding) {
       const holdingIdentifier = randomUUID();
       
-      this.holdings.set(stockIdentifier, Holding.create({holdingIdentifier, stockIdentifier, portfolioIdentifier: this.portfolioIdentifier, quantity}));
+      this.holdings.set(stockIdentifier, Holding.create({holdingIdentifier, stockIdentifier, portfolioIdentifier: this.portfolioIdentifier, quantity, averagePrice}));
     } else {
       this.holdings.get(stockIdentifier)!.quantity += quantity;
     }
@@ -46,4 +52,9 @@ export class Portfolio {
   getHolding(stockIdentifier: string): Holding | undefined {
     return this.holdings.get(stockIdentifier);
   }
+
+  public allHoldings(): Holding[] {
+    return Array.from(this.holdings.values());
+  }
+
 }

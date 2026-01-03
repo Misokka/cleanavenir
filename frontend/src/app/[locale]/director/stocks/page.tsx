@@ -7,15 +7,18 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getAllStocks, deleteStock, toggleStockAvailability, Stock } from '@/lib/api/director/stocks';
+import { getAllStocks, deleteStock, toggleStockAvailability } from '@/lib/api/director/stocks';
 import { useToast } from '@/contexts/ToastProvider';
 import Link from 'next/link';
+import { useGetStocks } from '@/features/stocks/useGetStocks';
+import { Stock } from '@/infrastructure/web/services/stocksService';
 
 export default function DirectorStocksPage() {
   const t = useTranslations('Director.stocks');
   const locale = useLocale();
   const { success, error: showError } = useToast();
-  const [stocks, setStocks] = useState<Stock[]>([]);
+  const { stocks, fetchStocks, loading: stocksLoading, error: stocksError } = useGetStocks();
+  // const [stocks, setStocks] = useState<Stock[]>([]);
   const [filteredStocks, setFilteredStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,20 +26,20 @@ export default function DirectorStocksPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    loadStocks();
-  }, []);
+  // useEffect(() => {
+  //   loadStocks();
+  // }, []);
 
   useEffect(() => {
     filterStocks();
   }, [stocks, searchQuery]);
 
-  const loadStocks = async () => {
-    setLoading(true);
-    const data = await getAllStocks();
-    setStocks(data);
-    setLoading(false);
-  };
+  // const loadStocks = async () => {
+  //   setLoading(true);
+  //   const data = await getAllStocks();
+  //   setStocks(data);
+  //   setLoading(false);
+  // };
 
   const filterStocks = () => {
     let filtered = stocks;
@@ -45,7 +48,7 @@ export default function DirectorStocksPage() {
       filtered = filtered.filter(
         (stock) =>
           stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          stock.companyName.toLowerCase().includes(searchQuery.toLowerCase())
+          stock.company.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -56,7 +59,7 @@ export default function DirectorStocksPage() {
     try {
       await toggleStockAvailability(stock.id, !stock.isAvailable);
       success(t('toasts.toggleSuccess'));
-      await loadStocks();
+      await fetchStocks();
     } catch (err) {
       console.error('Error toggling stock availability:', err);
       showError(t('toasts.toggleError'));
@@ -71,7 +74,7 @@ export default function DirectorStocksPage() {
       await deleteStock(selectedStock.id);
       success(t('toasts.deleteSuccess'));
       setShowDeleteModal(false);
-      await loadStocks();
+      await fetchStocks();
     } catch (err) {
       console.error('Error deleting stock:', err);
       showError(t('toasts.deleteError'));
@@ -88,7 +91,7 @@ export default function DirectorStocksPage() {
     });
   };
 
-  if (loading) {
+  if (stocksLoading) {
     return (
       <DashboardLayout>
         <div className="space-y-6">
@@ -156,7 +159,7 @@ export default function DirectorStocksPage() {
                   filteredStocks.map((stock) => (
                     <tr key={stock.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-4 font-bold text-clean-dark">{stock.ticker}</td>
-                      <td className="py-3 px-4">{stock.companyName}</td>
+                      <td className="py-3 px-4">{stock.company.name}</td>
                       <td className="py-3 px-4">
                         <button
                           onClick={() => handleToggleAvailability(stock)}
@@ -209,7 +212,7 @@ export default function DirectorStocksPage() {
               {t('modals.deleteMessage')}
             </Typography>
             <Typography variant="caption" color="muted" className="mb-4">
-              {selectedStock.ticker} - {selectedStock.companyName}
+              {selectedStock.ticker} - {selectedStock.company.name}
             </Typography>
             <div className="flex gap-2 justify-end">
               <Button variant="outline" size="sm" onClick={() => setShowDeleteModal(false)}>
