@@ -51,8 +51,18 @@ export class CancelOrderUseCase {
       if(!clientPortfolioResult.ok) return err(clientPortfolioResult.error);
       const clientPortfolio = clientPortfolioResult.value;
 
+
       const stockQuantity = order.blockedStockQuantity ?? 0
-      clientPortfolio.addHolding(order.stockIdentifier, stockQuantity);
+      
+      const holding = clientPortfolio.getHolding(order.stockIdentifier);
+      if (!holding) {
+          // Cas théoriquement impossible : on ne peut pas annuler une vente d'une action qu'on a plus en portefeuille
+          // (sauf si le système a un bug de cohérence).
+          return err(new Error("Holding not found for this stock identifier in portfolio"));
+      }
+
+      const currentAveragePrice = holding.averagePrice;
+      clientPortfolio.addHolding(order.stockIdentifier, stockQuantity, currentAveragePrice);
 
       const updatedPortfolioResult = await this.portfolioRepository.update(clientPortfolio);
       if(!updatedPortfolioResult.ok) return err(updatedPortfolioResult.error);
