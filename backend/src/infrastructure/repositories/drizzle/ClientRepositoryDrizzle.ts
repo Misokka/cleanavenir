@@ -73,4 +73,19 @@ export class ClientRepositoryDrizzle implements ClientRepository {
       return err(e);
     }
   }
+
+  async delete(clientIdentifier: string): Promise<Result<void, ClientNotFoundError | Error>> {
+    try {
+      const result = await this.db.delete(clients).where(eq(clients.id, clientIdentifier)).returning();
+      
+      if (!result.length) {
+        return err(new ClientNotFoundError(clientIdentifier));
+      }
+      
+      return ok(undefined);
+    } catch (e: any) {
+      console.error('Error deleting client:', e);
+      return err(new Error(e.message || 'Failed to delete client'));
+    }
+  }
 }

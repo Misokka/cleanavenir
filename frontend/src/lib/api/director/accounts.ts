@@ -30,77 +30,141 @@ export interface CreateAccountPayload {
   initialBalance?: number;
 }
 
-/**
- * Récupère tous les comptes clients
- */
+// Types pour les réponses backend
+interface BackendClient {
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    role: string;
+    isActive: boolean;
+    emailVerifiedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+
+const mapClientToAccount = (client: BackendClient): ClientAccount => ({
+  id: client.userId, 
+  accountNumber: client.user.email,
+  clientId: client.id,
+  clientName: `${client.user.firstname} ${client.user.lastname}`,
+  type: 'CLIENT',
+  balance: 0, 
+  currency: 'EUR',
+  isActive: client.user.isActive,
+  isBanned: !client.user.isActive,
+  createdAt: client.user.createdAt,
+  updatedAt: client.user.updatedAt,
+});
+
 export const getAllClientAccounts = async (): Promise<ClientAccount[]> => {
   try {
-    const response = await httpClient.get<{ accounts: ClientAccount[] }>('/director/accounts');
-    return response.data.accounts || [];
+    const response = await httpClient.get<{ clients: BackendClient[] }>('/admin/clients');
+    const clients = response.data.clients || [];
+    return clients.map(mapClientToAccount);
   } catch (error) {
-    console.error('Error fetching client accounts:', error);
+    console.error('Error fetching clients:', error);
     return [];
   }
 };
 
-/**
- * Récupère un compte client par ID
- */
 export const getClientAccountById = async (accountId: string): Promise<ClientAccount | null> => {
   try {
-    const response = await httpClient.get<{ account: ClientAccount }>(`/director/accounts/${accountId}`);
-    return response.data.account;
+    const accounts = await getAllClientAccounts();
+    return accounts.find(acc => acc.id === accountId) || null;
   } catch (error) {
-    console.error(`Error fetching account ${accountId}:`, error);
+    console.error(`Error fetching client ${accountId}:`, error);
     return null;
   }
 };
 
-/**
- * Bannir un compte client
- */
-export const banClientAccount = async (accountId: string, payload: BanAccountPayload): Promise<ClientAccount> => {
+export const banClientAccount = async (userId: string, payload: BanAccountPayload): Promise<ClientAccount> => {
   try {
-    const response = await httpClient.post<{ account: ClientAccount }>(`/director/accounts/${accountId}/ban`, payload);
-    return response.data.account;
+    const response = await httpClient.post<{ message: string; client: { id: string; email: string; isActive: boolean } }>(
+      `/admin/clients/${userId}/ban`,
+      payload
+    );
+    
+    return {
+      id: response.data.client.id,
+      accountNumber: response.data.client.email,
+      clientId: userId,
+      clientName: response.data.client.email,
+      type: 'CLIENT',
+      balance: 0,
+      currency: 'EUR',
+      isActive: response.data.client.isActive,
+      isBanned: !response.data.client.isActive,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   } catch (error) {
-    console.error(`Error banning account ${accountId}:`, error);
+    console.error(`Error banning client ${userId}:`, error);
     throw error;
   }
 };
 
-/**
- * Débannir un compte client
- */
-export const unbanClientAccount = async (accountId: string): Promise<ClientAccount> => {
+export const unbanClientAccount = async (userId: string): Promise<ClientAccount> => {
   try {
-    const response = await httpClient.post<{ account: ClientAccount }>(`/director/accounts/${accountId}/unban`, {});
-    return response.data.account;
+    const response = await httpClient.post<{ message: string; client: { id: string; email: string; isActive: boolean } }>(
+      `/admin/clients/${userId}/unban`,
+      {}
+    );
+    
+    return {
+      id: response.data.client.id,
+      accountNumber: response.data.client.email,
+      clientId: userId,
+      clientName: response.data.client.email,
+      type: 'CLIENT',
+      balance: 0,
+      currency: 'EUR',
+      isActive: response.data.client.isActive,
+      isBanned: !response.data.client.isActive,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   } catch (error) {
-    console.error(`Error unbanning account ${accountId}:`, error);
+    console.error(`Error unbanning client ${userId}:`, error);
     throw error;
   }
 };
 
-/**
- * Renommer un compte client
- */
 export const renameClientAccount = async (accountId: string, payload: RenameAccountPayload): Promise<ClientAccount> => {
   try {
-    const response = await httpClient.put<{ account: ClientAccount }>(`/director/accounts/${accountId}/rename`, payload);
-    return response.data.account;
+    const response = await httpClient.put<{ message: string; account: any }>(
+      `/admin/accounts/${accountId}/rename`,
+      { newName: payload.accountName }
+    );
+    
+    const backendAccount = response.data.account;
+    return {
+      id: backendAccount.id,
+      accountNumber: backendAccount.iban || backendAccount.id,
+      clientId: backendAccount.clientId || backendAccount.ownerId,
+      clientName: '',
+      type: 'BANK_ACCOUNT',
+      balance: backendAccount.balance / 100, 
+      currency: backendAccount.currency || 'EUR',
+      isActive: true,
+      isBanned: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   } catch (error) {
     console.error(`Error renaming account ${accountId}:`, error);
     throw error;
   }
 };
 
-/**
- * Supprimer un compte client
- */
 export const deleteClientAccount = async (accountId: string): Promise<boolean> => {
   try {
-    await httpClient.delete(`/director/accounts/${accountId}`);
+    await httpClient.delete(`/admin/accounts/${accountId}`);
     return true;
   } catch (error) {
     console.error(`Error deleting account ${accountId}:`, error);
@@ -108,13 +172,27 @@ export const deleteClientAccount = async (accountId: string): Promise<boolean> =
   }
 };
 
-/**
- * Créer un nouveau compte client
- */
 export const createClientAccount = async (payload: CreateAccountPayload): Promise<ClientAccount> => {
   try {
-    const response = await httpClient.post<{ account: ClientAccount }>('/director/accounts', payload);
-    return response.data.account;
+    const response = await httpClient.post<{ message: string; account: any }>(
+      `/admin/clients/${payload.clientId}/accounts`,
+      { name: payload.type } 
+    );
+    
+    const backendAccount = response.data.account;
+    return {
+      id: backendAccount.id,
+      accountNumber: backendAccount.iban || backendAccount.id,
+      clientId: payload.clientId,
+      clientName: '',
+      type: 'BANK_ACCOUNT',
+      balance: backendAccount.balance / 100, 
+      currency: backendAccount.currency || 'EUR',
+      isActive: true,
+      isBanned: false,
+      createdAt: backendAccount.createdAt || new Date().toISOString(),
+      updatedAt: backendAccount.updatedAt || new Date().toISOString(),
+    };
   } catch (error) {
     console.error('Error creating client account:', error);
     throw error;

@@ -8,6 +8,7 @@ import { User } from "../../../domain/entities/User";
 export interface UserRepository {
   save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError | Error>>;
   update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>>;
+  delete(userId: string): Promise<Result<void, UserNotFoundError | Error>>;
 
   findById(id: string): Promise<Result<User, UserNotFoundError>>;
   findByEmail(email: string): Promise<Result<User, UserNotFoundError>>;

@@ -42,11 +42,14 @@ export class LoginUseCase{
       return err(new InvalidCredentialsError("Invalid credentials."))
     }
 
+    if(!user.value.active){
+      return err(new Error("Votre compte a été désactivé. Veuillez contacter la banque."))
+    }
+
     const profile = await this.profileManager.fetch(user.value.userIdentifier, user.value.role);
 
     if(!profile.ok){
       return err(profile.error)
-      // return err(new Error("Could not fetch user profile."))
     }
 
     return ok({

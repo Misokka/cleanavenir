@@ -100,6 +100,16 @@ import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/
 import { EditStockUseCase } from '../../application/use-cases/director/stock/EditStockUseCase';
 import { GetStockUseCase } from '../../application/use-cases/client/investment/stock/GetStockUseCase';
 
+// Use Cases - Director Account Management (Bank Accounts)
+import { CreateBankAccountForClientUseCase } from '../../application/use-cases/director/account/CreateBankAccountForClientUseCase';
+import { RenameBankAccountByDirectorUseCase } from '../../application/use-cases/director/account/RenameBankAccountByDirectorUseCase';
+import { DeleteBankAccountByDirectorUseCase } from '../../application/use-cases/director/account/DeleteBankAccountByDirectorUseCase';
+
+// Use Cases - Director Client Management (Users)
+import { CreateClientByDirectorUseCase } from '../../application/use-cases/director/client/CreateClientByDirectorUseCase';
+import { UpdateClientByDirectorUseCase } from '../../application/use-cases/director/client/UpdateClientByDirectorUseCase';
+import { DeleteClientByDirectorUseCase } from '../../application/use-cases/director/client/DeleteClientByDirectorUseCase';
+
 // Use Cases - Beneficiary
 import { AddBeneficiaryUseCase } from '../../application/use-cases/client/beneficiary/AddBeneficiaryUseCase';
 import { ListUserBeneficiariesUseCase } from '../../application/use-cases/client/beneficiary/ListUserBeneficiariesUseCase';
@@ -250,6 +260,16 @@ export function createContainer() {
   const editStockUseCase = new EditStockUseCase(stockRepository);
   const getStockUseCase = new GetStockUseCase(stockRepository, companyRepository);
 
+  // Director Bank Account Management Use Cases
+  const createAccountForClientUseCase = new CreateBankAccountForClientUseCase(bankAccountRepository, clientRepository);
+  const renameAccountByDirectorUseCase = new RenameBankAccountByDirectorUseCase(bankAccountRepository);
+  const deleteAccountByDirectorUseCase = new DeleteBankAccountByDirectorUseCase(bankAccountRepository);
+
+  // Director Client Management Use Cases
+  const createClientByDirectorUseCase = new CreateClientByDirectorUseCase(userRepository, advisorRepository, profileManager, passwordHasher);
+  const updateClientByDirectorUseCase = new UpdateClientByDirectorUseCase(userRepository, passwordHasher);
+  const deleteClientByDirectorUseCase = new DeleteClientByDirectorUseCase(userRepository, clientRepository);
+
   // Beneficiary Use Cases
   const addBeneficiaryUseCase = new AddBeneficiaryUseCase(beneficiaryRepository, clientRepository, bankAccountRepository);
   const listUserBeneficiariesUseCase = new ListUserBeneficiariesUseCase(beneficiaryRepository, clientRepository);
@@ -335,6 +355,14 @@ export function createContainer() {
         getStockPriceHistory: getStockPriceHistoryUseCase,
         editStock: editStockUseCase,
         getStock: getStockUseCase,
+      },
+      director: {
+        createAccountForClient: createAccountForClientUseCase,
+        renameAccountByDirector: renameAccountByDirectorUseCase,
+        deleteAccountByDirector: deleteAccountByDirectorUseCase,
+        createClient: createClientByDirectorUseCase,
+        updateClient: updateClientByDirectorUseCase,
+        deleteClient: deleteClientByDirectorUseCase,
       },
       beneficiary: {
         add: addBeneficiaryUseCase,

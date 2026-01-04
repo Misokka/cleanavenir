@@ -7,4 +7,5 @@ export interface ClientRepository{
   findById(clientIdentifier: string): Promise<Result<Client, ClientNotFoundError>>
   findByUserId(userIdentifier: string): Promise<Result<Client, ClientNotFoundError>>
   all(): Promise<Result<Client[], Error>>;
+  delete(clientIdentifier: string): Promise<Result<void, ClientNotFoundError | Error>>;
 }

@@ -16,7 +16,7 @@ export class UserRepositoryDrizzle implements UserRepository {
     private readonly userMapper: DrizzleUserMapper
   ) {}
 
-  async save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError>> {
+  async save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError | Error>> {
     try {
       const userToPersist = this.userMapper.toPersistence(user);
       const registeredUserRows = await this.db.insert(users).values(userToPersist).returning();
@@ -26,7 +26,8 @@ export class UserRepositoryDrizzle implements UserRepository {
       if (e.message?.includes('UNIQUE constraint')) {
         return err(new EmailAlreadyUsedError(user.email));
       }
-      return err(new InvalidRoleError("test error user repo"));
+      console.error('Error saving user:', e);
+      return err(new Error(e.message || 'Failed to save user'));
     }
   }
 
@@ -34,13 +35,34 @@ export class UserRepositoryDrizzle implements UserRepository {
     try {
       const userToPersist = this.userMapper.toPersistence(user);
       const registeredUserRows = await this.db.update(users).set(userToPersist).where(eq(users.id, user.userIdentifier)).returning();
+      
+      if (!registeredUserRows.length) {
+        return err(new UserNotFoundError(user.userIdentifier));
+      }
+      
       const userToDomain = this.userMapper.toDomain(registeredUserRows[0]);
       return ok(userToDomain);
     } catch (e: any) {
       if (e.message?.includes('UNIQUE constraint')) {
         return err(new EmailAlreadyUsedError(user.email));
       }
-      return err(new InvalidRoleError(user.userIdentifier));
+      console.error('Error updating user:', e);
+      return err(new Error(e.message || 'Failed to update user'));
+    }
+  }
+
+  async delete(userId: string): Promise<Result<void, UserNotFoundError | Error>> {
+    try {
+      const result = await this.db.delete(users).where(eq(users.id, userId)).returning();
+      
+      if (!result.length) {
+        return err(new UserNotFoundError(userId));
+      }
+      
+      return ok(undefined);
+    } catch (e: any) {
+      console.error('Error deleting user:', e);
+      return err(new Error(e.message || 'Failed to delete user'));
     }
   }
 
