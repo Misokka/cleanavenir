@@ -33,10 +33,10 @@ export const loginController = asyncHandler(
         return;
       }
 
-      if (error.message.includes('désactivé') || error.message.includes('inactive')) {
+      if (error.message.includes('désactivé') || error.message.includes('inactive') || error.message.includes('banned') || error.message.includes('banni')) {
         res.status(403).json({
-          error: 'ACCOUNT_INACTIVE',
-          message: 'Compte désactivé',
+          error: 'ACCOUNT_BANNED',
+          message: error.message,
         });
         return;
       }

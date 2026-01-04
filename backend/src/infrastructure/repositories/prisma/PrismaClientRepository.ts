@@ -69,4 +69,49 @@ export class PrismaClientRepository implements ClientRepository{
     const clientToDomain = this.prismaCientMapper.toDomain(maybeClient);
     return ok(clientToDomain);
   }
+
+  async findByUserId(userIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
+    const maybeClient = await this.prismaClient.client.findUnique({
+      where: {
+        userIdentifier: userIdentifier
+      }
+    });
+
+    if(!maybeClient){
+      return err(new UserNotFoundError(userIdentifier));
+    }
+
+    const clientToDomain = this.prismaCientMapper.toDomain(maybeClient);
+    return ok(clientToDomain);
+  }
+
+  async all(): Promise<Result<Client[], Error>> {
+    try {
+      const clientRecords = await this.prismaClient.client.findMany();
+      const clients = clientRecords.map(record => this.prismaCientMapper.toDomain(record));
+      return ok(clients);
+    } catch (error) {
+      return err(new Error("Error fetching all clients"));
+    }
+  }
+
+  async delete(clientIdentifier: string): Promise<Result<void, UserNotFoundError | Error>> {
+    try {
+      const existingClient = await this.prismaClient.client.findUnique({
+        where: { clientIdentifier }
+      });
+
+      if (!existingClient) {
+        return err(new UserNotFoundError(clientIdentifier));
+      }
+
+      await this.prismaClient.client.delete({
+        where: { clientIdentifier }
+      });
+
+      return ok(undefined);
+    } catch (error) {
+      return err(new Error(`Error deleting client ${clientIdentifier}`));
+    }
+  }
 }

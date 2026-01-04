@@ -115,4 +115,24 @@ export class PrismaUserRepository implements UserRepository {
 
     return ok(domainUsers);
   }
+
+  async delete(userId: string): Promise<Result<void, UserNotFoundError | Error>> {
+    try {
+      const existingUser = await this.prismaClient.user.findUnique({
+        where: { userIdentifier: userId }
+      });
+
+      if (!existingUser) {
+        return err(new UserNotFoundError(userId));
+      }
+
+      await this.prismaClient.user.delete({
+        where: { userIdentifier: userId }
+      });
+
+      return ok(undefined);
+    } catch (error) {
+      return err(new Error(`An error occurred when deleting user ${userId}`));
+    }
+  }
 }

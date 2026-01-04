@@ -17,12 +17,16 @@ export class DrizzleUserMapper implements Mapper<UserDrizzle, User, NewUserDrizz
 
   toPersistence(entity: User): NewUserDrizzle {
     return {
-      ...entity,
       id: entity.userIdentifier,
+      firstname: entity.firstname,
+      lastname: entity.lastname,
+      email: entity.email,
+      password: entity.password,
+      role: entity.role,
       createdAt: entity.createdAt.toISOString(),
       isActive: entity.active ? 1 : 0,
       updatedAt: new Date().toISOString(),
-      emailVerifiedAt: entity.emailVerifiedAt?.toISOString(),
+      emailVerifiedAt: entity.emailVerifiedAt?.toISOString() || null,
     };
   }
 }
