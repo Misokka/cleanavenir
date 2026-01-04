@@ -26,6 +26,10 @@ DB_FILE_NAME=file:dev.sqlite
 
 Le préfixe `file:` est requis pour la connexion SQLite utilisée par `drizzle-orm/libsql`.
 
+### Notes de sécurité (dev vs prod)
+- En développement, le service d'auth utilise `SimplePasswordHasher` (pas de vrai hash, motif `plain:<motdepasse>`). En production, utilisez `BcryptPasswordHasher`.
+- Ne commitez jamais de secrets réels dans `.env`. Remplacez `JWT_SECRET`, etc. avant déploiement.
+
 ## Commandes fréquentes
 
 - Appliquer le schéma (push) — rapide pour le dev :
@@ -62,6 +66,10 @@ npx tsx scripts/seed-accounts.ts
 npx tsx scripts/test-user-repo.ts
 ```
 
+### Identifiants par défaut (seed)
+- Les utilisateurs seedés dans [backend/scripts/drizzleSeeds/seed-users.ts](backend/scripts/drizzleSeeds/seed-users.ts) ont le mot de passe `Password123!`.
+- En dev (hasher simple), la valeur stockée ressemble à `plain:Password123!`. La connexion se fait avec le mot de passe en clair `Password123!`.
+
 ## Bonnes pratiques
 - Ne pas importer `drizzle`/`db` dans la couche `domain` ou `application`. Les adaptateurs SQL restent dans `infrastructure`.
 - Préférer l'injection du `db` dans les repositories (constructor injection) pour faciliter les tests.
@@ -88,6 +96,22 @@ npx drizzle-kit push
 # reseed
 npx tsx scripts/seed-users.ts
 npx tsx scripts/seed-accounts.ts
+```
+
+### Reset automatisé — Windows
+Sur Windows, vous pouvez utiliser le script npm dédié pour réinitialiser et reseed toute la base.
+
+```powershell
+npm run db:reset:win
+```
+
+Ce script supprime `dev.sqlite`, recrée la base, exécute les migrations puis injecte les seeds principaux.
+
+### Reset automatisé — Linux/macOS
+Sur Linux/macOS, utilisez le script existant :
+
+```bash
+npm run db:reset
 ```
 
 ## Points ouverts / TODOs
