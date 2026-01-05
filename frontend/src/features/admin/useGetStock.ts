@@ -1,4 +1,4 @@
-import { adminService } from "@/infrastructure/web/services/adminService"
+import { stocksService } from "@/infrastructure/web/services/stocksService";
 import { Stock } from "@/infrastructure/web/services/stocksService";
 import { useEffect, useState } from "react";
 
@@ -9,7 +9,7 @@ export function useGetStock(){
 
   async function getStock(stockId: string){
     try{
-      const response = await adminService.getStock(stockId);
+      const response = await stocksService.getStockById(stockId);
       setStock(response);
       return response;
     } catch (error: any) {

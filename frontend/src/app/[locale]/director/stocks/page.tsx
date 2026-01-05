@@ -7,11 +7,10 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getAllStocks, deleteStock, toggleStockAvailability } from '@/lib/api/director/stocks';
 import { useToast } from '@/contexts/ToastProvider';
 import Link from 'next/link';
 import { useGetStocks } from '@/features/stocks/useGetStocks';
-import { Stock } from '@/infrastructure/web/services/stocksService';
+import { Stock, stocksService } from '@/infrastructure/web/services/stocksService';
 
 export default function DirectorStocksPage() {
   const t = useTranslations('Director.stocks');
@@ -57,7 +56,7 @@ export default function DirectorStocksPage() {
 
   const handleToggleAvailability = async (stock: Stock) => {
     try {
-      await toggleStockAvailability(stock.id, !stock.isAvailable);
+      await stocksService.updateStock(stock.id, { isAvailable: !stock.isAvailable });
       success(t('toasts.toggleSuccess'));
       await fetchStocks();
     } catch (err) {
@@ -71,7 +70,7 @@ export default function DirectorStocksPage() {
 
     setDeleting(true);
     try {
-      await deleteStock(selectedStock.id);
+      await stocksService.deleteStock(selectedStock.id);
       success(t('toasts.deleteSuccess'));
       setShowDeleteModal(false);
       await fetchStocks();
@@ -137,6 +136,9 @@ export default function DirectorStocksPage() {
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">
                     {t('list.company')}
                   </th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700">
+                    Prix
+                  </th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">
                     {t('list.available')}
                   </th>
@@ -151,7 +153,7 @@ export default function DirectorStocksPage() {
               <tbody>
                 {filteredStocks.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-gray-500">
+                    <td colSpan={6} className="text-center py-8 text-gray-500">
                       {t('list.noStocks')}
                     </td>
                   </tr>
@@ -160,6 +162,9 @@ export default function DirectorStocksPage() {
                     <tr key={stock.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-4 font-bold text-clean-dark">{stock.ticker}</td>
                       <td className="py-3 px-4">{stock.company.name}</td>
+                      <td className="py-3 px-4 text-right font-semibold text-clean-dark">
+                        {stock.price.toFixed(2)} €
+                      </td>
                       <td className="py-3 px-4">
                         <button
                           onClick={() => handleToggleAvailability(stock)}

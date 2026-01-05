@@ -61,8 +61,10 @@ export const API_ENDPOINTS = {
     },
     STOCKS: {
       LIST: '/stocks',
-      DETAILS: (id: string) => `/stocks/${id}`,
-      UPDATE: (id: string) => `/stocks/${id}/update`,
+      CREATE: '/stocks',
+      GET_STOCK: (stockId: string) => `/stocks/${stockId}`,
+      UPDATE: (stockId: string) => `/stocks/${stockId}`,
+      DELETE: (stockId: string) => `/stocks/${stockId}`,
       GET_STOCK_PRICE_HISTORY: (stockId: string) => `/stocks/stock-price-history/${stockId}`,
     },
     ORDERS: {

@@ -8,7 +8,7 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getCompanyById, updateCompany } from '@/lib/api/director/companies';
+import { companiesService } from '@/infrastructure/web/services/companiesService';
 import { useToast } from '@/contexts/ToastProvider';
 
 interface EditCompanyPageProps {
@@ -32,15 +32,16 @@ export default function EditCompanyPage({ params }: EditCompanyPageProps) {
 
   const loadCompany = async () => {
     setLoading(true);
-    const company = await getCompanyById(resolvedParams.id);
-    if (company) {
+    try {
+      const company = await companiesService.getCompanyById(resolvedParams.id);
       setName(company.name);
       setDescription(company.description);
-    } else {
+    } catch (error) {
       showError('Entreprise introuvable');
       router.push(`/${locale}/director/companies`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +54,7 @@ export default function EditCompanyPage({ params }: EditCompanyPageProps) {
 
     setSubmitting(true);
     try {
-      await updateCompany(resolvedParams.id, {
+      await companiesService.updateCompany(resolvedParams.id, {
         name: name.trim(),
         description: description.trim(),
       });

@@ -7,11 +7,10 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getAllCompanies, deleteCompany } from '@/lib/api/director/companies';
+import { companiesService, Company } from '@/infrastructure/web/services/companiesService';
 import { useToast } from '@/contexts/ToastProvider';
 import Link from 'next/link';
 import { useGetCompanies } from '@/features/companies/useGetCompanies';
-import { Company } from '@/infrastructure/web/services/companiesService';
 
 export default function DirectorCompaniesPage() {
   const t = useTranslations('Director.companies');
@@ -60,11 +59,11 @@ export default function DirectorCompaniesPage() {
 
     setDeleting(true);
     try {
-      await deleteCompany(selectedCompany.id);
+      await companiesService.deleteCompany(selectedCompany.id);
       success(t('toasts.deleteSuccess'));
       setShowDeleteModal(false);
       await fetchCompanies();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting company:', err);
       showError(t('toasts.deleteError'));
     } finally {

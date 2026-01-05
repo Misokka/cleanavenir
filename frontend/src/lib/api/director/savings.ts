@@ -16,10 +16,8 @@ export interface UpdateSavingsRatePayload {
 
 export const getCurrentSavingsRate = async (): Promise<SavingsRate | null> => {
   try {
-    const response = await fetcher<{ rate: SavingsRate }>('/api/director/savings/rate/current', {
-      method: 'GET',
-    });
-    return response.rate;
+    const response = await httpClient.get<{ rate: SavingsRate }>('/director/savings/rate/current');
+    return response.data.rate;
   } catch (error) {
     console.error('Error fetching current savings rate:', error);
     return null;
@@ -28,10 +26,8 @@ export const getCurrentSavingsRate = async (): Promise<SavingsRate | null> => {
 
 export const getSavingsRateHistory = async (): Promise<SavingsRate[]> => {
   try {
-    const response = await fetcher<{ history: SavingsRate[] }>('/api/director/savings/rate/history', {
-      method: 'GET',
-    });
-    return response.history || [];
+    const response = await httpClient.get<{ history: SavingsRate[] }>('/director/savings/rate/history');
+    return response.data.history || [];
   } catch (error) {
     console.error('Error fetching savings rate history:', error);
     return [];
@@ -40,11 +36,8 @@ export const getSavingsRateHistory = async (): Promise<SavingsRate[]> => {
 
 export const updateSavingsRate = async (payload: UpdateSavingsRatePayload): Promise<SavingsRate> => {
   try {
-    const response = await fetcher<{ rate: SavingsRate }>('/api/director/savings/rate', {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
-    return response.rate;
+    const response = await httpClient.put<{ rate: SavingsRate }>('/director/savings/rate', payload);
+    return response.data.rate;
   } catch (error) {
     console.error('Error updating savings rate:', error);
     throw error;

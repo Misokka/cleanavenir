@@ -10,12 +10,23 @@ export interface ClientDTO {
   user: UserDTO;
 }
 
+export interface Client {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface StatisticsDTO {
   totalClients: number;
   totalAccounts: number;
   totalOperations: number;
   activeLoans: number;
   totalLoanAmount: number;
+  availableStocks: number;
 }
 
 export interface CreateSavingProductRequest {
@@ -39,15 +50,97 @@ export interface EditStockResponse {
   message: string
 }
 
+export interface CreateClientPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export interface UpdateClientPayload {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+}
+
 export class AdminService {
-  async getClients(): Promise<ClientDTO[]> {
+  async getClients(): Promise<Client[]> {
     try {
       const response = await httpClient.get<{ clients: ClientDTO[] }>(
         API_ENDPOINTS.ADMIN.CLIENTS
       );
-      return response.data.clients;
+      const clientsData = response.data.clients || [];
+      
+      // Map ClientDTO to simplified Client format
+      return clientsData.map((client) => ({
+        id: client.userId,
+        email: client.user.email,
+        firstName: client.user.firstname,
+        lastName: client.user.lastname,
+        role: client.user.role,
+        isActive: client.user.isActive,
+        createdAt: client.user.createdAt,
+      }));
     } catch (error) {
       console.error('Erreur lors de la récupération des clients:', error);
+      throw error;
+    }
+  }
+
+  async createClient(payload: CreateClientPayload): Promise<Client> {
+    try {
+      const response = await httpClient.post<{ message: string; client: UserDTO }>(
+        API_ENDPOINTS.ADMIN.CLIENTS,
+        payload
+      );
+      const clientData = response.data.client;
+      
+      // Map UserDTO to Client format
+      return {
+        id: clientData.id,
+        email: clientData.email,
+        firstName: clientData.firstname,
+        lastName: clientData.lastname,
+        role: clientData.role,
+        isActive: clientData.isActive,
+        createdAt: clientData.createdAt,
+      };
+    } catch (error) {
+      console.error('Erreur lors de la création du client:', error);
+      throw error;
+    }
+  }
+
+  async updateClient(userId: string, payload: UpdateClientPayload): Promise<Client> {
+    try {
+      const response = await httpClient.put<{ message: string; client: UserDTO }>(
+        `${API_ENDPOINTS.ADMIN.CLIENTS}/${userId}`,
+        payload
+      );
+      const clientData = response.data.client;
+      
+      // Map UserDTO to Client format
+      return {
+        id: clientData.id,
+        email: clientData.email,
+        firstName: clientData.firstname,
+        lastName: clientData.lastname,
+        role: clientData.role,
+        isActive: clientData.isActive,
+        createdAt: clientData.createdAt,
+      };
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du client:', error);
+      throw error;
+    }
+  }
+
+  async deleteClient(userId: string): Promise<void> {
+    try {
+      await httpClient.delete(`${API_ENDPOINTS.ADMIN.CLIENTS}/${userId}`);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du client:', error);
       throw error;
     }
   }
@@ -141,7 +234,7 @@ export class AdminService {
 
   async getStock(stockId: string){
     try{
-      const response = await httpClient.get<{stock: Stock}>(API_ENDPOINTS.INVESTMENTS.STOCKS.DETAILS(stockId));
+      const response = await httpClient.get<{stock: Stock}>(API_ENDPOINTS.INVESTMENTS.STOCKS.GET_STOCK(stockId));
       return response.data.stock
     } catch (error) {
       console.error("Erreur lors de la récupération de l'action", error);

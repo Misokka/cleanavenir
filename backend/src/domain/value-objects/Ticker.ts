@@ -6,7 +6,7 @@ export class Ticker{
 
   public static from(value: string){
     
-    if(value.length > 5){
+    if(value.length > 10){
       return err(new TickerTooLongError(value));
     }
 

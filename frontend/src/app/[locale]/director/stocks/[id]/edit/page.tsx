@@ -8,11 +8,10 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { getStockById, updateStock, Stock } from '@/lib/api/director/stocks';
-import { getAllCompanies, Company } from '@/lib/api/director/companies';
+import { companiesService, Company } from '@/infrastructure/web/services/companiesService';
+import { UpdateStockPayload } from '@/infrastructure/web/services/stocksService';
 import { useToast } from '@/contexts/ToastProvider';
 import { useGetStock } from '@/features/admin/useGetStock';
-import { EditStockRequest } from '@/infrastructure/web/services/adminService';
 import { useEditStock } from '@/features/admin/useEditStock';
 
 interface EditStockPageProps {
@@ -25,24 +24,18 @@ export default function EditStockPage({ params }: EditStockPageProps) {
   const locale = useLocale();
   const router = useRouter();
   const { success, error: showError } = useToast();
-  // const [stock, setStock] = useState<Stock | null>(null);
-  // const [companies, setCompanies] = useState<Company[]>([]);
-  // const [companyId, setCompanyId] = useState('');
-  // const [ticker, setTicker] = useState('');
-  // const [isAvailable, setIsAvailable] = useState(true);
-  // const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const {getStock, stock, loading, error} = useGetStock();
   const {editStock, success: editSuccess, error: editError, loading: editLoading} = useEditStock();
 
-  const [formData, setFormData] = useState<EditStockRequest>({
+  const [formData, setFormData] = useState<UpdateStockPayload>({
     isAvailable: stock?.isAvailable ?? true,
-    ticker: stock?.ticker ?? ""
+    ticker: stock?.ticker ?? "",
+    price: stock?.price
   })
 
   useEffect(() => {
-    // loadData();
     getStock(id)
   }, [id]);
 
@@ -51,7 +44,8 @@ export default function EditStockPage({ params }: EditStockPageProps) {
       setFormData((prev) => ({
         ...prev,
         isAvailable: stock.isAvailable,
-        ticker: stock.ticker
+        ticker: stock.ticker,
+        price: stock.price
       }))
     }
   }, [stock])
@@ -82,7 +76,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.ticker.trim()) {
+    if (!formData.ticker?.trim()) {
       showError('Tous les champs requis doivent être remplis');
       return;
     }
@@ -179,6 +173,27 @@ export default function EditStockPage({ params }: EditStockPageProps) {
             </div>
 
             <div>
+              <label className="block mb-2">
+                <Typography variant="caption" className="font-medium">
+                  Prix (€) *
+                </Typography>
+              </label>
+              <Input
+                type="number"
+                value={formData.price ?? ''}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  price: e.target.value ? Number(e.target.value) : undefined
+                })}
+                fullWidth
+                placeholder="100.00"
+                required
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <div>
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -209,7 +224,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={submitting || !formData.ticker.trim()}
+                disabled={submitting || !formData.ticker || !formData.ticker.trim()}
                 className="flex-1"
               >
                 {t('form.submit')}

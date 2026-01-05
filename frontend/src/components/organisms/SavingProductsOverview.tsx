@@ -73,7 +73,6 @@ function SavingProductsOverview({ savingProducts, onSuccess }: SavingProductsOve
                   setIsFormActive(true);
                   setProductToEdit(product);
                 }}>Modifier</button>
-                <button className='text-left hover:bg-slate-50 p-1 rounded text-sm text-red-600'>Supprimer</button>
               </div>
             )}
           </Card>

@@ -20,10 +20,8 @@ export interface UpdateCompanyPayload {
 
 export const getAllCompanies = async (): Promise<Company[]> => {
   try {
-    const response = await fetcher<{ companies: Company[] }>('/api/director/companies', {
-      method: 'GET',
-    });
-    return response.companies || [];
+    const response = await httpClient.get<{ companies: Company[] }>('/director/companies');
+    return response.data.companies || [];
   } catch (error) {
     console.error('Error fetching companies:', error);
     return [];
@@ -32,10 +30,8 @@ export const getAllCompanies = async (): Promise<Company[]> => {
 
 export const getCompanyById = async (companyId: string): Promise<Company | null> => {
   try {
-    const response = await fetcher<{ company: Company }>(`/api/director/companies/${companyId}`, {
-      method: 'GET',
-    });
-    return response.company;
+    const response = await httpClient.get<{ company: Company }>(`/director/companies/${companyId}`);
+    return response.data.company;
   } catch (error) {
     console.error(`Error fetching company ${companyId}:`, error);
     return null;
@@ -44,11 +40,8 @@ export const getCompanyById = async (companyId: string): Promise<Company | null>
 
 export const createCompany = async (payload: CreateCompanyPayload): Promise<Company> => {
   try {
-    const response = await fetcher<{ company: Company }>('/api/director/companies', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    return response.company;
+    const response = await httpClient.post<{ company: Company }>('/director/companies', payload);
+    return response.data.company;
   } catch (error) {
     console.error('Error creating company:', error);
     throw error;
@@ -57,11 +50,8 @@ export const createCompany = async (payload: CreateCompanyPayload): Promise<Comp
 
 export const updateCompany = async (companyId: string, payload: UpdateCompanyPayload): Promise<Company> => {
   try {
-    const response = await fetcher<{ company: Company }>(`/api/director/companies/${companyId}`, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
-    return response.company;
+    const response = await httpClient.put<{ company: Company }>(`/director/companies/${companyId}`, payload);
+    return response.data.company;
   } catch (error) {
     console.error(`Error updating company ${companyId}:`, error);
     throw error;
@@ -70,9 +60,7 @@ export const updateCompany = async (companyId: string, payload: UpdateCompanyPay
 
 export const deleteCompany = async (companyId: string): Promise<boolean> => {
   try {
-    await fetcher(`/api/director/companies/${companyId}`, {
-      method: 'DELETE',
-    });
+    await httpClient.delete(`/director/companies/${companyId}`);
     return true;
   } catch (error) {
     console.error(`Error deleting company ${companyId}:`, error);

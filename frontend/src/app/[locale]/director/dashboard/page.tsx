@@ -5,22 +5,27 @@ import { useTranslations } from 'next-intl';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
-import { getDirectorStatistics, DirectorStatistics } from '@/lib/api/director/statistics';
+import { adminService, StatisticsDTO } from '@/infrastructure/web/services/adminService';
 import { useParams } from 'next/navigation';
 
 export default function DirectorDashboardPage() {
   const params = useParams();
   const locale = params.locale;
   const t = useTranslations('Director.dashboard');
-  const [stats, setStats] = useState<DirectorStatistics | null>(null);
+  const [stats, setStats] = useState<StatisticsDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadStats = async () => {
       setLoading(true);
-      const data = await getDirectorStatistics();
-      setStats(data);
-      setLoading(false);
+      try {
+        const data = await adminService.getStatistics();
+        setStats(data);
+      } catch (error) {
+        console.error('Error loading statistics:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     
     loadStats();
@@ -48,7 +53,7 @@ export default function DirectorDashboardPage() {
       <div className="space-y-6">
         <Typography variant="h2">{t('title')}</Typography>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -70,19 +75,6 @@ export default function DirectorDashboardPage() {
                 </Typography>
                 <Typography variant="h2" color="primary">
                   {stats?.totalAccounts || 0}
-                </Typography>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <Typography variant="caption" color="muted" className="mb-2">
-                  {t('stats.savingsRate')}
-                </Typography>
-                <Typography variant="h2" color="primary">
-                  {stats?.currentSavingsRate || 0}%
                 </Typography>
               </div>
             </div>

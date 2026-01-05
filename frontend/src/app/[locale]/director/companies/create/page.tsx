@@ -8,7 +8,7 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { createCompany } from '@/lib/api/director/companies';
+import { companiesService } from '@/infrastructure/web/services/companiesService';
 import { useToast } from '@/contexts/ToastProvider';
 
 export default function CreateCompanyPage() {
@@ -30,7 +30,7 @@ export default function CreateCompanyPage() {
 
     setSubmitting(true);
     try {
-      await createCompany({ name: name.trim(), description: description.trim() });
+      await companiesService.createCompany({ name: name.trim(), description: description.trim() });
       success(t('toasts.createSuccess'));
       router.push(`/${locale}/director/companies`);
     } catch (err) {
