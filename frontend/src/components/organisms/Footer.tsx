@@ -27,7 +27,7 @@ export function Footer() {
               </Typography>
             </div>
             <Typography color="white" className="opacity-80 max-w-md">
-              Votre banque du futur, simple, moderne et responsable.
+              {t('tagline')}
             </Typography>
           </div>
 
