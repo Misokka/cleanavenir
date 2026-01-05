@@ -5,6 +5,7 @@ import { LoanNotFoundError } from '../../../../domain/errors/LoanNotFoundError';
 
 export interface RejectLoanInput {
   loanIdentifier: string;
+  advisorIdentifier: string; 
 }
 
 export class RejectLoanUseCase {
@@ -20,6 +21,10 @@ export class RejectLoanUseCase {
 
     if (loan.status !== 'PENDING') {
       return err(new Error('Ce prêt n\'est plus en attente'));
+    }
+
+    if (loan.advisorIdentifier && loan.advisorIdentifier !== input.advisorIdentifier) {
+      return err(new Error('Vous n\'êtes pas autorisé à rejeter ce prêt'));
     }
     const rejectedLoan = Loan.create({
       loanIdentifier: loan.loanIdentifier,

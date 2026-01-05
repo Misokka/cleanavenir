@@ -5,12 +5,24 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 export const rejectLoanController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id: loanId } = req.params;
+    const userId = req.userId!; // L'ID utilisateur du conseiller connecté
 
     const container = getContainer();
     const rejectLoanUseCase = container.useCases.loan.rejectLoan;
+    const advisorRepository = container.repositories.advisor;
+
+    const advisorResult = await advisorRepository.findByUserId(userId);
+    if (!advisorResult.ok) {
+      res.status(404).json({
+        error: 'ADVISOR_NOT_FOUND',
+        message: 'Conseiller introuvable',
+      });
+      return;
+    }
 
     const result = await rejectLoanUseCase.execute({
       loanIdentifier: loanId,
+      advisorIdentifier: advisorResult.value.advisorIdentifier,
     });
 
     if (!result.ok) {

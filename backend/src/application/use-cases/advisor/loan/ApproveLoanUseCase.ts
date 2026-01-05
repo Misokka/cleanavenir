@@ -3,6 +3,7 @@ import { Loan } from '../../../../domain/entities/Loan';
 import { LoanRepository } from '../../../ports/repositories/LoanRepository';
 import { BankAccountRepository } from '../../../ports/repositories/BankAccountRepository';
 import { TransactionRepository } from '../../../ports/repositories/TransactionRepository';
+import { ClientRepository } from '../../../ports/repositories/ClientRepository';
 import { Transaction } from '../../../../domain/entities/Transaction';
 import { LoanNotFoundError } from '../../../../domain/errors/LoanNotFoundError';
 import { randomUUID } from 'crypto';
@@ -16,7 +17,8 @@ export class ApproveLoanUseCase {
   constructor(
     private readonly loanRepository: LoanRepository,
     private readonly bankAccountRepository: BankAccountRepository,
-    private readonly transactionRepository: TransactionRepository
+    private readonly transactionRepository: TransactionRepository,
+    private readonly clientRepository: ClientRepository
   ) {}
 
   async execute(input: ApproveLoanInput): Promise<Result<Loan, Error>> {
@@ -29,6 +31,10 @@ export class ApproveLoanUseCase {
 
     if (loan.status !== 'PENDING') {
       return err(new Error('Ce prêt n\'est plus en attente'));
+    }
+
+    if (loan.advisorIdentifier && loan.advisorIdentifier !== input.advisorIdentifier) {
+      return err(new Error('Vous n\'êtes pas autorisé à approuver ce prêt'));
     }
 
     const nextPaymentDate = new Date();
@@ -54,10 +60,12 @@ export class ApproveLoanUseCase {
       description: `Déblocage du prêt ${loan.loanIdentifier.slice(0, 8)}`,
     });
 
+    const assignedAdvisorId = loan.advisorIdentifier || input.advisorIdentifier;
+
     const updatedLoan = Loan.create({
       loanIdentifier: loan.loanIdentifier,
       clientIdentifier: loan.clientIdentifier,
-      advisorIdentifier: input.advisorIdentifier, 
+      advisorIdentifier: assignedAdvisorId, 
       loanAmount: loan.loanAmount,
       durationInMonth: loan.durationInMonth,
       mensualities: loan.mensualities,
@@ -78,6 +86,11 @@ export class ApproveLoanUseCase {
 
     await this.bankAccountRepository.updateBalance(bankAccount.accountIdentifier, bankAccount.balance);
     await this.transactionRepository.save(creditTransaction);
+
+    const clientResult = await this.clientRepository.findById(loan.clientIdentifier);
+    if (clientResult.ok && !clientResult.value.advisorIdentifier) {
+      await this.clientRepository.updateAdvisor(loan.clientIdentifier, assignedAdvisorId);
+    }
 
     return updateResult;
   }
