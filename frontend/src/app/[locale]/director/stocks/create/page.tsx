@@ -8,8 +8,8 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { createStock } from '@/lib/api/director/stocks';
-import { getAllCompanies, Company } from '@/lib/api/director/companies';
+import { companiesService, Company } from '@/infrastructure/web/services/companiesService';
+import { stocksService } from '@/infrastructure/web/services/stocksService';
 import { useToast } from '@/contexts/ToastProvider';
 
 export default function CreateStockPage() {
@@ -20,6 +20,8 @@ export default function CreateStockPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [companyId, setCompanyId] = useState('');
   const [ticker, setTicker] = useState('');
+  const [price, setPrice] = useState('');
+  const [initialQuantity, setInitialQuantity] = useState('');
   const [isAvailable, setIsAvailable] = useState(true);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +32,7 @@ export default function CreateStockPage() {
 
   const loadCompanies = async () => {
     setLoading(true);
-    const data = await getAllCompanies();
+    const data = await companiesService.listCompanies();
     setCompanies(data);
     setLoading(false);
   };
@@ -38,23 +40,44 @@ export default function CreateStockPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!companyId || !ticker.trim()) {
+    if (!companyId || !ticker.trim() || !price || !initialQuantity) {
       showError('Tous les champs requis doivent être remplis');
+      return;
+    }
+
+    const priceNum = parseFloat(price);
+    const quantityNum = parseInt(initialQuantity);
+
+    if (isNaN(priceNum) || priceNum <= 0) {
+      showError('Le prix doit être un nombre positif');
+      return;
+    }
+
+    if (isNaN(quantityNum) || quantityNum <= 0) {
+      showError('La quantité doit être un nombre positif');
       return;
     }
 
     setSubmitting(true);
     try {
-      await createStock({
+      await stocksService.createStock({
         companyId,
         ticker: ticker.trim().toUpperCase(),
+        price: priceNum,
+        initialQuantity: quantityNum,
         isAvailable,
       });
       success(t('toasts.createSuccess'));
       router.push(`/${locale}/director/stocks`);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating stock:', err);
-      showError(t('toasts.createError'));
+      // Gérer l'erreur de ticker existant
+      if (err?.response?.data?.message?.includes('UNIQUE constraint failed') || 
+          err?.response?.data?.message?.includes('ticker')) {
+        showError(`Une action avec le ticker "${ticker.toUpperCase()}" existe déjà. Veuillez utiliser un ticker différent.`);
+      } else {
+        showError(t('toasts.createError'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -121,6 +144,45 @@ export default function CreateStockPage() {
             </div>
 
             <div>
+              <label className="block mb-2">
+                <Typography variant="caption" className="font-medium">
+                  Prix initial (€) *
+                </Typography>
+              </label>
+              <Input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                fullWidth
+                placeholder="100.00"
+                required
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2">
+                <Typography variant="caption" className="font-medium">
+                  Quantité initiale *
+                </Typography>
+              </label>
+              <Input
+                type="number"
+                value={initialQuantity}
+                onChange={(e) => setInitialQuantity(e.target.value)}
+                fullWidth
+                placeholder="1000"
+                required
+                min="1"
+                step="1"
+              />
+              <Typography variant="caption" className="text-gray-500 mt-1">
+                Nombre d'actions à mettre en circulation dans le portfolio système
+              </Typography>
+            </div>
+
+            <div>
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -148,7 +210,7 @@ export default function CreateStockPage() {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={submitting || !companyId || !ticker.trim()}
+                disabled={submitting || !companyId || !ticker.trim() || !price || !initialQuantity}
                 className="flex-1"
               >
                 {t('form.submit')}

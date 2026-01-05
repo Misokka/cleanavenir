@@ -11,6 +11,7 @@ export function Footer() {
   const hassidebar = pathname.includes('/dashboard') || 
                       pathname.includes('/client') || 
                       pathname.includes('/advisor') || 
+                      pathname.includes('/director') ||
                       pathname.includes('/admin');
 
   return (

@@ -24,6 +24,20 @@ export type StockPriceHistory = {
   recordedAt: string
 }
 
+export type CreateStockPayload = {
+  companyId: string;
+  ticker: string;
+  price: number;
+  isAvailable: boolean;
+  initialQuantity: number;
+}
+
+export type UpdateStockPayload = {
+  ticker?: string;
+  price?: number;
+  isAvailable?: boolean;
+}
+
 class StockService {
   async listStocks(){
     try{
@@ -38,6 +52,18 @@ class StockService {
     }
   }
 
+  async getStockById(stockId: string): Promise<Stock> {
+    try {
+      const response = await httpClient.get<{ stock: Stock }>(
+        API_ENDPOINTS.INVESTMENTS.STOCKS.GET_STOCK(stockId)
+      );
+      return response.data.stock;
+    } catch (error) {
+      console.error("Error getting stock:", error);
+      throw error;
+    }
+  }
+
   async getStockPriceHistory(stockId: string){
     try{
       const response = await httpClient.get<{stockPriceHistory: StockWithPriceHistory}>(
@@ -46,6 +72,43 @@ class StockService {
       return response.data.stockPriceHistory
     } catch (error) {
       console.log("An error occured when listing stock price history", error);
+      throw error;
+    }
+  }
+
+  async createStock(payload: CreateStockPayload): Promise<Stock> {
+    try {
+      const response = await httpClient.post<{ stock: Stock }>(
+        API_ENDPOINTS.INVESTMENTS.STOCKS.CREATE,
+        payload
+      );
+      return response.data.stock;
+    } catch (error) {
+      console.error("Error creating stock:", error);
+      throw error;
+    }
+  }
+
+  async updateStock(stockId: string, payload: UpdateStockPayload): Promise<{ success: boolean }> {
+    try {
+      const response = await httpClient.put<{ success: boolean }>(
+        API_ENDPOINTS.INVESTMENTS.STOCKS.UPDATE(stockId),
+        payload
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      throw error;
+    }
+  }
+
+  async deleteStock(stockId: string): Promise<void> {
+    try {
+      await httpClient.delete(
+        API_ENDPOINTS.INVESTMENTS.STOCKS.DELETE(stockId)
+      );
+    } catch (error) {
+      console.error("Error deleting stock:", error);
       throw error;
     }
   }

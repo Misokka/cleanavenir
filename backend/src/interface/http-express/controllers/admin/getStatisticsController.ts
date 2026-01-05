@@ -9,19 +9,20 @@ export const getStatisticsController = asyncHandler(
     const accountRepository = container.repositories.bankAccount;
     const transactionRepository = container.repositories.transaction;
     const loanRepository = container.repositories.loan;
+    const stockRepository = container.repositories.stock;
 
-    // Récupérer les statistiques
     const clientsResult = await clientRepository.all();
     const accountsResult = await accountRepository.all();
     
-    // Compter les opérations (approximation - vous pouvez améliorer)
-    const totalOperations = 0; // TODO: implémenter countAll() dans le repository
+    const totalOperations = 0;
 
-    // Compter les prêts actifs
     const loansResult = await loanRepository.all();
     const activeLoans = loansResult.ok 
       ? loansResult.value.filter((loan) => loan.status === 'ACTIVE')
       : [];
+
+    const stocksResult = await stockRepository.allAvailableStocks();
+    const availableStocks = stocksResult.ok ? stocksResult.value.length : 0;
 
     res.json({
       statistics: {
@@ -33,6 +34,7 @@ export const getStatisticsController = asyncHandler(
           (sum, loan) => sum + loan.loanAmount,
           0
         ),
+        availableStocks,
       },
     });
   }

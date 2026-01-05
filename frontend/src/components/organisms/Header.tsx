@@ -18,6 +18,7 @@ export function Header() {
   const isAuthenticatedPage = pathname.includes('/dashboard') || 
                                pathname.includes('/client') || 
                                pathname.includes('/advisor') || 
+                               pathname.includes('/director') ||
                                pathname.includes('/admin');
 
   if (isAuthenticatedPage) {

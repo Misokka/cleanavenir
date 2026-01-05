@@ -45,4 +45,41 @@ export class CompanyRepositoryDrizzle implements CompanyRepository {
       return err(new Error(e.message));
     }
   }
+
+  async update(company: Company): Promise<Result<Company, Error>> {
+    try {
+      const companyToPersist = this.companyMapper.toPersistence(company);
+      const updatedCompany = await this.db
+        .update(companies)
+        .set(companyToPersist)
+        .where(eq(companies.id, company.companyIdentifier))
+        .returning();
+
+      if (!updatedCompany.length) {
+        return err(new CompanyNotFoundError(company.companyIdentifier));
+      }
+
+      const companyToDomain = this.companyMapper.toDomain(updatedCompany[0]);
+      return ok(companyToDomain);
+    } catch (e: any) {
+      return err(new Error(e.message || 'Failed to update company'));
+    }
+  }
+
+  async delete(companyIdentifier: string): Promise<Result<void, Error>> {
+    try {
+      const result = await this.db
+        .delete(companies)
+        .where(eq(companies.id, companyIdentifier))
+        .returning();
+
+      if (!result.length) {
+        return err(new CompanyNotFoundError(companyIdentifier));
+      }
+
+      return ok(undefined);
+    } catch (e: any) {
+      return err(new Error(e.message || 'Failed to delete company'));
+    }
+  }
 }

@@ -5,20 +5,25 @@ import { Ticker } from "../../../../domain/value-objects/Ticker";
 import Result, { err, ok } from "../../../../shared/Result";
 import { CouldNotCreateStockError } from "../../../../domain/errors/CouldNotCreateStockError";
 import { CompanyRepository } from "../../../ports/repositories/CompanyRepository";
+import { PortfolioRepository } from "../../../ports/repositories/PortfolioRepository";
+import { Portfolio } from "../../../../domain/entities/Portfolio";
+import { SYSTEM_PORTFOLIO_ID } from "../../../../shared/constants/Investment";
 
 type CreateStockProps = {
   companyIdentifier: string,
   tickerValue: string,
   price: number,
-  isAvailable: boolean
+  isAvailable: boolean,
+  initialQuantity: number
 }
 export class CreateStockUseCase{
   constructor(
     private readonly stockRepository: StockRepository,
-    private readonly companyRepository: CompanyRepository
+    private readonly companyRepository: CompanyRepository,
+    private readonly portfolioRepository: PortfolioRepository
   ){}
 
-  public async execute({companyIdentifier, tickerValue, price, isAvailable}: CreateStockProps): Promise<Result<Stock, Error>>{
+  public async execute({companyIdentifier, tickerValue, price, isAvailable, initialQuantity}: CreateStockProps): Promise<Result<Stock, Error>>{
     const existingCompanyResult = await this.companyRepository.findById(companyIdentifier);
 
     if(!existingCompanyResult.ok){
@@ -45,8 +50,13 @@ export class CreateStockUseCase{
     const maybeStock = await this.stockRepository.save(newStock);
 
     if(!maybeStock.ok){
+      console.error('CreateStockUseCase - Stock save error:', maybeStock.error);
       return err(new CouldNotCreateStockError())
     }
+
+    // Note: Les holdings initiaux peuvent être gérés par un système de matching d'ordres
+    // Pour l'instant, on ne crée pas de portfolio système automatiquement
+    // car cela nécessiterait un utilisateur système dans la table clients
 
     return ok(maybeStock.value)
   }

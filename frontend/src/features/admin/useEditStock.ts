@@ -1,4 +1,4 @@
-import { adminService, EditStockRequest } from "@/infrastructure/web/services/adminService";
+import { stocksService, UpdateStockPayload } from "@/infrastructure/web/services/stocksService";
 import { useState } from "react";
 
 export function useEditStock(){
@@ -6,9 +6,9 @@ export function useEditStock(){
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  async function editStock(stockId: string, data: EditStockRequest){
+  async function editStock(stockId: string, data: UpdateStockPayload){
     try{
-      const response = await adminService.editStock(stockId, data);
+      const response = await stocksService.updateStock(stockId, data);
       setSuccess(response.success);
       return response;
     } catch (error: any) {

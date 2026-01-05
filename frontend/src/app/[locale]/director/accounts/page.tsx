@@ -7,17 +7,8 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
-import { 
-  listClients,
-  createClient,
-  updateClient,
-  deleteClient,
-  banClient,
-  unbanClient,
-  Client,
-  CreateClientPayload,
-  UpdateClientPayload
-} from '@/lib/api/director/clients';
+import { adminService, Client } from '@/infrastructure/web/services/adminService';
+import type { CreateClientPayload, UpdateClientPayload } from '@/infrastructure/web/services/adminService';
 import { useToast } from '@/contexts/ToastProvider';
 
 export default function DirectorAccountsPage() {    
@@ -64,7 +55,7 @@ export default function DirectorAccountsPage() {
 
   const loadClients = async () => {
     setLoading(true);
-    const data = await listClients();
+    const data = await adminService.getClients();
     setClients(data);
     setLoading(false);
   };
@@ -112,7 +103,7 @@ export default function DirectorAccountsPage() {
     
     setActionLoading(true);
     try {
-      await createClient({
+      await adminService.createClient({
         email: createEmail,
         firstName: createFirstName,
         lastName: createLastName,
@@ -163,7 +154,7 @@ export default function DirectorAccountsPage() {
       if (editLastName) payload.lastName = editLastName;
       if (editPassword) payload.password = editPassword;
       
-      await updateClient(selectedClient.id, payload);
+      await adminService.updateClient(selectedClient.id, payload);
       success(t('toasts.updateSuccess'));
       setShowEditModal(false);
       setEditEmail('');
@@ -185,7 +176,7 @@ export default function DirectorAccountsPage() {
     
     setActionLoading(true);
     try {
-      await banClient(selectedClient.id, banReason);
+      await adminService.banClient(selectedClient.id);
       success(t('toasts.banSuccess'));
       setShowBanModal(false);
       setBanReason('');
@@ -203,7 +194,7 @@ export default function DirectorAccountsPage() {
     
     setActionLoading(true);
     try {
-      await unbanClient(selectedClient.id);
+      await adminService.unbanClient(selectedClient.id);
       success(t('toasts.unbanSuccess'));
       setShowUnbanModal(false);
       await loadClients();
@@ -220,7 +211,7 @@ export default function DirectorAccountsPage() {
     
     setActionLoading(true);
     try {
-      await deleteClient(selectedClient.id);
+      await adminService.deleteClient(selectedClient.id);
       success(t('toasts.deleteSuccess'));
       setShowDeleteModal(false);
       await loadClients();

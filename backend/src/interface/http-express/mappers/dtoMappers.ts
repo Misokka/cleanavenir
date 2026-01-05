@@ -84,7 +84,7 @@ export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductD
   return {
     ...savingProduct,
     id: savingProduct.savingProductIdentifier,
-    rate: savingProduct.rate / 1_000_000, // conversion de micro pourcent à pourcent
+    rate: savingProduct.rate, // Le mapper a déjà converti en pourcentage
   }
 }
 
@@ -100,7 +100,7 @@ export function toStockDTO(stock: Stock, company: Company): StockDTO{
   return{
     id: stock.stockIdentifier,
     ticker: stock.ticker.value,
-    price: stock.price / 100, // conversion en euros
+    price: stock.price, // Le stock du domaine est déjà en euros (converti par le mapper)
     isAvailable: stock.isAvailable,
     createdAt: stock.createdAt.toISOString(),
     updatedAt: stock.updatedAt?.toISOString() as string,
@@ -112,7 +112,7 @@ export function toStockWithOutCompanyDTO(stock: Stock){
     return{
     id: stock.stockIdentifier,
     ticker: stock.ticker.value,
-    price: stock.price / 100, // conversion en euros
+    price: stock.price, // Le stock du domaine est déjà en euros (converti par le mapper)
     isAvailable: stock.isAvailable,
     createdAt: stock.createdAt.toISOString(),
     updatedAt: stock.updatedAt?.toISOString() as string,

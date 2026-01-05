@@ -19,6 +19,7 @@ export class PortfolioRepositoryDrizzle implements PortfolioRepository {
   async save(portfolio: Portfolio): Promise<Result<Portfolio, Error>> {
     try {
       const portfolioToPersist = this.portfolioMapper.toPersistence(portfolio)
+      console.log('PortfolioRepositoryDrizzle - Persisting:', portfolioToPersist);
       const registeredPortofolioRows = await this.db.insert(portfolios).values(portfolioToPersist).returning();
 
       const holdingsToPersist = portfolio.allHoldings();
@@ -38,6 +39,7 @@ export class PortfolioRepositoryDrizzle implements PortfolioRepository {
     
       return ok(portfolioToDomain);
     } catch (e: any) {
+      console.error('PortfolioRepositoryDrizzle - Save error:', e);
       return err(new Error(`Could not insert portfolio: ${e.message}`));
     }
   }

@@ -4,18 +4,18 @@ import { Mapper } from "../MapperInterface";
 
 export class DrizzleSavingProductMapper implements Mapper<SavingProductDrizzle, SavingProduct, NewSavingProductDrizzle> {
   toDomain(raw: SavingProductDrizzle): SavingProduct {
-    // ...mapping logic...
     return SavingProduct.create({
-      ...raw,
       savingProductIdentifier: raw.id,
+      label: raw.label,
+      rate: raw.rate / 1000000,
     });
   }
 
   toPersistence(entity: SavingProduct): NewSavingProductDrizzle {
-    // ...mapping logic...
     return {
-      ...entity,
       id: entity.savingProductIdentifier,
+      label: entity.label,
+      rate: Math.round(entity.rate * 1000000),
     };
   }
 }

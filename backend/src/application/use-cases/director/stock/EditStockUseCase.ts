@@ -12,7 +12,8 @@ interface EditStockProps{
 export type StockToEditType = {
   id: string,
   isAvailable: boolean,
-  ticker: string
+  ticker: string,
+  price?: number
 }
 
 export class EditStockUseCase {
@@ -29,6 +30,10 @@ export class EditStockUseCase {
     const stockTickerResult = Ticker.from(stockToEdit.ticker);
     if(!stockTickerResult.ok) return err(new TickerTooLongError(stockToEdit.ticker));
     stock.ticker = stockTickerResult.value;
+    
+    if (stockToEdit.price !== undefined) {
+      stock.updatePrice(stockToEdit.price);
+    }
 
     const updatedStockResult = await this.stockRepository.update(stock);
     if(!updatedStockResult.ok) return err(updatedStockResult.error);

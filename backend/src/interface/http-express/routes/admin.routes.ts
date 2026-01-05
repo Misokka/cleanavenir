@@ -18,7 +18,7 @@ import {
   deleteAccountByDirectorController,
 } from '../controllers/admin';
 
-import { ListCompaniesController } from '../controllers/companies'; 
+import { ListCompaniesController, CreateCompanyController, GetCompanyByIdController, UpdateCompanyController, DeleteCompanyController } from '../controllers/companies'; 
 
 
 const router = Router();
@@ -49,7 +49,11 @@ router.get('/savings/products', ListSavingProductsController);
 router.put('/savings/products/:id', UpdateSavingProductController);
 
 // Entreprises et actions
-router.get('/companies', ListCompaniesController)
-router.put('/stocks/:stockId/edit', EditStockController)
+router.get('/companies', ListCompaniesController);
+router.post('/companies', CreateCompanyController);
+router.get('/companies/:id', GetCompanyByIdController);
+router.put('/companies/:id', UpdateCompanyController);
+router.delete('/companies/:id', DeleteCompanyController);
+router.put('/stocks/:stockId/edit', EditStockController);
 
 export const adminRoutes = router;

@@ -15,20 +15,20 @@ export class DrizzleStockMapper implements Mapper<StockDrizzle, Stock, NewStockD
       stockIdentifier: raw.id,
       companyIdentifier: raw.companyId,
       ticker: tickerResult.value,
+      price: raw.price / 100, // Conversion centimes -> euros
       isAvailable: raw.isAvailable === 1 ? true : false,
       createdAt: new Date(raw.createdAt)
     });
   }
 
   toPersistence(entity: Stock): NewStockDrizzle {
-    // ...mapping logic...
     return {
-      ...entity,
       id: entity.stockIdentifier,
       companyId: entity.companyIdentifier,
       ticker: entity.ticker.value,
+      price: Math.round(entity.price * 100), // Conversion euros -> centimes
       createdAt: entity.createdAt.toISOString(),
-      updatedAt: entity.updatedAt?.toISOString() as string,
+      updatedAt: entity.updatedAt ? entity.updatedAt.toISOString() : entity.createdAt.toISOString(),
       isAvailable: entity.isAvailable ? 1 : 0
     };
   }

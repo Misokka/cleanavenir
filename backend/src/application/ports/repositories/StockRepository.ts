@@ -7,6 +7,7 @@ export interface StockRepository {
   save(stock: Stock): Promise<Result<Stock, Error>>; // Error si doublon symbol
   findById(stockIdentifier: string): Promise<Result<Stock, StockNotFoundError>>;
   findByTicker(ticker: string): Promise<Result<Stock, StockNotFoundError>>;
+  findByCompanyId(companyId: string): Promise<Result<Stock[], Error>>;
   update(stock: Stock): Promise<Result<Stock, StockNotFoundError>>;
   remove(id: string): Promise<Result<true, StockNotFoundError>>;
   all(): Promise<Result<Stock[], Error>>;

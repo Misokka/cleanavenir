@@ -89,6 +89,9 @@ import { PlaceOrderUseCase } from '../../application/use-cases/client/investment
 import { SettleTradesUseCase } from '../../application/use-cases/client/investment/Order/SettleTradesUseCase';
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
+import { GetCompanyByIdUseCase } from '../../application/use-cases/director/company/GetCompanyByIdUseCase';
+import { UpdateCompanyUseCase } from '../../application/use-cases/director/company/UpdateCompanyUseCase';
+import { DeleteCompanyUseCase } from '../../application/use-cases/director/company/DeleteCompanyUseCase';
 import { CreateStockUseCase } from '../../application/use-cases/director/stock/CreateStockUseCase';
 import { ListCompaniesUseCase } from '../../application/use-cases/client/investment/ListCompaniesUseCase';
 import { ListStocksUseCase } from '../../application/use-cases/client/investment/stock/ListStocksUseCase';
@@ -251,7 +254,10 @@ export function createContainer() {
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
   const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository, stockRepository, companyRepository);
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
-  const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository);
+  const getCompanyByIdUseCase = new GetCompanyByIdUseCase(companyRepository);
+  const updateCompanyUseCase = new UpdateCompanyUseCase(companyRepository);
+  const deleteCompanyUseCase = new DeleteCompanyUseCase(companyRepository, stockRepository);
+  const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository, portfolioRepository);
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
   const listStockUseCase = new ListStocksUseCase(stockRepository);
   const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);
@@ -343,6 +349,9 @@ export function createContainer() {
       },
       investment: {
         addCompany: addCompanyUseCase,
+        getCompanyById: getCompanyByIdUseCase,
+        updateCompany: updateCompanyUseCase,
+        deleteCompany: deleteCompanyUseCase,
         createStock: createStockUseCase,
         placeOrder: placeOrderUseCase,
         createPortfolio: createPortfolioUseCase,
