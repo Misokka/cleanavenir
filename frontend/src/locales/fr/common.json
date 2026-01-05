@@ -174,10 +174,16 @@
       "recentOperations": "Opérations récentes",
       "viewAll": "Tout voir",
       "noOperations": "Aucune opération récente",
+      "noOperationsHint": "Vos dernières transactions apparaîtront ici",
       "accountsSummary": "Mes comptes",
       "retry": "Réessayer",
       "noAccountsAvailable": "Aucun compte disponible",
-      "accountsWillAppear": "Vos comptes apparaîtront ici une fois activés"
+      "accountsWillAppear": "Vos comptes apparaîtront ici une fois activés",
+      "distributedOn": "Répartis sur",
+      "account": "compte",
+      "accounts": "comptes",
+      "openAccount": "Ouvrir un compte",
+      "createAccount": "Créer un compte"
     },
     "accounts": {
       "title": "Mes comptes",

@@ -174,10 +174,16 @@
       "recentOperations": "Recent operations",
       "viewAll": "View all",
       "noOperations": "No recent operations",
+      "noOperationsHint": "Your recent transactions will appear here",
       "accountsSummary": "My accounts",
       "noAccountsAvailable": "No accounts available",
       "accountsWillAppear": "Your accounts will appear here once activated",
-      "retry": "Retry"
+      "retry": "Retry",
+      "distributedOn": "Distributed across",
+      "account": "account",
+      "accounts": "accounts",
+      "openAccount": "Open an account",
+      "createAccount": "Create an account"
     },
     "accounts": {
       "title": "My accounts",

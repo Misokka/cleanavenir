@@ -105,7 +105,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
             {t('accountsWillAppear')}
           </Typography>
           <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
-            Ouvrir un compte
+            {t('openAccount')}
           </Button>
         </Card>
 
@@ -127,7 +127,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
             size="sm"
             onClick={() => setIsCreateModalOpen(true)}
           >
-            + Créer un compte
+            + {t('createAccount')}
           </Button>
           {showViewAll && (
             <Link href={`/${locale}/dashboard/accounts`}>
@@ -149,7 +149,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
               {formatCurrency(getTotalBalance())}
             </Typography>
             <Typography variant="caption" className="text-white opacity-75 mt-2">
-              Répartis sur {accounts.length} {accounts.length > 1 ? 'comptes' : 'compte'}
+              {t('distributedOn')} {accounts.length} {accounts.length > 1 ? t('accounts') : t('account')}
             </Typography>
           </div>
         </Card>

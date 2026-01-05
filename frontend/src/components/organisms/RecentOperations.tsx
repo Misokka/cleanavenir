@@ -148,7 +148,7 @@ export const RecentOperations: React.FC<RecentOperationsProps> = ({
             {t('noOperations')}
           </Typography>
           <Typography color="muted">
-            Vos dernières transactions apparaîtront ici
+            {t('noOperationsHint')}
           </Typography>
         </Card>
       )}
