@@ -83,6 +83,10 @@ import { RequestLoanUseCase } from '../../application/use-cases/client/loan/Requ
 import { SimulateLoanUseCase } from '../../application/use-cases/client/loan/SimulateLoanUseCase';
 import { GrantLoanUseCase } from '../../application/use-cases/advisor/loan/GrantLoanUseCase';
 import { ProcessScheduledLoanPaymentsUseCase } from '../../application/use-cases/advisor/loan/ProcessScheduledLoanPaymentsUseCase';
+import { ListPendingLoansUseCase } from '../../application/use-cases/advisor/loan/ListPendingLoansUseCase';
+import { ApproveLoanUseCase } from '../../application/use-cases/advisor/loan/ApproveLoanUseCase';
+import { RejectLoanUseCase } from '../../application/use-cases/advisor/loan/RejectLoanUseCase';
+import { ListAdvisorClientsUseCase } from '../../application/use-cases/advisor/loan/ListAdvisorClientsUseCase';
 
 // Use Cases - Investment
 import { PlaceOrderUseCase } from '../../application/use-cases/client/investment/Order/PlaceOrderUseCase';
@@ -246,7 +250,11 @@ export function createContainer() {
   const requestLoanUseCase = new RequestLoanUseCase(loanRepository, clientRepository);
   const grantLoanUseCase = new GrantLoanUseCase(loanRepository, clientRepository, advisorRepository);
   const simulateLoanUseCase = new SimulateLoanUseCase();
-  const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository)
+  const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository);
+  const listPendingLoansUseCase = new ListPendingLoansUseCase(loanRepository);
+  const approveLoanUseCase = new ApproveLoanUseCase(loanRepository, bankAccountRepository, transactionRepository);
+  const rejectLoanUseCase = new RejectLoanUseCase(loanRepository);
+  const listAdvisorClientsUseCase = new ListAdvisorClientsUseCase(loanRepository);
 
   //Investment Use Cases
   const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
@@ -345,7 +353,11 @@ export function createContainer() {
         requestLoan: requestLoanUseCase,
         grantLoan: grantLoanUseCase,
         simulateLoan: simulateLoanUseCase,
-        processLoanPayments: processScheduledLoanPaymentsUseCase
+        processLoanPayments: processScheduledLoanPaymentsUseCase,
+        listPendingLoans: listPendingLoansUseCase,
+        approveLoan: approveLoanUseCase,
+        rejectLoan: rejectLoanUseCase,
+        listAdvisorClients: listAdvisorClientsUseCase
       },
       investment: {
         addCompany: addCompanyUseCase,

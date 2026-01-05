@@ -7,9 +7,9 @@ import { Button } from '@/components/atoms/Button';
 import { Typography } from '@/components/atoms/Typography';
 
 export default function StatisticsClient() {
-  const { data: statistics, isLoading, error, refetch } = useGetStatistics();
+  const { statistics, loading, error, refetch } = useGetStatistics();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="animate-pulse space-y-6">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -29,7 +29,7 @@ export default function StatisticsClient() {
           ❌ Erreur
         </Typography>
         <Typography variant="body" color="muted" className="mb-4">
-          {error.message || 'Impossible de charger les statistiques'}
+          {error || 'Impossible de charger les statistiques'}
         </Typography>
         <Button onClick={() => refetch()}>Réessayer</Button>
       </div>
@@ -50,7 +50,7 @@ export default function StatisticsClient() {
     <div className="space-y-4">
       <div className="flex justify-end">
         <Button variant="secondary" onClick={() => refetch()}>
-          🔄 Actualiser
+          Actualiser
         </Button>
       </div>
       <StatisticsOverview statistics={statistics} />

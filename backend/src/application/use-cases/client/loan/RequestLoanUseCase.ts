@@ -6,7 +6,7 @@ import { ClientRepository } from '../../../ports/repositories/ClientRepository';
 import { LoanCalculator } from '../../../ports/services/LoanCalculator';
 
 export interface RequestLoanInput {
-  clientIdentifier: string;
+  userIdentifier: string; 
   amount: number; // en centimes
   durationInMonth: number;
   annualInterestRate: number; // en basis points
@@ -21,8 +21,8 @@ export class RequestLoanUseCase {
   ) {}
 
   async execute(input: RequestLoanInput): Promise<Result<Loan, Error>> {
-    // Vérifier que le client existe
-    const clientResult = await this.clientRepository.findById(input.clientIdentifier);
+    // Vérifier que le client existe à partir du userId
+    const clientResult = await this.clientRepository.findByUserId(input.userIdentifier);
     if (!clientResult.ok) {
       return err(new Error('Client introuvable'));
     }
@@ -42,7 +42,7 @@ export class RequestLoanUseCase {
 
     const loan = Loan.create({
       loanIdentifier: randomUUID(),
-      clientIdentifier: input.clientIdentifier,
+      clientIdentifier: client.clientIdentifier, // utiliser le clientId du client récupéré
       advisorIdentifier: client.advisorIdentifier, // advisor assigné aléatoirement à la création du compte
       loanAmount: input.amount,
       durationInMonth: input.durationInMonth,

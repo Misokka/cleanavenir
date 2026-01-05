@@ -2,24 +2,26 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
-export const listLoansController = asyncHandler(
+export const listAdvisorClientsController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const userId = req.userId!;
 
     const container = getContainer();
-    const loanRepository = container.repositories.loan;
-    const clientRepository = container.repositories.client;
+    const listAdvisorClientsUseCase = container.useCases.loan.listAdvisorClients;
+    const advisorRepository = container.repositories.advisor;
 
-    const clientResult = await clientRepository.findByUserId(userId);
-    if (!clientResult.ok) {
+    const advisorResult = await advisorRepository.findByUserId(userId);
+    if (!advisorResult.ok) {
       res.status(404).json({
-        error: 'CLIENT_NOT_FOUND',
-        message: 'Client introuvable',
+        error: 'ADVISOR_NOT_FOUND',
+        message: 'Conseiller introuvable',
       });
       return;
     }
 
-    const result = await loanRepository.findAllByUserId(clientResult.value.clientIdentifier);
+    const result = await listAdvisorClientsUseCase.execute({
+      advisorIdentifier: advisorResult.value.advisorIdentifier,
+    });
 
     if (!result.ok) {
       res.status(500).json({
@@ -29,6 +31,7 @@ export const listLoansController = asyncHandler(
       return;
     }
 
+    // Mapper les entités en DTO
     const loansDTO = result.value.map((loan) => ({
       id: loan.loanIdentifier,
       clientId: loan.clientIdentifier,

@@ -74,38 +74,61 @@ export default function LoansPage() {
 
         {loans && loans.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card className="bg-blue-50 border-blue-200">
+            <div className="grid md:grid-cols-4 gap-4">
+              <Card className="border-l-4 border-l-blue-500">
                 <Typography variant="caption" color="muted" className="mb-1">
                   Prêts actifs
                 </Typography>
-                <Typography variant="h3" className="text-blue-600 font-bold">
+                <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'ACTIVE').length}
                 </Typography>
               </Card>
-              <Card className="bg-yellow-50 border-yellow-200">
+              <Card className="border-l-4 border-l-amber-500">
                 <Typography variant="caption" color="muted" className="mb-1">
                   En attente
                 </Typography>
-                <Typography variant="h3" className="text-yellow-600 font-bold">
+                <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'PENDING').length}
                 </Typography>
               </Card>
-              <Card className="bg-green-50 border-green-200">
+              <Card className="border-l-4 border-l-green-500">
                 <Typography variant="caption" color="muted" className="mb-1">
                   Remboursés
                 </Typography>
-                <Typography variant="h3" className="text-green-600 font-bold">
-                  {loans.filter((l) => l.status === 'CLOSED').length}
+                <Typography variant="h3" className="text-gray-900 font-bold">
+                  {loans.filter((l) => l.status === 'PAID_OFF').length}
+                </Typography>
+              </Card>
+              <Card className="border-l-4 border-l-red-500">
+                <Typography variant="caption" color="muted" className="mb-1">
+                  Refusés
+                </Typography>
+                <Typography variant="h3" className="text-gray-900 font-bold">
+                  {loans.filter((l) => l.status === 'REJECTED').length}
                 </Typography>
               </Card>
             </div>
+
+            {loans.filter((l) => l.status === 'PENDING').length > 0 && (
+              <div>
+                <Typography variant="h3" className="mb-4">
+                  Mes demandes en attente ({loans.filter((l) => l.status === 'PENDING').length})
+                </Typography>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-start">
+                  {loans
+                    .filter((loan) => loan.status === 'PENDING')
+                    .map((loan) => (
+                      <LoanCard key={loan.id} loan={loan} />
+                    ))}
+                </div>
+              </div>
+            )}
 
             <div>
               <Typography variant="h3" className="mb-4">
                 Tous mes prêts ({loans.length})
               </Typography>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-start">
                 {loans.map((loan) => (
                   <LoanCard key={loan.id} loan={loan} />
                 ))}

@@ -62,7 +62,6 @@ function SavingProductsOverview({ savingProducts, onSuccess }: SavingProductsOve
               </div>
             </div>
 
-            {/* modal */}
             {openMenuId === product.id && (
               <div 
                 className='absolute top-10 right-4 bg-white shadow-md w-32 rounded-md p-2 space-y-2 flex flex-col z-10 border border-slate-100'

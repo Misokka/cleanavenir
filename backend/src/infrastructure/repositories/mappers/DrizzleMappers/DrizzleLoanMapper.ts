@@ -11,20 +11,31 @@ export class DrizzleLoanMapper implements Mapper<LoanDrizzle, Loan, NewLoanDrizz
       advisorIdentifier: raw.advisorId,
       status: raw.status as LoanStatus | undefined,
       createdAt: new Date(raw.createdAt),
-      lastPaidAt: new Date(raw.lastPaidAt as string),
-      nextToPayAt: new Date(raw.nextToPayAt)
+      lastPaidAt: raw.lastPaidAt && raw.lastPaidAt !== "" ? new Date(raw.lastPaidAt) : undefined,
+      nextToPayAt: raw.nextToPayAt && raw.nextToPayAt !== "" ? new Date(raw.nextToPayAt) : undefined
     });
   }
 
   toPersistence(entity: Loan): NewLoanDrizzle {
-    return {
-      ...entity,
+    const lastPaidAtValue = entity.lastPaidAt ? entity.lastPaidAt.toISOString() : null;
+    
+    const result: any = {
       id: entity.loanIdentifier,
       clientId: entity.clientIdentifier,
       advisorId: entity.advisorIdentifier,
+      loanAmount: Math.round(entity.loanAmount),
+      durationInMonth: Math.round(entity.durationInMonth),
+      mensualities: Math.round(entity.mensualities),
+      insuranceMensualities: Math.round(entity.insuranceMensualities),
+      remainingAmountToPay: Math.round(entity.remainingAmountToPay),
+      annualInterestRate: Math.round(entity.annualInterestRate),
+      annualInsuranceRate: Math.round(entity.annualInsuranceRate),
+      status: entity.status,
       createdAt: entity.createdAt.toISOString(),
-      lastPaidAt: entity.lastPaidAt?.toISOString() || "",
-      nextToPayAt: entity.nextToPayAt?.toISOString() || ""
+      lastPaidAt: lastPaidAtValue,
+      nextToPayAt: entity.nextToPayAt ? entity.nextToPayAt.toISOString() : ""
     };
+    
+    return result;
   }
 }

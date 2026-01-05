@@ -100,7 +100,7 @@ export function toStockDTO(stock: Stock, company: Company): StockDTO{
   return{
     id: stock.stockIdentifier,
     ticker: stock.ticker.value,
-    price: stock.price, // Le stock du domaine est déjà en euros (converti par le mapper)
+    price: stock.price, 
     isAvailable: stock.isAvailable,
     createdAt: stock.createdAt.toISOString(),
     updatedAt: stock.updatedAt?.toISOString() as string,
@@ -112,7 +112,7 @@ export function toStockWithOutCompanyDTO(stock: Stock){
     return{
     id: stock.stockIdentifier,
     ticker: stock.ticker.value,
-    price: stock.price, // Le stock du domaine est déjà en euros (converti par le mapper)
+    price: stock.price, 
     isAvailable: stock.isAvailable,
     createdAt: stock.createdAt.toISOString(),
     updatedAt: stock.updatedAt?.toISOString() as string,

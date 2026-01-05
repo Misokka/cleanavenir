@@ -10,6 +10,9 @@ export interface LoanRepository{
   findById(loanIdentifier: string): Promise<Result<Loan, LoanNotFoundError>>;
   findActiveLoansDueOn(date: Date): Promise<Result<Loan[], Error>>;
   findAllByUserId(userId: string): Promise<Result<Loan[], Error>>;
+  findByStatus(status: string): Promise<Result<Loan[], Error>>;
+  findByAdvisorId(advisorId: string): Promise<Result<Loan[], Error>>;
+  update(loan: Loan): Promise<Result<Loan, LoanNotFoundError>>;
   all(): Promise<Result<Loan[], Error>>;
   delete(loanIdentifier: string): Promise<Result<string, LoanNotFoundError>>;
 }

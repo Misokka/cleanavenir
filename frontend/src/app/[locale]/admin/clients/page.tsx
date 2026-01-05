@@ -56,9 +56,6 @@ export default function AdminClientsPage() {
               Administrez les comptes clients de la banque
             </Typography>
           </div>
-          <Button variant="outline" onClick={refetch}>
-            🔄 Actualiser
-          </Button>
         </div>
 
         {/* Statistiques */}

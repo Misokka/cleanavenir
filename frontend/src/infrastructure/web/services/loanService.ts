@@ -7,13 +7,17 @@ export interface LoanDTO {
   advisorId: string;
   loanAmount: number;
   durationInMonth: number;
-  monthlyPayment: number;
-  monthlyInsurance: number;
+  mensualities?: number; 
+  monthlyPayment?: number; 
+  insuranceMensualities?: number; 
+  monthlyInsurance?: number; 
   remainingAmountToPay: number;
   annualInterestRate: number;
   annualInsuranceRate: number;
-  status: 'PENDING' | 'ACTIVE' | 'CLOSED' | 'REJECTED';
+  status: 'PENDING' | 'ACTIVE' | 'PAID_OFF' | 'REJECTED';
   createdAt: string;
+  lastPaidAt?: string;
+  nextToPayAt?: string;
   closedAt?: string;
   nextPaymentDate?: string;
 }
