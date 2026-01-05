@@ -252,7 +252,7 @@ export function createContainer() {
   const simulateLoanUseCase = new SimulateLoanUseCase();
   const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository);
   const listPendingLoansUseCase = new ListPendingLoansUseCase(loanRepository);
-  const approveLoanUseCase = new ApproveLoanUseCase(loanRepository, bankAccountRepository, transactionRepository);
+  const approveLoanUseCase = new ApproveLoanUseCase(loanRepository, bankAccountRepository, transactionRepository, clientRepository);
   const rejectLoanUseCase = new RejectLoanUseCase(loanRepository);
   const listAdvisorClientsUseCase = new ListAdvisorClientsUseCase(loanRepository);
 

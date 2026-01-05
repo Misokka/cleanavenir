@@ -56,7 +56,7 @@ export class Loan{
       return;
     }
 
-    const monthlyInterestRate = this.annualInterestRate / 12;
+    const monthlyInterestRate = this.annualInterestRate / 10000 / 12;
     const interestPortion = this.remainingAmountToPay * monthlyInterestRate;
     
     const capitalPortion = this.mensualities - interestPortion - this.insuranceMensualities;

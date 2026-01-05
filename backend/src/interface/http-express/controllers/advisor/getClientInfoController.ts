@@ -4,8 +4,18 @@ import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 export const getClientInfoController = async (req: Request, res: Response) => {
   try {
     const { clientId } = req.params;
+    const userId = req.userId!;
 
     const container = getContainer();
+    
+    const advisorResult = await container.repositories.advisor.findByUserId(userId);
+    if (!advisorResult.ok) {
+      return res.status(403).json({
+        message: 'Accès non autorisé: conseiller introuvable',
+      });
+    }
+    const advisorId = advisorResult.value.advisorIdentifier;
+
     const clientResult = await container.repositories.client.findById(clientId);
     
     if (!clientResult.ok) {
@@ -16,6 +26,21 @@ export const getClientInfoController = async (req: Request, res: Response) => {
     }
 
     const client = clientResult.value;
+
+    const isClientAssignedToAdvisor = client.advisorIdentifier === advisorId;
+    
+    if (!isClientAssignedToAdvisor) {
+      const loansResult = await container.repositories.loan.findByStatus('PENDING');
+      const hasPendingLoan = loansResult.ok && 
+        loansResult.value.some(loan => loan.clientIdentifier === clientId);
+      
+      if (!hasPendingLoan) {
+        return res.status(403).json({
+          message: 'Accès non autorisé: ce client ne vous est pas attribué et n\'a pas de prêt en attente',
+        });
+      }
+    }
+
     const userResult = await container.repositories.user.findById(client.userIdentifier);
     
     if (!userResult.ok) {

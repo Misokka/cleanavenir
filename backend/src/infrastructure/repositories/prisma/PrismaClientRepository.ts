@@ -114,4 +114,18 @@ export class PrismaClientRepository implements ClientRepository{
       return err(new Error(`Error deleting client ${clientIdentifier}`));
     }
   }
+
+  async updateAdvisor(clientIdentifier: string, advisorIdentifier: string): Promise<Result<Client, UserNotFoundError>> {
+    try {
+      const updatedClient = await this.prismaClient.client.update({
+        where: { clientIdentifier },
+        data: { advisorIdentifier }
+      });
+
+      const clientToDomain = this.prismaCientMapper.toDomain(updatedClient);
+      return ok(clientToDomain);
+    } catch (error) {
+      return err(new UserNotFoundError(clientIdentifier));
+    }
+  }
 }

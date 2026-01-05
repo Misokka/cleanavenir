@@ -8,4 +8,5 @@ export interface ClientRepository{
   findByUserId(userIdentifier: string): Promise<Result<Client, ClientNotFoundError>>
   all(): Promise<Result<Client[], Error>>;
   delete(clientIdentifier: string): Promise<Result<void, ClientNotFoundError | Error>>;
+  updateAdvisor(clientIdentifier: string, advisorIdentifier: string): Promise<Result<Client, ClientNotFoundError>>;
 }
