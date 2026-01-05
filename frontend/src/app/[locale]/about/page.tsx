@@ -1,10 +1,7 @@
-import { useTranslations } from 'next-intl';
-import type { Metadata } from 'next';
-import { Typography } from '@/components/atoms/Typography';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'About | Clean Avenir',
-};
+import { useTranslations } from 'next-intl';
+import { Typography } from '@/components/atoms/Typography';
 
 export default function AboutPage() {
   const t = useTranslations('About');
