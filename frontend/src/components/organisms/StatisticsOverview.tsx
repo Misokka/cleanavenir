@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import type { StatisticsDTO } from '@/infrastructure/web/services/adminService';
@@ -10,6 +11,8 @@ interface StatisticsOverviewProps {
 }
 
 export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statistics }) => {
+  const t = useTranslations('admin.statistics');
+  
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -19,32 +22,32 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
 
   const stats = [
     {
-      title: 'Total Clients',
+      title: t('totalClients'),
       value: statistics.totalClients,
       icon: '👥',
       color: 'blue',
-      description: 'Clients enregistrés',
+      description: t('totalClients'),
     },
     {
-      title: 'Total Comptes',
+      title: t('totalAccounts'),
       value: statistics.totalAccounts,
       icon: '🏦',
       color: 'green',
-      description: 'Comptes bancaires actifs',
+      description: t('totalAccounts'),
     },
     {
-      title: 'Opérations',
+      title: t('totalOperations'),
       value: statistics.totalOperations,
       icon: '💳',
       color: 'purple',
-      description: 'Transactions totales',
+      description: t('totalOperations'),
     },
     {
-      title: 'Prêts Actifs',
+      title: t('activeLoans'),
       value: statistics.activeLoans,
       icon: '',
       color: 'orange',
-      description: 'Crédits en cours',
+      description: t('activeLoans'),
     },
   ];
 
@@ -87,13 +90,13 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
       <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
         <div className="text-center py-6">
           <Typography variant="caption" className="text-white opacity-90 mb-2">
-            Montant Total des Prêts Actifs
+            {t('totalLoanAmount')}
           </Typography>
           <Typography variant="h1" className="text-white font-bold">
             {formatCurrency(statistics.totalLoanAmount)}
           </Typography>
           <Typography variant="caption" className="text-white opacity-75 mt-2">
-            Répartis sur {statistics.activeLoans} prêts
+            {t('distributedOn')} {statistics.activeLoans} {t('loans')}
           </Typography>
         </div>
       </Card>
@@ -101,12 +104,12 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
           <Typography variant="h4" className="mb-4">
-            Ratios clés
+            {t('keyRatios')}
           </Typography>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <Typography variant="body" color="muted">
-                Comptes par client
+                {t('accountsPerClient')}
               </Typography>
               <Typography variant="body" className="font-semibold">
                 {statistics.totalClients > 0
@@ -116,7 +119,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
             </div>
             <div className="flex justify-between items-center">
               <Typography variant="body" color="muted">
-                Taux de prêts actifs
+                {t('activeLoanRate')}
               </Typography>
               <Typography variant="body" className="font-semibold">
                 {statistics.totalClients > 0
@@ -130,27 +133,27 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({ statisti
 
         <Card className="bg-yellow-50 border-yellow-200">
           <Typography variant="h4" className="mb-4 text-yellow-900">
-            Alertes
+            {t('alerts')}
           </Typography>
           <div className="space-y-2">
             {statistics.activeLoans > 50 && (
               <div className="bg-yellow-100 rounded p-2">
                 <Typography variant="caption" className="text-yellow-800">
-                  Nombre élevé de prêts actifs
+                  {t('highLoanCount')}
                 </Typography>
               </div>
             )}
             {statistics.totalOperations === 0 && (
               <div className="bg-yellow-100 rounded p-2">
                 <Typography variant="caption" className="text-yellow-800">
-                  Aucune opération enregistrée
+                  {t('noOperations')}
                 </Typography>
               </div>
             )}
             {statistics.totalClients === 0 && (
               <div className="bg-red-100 rounded p-2">
                 <Typography variant="caption" className="text-red-800">
-                  Aucun client enregistré
+                  {t('noClients')}
                 </Typography>
               </div>
             )}

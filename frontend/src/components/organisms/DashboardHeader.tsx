@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
@@ -12,9 +12,17 @@ export const DashboardHeader: React.FC = () => {
   const t = useTranslations('Dashboard.header');
   const tNav = useTranslations('Dashboard.navigation');
   const locale = useLocale();
+  const pathname = usePathname();
   const router = useRouter();
   const { user, loading: userLoading } = useAuth();
   const { logout, loading: logoutLoading } = useLogout();
+
+  // Extraire la locale depuis le pathname pour être sûr
+  const currentLocale = pathname.split('/')[1] || locale;
+  
+  const getDateLocale = () => {
+    return currentLocale === 'fr' ? 'fr-FR' : 'en-US';
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -56,7 +64,7 @@ export const DashboardHeader: React.FC = () => {
               {t('today')}
             </Typography>
             <Typography variant="body" className="text-gray-700">
-              {new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+              {new Date().toLocaleDateString(getDateLocale(), {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',

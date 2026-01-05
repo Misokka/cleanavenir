@@ -21,6 +21,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
   showViewAll = true
 }) => {
   const t = useTranslations('Dashboard.overview');
+  const tAccounts = useTranslations('Accounts');
   const locale = useLocale();
   const { accounts, loading, error, refetch } = useGetAccounts();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -30,6 +31,21 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
       style: 'currency',
       currency: currency,
     }).format(amount);
+  };
+
+  // Traduire le label du compte basé sur des patterns connus
+  const translateAccountLabel = (label: string): string => {
+    const labelLower = label.toLowerCase();
+    if (labelLower.includes('checking') || labelLower.includes('courant')) {
+      return tAccounts('types.checking');
+    }
+    if (labelLower.includes('savings') || labelLower.includes('épargne') || labelLower.includes('livret')) {
+      return tAccounts('types.savings');
+    }
+    if (labelLower.includes('investment') || labelLower.includes('investissement')) {
+      return tAccounts('types.investment');
+    }
+    return label; // Retourner le label original si non reconnu
   };
 
   const getTotalBalance = () => {
@@ -105,7 +121,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
             {t('accountsWillAppear')}
           </Typography>
           <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
-            Ouvrir un compte
+            {t('openAccount')}
           </Button>
         </Card>
 
@@ -127,7 +143,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
             size="sm"
             onClick={() => setIsCreateModalOpen(true)}
           >
-            + Créer un compte
+            + {t('createAccount')}
           </Button>
           {showViewAll && (
             <Link href={`/${locale}/dashboard/accounts`}>
@@ -149,7 +165,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
               {formatCurrency(getTotalBalance())}
             </Typography>
             <Typography variant="caption" className="text-white opacity-75 mt-2">
-              Répartis sur {accounts.length} {accounts.length > 1 ? 'comptes' : 'compte'}
+              {t('distributedOn')} {accounts.length} {accounts.length > 1 ? t('accounts') : t('account')}
             </Typography>
           </div>
         </Card>
@@ -168,7 +184,7 @@ export const DashboardAccountsOverview: React.FC<DashboardAccountsOverviewProps>
                   <span className="text-2xl"></span>
                   <div>
                     <Typography variant="h4" className="mb-1">
-                      {account.label}
+                      {translateAccountLabel(account.label)}
                     </Typography>
                     <Typography variant="caption" color="muted" className="font-mono text-xs">
                       {formatIban(account.iban)}

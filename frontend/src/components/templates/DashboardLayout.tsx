@@ -68,13 +68,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       },
       {
         href: `/${locale}/dashboard/operations/transfer`,
-        label: 'Transferts',
+        label: t('navigation.transfers'),
         iconClass: 'fi fi-br-paper-plane',
         isActive: pathname === `/${locale}/dashboard/operations/transfer`,
       },
       {
         href: `/${locale}/dashboard/beneficiaries`,
-        label: 'Bénéficiaires',
+        label: t('navigation.beneficiaries'),
         iconClass: 'fi fi-br-users-alt',
         isActive: pathname.startsWith(`/${locale}/dashboard/beneficiaries`),
       },
@@ -86,19 +86,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       },
       {
         href: `/${locale}/client/dashboard/loans`,
-        label: 'Prêts',
+        label: t('navigation.loans'),
         iconClass: 'fi fi-br-hand-holding-usd',
         isActive: pathname.startsWith(`/${locale}/client/dashboard/loans`),
       },
       {
         href: `/${locale}/dashboard/operations/history`,
-        label: 'Opérations',
+        label: t('navigation.operations'),
         iconClass: 'fi fi-br-exchange-alt',
         isActive: pathname === `/${locale}/dashboard/operations/history`,
       },
       {
         href: `/${locale}/client/investment`,
-        label: 'Investissements',
+        label: t('navigation.investments'),
         iconClass: 'fi fi-br-chart-line-up',
         isActive: pathname.startsWith(`/${locale}/client/investment`),
       },
@@ -107,19 +107,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     const advisorItems: NavigationItem[] = [
       {
         href: `/${locale}/advisor/dashboard`,
-        label: 'Vue d\'ensemble',
+        label: t('navigation.advisor.overview'),
         iconClass: 'fi fi-br-home-location-alt',
         isActive: pathname === `/${locale}/advisor/dashboard`,
       },
       {
         href: `/${locale}/advisor/clients`,
-        label: 'Mes clients',
+        label: t('navigation.advisor.clients'),
         iconClass: 'fi fi-br-users-alt',
         isActive: pathname.startsWith(`/${locale}/advisor/clients`),
       },
       {
         href: `/${locale}/advisor/loans`,
-        label: 'Prêts à valider',
+        label: t('navigation.advisor.loansToValidate'),
         iconClass: 'fi fi-br-check-circle',
         isActive: pathname.startsWith(`/${locale}/advisor/loans`),
       },
@@ -277,17 +277,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               </Typography>
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <Typography variant="caption" color="muted">
-                  {new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </Typography>
-              </div>
-
+        
               <div className="hidden md:flex rounded-lg border border-gray-200 overflow-hidden">
                 <button
                   onClick={() => switchLocale('fr')}
