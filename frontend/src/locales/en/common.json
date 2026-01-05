@@ -153,6 +153,11 @@
       "overview": "Overview",
       "accounts": "Accounts",
       "savings": "Savings",
+      "transfers": "Transfers",
+      "beneficiaries": "Beneficiaries",
+      "loans": "Loans",
+      "operations": "Operations",
+      "investments": "Investments",
       "logout": "Logout",
       "director": {
         "overview": "Overview",
@@ -160,6 +165,11 @@
         "savings": "Savings Rate",
         "companies": "Companies",
         "stocks": "Stocks"
+      },
+      "advisor": {
+        "overview": "Overview",
+        "clients": "My clients",
+        "loansToValidate": "Loans to validate"
       }
     },
     "header": {

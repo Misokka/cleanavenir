@@ -153,6 +153,11 @@
       "overview": "Accueil",
       "accounts": "Comptes",
       "savings": "Épargne",
+      "transfers": "Transferts",
+      "beneficiaries": "Bénéficiaires",
+      "loans": "Prêts",
+      "operations": "Opérations",
+      "investments": "Investissements",
       "logout": "Déconnexion",
       "director": {
         "overview": "Vue d'ensemble",
@@ -160,6 +165,11 @@
         "savings": "Taux Épargne",
         "companies": "Entreprises",
         "stocks": "Actions"
+      },
+      "advisor": {
+        "overview": "Vue d'ensemble",
+        "clients": "Mes clients",
+        "loansToValidate": "Prêts à valider"
       }
     },
     "header": {
