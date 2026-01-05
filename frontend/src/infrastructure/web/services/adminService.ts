@@ -72,7 +72,6 @@ export class AdminService {
       );
       const clientsData = response.data.clients || [];
       
-      // Map ClientDTO to simplified Client format
       return clientsData.map((client) => ({
         id: client.userId,
         email: client.user.email,
@@ -120,7 +119,6 @@ export class AdminService {
       );
       const clientData = response.data.client;
       
-      // Map UserDTO to Client format
       return {
         id: clientData.id,
         email: clientData.email,

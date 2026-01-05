@@ -2,28 +2,15 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
-export const approveLoanController = asyncHandler(
+export const rejectLoanController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const { id: loanId } = req.params;
-    const userId = req.userId!; // L'ID utilisateur du conseiller connecté
 
     const container = getContainer();
-    const approveLoanUseCase = container.useCases.loan.approveLoan;
-    const advisorRepository = container.repositories.advisor;
+    const rejectLoanUseCase = container.useCases.loan.rejectLoan;
 
-    // Récupérer l'advisor via le userId
-    const advisorResult = await advisorRepository.findByUserId(userId);
-    if (!advisorResult.ok) {
-      res.status(404).json({
-        error: 'ADVISOR_NOT_FOUND',
-        message: 'Conseiller introuvable',
-      });
-      return;
-    }
-
-    const result = await approveLoanUseCase.execute({
+    const result = await rejectLoanUseCase.execute({
       loanIdentifier: loanId,
-      advisorIdentifier: advisorResult.value.advisorIdentifier,
     });
 
     if (!result.ok) {
@@ -43,7 +30,7 @@ export const approveLoanController = asyncHandler(
     }
 
     res.json({
-      message: 'Prêt approuvé avec succès',
+      message: 'Prêt rejeté avec succès',
       loan: result.value,
     });
   }

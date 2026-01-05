@@ -41,7 +41,6 @@ export const LoanRequestForm: React.FC = () => {
   if (success) {
     return (
       <Card className="text-center py-12 bg-green-50 border-green-200">
-        <div className="text-6xl mb-4">✅</div>
         <Typography variant="h3" className="mb-4 text-green-700">
           Demande envoyée avec succès !
         </Typography>
@@ -72,7 +71,6 @@ export const LoanRequestForm: React.FC = () => {
             id="amount"
             type="number"
             min="1000"
-            max="100000"
             step="100"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -152,7 +150,7 @@ export const LoanRequestForm: React.FC = () => {
             </div>
           </div>
           <Typography variant="caption" className="text-blue-700 mt-4 block">
-            ℹ️ Ces taux sont indicatifs et peuvent être ajustés par votre conseiller.
+            Ces taux sont indicatifs et peuvent être ajustés par votre conseiller.
           </Typography>
         </Card>
 

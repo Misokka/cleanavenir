@@ -11,9 +11,9 @@ export class LoanCalculator{
     const mensualities = this.getMensualities(loanAmount, annualInterestRate, durationInMonth, annualInsuranceRate);
 
     const MONTH_IN_YEAR = 12;
-    const TOTAL_MONTH = durationInMonth * MONTH_IN_YEAR;
-    const MONTHLY_INTEREST_RATE = (annualInterestRate / MONTH_IN_YEAR) / 100; //passage de % en décimal
-    const MONTHLY_INSURANCE_RATE = (annualInsuranceRate / MONTH_IN_YEAR) / 100;
+    const TOTAL_MONTH = durationInMonth; // durationInMonth est déjà en mois
+    const MONTHLY_INTEREST_RATE = (annualInterestRate / 10000 / MONTH_IN_YEAR); // basis points (350 = 3.5%) vers décimal
+    const MONTHLY_INSURANCE_RATE = (annualInsuranceRate / 10000 / MONTH_IN_YEAR); // basis points (50 = 0.5%) vers décimal
     let remainingAmountToPay = loanAmount;
 
     const amortizationTable: Amortizationtable = {};
@@ -48,9 +48,9 @@ export class LoanCalculator{
    */
   public computeLoanMensualities(loanAmount: number, annualInterestRate: number, durationInMonth: number){
     const MONTH_IN_YEAR = 12
-    const MONTHLY_INTEREST_RATE = (annualInterestRate / MONTH_IN_YEAR) / 100
+    const MONTHLY_INTEREST_RATE = (annualInterestRate / 10000 / MONTH_IN_YEAR); 
 
-    const numberOfMensualities = durationInMonth * MONTH_IN_YEAR;
+    const numberOfMensualities = durationInMonth;
 
     const numerator = MONTHLY_INTEREST_RATE * (1 + MONTHLY_INTEREST_RATE) ** numberOfMensualities;
     const denominator = (1 + MONTHLY_INTEREST_RATE) ** numberOfMensualities - 1
@@ -62,6 +62,6 @@ export class LoanCalculator{
   public computeInsuranceMensualities(loanAmount: number, annualInsuranceRate: number){
     const MONTH_IN_YEAR = 12;
 
-    return (loanAmount * annualInsuranceRate / 100) / MONTH_IN_YEAR;
+    return (loanAmount * annualInsuranceRate / 10000) / MONTH_IN_YEAR; 
   }
 }

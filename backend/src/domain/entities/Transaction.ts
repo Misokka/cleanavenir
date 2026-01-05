@@ -1,6 +1,7 @@
 export type TransactionType = 
   | "TRANSFER" 
   | "LOAN_PAYMENT" 
+  | "LOAN_DISBURSEMENT"
   | "STOCK_PURCHASE" 
   | "STOCK_SALE"
   | "SAVINGS_INTEREST"

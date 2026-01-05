@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+  import { Request, Response } from 'express';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 

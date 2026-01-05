@@ -1,21 +1,32 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
+import { advisorService, AdvisorStatsDTO } from '@/infrastructure/web/services/advisorService';
 
 export default function AdvisorDashboardClient() {
   const locale = useLocale();
+  const [stats, setStats] = useState<AdvisorStatsDTO | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - À remplacer par de vraies données API
-  const stats = {
-    totalClients: 15,
-    activeLoans: 8,
-    pendingLoans: 3,
-    totalLoanAmount: 250000,
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const data = await advisorService.getStats();
+      setStats(data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -25,18 +36,34 @@ export default function AdvisorDashboardClient() {
     }).format(value);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Typography variant="body">Chargement...</Typography>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <Card>
+        <Typography variant="body" color="muted">
+          Impossible de charger les statistiques
+        </Typography>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Statistics Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-blue-50 border-blue-200">
+        <Card>
           <div className="flex items-center justify-between mb-2">
             <Typography variant="caption" color="muted">
               Mes clients
             </Typography>
-            <span className="text-2xl">👥</span>
           </div>
-          <Typography variant="h2" className="font-bold text-blue-600">
+          <Typography variant="h2" className="font-bold">
             {stats.totalClients}
           </Typography>
           <Typography variant="caption" color="muted">
@@ -44,14 +71,13 @@ export default function AdvisorDashboardClient() {
           </Typography>
         </Card>
 
-        <Card className="bg-green-50 border-green-200">
+        <Card>
           <div className="flex items-center justify-between mb-2">
             <Typography variant="caption" color="muted">
               Prêts actifs
             </Typography>
-            <span className="text-2xl">✅</span>
           </div>
-          <Typography variant="h2" className="font-bold text-green-600">
+          <Typography variant="h2" className="font-bold">
             {stats.activeLoans}
           </Typography>
           <Typography variant="caption" color="muted">
@@ -59,14 +85,13 @@ export default function AdvisorDashboardClient() {
           </Typography>
         </Card>
 
-        <Card className="bg-orange-50 border-orange-200">
+        <Card>
           <div className="flex items-center justify-between mb-2">
             <Typography variant="caption" color="muted">
               En attente
             </Typography>
-            <span className="text-2xl">⏳</span>
           </div>
-          <Typography variant="h2" className="font-bold text-orange-600">
+          <Typography variant="h2" className="font-bold">
             {stats.pendingLoans}
           </Typography>
           <Typography variant="caption" color="muted">
@@ -74,13 +99,13 @@ export default function AdvisorDashboardClient() {
           </Typography>
         </Card>
 
-        <Card className="bg-purple-50 border-purple-200">
+        <Card>
           <div className="flex items-center justify-between mb-2">
             <Typography variant="caption" color="muted">
               Montant total
             </Typography>
           </div>
-          <Typography variant="h2" className="font-bold text-purple-600">
+          <Typography variant="h3" className="font-bold break-words">
             {formatCurrency(stats.totalLoanAmount)}
           </Typography>
           <Typography variant="caption" color="muted">
@@ -96,7 +121,7 @@ export default function AdvisorDashboardClient() {
         <div className="grid md:grid-cols-2 gap-4">
           <Link href={`/${locale}/advisor/clients`}>
             <Button variant="primary" className="w-full">
-              👥 Voir mes clients
+              Voir mes clients
             </Button>
           </Link>
           <Link href={`/${locale}/advisor/loans`}>
@@ -149,21 +174,6 @@ export default function AdvisorDashboardClient() {
             </div>
             <Typography variant="caption" color="muted">
               Hier
-            </Typography>
-          </div>
-        </div>
-      </Card>
-
-      <Card className="bg-blue-50 border-blue-200">
-        <div className="flex items-start space-x-3">
-          <span className="text-2xl">ℹ️</span>
-          <div>
-            <Typography variant="body" className="font-medium text-blue-900 mb-1">
-              Note importante
-            </Typography>
-            <Typography variant="caption" className="text-blue-800">
-              Ce dashboard affiche des données fictives. Les fonctionnalités d&apos;approbation 
-              de prêts et de gestion de clients seront disponibles prochainement.
             </Typography>
           </div>
         </div>

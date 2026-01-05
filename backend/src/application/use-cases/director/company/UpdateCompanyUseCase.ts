@@ -21,7 +21,6 @@ export class UpdateCompanyUseCase {
 
     const company = maybeCompany.value;
 
-    // Update fields if provided
     if (props.name !== undefined) {
       company.name = props.name;
     }

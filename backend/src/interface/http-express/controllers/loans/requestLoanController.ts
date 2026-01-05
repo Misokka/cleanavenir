@@ -28,7 +28,7 @@ export const requestLoanController = asyncHandler(
     const requestLoanUseCase = container.useCases.loan.requestLoan;
 
     const requestedLoan = await requestLoanUseCase.execute({
-      clientIdentifier: clientId,
+      userIdentifier: clientId, 
       amount,
       durationInMonth,
       annualInterestRate,

@@ -14,7 +14,7 @@ export default function AdvisorDashboardPage() {
       <div className="space-y-6">
         <div>
           <Typography variant="h1" className="mb-2">
-            👔 Dashboard Conseiller
+            Dashboard Conseiller
           </Typography>
           <Typography variant="body" color="muted">
             Vue d&apos;ensemble de vos clients et prêts à valider

@@ -1,4 +1,4 @@
-export type LoanStatus = "PENDING" | "ACTIVE" | "PAID_OFF"
+export type LoanStatus = "PENDING" | "ACTIVE" | "PAID_OFF" | "REJECTED"
 export class Loan{
   private constructor(
     public loanIdentifier: string,

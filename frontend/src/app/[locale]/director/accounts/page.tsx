@@ -31,14 +31,12 @@ export default function DirectorAccountsPage() {
   const [banReason, setBanReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   
-  // Create form state
   const [createEmail, setCreateEmail] = useState('');
   const [createFirstName, setCreateFirstName] = useState('');
   const [createLastName, setCreateLastName] = useState('');
   const [createPassword, setCreatePassword] = useState('');
   const [createError, setCreateError] = useState('');
   
-  // Edit form state
   const [editEmail, setEditEmail] = useState('');
   const [editFirstName, setEditFirstName] = useState('');
   const [editLastName, setEditLastName] = useState('');

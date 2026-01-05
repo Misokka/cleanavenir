@@ -80,6 +80,9 @@ export const API_ENDPOINTS = {
     REQUEST: '/loans/request',
     DETAILS: (id: string) => `/loans/${id}`,
     APPROVE: (id: string) => `/loans/${id}/approve`,
+    REJECT: (id: string) => `/loans/${id}/reject`,
+    PENDING: '/loans/pending',
+    ADVISOR_CLIENTS: '/loans/advisor/clients',
   },
 
   COMPANIES: {

@@ -2,24 +2,12 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
 
-export const listLoansController = asyncHandler(
+export const listPendingLoansController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const userId = req.userId!;
-
     const container = getContainer();
-    const loanRepository = container.repositories.loan;
-    const clientRepository = container.repositories.client;
+    const listPendingLoansUseCase = container.useCases.loan.listPendingLoans;
 
-    const clientResult = await clientRepository.findByUserId(userId);
-    if (!clientResult.ok) {
-      res.status(404).json({
-        error: 'CLIENT_NOT_FOUND',
-        message: 'Client introuvable',
-      });
-      return;
-    }
-
-    const result = await loanRepository.findAllByUserId(clientResult.value.clientIdentifier);
+    const result = await listPendingLoansUseCase.execute();
 
     if (!result.ok) {
       res.status(500).json({
