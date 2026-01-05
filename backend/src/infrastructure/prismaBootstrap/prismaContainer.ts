@@ -33,6 +33,7 @@ import { GetCurrentSavingRateUseCase } from '../../application/use-cases/client/
 // Repositories Prisma
 import { PrismaAdvisorRepository } from '../repositories/prisma/PrismaAdvisorRepository';
 import { PrismaBankAccountRepository } from '../repositories/prisma/PrismaBankAccountRepository';
+import { PrismaBeneficiaryRepository } from '../repositories/prisma/PrismaBeneficiaryRepository';
 import { PrismaClientRepository } from '../repositories/prisma/PrismaClientRepository';
 import { PrismaCompanyRepository } from '../repositories/prisma/PrismaCompanyRepository';
 import { PrismaDirectorRepository } from '../repositories/prisma/PrismaDirectorRepository';
@@ -42,6 +43,7 @@ import { PrismaLoanRepository } from '../repositories/prisma/PrismaLoanRepositor
 import { PrismaPortfolioRepository } from '../repositories/prisma/PrismaPortfolioRepository';
 import { PrismaSavingAccountRepository } from '../repositories/prisma/PrismaSavingAccountRepository';
 import { PrismaSavingProductRepository } from '../repositories/prisma/PrismaSavingProductRepository';
+import { PrismaStockRepository } from '../repositories/prisma/PrismaStockRepository';
 import { PrismaTradeRepository } from '../repositories/prisma/PrismaTradeRepository';
 import { PrismaTransactionRepository } from '../repositories/prisma/PrismaTransactionRepository';
 import { PrismaUserRepository } from '../repositories/prisma/PrismaUserRepository';
@@ -49,6 +51,7 @@ import { PrismaUserRepository } from '../repositories/prisma/PrismaUserRepositor
 // Mappers
 import { PrismaAdvisorMapper } from '../repositories/mappers/PrismaMappers/PrismaAdvisorMapper';
 import { PrismaBankAccountMapper } from '../repositories/mappers/PrismaMappers/PrismaBankAccountMapper';
+import { PrismaBeneficiaryMapper } from '../repositories/mappers/PrismaMappers/PrismaBeneficiaryMapper';
 import { PrismaClientMapper } from '../repositories/mappers/PrismaMappers/PrismaClientMapper';
 import { PrismaCompanyMapper } from '../repositories/mappers/PrismaMappers/PrismaCompanyMapper';
 import { PrismaDirectorMapper } from '../repositories/mappers/PrismaMappers/PrismaDirectorMapper';
@@ -58,6 +61,7 @@ import { PrismaLoanMapper } from '../repositories/mappers/PrismaMappers/PrismaLo
 import { PrismaPortfolioMapper } from '../repositories/mappers/PrismaMappers/PrismaPortfolioMapper';
 import { PrismaSavingAccountMapper } from '../repositories/mappers/PrismaMappers/PrismaSavingAccountMapper';
 import { PrismaSavingProductMapper } from '../repositories/mappers/PrismaMappers/PrismaSavingProductMapper';
+import { PrismaStockMapper } from '../repositories/mappers/PrismaMappers/PrismaStockMapper';
 import { PrismaTradeMapper } from '../repositories/mappers/PrismaMappers/PrismaTradeMapper';
 import { PrismaTransactionMapper } from '../repositories/mappers/PrismaMappers/PrismaTransactionMapper';
 import { PrismaUserMapper } from '../repositories/mappers/PrismaMappers/PrismaUserMapper';
@@ -72,9 +76,11 @@ export function createPrismaContainer() {
   const directorMapper = new PrismaDirectorMapper();
   const advisorMapper = new PrismaAdvisorMapper();
   const bankAccountMapper = new PrismaBankAccountMapper();
+  const beneficiaryMapper = new PrismaBeneficiaryMapper();
   const loanMapper = new PrismaLoanMapper();
   const savingAccountMapper = new PrismaSavingAccountMapper();
   const savingProductMapper = new PrismaSavingProductMapper();
+  const stockMapper = new PrismaStockMapper();
   const transactionMapper = new PrismaTransactionMapper();
   const tradeMapper = new PrismaTradeMapper();
   const portfolioMapper = new PrismaPortfolioMapper();
@@ -87,9 +93,11 @@ export function createPrismaContainer() {
   const directorRepository = new PrismaDirectorRepository(prismaClient, directorMapper);
   const advisorRepository = new PrismaAdvisorRepository(prismaClient, advisorMapper);
   const bankAccountRepository = new PrismaBankAccountRepository(prismaClient, bankAccountMapper);
+  const beneficiaryRepository = new PrismaBeneficiaryRepository(prismaClient, beneficiaryMapper);
   const loanRepository = new PrismaLoanRepository(prismaClient, loanMapper);
   const savingAccountRepository = new PrismaSavingAccountRepository(prismaClient, savingAccountMapper);
   const savingProductRepository = new PrismaSavingProductRepository(prismaClient, savingProductMapper);
+  const stockRepository = new PrismaStockRepository(prismaClient, stockMapper);
   const transactionRepository = new PrismaTransactionRepository(prismaClient, transactionMapper);
   const tradeRepository = new PrismaTradeRepository(prismaClient, tradeMapper);
   const portfolioRepository = new PrismaPortfolioRepository(prismaClient, portfolioMapper);

@@ -78,9 +78,11 @@ model Transaction{
   direction TransactionDirection
   type TransactionType
   description String
+  currency String @default("EUR")
   date DateTime @default(now())
   fromAccountIdentifier String?
   toAccountIdentifier String?
+  toSavingAccountIdentifier String?
 
   bankAccount BankAccount @relation(fields: [bankAccountIdentifier], references: [accountIdentifier])
 }
@@ -139,6 +141,7 @@ model Loan {
 }
 
 enum LoanStatus {
+  PENDING
   ACTIVE
   PAID_OFF
 }
@@ -154,6 +157,7 @@ model Stock {
   orders Order[]
   holding Holding[]
   trades Trade[]
+  priceHistory StockPriceHistory[]
 
 }
 
@@ -244,4 +248,22 @@ model SavingProduct {
   rate Float
 
   savingAccounts SavingAccount[]
+}
+
+model Beneficiary {
+  beneficiaryIdentifier String @id @default(cuid())
+  clientIdentifier String
+  iban String
+  label String
+  accountName String?
+  createdAt DateTime @default(now())
+}
+
+model StockPriceHistory {
+  stockPriceIdentifier String @id @default(cuid())
+  stockIdentifier String
+  price Float
+  recordedAt DateTime @default(now())
+
+  stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
 }
