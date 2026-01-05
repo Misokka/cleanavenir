@@ -132,7 +132,7 @@ export default function AdvisorDashboardClient() {
         </div>
       </Card>
 
-      <Card>
+      {/* <Card>
         <Typography variant="h3" className="mb-4">
           Activité récente
         </Typography>
@@ -177,7 +177,7 @@ export default function AdvisorDashboardClient() {
             </Typography>
           </div>
         </div>
-      </Card>
+      </Card> */}
     </div>
   );
 }

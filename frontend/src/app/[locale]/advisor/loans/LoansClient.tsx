@@ -94,7 +94,6 @@ export default function LoansClient() {
 
   return (
     <div className="space-y-6">
-      {/* Messages de succès */}
       {success && (
         <Card className="bg-green-50 border-green-200">
           <Typography variant="body" className="text-green-800">
@@ -103,7 +102,6 @@ export default function LoansClient() {
         </Card>
       )}
 
-      {/* Messages d'erreur */}
       {error && (
         <Card className="bg-red-50 border-red-200">
           <Typography variant="body" className="text-red-800">
@@ -226,7 +224,6 @@ export default function LoansClient() {
         </div>
       )}
 
-      {/* Modal de confirmation de rejet */}
       {showConfirmReject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <Card className="max-w-md w-full mx-4">
@@ -257,7 +254,6 @@ export default function LoansClient() {
         </div>
       )}
 
-      {/* Modal d'approbation avec les comptes du client */}
       {showApprovalModal && (
         <ApprovalModal
           loanId={showApprovalModal.id}
