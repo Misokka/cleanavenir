@@ -1,0 +1,17 @@
+# Clean Avenir - Robots.txt
+# https://cleanavenir.com
+
+User-agent: *
+Allow: /
+
+# Bloquer les pages d'admin et d'API
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /_next/
+
+# Autoriser les assets
+Allow: /_next/static/
+Allow: /images/
+
+# Sitemap
+Sitemap: https://cleanavenir.com/sitemap.xml
