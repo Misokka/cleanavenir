@@ -36,14 +36,24 @@ export const listClientsController = asyncHandler(
 
     const users = userResult.value
 
-    const clientsWithUserArr: ClientWithUserProfileDTO[] = clients.map((client) => {
-      const clientUser = users.find((user) => client.userIdentifier === user.userIdentifier) as User;
-      return {
-        id: client.clientIdentifier,
-        userId: client.userIdentifier,
-        user: toUserDTO(clientUser)
-      }
-    });
+    // Filtrer le compte SYSTEM
+    const filteredUsers = users.filter(user => 
+      !(user.firstname === 'SYSTEM' && user.lastname === 'SYSTEM')
+    );
+
+    const clientsWithUserArr: ClientWithUserProfileDTO[] = clients
+      .filter(client => {
+        const clientUser = filteredUsers.find((user) => client.userIdentifier === user.userIdentifier);
+        return clientUser !== undefined; // Exclure les clients sans utilisateur (SYSTEM)
+      })
+      .map((client) => {
+        const clientUser = filteredUsers.find((user) => client.userIdentifier === user.userIdentifier) as User;
+        return {
+          id: client.clientIdentifier,
+          userId: client.userIdentifier,
+          user: toUserDTO(clientUser)
+        }
+      });
 
     res.json({
       clients: clientsWithUserArr

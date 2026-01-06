@@ -31,8 +31,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
 
   const [formData, setFormData] = useState<UpdateStockPayload>({
     isAvailable: stock?.isAvailable ?? true,
-    ticker: stock?.ticker ?? "",
-    price: stock?.price
+    ticker: stock?.ticker ?? ""
   })
 
   useEffect(() => {
@@ -44,8 +43,7 @@ export default function EditStockPage({ params }: EditStockPageProps) {
       setFormData((prev) => ({
         ...prev,
         isAvailable: stock.isAvailable,
-        ticker: stock.ticker,
-        price: stock.price
+        ticker: stock.ticker
       }))
     }
   }, [stock])
@@ -175,22 +173,17 @@ export default function EditStockPage({ params }: EditStockPageProps) {
             <div>
               <label className="block mb-2">
                 <Typography variant="caption" className="font-medium">
-                  Prix (€) *
+                  Prix actuel (€)
                 </Typography>
               </label>
-              <Input
-                type="number"
-                value={formData.price ?? ''}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  price: e.target.value ? Number(e.target.value) : undefined
-                })}
-                fullWidth
-                placeholder="100.00"
-                required
-                min="0"
-                step="0.01"
-              />
+              <div className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
+                <Typography variant="body" className="font-semibold">
+                  {stock.price.toFixed(2)} €
+                </Typography>
+                <Typography variant="caption" className="text-gray-500 mt-1">
+                  Le prix est géré par le marché et ne peut pas être modifié manuellement
+                </Typography>
+              </div>
             </div>
 
             <div>

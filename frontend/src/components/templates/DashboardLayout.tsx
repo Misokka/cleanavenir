@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -8,6 +8,9 @@ import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
 import { useAuth } from '@/features/auth/useAuth';
 import { useLogout } from '@/features/auth/useLogin';
+import { savingService, SavingDTO } from '@/infrastructure/web/services/savingService';
+import { useRateChangeNotification } from '@/hooks/useRateChangeNotification';
+import { RateChangeNotificationModal } from '../molecules/RateChangeNotificationModal';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -29,6 +32,22 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
   const { logout, loading: logoutLoading } = useLogout();
+  const [savings, setSavings] = useState<SavingDTO[] | null>(null);
+  
+  useEffect(() => {
+    if (user?.role === 'CLIENT') {
+      savingService.getSavings()
+        .then(data => setSavings(data))
+        .catch(err => {
+          console.error('Error fetching savings:', err);
+          setSavings(null);
+        });
+    } else {
+      setSavings(null);
+    }
+  }, [user?.role]);
+  
+  const { rateChanges, showModal, setShowModal, handleAcknowledge } = useRateChangeNotification(savings);
 
   const currentLocale = pathname.split('/')[1] || 'en';
 
@@ -308,6 +327,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           {children}
         </div>
       </main>
+
+      <RateChangeNotificationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onAcknowledge={handleAcknowledge}
+        rateChanges={rateChanges}
+      />
     </div>
   );
 

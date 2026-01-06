@@ -13,4 +13,5 @@ export interface OrderRepository {
   listPendingSellsByStock(stockIdentifier: string): Promise<Result<Order[], Error>>;
 
   listByUser(clientIdentifier: string): Promise<Result<Order[], Error>>;
+  delete(orderIdentifier: string): Promise<Result<boolean, Error>>;
 }

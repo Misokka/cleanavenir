@@ -8,6 +8,7 @@ export class DrizzleSavingProductMapper implements Mapper<SavingProductDrizzle, 
       savingProductIdentifier: raw.id,
       label: raw.label,
       rate: raw.rate / 1000000,
+      rateUpdatedAt: raw.rateUpdatedAt,
     });
   }
 
@@ -16,6 +17,7 @@ export class DrizzleSavingProductMapper implements Mapper<SavingProductDrizzle, 
       id: entity.savingProductIdentifier,
       label: entity.label,
       rate: Math.round(entity.rate * 1000000),
+      rateUpdatedAt: entity.rateUpdatedAt ?? null,
     };
   }
 }

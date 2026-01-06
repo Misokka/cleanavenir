@@ -20,7 +20,8 @@ export interface SavingDTO {
 export interface SavingProductDTO {
   id: string;
   rate: number;
-  label: string
+  label: string;
+  rateUpdatedAt?: string | null;
 }
 
 export interface CreateSavingRequest {
@@ -88,6 +89,19 @@ export class SavingService {
       return response.data;
     } catch (error) {
       console.error('Erreur lors du transfert depuis l\'épargne:', error);
+      throw error;
+    }
+  }
+
+  async depositToSaving(savingId: string, sourceAccountId: string, amount: number): Promise<{ message: string; success: boolean }> {
+    try {
+      const response = await httpClient.post<{ message: string; success: boolean }>(
+        `${API_ENDPOINTS.SAVINGS.LIST}/${savingId}/deposit`,
+        { sourceAccountId, amount }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du dépôt vers l\'épargne:', error);
       throw error;
     }
   }

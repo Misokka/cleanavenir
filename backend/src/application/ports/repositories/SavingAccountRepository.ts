@@ -16,4 +16,5 @@ export interface SavingAccountRepository {
 
     findByAccountIds(accountIds: string[]): Promise<Result<SavingAccount[], Error>>;
     updateBalance(accountId: string, newBalance: number): Promise<Result<number, Error>>;
+    delete(accountId: string): Promise<Result<boolean, Error>>;
 }

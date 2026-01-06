@@ -15,4 +15,5 @@ export interface BankAccountRepository {
     updateBalance(accountIdentifier: string, newBalance: number): Promise<Result<number, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     rename(accountIdentifier: string, label: string): Promise<Result<BankAccount, BankAccountNotFoundError | UnexpectedBankAccountError>>;
     remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>>;
+    delete(accountIdentifier: string): Promise<Result<boolean, Error>>;
 }

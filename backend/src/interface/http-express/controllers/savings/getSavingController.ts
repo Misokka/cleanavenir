@@ -60,7 +60,7 @@ export const getSavingController = asyncHandler(
 
     const savingProduct = savingProductResult.value;
 
-    // Convertir centimes → euros et basis points → pourcentage
+    // Convertir centimes → euros
     const savingDTO = {
       id: saving.accountIdentifier,
       clientId: saving.clientIdentifier,
@@ -72,7 +72,8 @@ export const getSavingController = asyncHandler(
       updatedAt: saving.updatedAt ? saving.updatedAt.toISOString() : null,
       savingProduct: {
         ...savingProduct,
-        rate: savingProduct.rate / 1_000_000, // conversion en %
+        id: savingProduct.savingProductIdentifier,
+        rate: savingProduct.rate, // Le mapper toDomain a déjà converti
       }
     };
 

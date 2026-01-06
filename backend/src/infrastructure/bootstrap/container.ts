@@ -75,6 +75,7 @@ import { ApplySavingDailyInterestUseCase } from '../../application/use-cases/cli
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
 import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
 import { TransferFromSavingUseCase } from '../../application/use-cases/client/saving/TransferFromSavingUseCase';
+import { DepositToSavingUseCase } from '../../application/use-cases/client/saving/DepositToSavingUseCase';
 import { CreateSavingProductUseCase } from '../../application/use-cases/director/saving/CreateSavingProductUseCase';
 import { UpdateSavingProductUseCase } from '../../application/use-cases/director/saving/UpdateSavingProductUseCase';
 import { ListSavingProductsUseCase } from '../../application/use-cases/director/saving/ListSavingProductsUseCase';
@@ -245,6 +246,13 @@ export function createContainer() {
     transactionRepository
   );
 
+  const depositToSavingUseCase = new DepositToSavingUseCase(
+    clientRepository,
+    savingRepository,
+    bankAccountRepository,
+    transactionRepository
+  );
+
   const listSavingProductsUseCase = new ListSavingProductsUseCase(savingProductRepository);
   const applySavingDailyInterestUseCase = new ApplySavingDailyInterestUseCase(
     savingProductRepository,
@@ -290,7 +298,16 @@ export function createContainer() {
   // Director Client Management Use Cases
   const createClientByDirectorUseCase = new CreateClientByDirectorUseCase(userRepository, advisorRepository, profileManager, passwordHasher);
   const updateClientByDirectorUseCase = new UpdateClientByDirectorUseCase(userRepository, passwordHasher);
-  const deleteClientByDirectorUseCase = new DeleteClientByDirectorUseCase(userRepository, clientRepository);
+  const deleteClientByDirectorUseCase = new DeleteClientByDirectorUseCase(
+    userRepository, 
+    clientRepository, 
+    bankAccountRepository, 
+    savingRepository, 
+    loanRepository, 
+    portfolioRepository, 
+    orderRepository, 
+    transactionRepository
+  );
 
   // Beneficiary Use Cases
   const addBeneficiaryUseCase = new AddBeneficiaryUseCase(beneficiaryRepository, clientRepository, bankAccountRepository);
@@ -353,6 +370,7 @@ export function createContainer() {
         listUser: listUserSavingsUseCase,
         create: createSavingAccountUseCase,
         transferFromSaving: transferFromSavingUseCase,
+        depositToSaving: depositToSavingUseCase,
         applySavingDailyInterest: applySavingDailyInterestUseCase,
         createSavingProduct: createSavingProductUseCase,
         updateSavingProduct: updateSavingProductUseCase,

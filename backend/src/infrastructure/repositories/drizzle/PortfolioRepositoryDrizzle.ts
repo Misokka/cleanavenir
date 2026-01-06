@@ -102,4 +102,15 @@ export class PortfolioRepositoryDrizzle implements PortfolioRepository {
       return err(new Error(`Could not list portfolios: ${e.message}`));
     }
   }
+
+  async delete(portfolioIdentifier: string): Promise<Result<boolean, Error>> {
+    try {
+      await this.db.delete(holdings).where(eq(holdings.portfolioId, portfolioIdentifier));
+      await this.db.delete(portfolios).where(eq(portfolios.id, portfolioIdentifier));
+      
+      return ok(true);
+    } catch (e: any) {
+      return err(new Error(`Could not delete portfolio: ${e.message}`));
+    }
+  }
 }
