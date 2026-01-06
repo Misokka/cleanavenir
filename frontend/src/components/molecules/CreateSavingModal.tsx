@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { useCreateSavingNew } from '../../features/savings/useGetSavings';
@@ -22,6 +23,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
   onSuccess,
   existingSavings = [],
 }) => {
+  const t = useTranslations('Dashboard.savings.createModal');
   const [sourceAccountId, setSourceAccountId] = useState('');
   const [savingProductId, setSavingProductId] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
@@ -45,43 +47,44 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
       setRate('2.5');
       reset();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]); 
 
   useEffect(() => {
     if (success) {
-      addToast('success', 'Compte épargne créé avec succès !');
+      addToast('success', t('success'));
       onSuccess();
       onClose();
     }
-  }, [success, addToast, onSuccess, onClose]);
+  }, [success, addToast, onSuccess, onClose, t]);
 
   useEffect(() => {
     if (error) {
       if (error.includes('possède déjà une épargne')) {
-        addToast('error', 'Ce compte possède déjà une épargne de ce type. Veuillez choisir un autre compte source.');
+        addToast('error', t('errors.alreadyHasSaving'));
       } else {
         addToast('error', error);
       }
     }
-  }, [error, addToast]);
+  }, [error, addToast, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!sourceAccountId) {
-      addToast('error', 'Veuillez sélectionner un compte source');
+      addToast('error', t('errors.selectAccount'));
       return;
     }
 
     const amount = Number.parseFloat(initialAmount);
     if (Number.isNaN(amount) || amount < 10) {
-      addToast('error', 'Le montant doit être d\'au moins 10€');
+      addToast('error', t('errors.minAmount'));
       return;
     }
 
     const rateValue = Number.parseFloat(rate);
     if (Number.isNaN(rateValue) || rateValue < 1.5 || rateValue > 3.5) {
-      addToast('error', 'Le taux doit être compris entre 1.5% et 3.5%');
+      addToast('error', t('errors.invalidRate'));
       return;
     }
 
@@ -100,7 +103,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         <div className="flex justify-between items-center mb-4">
           <Typography variant="h3" color="primary">
-            Ouvrir une épargne
+            {t('title')}
           </Typography>
           <button
             onClick={onClose}
@@ -114,11 +117,11 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="sourceAccount" className="block text-sm font-medium text-gray-700 mb-1">
-              Compte source *
+              {t('sourceAccount')} *
             </label>
             {accountsLoading ? (
               <div className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
-                Chargement des comptes...
+                {t('loadingAccounts')}
               </div>
             ) : (
               <select
@@ -129,7 +132,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
                 required
                 disabled={loading}
               >
-                <option value="">Sélectionnez un compte</option>
+                <option value="">{t('selectAccount')}</option>
                 {accounts?.map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.label} - {(account.balance).toFixed(2)}€
@@ -140,12 +143,12 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
           </div>
 
           <div>
-            <label htmlFor="sourceAccount" className="block text-sm font-medium text-gray-700 mb-1">
-              Produit d'épargne (taux annuel) *
+            <label htmlFor="savingProduct" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('savingProduct')} *
             </label>
             {isLoading ? (
               <div className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
-                Chargement des produits d'épargne...
+                {t('loadingProducts')}
               </div>
             ) : (
               <select
@@ -156,9 +159,9 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
                 required
                 disabled={loading}
               >
-                <option value="">Sélectionnez un produit d'épargne</option>
+                <option value="">{t('selectProduct')}</option>
                 {availableSavingProducts.length === 0 && savingProducts && savingProducts.length > 0 ? (
-                  <option value="" disabled>Tous les produits d'épargne sont déjà utilisés</option>
+                  <option value="" disabled>{t('allProductsUsed')}</option>
                 ) : (
                   availableSavingProducts.map((product) => (
                     <option key={product.id} value={product.id}>
@@ -170,21 +173,21 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
             )}
             {availableSavingProducts.length === 0 && savingProducts && savingProducts.length > 0 && (
               <p className="text-sm text-orange-600 mt-2">
-                Vous avez déjà ouvert tous les produits d'épargne disponibles.
+                {t('allProductsUsedMessage')}
               </p>
             )}
           </div>
 
           <div>
             <label htmlFor="initialAmount" className="block text-sm font-medium text-gray-700 mb-1">
-              Montant initial (€) *
+              {t('initialAmount')} *
             </label>
             <input
               id="initialAmount"
               type="number"
               value={initialAmount}
               onChange={(e) => setInitialAmount(e.target.value)}
-              placeholder="Ex: 100"
+              placeholder={t('initialAmountPlaceholder')}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-clean-primary focus:border-transparent"
               required
               min="10"
@@ -192,7 +195,7 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
               disabled={loading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Minimum 10€
+              {t('minimumAmount')}
             </p>
           </div>
 
@@ -223,12 +226,12 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
               <span className="text-blue-500 text-xl"></span>
               <div>
                 <Typography variant="body" className="text-sm text-blue-800">
-                  <strong>Fonctionnement :</strong>
+                  <strong>{t('howItWorks')}</strong>
                 </Typography>
                 <Typography variant="caption" className="text-blue-700 mt-1">
-                  • Le montant sera débité de votre compte source<br />
-                  • Les intérêts seront calculés et ajoutés chaque jour<br />
-                  • Formule : solde × (taux / 365) par jour
+                  • {t('info1')}<br />
+                  • {t('info2')}<br />
+                  • {t('info3')}
                 </Typography>
               </div>
             </div>
@@ -241,14 +244,14 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
               onClick={onClose}
               disabled={loading}
             >
-              Annuler
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               variant="primary"
               disabled={loading || !sourceAccountId || !initialAmount}
             >
-              {loading ? 'Création...' : 'Ouvrir l\'épargne'}
+              {loading ? t('creating') : t('submit')}
             </Button>
           </div>
         </form>

@@ -236,6 +236,34 @@
         "premiumRate": "Taux premium: {rate}% pour les comptes premium", 
         "minimumAmount": "Montant minimum: {amount}",
         "lastUpdate": "Dernière mise à jour: {date}"
+      },
+      "createModal": {
+        "title": "Ouvrir une épargne",
+        "sourceAccount": "Compte source",
+        "loadingAccounts": "Chargement des comptes...",
+        "selectAccount": "Sélectionnez un compte",
+        "savingProduct": "Produit d'épargne (taux annuel)",
+        "loadingProducts": "Chargement des produits d'épargne...",
+        "selectProduct": "Sélectionnez un produit d'épargne",
+        "allProductsUsed": "Tous les produits d'épargne sont déjà utilisés",
+        "allProductsUsedMessage": "Vous avez déjà ouvert tous les produits d'épargne disponibles.",
+        "initialAmount": "Montant initial (€)",
+        "initialAmountPlaceholder": "Ex: 100",
+        "minimumAmount": "Minimum 10€",
+        "howItWorks": "Fonctionnement :",
+        "info1": "Le montant sera débité de votre compte source",
+        "info2": "Les intérêts seront calculés et ajoutés chaque jour",
+        "info3": "Formule : solde × (taux / 365) par jour",
+        "cancel": "Annuler",
+        "creating": "Création...",
+        "submit": "Ouvrir l'épargne",
+        "success": "Compte épargne créé avec succès !",
+        "errors": {
+          "selectAccount": "Veuillez sélectionner un compte source",
+          "minAmount": "Le montant doit être d'au moins 10€",
+          "invalidRate": "Le taux doit être compris entre 1.5% et 3.5%",
+          "alreadyHasSaving": "Ce compte possède déjà une épargne de ce type. Veuillez choisir un autre compte source."
+        }
       }
     },
     "operations": {

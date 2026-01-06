@@ -236,6 +236,34 @@
         "premiumRate": "Premium rate: {rate}% for premium accounts",
         "minimumAmount": "Minimum amount: {amount}",
         "lastUpdate": "Last update: {date}"
+      },
+      "createModal": {
+        "title": "Open a savings account",
+        "sourceAccount": "Source account",
+        "loadingAccounts": "Loading accounts...",
+        "selectAccount": "Select an account",
+        "savingProduct": "Savings product (annual rate)",
+        "loadingProducts": "Loading savings products...",
+        "selectProduct": "Select a savings product",
+        "allProductsUsed": "All savings products are already in use",
+        "allProductsUsedMessage": "You have already opened all available savings products.",
+        "initialAmount": "Initial amount (€)",
+        "initialAmountPlaceholder": "E.g.: 100",
+        "minimumAmount": "Minimum €10",
+        "howItWorks": "How it works:",
+        "info1": "The amount will be debited from your source account",
+        "info2": "Interest will be calculated and added daily",
+        "info3": "Formula: balance × (rate / 365) per day",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "submit": "Open savings account",
+        "success": "Savings account created successfully!",
+        "errors": {
+          "selectAccount": "Please select a source account",
+          "minAmount": "The amount must be at least €10",
+          "invalidRate": "The rate must be between 1.5% and 3.5%",
+          "alreadyHasSaving": "This account already has a savings of this type. Please choose another source account."
+        }
       }
     },
     "operations": {
