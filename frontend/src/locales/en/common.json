@@ -548,10 +548,23 @@
     "actions": {
       "submit": "Make transfer",
       "cancel": "Cancel",
-      "back": "Back"
+      "back": "Back",
+      "inProgress": "Transfer in progress..."
+    },
+    "placeholders": {
+      "description": "E.g.: Refund, Monthly savings..."
+    },
+    "info": {
+      "title": "Important information",
+      "checkDetails": "Please check the accounts and amount carefully before confirming",
+      "immediate": "The transfer is immediate between your accounts",
+      "emailConfirmation": "You will receive a confirmation by email"
+    },
+    "labels": {
+      "availableBalance": "Available balance",
+      "newSourceBalance": "New balance (source account)"
     }
-  }
-  ,
+  },
   "LearnMore": {
     "meta": {
       "title": "Learn More - Clean Avenir",

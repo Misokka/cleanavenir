@@ -197,7 +197,7 @@ export default function TransferPage() {
               )}
               {fromAccount && (
                 <p className="mt-2 text-sm text-gray-600">
-                  Solde disponible: {formatCurrency(fromAccount.balance, 'fr-FR', fromAccount.currency)}
+                  {t('labels.availableBalance')}: {formatCurrency(fromAccount.balance, 'fr-FR', fromAccount.currency)}
                 </p>
               )}
             </div>
@@ -357,7 +357,7 @@ export default function TransferPage() {
                 disabled={transferLoading}
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ex: Remboursement, Épargne mensuelle..."
+                placeholder={t('placeholders.description')}
               />
             </div>
 
@@ -386,7 +386,7 @@ export default function TransferPage() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-700">Nouveau solde (compte source):</span>
+                    <span className="text-gray-700">{t('labels.newSourceBalance')}:</span>
                     <span className={`font-medium ${fromAccount.balance - amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatCurrency(fromAccount.balance - amount, 'fr-FR', fromAccount.currency)}
                     </span>
@@ -402,7 +402,7 @@ export default function TransferPage() {
                 disabled={transferLoading || accountsLoading}
                 className="flex-1"
               >
-                {transferLoading ? 'Virement en cours...' : t('actions.submit')}
+                {transferLoading ? t('actions.inProgress') : t('actions.submit')}
               </Button>
               <Button
                 type="button"
@@ -420,12 +420,12 @@ export default function TransferPage() {
           <div className="flex items-start space-x-3">
             <div>
               <Typography variant="body" className="font-medium text-yellow-900 mb-2">
-                Information importante
+                {t('info.title')}
               </Typography>
               <Typography variant="caption" className="text-yellow-800">
-                • Vérifiez attentivement les comptes et le montant avant de confirmer<br/>
-                • Le virement est immédiat entre vos comptes<br/>
-                • Vous recevrez une confirmation par email
+                • {t('info.checkDetails')}<br/>
+                • {t('info.immediate')}<br/>
+                • {t('info.emailConfirmation')}
               </Typography>
             </div>
           </div>

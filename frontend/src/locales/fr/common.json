@@ -548,7 +548,21 @@
     "actions": {
       "submit": "Effectuer le virement",
       "cancel": "Annuler",
-      "back": "Retour"
+      "back": "Retour",
+      "inProgress": "Virement en cours..."
+    },
+    "placeholders": {
+      "description": "Ex: Remboursement, Épargne mensuelle..."
+    },
+    "info": {
+      "title": "Information importante",
+      "checkDetails": "Vérifiez attentivement les comptes et le montant avant de confirmer",
+      "immediate": "Le virement est immédiat entre vos comptes",
+      "emailConfirmation": "Vous recevrez une confirmation par email"
+    },
+    "labels": {
+      "availableBalance": "Solde disponible",
+      "newSourceBalance": "Nouveau solde (compte source)"
     }
   },
   "LearnMore": {
