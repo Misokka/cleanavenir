@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DashboardLayout } from '../../../../../components/templates/DashboardLayout';
 import { Card } from '../../../../../components/atoms/Card';
 import { Typography } from '../../../../../components/atoms/Typography';
 import { Button } from '../../../../../components/atoms/Button';
 import { SavingDetailSkeleton } from '../../../../../components/molecules/SavingSkeleton';
+import { TransferFromSavingModal } from '../../../../../components/molecules/TransferFromSavingModal';
 import { useAuth } from '../../../../../contexts/AuthProvider';
 import { useGetSavingDetails } from '../../../../../features/savings/useGetSavings';
 import { useGetAccounts } from '../../../../../features/account/useGetAccounts';
@@ -21,6 +22,7 @@ export default function SavingDetailPage() {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { saving, loading, error, refetch } = useGetSavingDetails(savingId);
   const { accounts } = useGetAccounts();
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -85,17 +87,20 @@ export default function SavingDetailPage() {
 
   const calculateDailyInterest = () => {
     if(!saving.savingProduct) return 0;
-    return Math.ceil((saving.balance * (saving.savingProduct.rate / 100)) / 365 * 100) / 100;
+    const ratePercent = saving.savingProduct.rate * 1000000;
+    return Math.ceil((saving.balance * (ratePercent / 100)) / 365 * 100) / 100;
   };
 
   const calculateMonthlyInterest = () => {
     if(!saving.savingProduct) return 0;
-    return Math.round((saving.balance * (saving.savingProduct.rate / 100)) / 12 * 100) / 100;
+    const ratePercent = saving.savingProduct.rate * 1000000;
+    return Math.round((saving.balance * (ratePercent / 100)) / 12 * 100) / 100;
   };
 
   const calculateYearlyInterest = () => {
     if(!saving.savingProduct) return 0;
-    return Math.round(saving.balance * (saving.savingProduct.rate / 100) * 100) / 100;
+    const ratePercent = saving.savingProduct.rate * 1000000;
+    return Math.round(saving.balance * (ratePercent / 100) * 100) / 100;
   };
 
   return (
@@ -129,7 +134,7 @@ export default function SavingDetailPage() {
                 {saving.savingProduct?.label}
               </Typography>
               <Typography variant="body" className="font-semibold">
-                Taux: {saving.savingProduct?.rate}%
+                Taux: {(saving.savingProduct?.rate || 0) * 1000000}%
               </Typography>
             </div>
             <div>
@@ -257,7 +262,7 @@ export default function SavingDetailPage() {
                   • Solde actuel : {formatCurrency(saving.balance)}<br/>
                   • Intérêts estimés : {formatCurrency(calculateYearlyInterest())}<br/>
                   • Solde final : {formatCurrency(saving.balance + calculateYearlyInterest())}<br/>
-                  • Taux appliqué : {saving.rate}%
+                  • Taux appliqué : {(saving.savingProduct?.rate || 0) * 1000000}%
                 </Typography>
               </div>
             </div>
@@ -269,6 +274,13 @@ export default function SavingDetailPage() {
             Actions disponibles
           </Typography>
           <div className="flex flex-wrap gap-4">
+            <Button 
+              variant="primary" 
+              onClick={() => setIsTransferModalOpen(true)}
+              disabled={saving.balance === 0}
+            >
+              Transférer vers un compte
+            </Button>
             <Button variant="outline" onClick={refetch}>
               Actualiser
             </Button>
@@ -286,6 +298,17 @@ export default function SavingDetailPage() {
             )}
           </div>
         </Card>
+
+        {accounts && (
+          <TransferFromSavingModal
+            isOpen={isTransferModalOpen}
+            onClose={() => setIsTransferModalOpen(false)}
+            onSuccess={refetch}
+            savingId={savingId}
+            savingBalance={saving.balance}
+            accounts={accounts}
+          />
+        )}
       </div>
     </DashboardLayout>
   );

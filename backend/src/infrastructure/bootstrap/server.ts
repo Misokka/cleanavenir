@@ -57,7 +57,7 @@ export function startServer(port: number = 3000): void {
   const { app } = createServer();
 
   app.listen(port, () => {
-    console.log('✅ Serveur démarré avec succès');
+    console.log('Serveur démarré avec succès');
     console.log(`   URL: http://localhost:${port}`);
     console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`   Health check: http://localhost:${port}/api/health\n`);

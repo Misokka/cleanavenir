@@ -286,7 +286,6 @@ export default function LoanDetailPage() {
         {loan.status === 'PENDING' && (
           <Card className="bg-amber-50 border-amber-200">
             <div className="flex items-start space-x-3">
-              <div className="text-2xl">⏳</div>
               <div>
                 <Typography variant="h4" className="text-amber-800 mb-2">
                   Demande en cours d'examen

@@ -229,7 +229,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                 />
                 <Tooltip 
                   contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                  formatter={(value: number) => [formatPrice(value), 'Prix']} // Utilise ton formateur ici
+                  formatter={(value: number | undefined) => [formatPrice(value ?? 0), 'Prix']}
                 />
                 <Area 
                   type="monotone" 

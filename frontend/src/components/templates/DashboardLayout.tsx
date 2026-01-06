@@ -90,12 +90,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         iconClass: 'fi fi-br-hand-holding-usd',
         isActive: pathname.startsWith(`/${locale}/client/dashboard/loans`),
       },
-      {
-        href: `/${locale}/dashboard/operations/history`,
-        label: t('navigation.operations'),
-        iconClass: 'fi fi-br-exchange-alt',
-        isActive: pathname === `/${locale}/dashboard/operations/history`,
-      },
+      // {
+      //   href: `/${locale}/dashboard/operations/history`,
+      //   label: t('navigation.operations'),
+      //   iconClass: 'fi fi-br-exchange-alt',
+      //   isActive: pathname === `/${locale}/dashboard/operations/history`,
+      // },
       {
         href: `/${locale}/client/investment`,
         label: t('navigation.investments'),

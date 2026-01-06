@@ -60,7 +60,7 @@ export default function TransferPage() {
 
   useEffect(() => {
     if (success) {
-      toast.success('Virement effectué avec succès ✅');
+      toast.success('Virement effectué avec succès');
       setTimeout(() => {
         router.push(`/${locale}/client/dashboard`);
       }, 1500);

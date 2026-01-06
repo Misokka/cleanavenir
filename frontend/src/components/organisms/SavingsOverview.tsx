@@ -151,7 +151,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                           {saving.savingProduct?.label ?? "Compte d'Épargne"}
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          Taux: {saving.savingProduct?.rate}%
+                          Taux: {(saving.savingProduct?.rate || 0) * 1000000}%
                         </Typography>
                       </div>
                     </div>
