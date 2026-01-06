@@ -29,7 +29,7 @@ export class GetMyPortfolioUseCase {
     private readonly companyRepository: CompanyRepository,
   ){}
 
-  async execute({ userId }: { userId: string }): Promise<Result<ChargedPortfolio, Error>>{
+  async execute({ userId }: { userId: string }): Promise<Result<ChargedPortfolio | null, Error>>{
     const clientResult = await this.clientRepository.findByUserId(userId);
     if(!clientResult.ok){
       return err(clientResult.error);
@@ -38,7 +38,11 @@ export class GetMyPortfolioUseCase {
     const client = clientResult.value;
 
     const portfolioResult = await this.portfolioRepository.findByClientId(client.clientIdentifier);
-    if(!portfolioResult.ok) return err(portfolioResult.error);
+    
+    if(!portfolioResult.ok) {
+      return ok(null);
+    }
+    
     const portfolio = portfolioResult.value
 
     const allStocksResult = await this.stockRepository.all();

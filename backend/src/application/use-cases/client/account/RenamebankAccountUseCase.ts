@@ -1,6 +1,7 @@
 import { BankAccount } from "../../../../domain/entities/BankAccount";
 import { err, ok, Result } from "../../../../shared/Result";
 import { BankAccountRepository } from "../../../ports/repositories/BankAccountRepository";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 
 export interface RenameAccountInput {
   accountId: string;
@@ -10,7 +11,8 @@ export interface RenameAccountInput {
 
 export class RenameBankAccountUseCase {
   constructor(
-    private readonly bankAccountRepository: BankAccountRepository
+    private readonly bankAccountRepository: BankAccountRepository,
+    private readonly clientRepository: ClientRepository
   ) {}
 
   public async execute(input: RenameAccountInput): Promise<Result<BankAccount, Error>> {
@@ -22,6 +24,12 @@ export class RenameBankAccountUseCase {
       return err(new Error('Le nom doit contenir au moins 3 caractères'));
     }
 
+    const clientResult = await this.clientRepository.findByUserId(input.userId);
+    if (!clientResult.ok) {
+      return err(clientResult.error);
+    }
+    const client = clientResult.value;
+
     const maybeBankAccount = await this.bankAccountRepository.findById(input.accountId);
 
     if (!maybeBankAccount.ok) {
@@ -30,17 +38,17 @@ export class RenameBankAccountUseCase {
 
     const bankAccount = maybeBankAccount.value;
 
-    if (bankAccount.clientIdentifier !== input.userId) {
+    if (bankAccount.clientIdentifier !== client.clientIdentifier) {
       return err(new Error('Accès non autorisé à ce compte'));
     }
 
-    const existingAccounts = await this.bankAccountRepository.findByOwner(input.userId);
+    const existingAccounts = await this.bankAccountRepository.findByOwner(client.clientIdentifier);
     
     if (existingAccounts.ok) {
       const duplicateName = existingAccounts.value.some(
-        (account: any) => 
-          account.id !== input.accountId && 
-          account.name.toLowerCase() === input.newName.trim().toLowerCase()
+        (account) => 
+          account.accountIdentifier !== input.accountId && 
+          account.label.toLowerCase() === input.newName.trim().toLowerCase()
       );
 
       if (duplicateName) {

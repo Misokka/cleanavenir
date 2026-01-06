@@ -11,6 +11,7 @@ import { TradeRepository } from "../repositories/TradeRepository";
 import { Trade } from "../../../domain/entities/Trade";
 import { TransactionRepository } from "../repositories/TransactionRepository";
 import { Transaction } from "../../../domain/entities/Transaction";
+import { toEuros } from "../../../shared/moneyUtilities";
 
 
 export class OrderMatchingService {
@@ -54,7 +55,7 @@ export class OrderMatchingService {
       if (!stockResult.ok) return err(stockResult.error);
       const stock = stockResult.value;
   
-      stock.updatePrice(executionPrice); // met à jour le prix du stock
+      stock.updatePrice(toEuros(executionPrice)); 
       const updatedStockResult = await this.stockRepository.update(stock); // persiste le nouveau prix
       if (!updatedStockResult.ok) return err(updatedStockResult.error);
 

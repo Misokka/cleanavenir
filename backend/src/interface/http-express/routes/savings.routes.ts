@@ -4,7 +4,8 @@ import {
   createSavingController,
   applyDailyInterestController,
   getSavingController,
-  ListSavingProductsController
+  ListSavingProductsController,
+  transferFromSavingController
 } from '../controllers/savings';
 import { requireAuth } from '../middlewares/authMiddleware';
 
@@ -19,6 +20,7 @@ router.get('/', listClientSavingsController);
 router.get('/products', ListSavingProductsController);
 router.get('/:id', getSavingController);
 router.post('/', createSavingController);
+router.post('/:savingId/transfer', transferFromSavingController);
 router.post('/apply-interest', applyDailyInterestController);
 
 export const savingsRoutes = router;

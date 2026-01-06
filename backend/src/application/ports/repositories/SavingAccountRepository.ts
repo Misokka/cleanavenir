@@ -15,4 +15,5 @@ export interface SavingAccountRepository {
     findByOwnerAndProductId(ownerId: string, productId: string): Promise<Result<SavingAccount | null, Error>>;
 
     findByAccountIds(accountIds: string[]): Promise<Result<SavingAccount[], Error>>;
+    updateBalance(accountId: string, newBalance: number): Promise<Result<number, Error>>;
 }

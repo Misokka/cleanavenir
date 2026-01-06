@@ -20,6 +20,12 @@ export const GetMyPortfolioController = asyncHandler(
 
     const portfolio = portfolioResult.value;
 
+    if (!portfolio) {
+      return res.status(200).json({
+        portfolio: null
+      })
+    }
+
     return res.status(200).json({
       portfolio: toChargedPortfolioDTO(portfolio)
     })

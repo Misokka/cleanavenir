@@ -74,6 +74,7 @@ import { CreateDebitUseCase } from '../../application/use-cases/client/transacti
 import { ApplySavingDailyInterestUseCase } from '../../application/use-cases/client/saving/ApplySavingDailyInterestUseCase';
 import { ListUserSavingsUseCase } from '../../application/use-cases/client/saving/ListUserSavingsUseCase';
 import { CreateSavingAccountUseCase } from '../../application/use-cases/client/saving/CreateSavingAccountUseCase';
+import { TransferFromSavingUseCase } from '../../application/use-cases/client/saving/TransferFromSavingUseCase';
 import { CreateSavingProductUseCase } from '../../application/use-cases/director/saving/CreateSavingProductUseCase';
 import { UpdateSavingProductUseCase } from '../../application/use-cases/director/saving/UpdateSavingProductUseCase';
 import { ListSavingProductsUseCase } from '../../application/use-cases/director/saving/ListSavingProductsUseCase';
@@ -196,7 +197,7 @@ export function createContainer() {
   const getBankAccountUseCase = new GetBankAccountUseCase(bankAccountRepository, clientRepository);
   const listUserBankAccountsUseCase = new ListUserBankAccountsUseCase(bankAccountRepository, clientRepository);
   const createBankAccountUseCase = new CreateBankAccountUseCase(bankAccountRepository, clientRepository);
-  const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository);
+  const renameBankAccountUseCase = new RenameBankAccountUseCase(bankAccountRepository, clientRepository);
   const deleteBankAccountUseCase = new DeleteBankAccountUseCase(bankAccountRepository, clientRepository);
 
   // Transaction Use Cases
@@ -233,6 +234,13 @@ export function createContainer() {
     clientRepository,
     savingRepository,
     savingProductRepository,
+    bankAccountRepository,
+    transactionRepository
+  );
+
+  const transferFromSavingUseCase = new TransferFromSavingUseCase(
+    clientRepository,
+    savingRepository,
     bankAccountRepository,
     transactionRepository
   );
@@ -344,6 +352,7 @@ export function createContainer() {
       saving: {
         listUser: listUserSavingsUseCase,
         create: createSavingAccountUseCase,
+        transferFromSaving: transferFromSavingUseCase,
         applySavingDailyInterest: applySavingDailyInterestUseCase,
         createSavingProduct: createSavingProductUseCase,
         updateSavingProduct: updateSavingProductUseCase,

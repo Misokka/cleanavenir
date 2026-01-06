@@ -79,6 +79,19 @@ export class SavingService {
     }
   }
 
+  async transferFromSaving(savingId: string, targetAccountId: string, amount: number): Promise<{ message: string; success: boolean }> {
+    try {
+      const response = await httpClient.post<{ message: string; success: boolean }>(
+        `${API_ENDPOINTS.SAVINGS.LIST}/${savingId}/transfer`,
+        { targetAccountId, amount }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du transfert depuis l\'épargne:', error);
+      throw error;
+    }
+  }
+
   async getCurrentRate(): Promise<CurrentRateDTO> {
     try {
       const response = await httpClient.get<CurrentRateDTO>(
