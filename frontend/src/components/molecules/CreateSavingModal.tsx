@@ -1,23 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { useCreateSavingNew } from '../../features/savings/useGetSavings';
 import { useGetAccounts } from '../../features/account/useGetAccounts';
 import { useToast } from '../../contexts/ToastProvider';
 import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
+import { SavingDTO } from '@/infrastructure/web/services/savingService';
 
 interface CreateSavingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  existingSavings?: SavingDTO[];
 }
 
 export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  existingSavings = [],
 }) => {
   const [sourceAccountId, setSourceAccountId] = useState('');
   const [savingProductId, setSavingProductId] = useState('');
@@ -28,6 +31,12 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
   const { savingProducts, isLoading} = useGetSavingProducts();
   const { createSaving, loading, error, success, reset } = useCreateSavingNew();
   const { addToast } = useToast();
+
+  const availableSavingProducts = useMemo(() => {
+    if (!savingProducts) return [];
+    const usedProductIds = existingSavings.map(s => s.savingProduct?.id).filter(Boolean) as string[];
+    return savingProducts.filter(product => !usedProductIds.includes(product.id));
+  }, [savingProducts, existingSavings]);
 
   useEffect(() => {
     if (isOpen) {
@@ -48,7 +57,11 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
 
   useEffect(() => {
     if (error) {
-      addToast('error', error);
+      if (error.includes('possède déjà une épargne')) {
+        addToast('error', 'Ce compte possède déjà une épargne de ce type. Veuillez choisir un autre compte source.');
+      } else {
+        addToast('error', error);
+      }
     }
   }, [error, addToast]);
 
@@ -144,12 +157,21 @@ export const CreateSavingModal: React.FC<CreateSavingModalProps> = ({
                 disabled={loading}
               >
                 <option value="">Sélectionnez un produit d'épargne</option>
-                {savingProducts?.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.label} - {product.rate}%
-                  </option>
-                ))}
+                {availableSavingProducts.length === 0 && savingProducts && savingProducts.length > 0 ? (
+                  <option value="" disabled>Tous les produits d'épargne sont déjà utilisés</option>
+                ) : (
+                  availableSavingProducts.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.label} - {product.rate.toFixed(2)}%
+                    </option>
+                  ))
+                )}
               </select>
+            )}
+            {availableSavingProducts.length === 0 && savingProducts && savingProducts.length > 0 && (
+              <p className="text-sm text-orange-600 mt-2">
+                Vous avez déjà ouvert tous les produits d'épargne disponibles.
+              </p>
             )}
           </div>
 

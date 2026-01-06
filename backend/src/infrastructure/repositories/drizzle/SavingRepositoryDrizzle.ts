@@ -125,5 +125,14 @@ export class SavingRepositoryDrizzle implements SavingAccountRepository{
       return err(new Error(`Could not update saving balance: ${e.message}`));
     }
   }
+
+  async delete(accountId: string): Promise<Result<boolean, Error>> {
+    try {
+      await this.db.delete(savingAccounts).where(eq(savingAccounts.id, accountId));
+      return ok(true);
+    } catch (e: any) {
+      return err(new Error(`Could not delete saving account: ${e.message}`));
+    }
+  }
 }
 

@@ -79,7 +79,7 @@ export const LoanRequestForm: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
           <Typography variant="caption" color="muted" className="mt-1">
-            Entre 1 000 € et 100 000 €
+            Minimum 1 000 €
           </Typography>
         </div>
 
@@ -92,7 +92,7 @@ export const LoanRequestForm: React.FC = () => {
             id="duration"
             type="number"
             min="6"
-            max="120"
+            max="600"
             step="6"
             value={durationInMonth}
             onChange={(e) => setDurationInMonth(e.target.value)}
@@ -101,7 +101,7 @@ export const LoanRequestForm: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
           <Typography variant="caption" color="muted" className="mt-1">
-            Entre 6 et 120 mois
+            Entre 6 et 600 mois (50 ans)
           </Typography>
         </div>
 

@@ -7,4 +7,5 @@ export interface PortfolioRepository{
   save(portfolio: Portfolio): Promise<Result<Portfolio, Error>>;
   update(portfolio: Portfolio): Promise<Result<Portfolio, Error>>;
   findByClientId(clientIdentifier: string): Promise<Result<Portfolio, Error>>;
+  delete(portfolioIdentifier: string): Promise<Result<boolean, Error>>;
 }

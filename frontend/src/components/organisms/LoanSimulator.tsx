@@ -61,7 +61,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
               <input
                 type="range"
                 min="1000"
-                max="100000"
+                max="10000000"
                 step="1000"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
@@ -82,7 +82,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
               <input
                 type="range"
                 min="6"
-                max="120"
+                max="600"
                 step="6"
                 value={durationInMonth}
                 onChange={(e) => setDurationInMonth(Number(e.target.value))}

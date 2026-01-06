@@ -27,4 +27,5 @@ export interface TransactionRepository{
   listWithFilters(accountIds: string[], filters: OperationFilters): Promise<Result<Transaction[], Error>>;
   listRecentForUser(userAccountIds: string[], limit: number): Promise<Result<Transaction[], Error>>;
   listForAccount(accountIdentifier: string): Promise<Result<Transaction[], Error>>;
+  delete(transactionIdentifier: string): Promise<Result<boolean, Error>>;
 }

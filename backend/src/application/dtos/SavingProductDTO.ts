@@ -1,5 +1,6 @@
 export interface SavingProductDTO {
   id: string;
   rate: number;
-  label: string
+  label: string;
+  rateUpdatedAt?: string | null;
 }

@@ -82,6 +82,7 @@ export const savingProducts = sqliteTable('saving_products', {
   id: text('id').primaryKey(),
   label: text('label').notNull().unique(),
   rate: integer('rate').notNull(), // stored as basis points or per-million (decide convention)
+  rateUpdatedAt: text('rate_updated_at'),
 })
 
 export type SavingProductDrizzle = InferSelectModel<typeof savingProducts>;

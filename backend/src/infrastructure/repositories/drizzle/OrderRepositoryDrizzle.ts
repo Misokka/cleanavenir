@@ -118,4 +118,13 @@ export class OrderRepositoryDrizzle implements OrderRepository{
       return err(new Error(`Couldn't set new status for order ${orderIdentifier}`))
     }
   }
+
+  async delete(orderIdentifier: string): Promise<Result<boolean, Error>> {
+    try {
+      await this.db.delete(orders).where(eq(orders.id, orderIdentifier));
+      return ok(true);
+    } catch (e: any) {
+      return err(new Error(`Could not delete order: ${e.message}`));
+    }
+  }
 }

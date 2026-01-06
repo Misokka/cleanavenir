@@ -183,5 +183,14 @@ export class TransactionRepositoryDrizzle implements TransactionRepository {
       return err(e);
     }
   }
+
+  async delete(transactionIdentifier: string): Promise<Result<boolean, Error>> {
+    try {
+      await this.db.delete(transactions).where(eq(transactions.id, transactionIdentifier));
+      return ok(true);
+    } catch (e: any) {
+      return err(new Error(`Could not delete transaction: ${e.message}`));
+    }
+  }
 }
 

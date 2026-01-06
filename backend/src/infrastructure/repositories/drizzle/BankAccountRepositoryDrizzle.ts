@@ -132,20 +132,24 @@ export class BankAccountRepositoryDrizzle implements BankAccountRepository {
     }
   }
 
-  async delete(id: string): Promise<Result<true, Error>> {
-    try {
-      await this.db.delete(bankAccounts).where(eq(bankAccounts.id, id));
+  async remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>> {
+    try{
+      const deleteResult = await this.delete(accountIdentifier);
+      if (!deleteResult.ok) {
+        return err(new UnexpectedBankAccountError(`Could not remove account: ${deleteResult.error.message}`));
+      }
       return ok(true);
-    } catch (e: any) {
+    } catch (e: any){
       return err(e);
     }
   }
 
-  async remove(accountIdentifier: string): Promise<Result<true, BankAccountNotFoundError | UnexpectedBankAccountError>> {
-    try{
-      return await this.delete(accountIdentifier);
-    } catch (e: any){
-      return err(e);
+  async delete(accountIdentifier: string): Promise<Result<boolean, Error>> {
+    try {
+      await this.db.delete(bankAccounts).where(eq(bankAccounts.id, accountIdentifier));
+      return ok(true);
+    } catch (e: any) {
+      return err(new Error(`Could not delete bank account: ${e.message}`));
     }
   }
 }

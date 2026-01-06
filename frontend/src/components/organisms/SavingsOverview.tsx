@@ -151,7 +151,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                           {saving.savingProduct?.label ?? "Compte d'Épargne"}
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          Taux: {(saving.savingProduct?.rate || 0) * 1000000}%
+                          Taux: {(saving.savingProduct?.rate || 0).toFixed(2)}%
                         </Typography>
                       </div>
                     </div>
@@ -216,6 +216,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={refetchSavings}
+        existingSavings={savings || []}
       />
     </div>
   );
