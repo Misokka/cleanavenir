@@ -1,10 +1,13 @@
 "use client";
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
+import Link from 'next/link';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 
 export const Hero = () => {
   const t = useTranslations('Home.hero');
+  const locale = useLocale();
 
   return (
     <section id="hero" className="bg-gradient-to-br from-clean-dark to-clean-secondary text-white py-20 lg:py-32">
@@ -18,12 +21,16 @@ export const Hero = () => {
         </Typography>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="!bg-white !text-clean-dark hover:!bg-gray-100 font-semibold">
-            {t('cta')}
-          </Button>
-          <Button size="lg" className="!bg-transparent !border-2 !border-white !text-white hover:!bg-white hover:!text-clean-dark">
-            {t('ctaSecondary')}
-          </Button>
+          <Link href={`/${locale}/auth/register`}>
+            <Button size="lg" className="!bg-white !text-clean-dark hover:!bg-gray-100 font-semibold">
+              {t('cta')}
+            </Button>
+          </Link>
+          <Link href={`/${locale}/learn-more`}>
+            <Button size="lg" className="!bg-transparent !border-2 !border-white !text-white hover:!bg-white hover:!text-clean-dark">
+              {t('ctaSecondary')}
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

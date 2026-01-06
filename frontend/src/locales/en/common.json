@@ -551,4 +551,55 @@
       "back": "Back"
     }
   }
+  ,
+  "LearnMore": {
+    "meta": {
+      "title": "Learn More - Clean Avenir",
+      "description": "Discover why Clean Avenir is the modern bank that saves you money"
+    },
+    "hero": {
+      "title": "A modern, transparent and affordable bank",
+      "subtitle": "Discover how Clean Avenir revolutionizes your wealth management with minimal fees"
+    },
+    "advantages": {
+      "title": "Our advantages",
+      "subtitle": "What sets us apart from other banking institutions",
+      "noArbitrage": {
+        "title": "Zero arbitrage fees",
+        "description": "Unlike many competitors, we charge no arbitrage fees on your investments. Your money works for you, not for us."
+      },
+      "fixedFees": {
+        "title": "Fixed and transparent fees",
+        "description": "One simple fee to understand: €1 per transaction, whether buying or selling.",
+        "perTransaction": "per transaction"
+      },
+      "ownership": {
+        "title": "You are the owner",
+        "description": "Your shares truly belong to you. Unlike some competitors who don't mention it clearly, with us, you are the real owner of your securities."
+      }
+    },
+    "comparison": {
+      "title": "Compare and save",
+      "subtitle": "See the difference with other institutions",
+      "table": {
+        "feature": "Feature",
+        "others": "Other banks",
+        "arbitrageFees": "Arbitrage fees",
+        "transactionFees": "Transaction fees",
+        "ownership": "Real share ownership",
+        "transparency": "Fee transparency"
+      }
+    },
+    "warning": {
+      "title": "Important information",
+      "description": "Some competitors do not clearly communicate that you are not always the owner of your shares. At Clean Avenir, transparency is a core value: you own every security you purchase."
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "description": "Join thousands of customers who have chosen a modern and transparent bank.",
+      "register": "Open an account",
+      "backHome": "Back to home"
+    }
+  }
+
 }

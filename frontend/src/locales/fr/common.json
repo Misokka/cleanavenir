@@ -550,5 +550,54 @@
       "cancel": "Annuler",
       "back": "Retour"
     }
+  },
+  "LearnMore": {
+    "meta": {
+      "title": "En savoir plus - Clean Avenir",
+      "description": "Découvrez pourquoi Clean Avenir est la banque moderne qui vous fait économiser"
+    },
+    "hero": {
+      "title": "Une banque moderne, transparente et économique",
+      "subtitle": "Découvrez comment Clean Avenir révolutionne la gestion de votre patrimoine avec des frais réduits au minimum"
+    },
+    "advantages": {
+      "title": "Nos avantages",
+      "subtitle": "Ce qui nous différencie des autres établissements bancaires",
+      "noArbitrage": {
+        "title": "Zéro frais d'arbitrage",
+        "description": "Contrairement à de nombreux concurrents, nous ne prélevons aucun frais d'arbitrage sur vos investissements. Votre argent travaille pour vous, pas pour nous."
+      },
+      "fixedFees": {
+        "title": "Frais fixes et transparents",
+        "description": "Un seul frais simple à comprendre : 1€ par transaction, que ce soit à l'achat ou à la vente.",
+        "perTransaction": "par transaction"
+      },
+      "ownership": {
+        "title": "Vous êtes propriétaire",
+        "description": "Vos actions vous appartiennent réellement. Contrairement à certains concurrents qui ne le mentionnent pas clairement, chez nous, vous êtes le véritable propriétaire de vos titres."
+      }
+    },
+    "comparison": {
+      "title": "Comparez et économisez",
+      "subtitle": "Voyez la différence avec les autres établissements",
+      "table": {
+        "feature": "Caractéristique",
+        "others": "Autres banques",
+        "arbitrageFees": "Frais d'arbitrage",
+        "transactionFees": "Frais par transaction",
+        "ownership": "Propriété réelle des actions",
+        "transparency": "Transparence des frais"
+      }
+    },
+    "warning": {
+      "title": "Information importante",
+      "description": "Certains concurrents ne communiquent pas clairement sur le fait que vous n'êtes pas toujours propriétaire de vos actions. Chez Clean Avenir, la transparence est une valeur fondamentale : vous êtes propriétaire de chaque titre que vous achetez."
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "description": "Rejoignez des milliers de clients qui ont choisi une banque moderne et transparente.",
+      "register": "Ouvrir un compte",
+      "backHome": "Retour à l'accueil"
+    }
   }
 }
