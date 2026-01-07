@@ -578,17 +578,17 @@
       }
     },
     "portfolio": {
-      "title": "My portfolio",
+      "title": "My Wallet",
       "empty": {
-        "title": "No active portfolio",
-        "description": "Start your investment journey now by opening your first securities portfolio.",
-        "button": "Open my portfolio"
+        "title": "No active Wallet",
+        "description": "Start your investment journey now by opening your first securities Wallet.",
+        "button": "Open my Wallet"
       },
       "error": "Error",
       "totalValue": "Estimated total value",
       "holdings": "My holdings",
       "holdingsEmpty": {
-        "title": "Your portfolio is empty",
+        "title": "Your Wallet is empty",
         "description": "You don't have any open positions yet. Explore the market to find your first opportunity."
       },
       "search": "Search for a stock...",
