@@ -7,12 +7,16 @@ import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import { Card } from '@/components/atoms/Card';
 import { loanService, type LoanDTO } from '@/infrastructure/web/services/loanService';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function LoanDetailPage() {
   const params = useParams();
   const router = useRouter();
   const loanId = params.id as string;
-  const locale = params.locale as string;
+  const localeFromParams = params.locale as string;
+  const localeHook = useLocale();
+  const locale = localeFromParams || localeHook;
+  const t = useTranslations('Loans.detail');
 
   const [loan, setLoan] = useState<LoanDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,8 +28,9 @@ export default function LoanDetailPage() {
         setLoading(true);
         const data = await loanService.getLoanById(loanId);
         setLoan(data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Erreur lors du chargement du prêt');
+      } catch (_err: unknown) {
+        void _err;
+        setError(t('errorTitle'));
       } finally {
         setLoading(false);
       }
@@ -34,17 +39,17 @@ export default function LoanDetailPage() {
     if (loanId) {
       fetchLoan();
     }
-  }, [loanId]);
+  }, [loanId, t]);
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'EUR',
     }).format(value / 100);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
+    return new Date(dateString).toLocaleDateString(locale, {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -66,20 +71,7 @@ export default function LoanDetailPage() {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'Actif';
-      case 'PENDING':
-        return 'En attente';
-      case 'PAID_OFF':
-        return 'Remboursé';
-      case 'REJECTED':
-        return 'Refusé';
-      default:
-        return status;
-    }
-  };
+  //
 
   if (loading) {
     return (
@@ -98,13 +90,13 @@ export default function LoanDetailPage() {
         <Card className="text-center py-12 border-red-200 bg-red-50 max-w-2xl mx-auto">
           <div className="text-6xl mb-4">⚠️</div>
           <Typography variant="h4" className="mb-2 text-red-700">
-            Erreur de chargement
+            {t('errorTitle')}
           </Typography>
           <Typography color="muted" className="mb-4">
-            {error || 'Prêt introuvable'}
+            {error || t('notFound')}
           </Typography>
           <Button variant="primary" onClick={() => router.back()}>
-            Retour
+            {t('back')}
           </Button>
         </Card>
       </DashboardLayout>
@@ -113,9 +105,7 @@ export default function LoanDetailPage() {
 
   const paidAmount = loan.loanAmount - loan.remainingAmountToPay;
   const progress = (paidAmount / loan.loanAmount) * 100;
-  const monthsElapsed = loan.status === 'ACTIVE' && loan.lastPaidAt
-    ? Math.floor((new Date().getTime() - new Date(loan.lastPaidAt).getTime()) / (1000 * 60 * 60 * 24 * 30))
-    : 0;
+  //
 
   return (
     <DashboardLayout>
@@ -124,17 +114,17 @@ export default function LoanDetailPage() {
         <div className="flex items-center justify-between">
           <div>
             <Button variant="outline" size="sm" onClick={() => router.back()}>
-              ← Retour
+              ← {t('back')}
             </Button>
             <Typography variant="h1" className="mt-4">
-              Détails du prêt
+              {t('title')}
             </Typography>
             <Typography variant="body" color="muted" className="mt-1">
-              Demandé le {formatDate(loan.createdAt)}
+              {t('requestedOn', { date: formatDate(loan.createdAt) })}
             </Typography>
           </div>
           <span className={`px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(loan.status)}`}>
-            {getStatusLabel(loan.status)}
+            {t(`status.${loan.status}`)}
           </span>
         </div>
 
@@ -142,7 +132,7 @@ export default function LoanDetailPage() {
         <div className="grid md:grid-cols-3 gap-4">
           <Card className="bg-blue-50 border-blue-200">
             <Typography variant="caption" color="muted" className="mb-2">
-              Montant emprunté
+              {t('borrowed')}
             </Typography>
             <Typography variant="h2" className="text-blue-700 font-bold">
               {formatCurrency(loan.loanAmount)}
@@ -151,7 +141,7 @@ export default function LoanDetailPage() {
 
           <Card className="bg-orange-50 border-orange-200">
             <Typography variant="caption" color="muted" className="mb-2">
-              Restant à payer
+              {t('remaining')}
             </Typography>
             <Typography variant="h2" className="text-orange-700 font-bold">
               {formatCurrency(loan.remainingAmountToPay)}
@@ -160,7 +150,7 @@ export default function LoanDetailPage() {
 
           <Card className="bg-green-50 border-green-200">
             <Typography variant="caption" color="muted" className="mb-2">
-              Déjà remboursé
+              {t('repaid')}
             </Typography>
             <Typography variant="h2" className="text-green-700 font-bold">
               {formatCurrency(paidAmount)}
@@ -172,12 +162,12 @@ export default function LoanDetailPage() {
         {loan.status === 'ACTIVE' && (
           <Card>
             <Typography variant="h3" className="mb-4">
-              Progression du remboursement
+              {t('repaymentProgress')}
             </Typography>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <Typography variant="body" color="muted">
-                  {progress.toFixed(1)}% remboursé
+                  {t('repaidPercent', { percent: Number(progress.toFixed(1)) })}
                 </Typography>
                 <Typography variant="body" className="font-semibold">
                   {formatCurrency(paidAmount)} / {formatCurrency(loan.loanAmount)}
@@ -200,13 +190,13 @@ export default function LoanDetailPage() {
         {/* Détails du prêt */}
         <Card>
           <Typography variant="h3" className="mb-6">
-            Détails du prêt
+            {t('title')}
           </Typography>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
                 <Typography variant="caption" color="muted" className="block mb-1">
-                  Mensualité
+                  {t('details.monthlyPayment')}
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
                   {formatCurrency(loan.mensualities || loan.monthlyPayment || 0)}
@@ -215,16 +205,16 @@ export default function LoanDetailPage() {
 
               <div>
                 <Typography variant="caption" color="muted" className="block mb-1">
-                  Durée totale
+                  {t('details.totalDuration')}
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
-                  {loan.durationInMonth} mois
+                  {loan.durationInMonth} {t('details.months')}
                 </Typography>
               </div>
 
               <div>
                 <Typography variant="caption" color="muted" className="block mb-1">
-                  Taux d'intérêt annuel
+                  {t('details.annualInterest')}
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
                   {(loan.annualInterestRate / 100).toFixed(2)}%
@@ -235,7 +225,7 @@ export default function LoanDetailPage() {
             <div className="space-y-4">
               <div>
                 <Typography variant="caption" color="muted" className="block mb-1">
-                  Assurance mensuelle
+                  {t('details.monthlyInsurance')}
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
                   {formatCurrency(loan.insuranceMensualities || loan.monthlyInsurance || 0)}
@@ -244,7 +234,7 @@ export default function LoanDetailPage() {
 
               <div>
                 <Typography variant="caption" color="muted" className="block mb-1">
-                  Taux d'assurance annuel
+                  {t('details.annualInsurance')}
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
                   {(loan.annualInsuranceRate / 100).toFixed(2)}%
@@ -254,7 +244,7 @@ export default function LoanDetailPage() {
               {loan.status === 'ACTIVE' && loan.nextToPayAt && (
                 <div>
                   <Typography variant="caption" color="muted" className="block mb-1">
-                    Prochain paiement
+                    {t('details.nextPayment')}
                   </Typography>
                   <Typography variant="h4" className="font-semibold">
                     {formatDate(loan.nextToPayAt)}
@@ -270,13 +260,13 @@ export default function LoanDetailPage() {
           <div className="flex items-center justify-between">
             <div>
               <Typography variant="caption" color="muted" className="block mb-1">
-                Coût total du crédit
+                {t('totalCost.title')}
               </Typography>
               <Typography variant="h3" className="font-bold text-slate-800">
                 {formatCurrency((loan.mensualities || 0) * loan.durationInMonth)}
               </Typography>
               <Typography variant="caption" color="muted" className="mt-1">
-                Dont {formatCurrency(((loan.mensualities || 0) * loan.durationInMonth) - loan.loanAmount)} d'intérêts et assurance
+                {t('totalCost.breakdown', { amount: formatCurrency(((loan.mensualities || 0) * loan.durationInMonth) - loan.loanAmount) })}
               </Typography>
             </div>
           </div>
@@ -288,10 +278,10 @@ export default function LoanDetailPage() {
             <div className="flex items-start space-x-3">
               <div>
                 <Typography variant="h4" className="text-amber-800 mb-2">
-                  Demande en cours d'examen
+                  {t('messages.pendingTitle')}
                 </Typography>
                 <Typography variant="body" color="muted">
-                  Nos conseillers étudient actuellement votre demande. Vous recevrez une réponse sous 48 heures.
+                  {t('messages.pendingBody')}
                 </Typography>
               </div>
             </div>
@@ -304,10 +294,10 @@ export default function LoanDetailPage() {
               <div className="text-2xl">✕</div>
               <div>
                 <Typography variant="h4" className="text-red-800 mb-2">
-                  Demande refusée
+                  {t('messages.rejectedTitle')}
                 </Typography>
                 <Typography variant="body" color="muted">
-                  Malheureusement, votre demande de prêt n'a pas pu être acceptée. N'hésitez pas à contacter un conseiller pour plus d'informations.
+                  {t('messages.rejectedBody')}
                 </Typography>
               </div>
             </div>
@@ -320,10 +310,10 @@ export default function LoanDetailPage() {
               <div className="text-2xl">✓</div>
               <div>
                 <Typography variant="h4" className="text-green-800 mb-2">
-                  Prêt intégralement remboursé
+                  {t('messages.paidOffTitle')}
                 </Typography>
                 <Typography variant="body" color="muted">
-                  Félicitations ! Vous avez remboursé l'intégralité de ce prêt.
+                  {t('messages.paidOffBody')}
                 </Typography>
               </div>
             </div>

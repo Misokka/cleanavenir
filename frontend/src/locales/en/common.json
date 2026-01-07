@@ -621,6 +621,145 @@
     "empty": {
       "title": "No loans for now",
       "description": "You don't have any active loans yet. Start by simulating a loan to discover our offers."
+    },
+    "request": {
+      "metaTitle": "Loan Request | Clean Avenir",
+      "metaDescription": "Submit a personalized loan request to our advisors",
+      "title": "Loan Request",
+      "description": "Fill in the form to submit your request to our advisors",
+      "simulateFirst": "Simulate first",
+      "process": {
+        "title": "Validation process",
+        "step1": "Your request is sent to our advisors",
+        "step2": "An advisor reviews your file (24-48h)",
+        "step3": "You receive a response by email",
+        "step4": "If accepted, the loan is activated automatically"
+      },
+      "form": {
+        "title": "Loan Request",
+        "amountLabel": "Requested amount (€) *",
+        "amountPlaceholder": "e.g. 10000",
+        "amountHint": "Minimum €1,000",
+        "durationLabel": "Duration (months) *",
+        "durationPlaceholder": "e.g. 24",
+        "durationHint": "Between 6 and 600 months (50 years)",
+        "purposeLabel": "Loan purpose *",
+        "purposeSelect": "Select...",
+        "purpose": {
+          "AUTO": "Vehicle purchase",
+          "IMMOBILIER": "Real estate project",
+          "TRAVAUX": "Renovation",
+          "CONSOMMATION": "Consumer",
+          "AUTRE": "Other"
+        },
+        "conditionsTitle": "Loan conditions",
+        "interestRate": "Annual interest rate:",
+        "insuranceRate": "Annual insurance rate:",
+        "conditionsNote": "Rates are indicative and may be adjusted by your advisor.",
+        "cancel": "Cancel",
+        "submit": "Submit request",
+        "submitting": "Submitting...",
+        "successTitle": "Request successfully sent!",
+        "successBody": "Your loan request has been sent to our advisors. You will receive a response shortly.",
+        "redirecting": "Redirecting..."
+      },
+      "toast": {
+        "success": "Loan request sent successfully",
+        "error": "Error while submitting the loan request"
+      }
+    },
+    "detail": {
+      "back": "Back",
+      "errorTitle": "Loading error",
+      "notFound": "Loan not found",
+      "title": "Loan details",
+      "requestedOn": "Requested on {date}",
+      "status": {
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "PAID_OFF": "Paid off",
+        "REJECTED": "Rejected"
+      },
+      "borrowed": "Borrowed amount",
+      "remaining": "Remaining to pay",
+      "repaid": "Already repaid",
+      "repaymentProgress": "Repayment progress",
+      "repaidPercent": "{percent}% repaid",
+      "details": {
+        "monthlyPayment": "Monthly payment",
+        "totalDuration": "Total duration",
+        "months": "months",
+        "annualInterest": "Annual interest rate",
+        "monthlyInsurance": "Monthly insurance",
+        "annualInsurance": "Annual insurance rate",
+        "nextPayment": "Next payment"
+      },
+      "totalCost": {
+        "title": "Total credit cost",
+        "breakdown": "Including {amount} interests and insurance"
+      },
+      "messages": {
+        "pendingTitle": "Request under review",
+        "pendingBody": "Our advisors are currently reviewing your request. You will receive a response within 48 hours.",
+        "rejectedTitle": "Request rejected",
+        "rejectedBody": "Unfortunately, your loan request could not be accepted. Feel free to contact an advisor for more information.",
+        "paidOffTitle": "Loan fully repaid",
+        "paidOffBody": "Congratulations! You have fully repaid this loan."
+      }
+    }
+  },
+  "Advisor": {
+    "dashboard": {
+      "loading": "Loading...",
+      "loadError": "Failed to load statistics",
+      "clients": "My clients",
+      "activeClients": "Active clients",
+      "activeLoans": "Active loans",
+      "creditsInProgress": "Loans in progress",
+      "pending": "Pending",
+      "toValidate": "To validate",
+      "totalAmount": "Total amount",
+      "quickActions": "Quick actions",
+      "viewClients": "View my clients",
+      "loansToValidate": "Loans to validate ({count})"
+    },
+    "loans": {
+      "loading": "Loading...",
+      "title": "Pending loan requests",
+      "pendingCount": "{count} {count, plural, one {request} other {requests}} awaiting processing",
+      "empty": {
+        "title": "No pending requests",
+        "description": "All loan requests have been processed"
+      },
+      "card": {
+        "title": "Loan request",
+        "status": {
+          "PENDING": "PENDING"
+        },
+        "amountRequested": "Requested amount",
+        "duration": "Duration",
+        "months": "months",
+        "monthlyPayment": "Monthly payments",
+        "interestRate": "Interest rate",
+        "monthlyInsurance": "Monthly insurance",
+        "requestedAt": "Requested at"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "confirmRejectTitle": "Confirm rejection",
+        "confirmRejectBody": "Are you sure you want to reject this loan request? This action is irreversible.",
+        "cancel": "Cancel",
+        "confirmReject": "Confirm rejection",
+        "rejecting": "Rejecting..."
+      },
+      "toasts": {
+        "approveSuccess": "Loan approved successfully! The client has been credited and now appears in your clients.",
+        "rejectSuccess": "Loan rejected successfully",
+        "approveError": "Error approving loan",
+        "rejectError": "Error rejecting loan",
+        "loadError": "Error loading requests"
+      }
     }
   },
   "Investment": {

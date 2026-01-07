@@ -1,20 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import { advisorService, LoanDTO } from '@/infrastructure/web/services/advisorService';
 import { ApprovalModal } from '@/components/molecules/ApprovalModal';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(value);
+const useFormatters = () => {
+  const locale = useLocale();
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(value);
+  const formatDate = (value: string | number | Date) =>
+    new Date(value).toLocaleDateString(locale);
+  return { formatCurrency, formatDate };
 };
 
 export default function LoansClient() {
+  const t = useTranslations('Advisor.loans');
+  const { formatCurrency, formatDate } = useFormatters();
   const [loans, setLoans] = useState<LoanDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingLoanId, setProcessingLoanId] = useState<string | null>(null);
@@ -48,7 +53,7 @@ export default function LoansClient() {
       const data = await advisorService.getPendingLoans();
       setLoans(data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors du chargement des demandes');
+      setError(err.response?.data?.message || t('toasts.loadError'));
     } finally {
       setLoading(false);
     }
@@ -59,11 +64,11 @@ export default function LoansClient() {
       setProcessingLoanId(loanId);
       setError(null);
       await advisorService.approveLoan(loanId);
-      setSuccess('Prêt approuvé avec succès ! Le client a été crédité et apparaît maintenant dans vos clients.');
+      setSuccess(t('toasts.approveSuccess'));
       setShowApprovalModal(null);
       await fetchPendingLoans();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors de l\'approbation du prêt');
+      setError(err.response?.data?.message || t('toasts.approveError'));
     } finally {
       setProcessingLoanId(null);
     }
@@ -74,11 +79,11 @@ export default function LoansClient() {
       setProcessingLoanId(loanId);
       setError(null);
       await advisorService.rejectLoan(loanId);
-      setSuccess('Prêt rejeté avec succès');
+      setSuccess(t('toasts.rejectSuccess'));
       setShowConfirmReject(null);
       await fetchPendingLoans();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors du rejet du prêt');
+      setError(err.response?.data?.message || t('toasts.rejectError'));
     } finally {
       setProcessingLoanId(null);
     }
@@ -87,7 +92,7 @@ export default function LoansClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Typography variant="body">Chargement...</Typography>
+        <Typography variant="body">{t('loading')}</Typography>
       </div>
     );
   }
@@ -111,23 +116,15 @@ export default function LoansClient() {
       )}
 
       <div>
-        <Typography variant="h1" className="mb-2">
-          Demandes de prêts en attente
-        </Typography>
-        <Typography variant="body" color="muted">
-          {loans.length} demande{loans.length > 1 ? 's' : ''} en attente de traitement
-        </Typography>
+        <Typography variant="h1" className="mb-2">{t('title')}</Typography>
+        <Typography variant="body" color="muted">{t('pendingCount', { count: loans.length })}</Typography>
       </div>
 
       {loans.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <Typography variant="h3" className="mb-2">
-              Aucune demande en attente
-            </Typography>
-            <Typography variant="body" color="muted">
-              Toutes les demandes de prêts ont été traitées
-            </Typography>
+            <Typography variant="h3" className="mb-2">{t('empty.title')}</Typography>
+            <Typography variant="body" color="muted">{t('empty.description')}</Typography>
           </div>
         </Card>
       ) : (
@@ -137,18 +134,16 @@ export default function LoansClient() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
-                    <Typography variant="h3">
-                      Demande de prêt
-                    </Typography>
+                    <Typography variant="h3">{t('card.title')}</Typography>
                     <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-                      EN ATTENTE
+                      {t('card.status.PENDING')}
                     </span>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Montant demandé
+                        {t('card.amountRequested')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
                         {formatCurrency(loan.loanAmount / 100)}
@@ -157,16 +152,16 @@ export default function LoansClient() {
 
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Durée
+                        {t('card.duration')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
-                        {loan.durationInMonth} mois
+                        {loan.durationInMonth} {t('card.months')}
                       </Typography>
                     </div>
 
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Mensualités
+                        {t('card.monthlyPayment')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
                         {formatCurrency(loan.mensualities / 100)}
@@ -175,7 +170,7 @@ export default function LoansClient() {
 
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Taux d&apos;intérêt
+                        {t('card.interestRate')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
                         {(loan.annualInterestRate / 100).toFixed(2)}%
@@ -184,7 +179,7 @@ export default function LoansClient() {
 
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Assurance mensuelle
+                        {t('card.monthlyInsurance')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
                         {formatCurrency(loan.insuranceMensualities / 100)}
@@ -193,10 +188,10 @@ export default function LoansClient() {
 
                     <div>
                       <Typography variant="caption" color="muted" className="block mb-1">
-                        Date de demande
+                        {t('card.requestedAt')}
                       </Typography>
                       <Typography variant="body" className="font-semibold">
-                        {new Date(loan.createdAt).toLocaleDateString('fr-FR')}
+                        {formatDate(loan.createdAt)}
                       </Typography>
                     </div>
                   </div>
@@ -207,14 +202,14 @@ export default function LoansClient() {
                       onClick={() => setShowApprovalModal(loan)}
                       disabled={processingLoanId === loan.id}
                     >
-                      Approuver
+                      {t('actions.approve')}
                     </Button>
                     <Button
                       variant="secondary"
                       onClick={() => setShowConfirmReject(loan.id)}
                       disabled={processingLoanId === loan.id}
                     >
-                      Rejeter
+                      {t('actions.reject')}
                     </Button>
                   </div>
                 </div>
@@ -227,19 +222,15 @@ export default function LoansClient() {
       {showConfirmReject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <Card className="max-w-md w-full mx-4">
-            <Typography variant="h3" className="mb-4">
-              Confirmer le rejet
-            </Typography>
-            <Typography variant="body" color="muted" className="mb-6">
-              Êtes-vous sûr de vouloir rejeter cette demande de prêt ? Cette action est irréversible.
-            </Typography>
+            <Typography variant="h3" className="mb-4">{t('actions.confirmRejectTitle')}</Typography>
+            <Typography variant="body" color="muted" className="mb-6">{t('actions.confirmRejectBody')}</Typography>
             <div className="flex gap-3 justify-end">
               <Button
                 variant="secondary"
                 onClick={() => setShowConfirmReject(null)}
                 disabled={processingLoanId === showConfirmReject}
               >
-                Annuler
+                {t('actions.cancel')}
               </Button>
               <Button
                 variant="primary"
@@ -247,7 +238,7 @@ export default function LoansClient() {
                 disabled={processingLoanId === showConfirmReject}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {processingLoanId === showConfirmReject ? 'Rejet...' : 'Confirmer le rejet'}
+                {processingLoanId === showConfirmReject ? t('actions.rejecting') : t('actions.confirmReject')}
               </Button>
             </div>
           </Card>

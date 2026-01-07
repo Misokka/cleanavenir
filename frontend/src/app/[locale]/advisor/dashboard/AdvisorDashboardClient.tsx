@@ -5,11 +5,12 @@ import { Card } from '@/components/atoms/Card';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { advisorService, AdvisorStatsDTO } from '@/infrastructure/web/services/advisorService';
 
 export default function AdvisorDashboardClient() {
   const locale = useLocale();
+  const t = useTranslations('Advisor.dashboard');
   const [stats, setStats] = useState<AdvisorStatsDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +31,7 @@ export default function AdvisorDashboardClient() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'EUR',
     }).format(value);
@@ -39,7 +40,7 @@ export default function AdvisorDashboardClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Typography variant="body">Chargement...</Typography>
+        <Typography variant="body">{t('loading')}</Typography>
       </div>
     );
   }
@@ -48,7 +49,7 @@ export default function AdvisorDashboardClient() {
     return (
       <Card>
         <Typography variant="body" color="muted">
-          Impossible de charger les statistiques
+          {t('loadError')}
         </Typography>
       </Card>
     );
@@ -59,74 +60,58 @@ export default function AdvisorDashboardClient() {
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <div className="flex items-center justify-between mb-2">
-            <Typography variant="caption" color="muted">
-              Mes clients
-            </Typography>
+            <Typography variant="caption" color="muted">{t('clients')}</Typography>
           </div>
           <Typography variant="h2" className="font-bold">
             {stats.totalClients}
           </Typography>
-          <Typography variant="caption" color="muted">
-            Clients actifs
-          </Typography>
+          <Typography variant="caption" color="muted">{t('activeClients')}</Typography>
         </Card>
 
         <Card>
           <div className="flex items-center justify-between mb-2">
-            <Typography variant="caption" color="muted">
-              Prêts actifs
-            </Typography>
+            <Typography variant="caption" color="muted">{t('activeLoans')}</Typography>
           </div>
           <Typography variant="h2" className="font-bold">
             {stats.activeLoans}
           </Typography>
-          <Typography variant="caption" color="muted">
-            Crédits en cours
-          </Typography>
+          <Typography variant="caption" color="muted">{t('creditsInProgress')}</Typography>
         </Card>
 
         <Card>
           <div className="flex items-center justify-between mb-2">
-            <Typography variant="caption" color="muted">
-              En attente
-            </Typography>
+            <Typography variant="caption" color="muted">{t('pending')}</Typography>
           </div>
           <Typography variant="h2" className="font-bold">
             {stats.pendingLoans}
           </Typography>
-          <Typography variant="caption" color="muted">
-            À valider
-          </Typography>
+          <Typography variant="caption" color="muted">{t('toValidate')}</Typography>
         </Card>
 
         <Card>
           <div className="flex items-center justify-between mb-2">
-            <Typography variant="caption" color="muted">
-              Montant total
-            </Typography>
+            <Typography variant="caption" color="muted">{t('totalAmount')}</Typography>
           </div>
           <Typography variant="h3" className="font-bold break-words">
             {formatCurrency(stats.totalLoanAmount)}
           </Typography>
-          <Typography variant="caption" color="muted">
-            Prêts actifs
-          </Typography>
+          <Typography variant="caption" color="muted">{t('activeLoans')}</Typography>
         </Card>
       </div>
 
       <Card>
         <Typography variant="h3" className="mb-4">
-          Actions rapides
+          {t('quickActions')}
         </Typography>
         <div className="grid md:grid-cols-2 gap-4">
           <Link href={`/${locale}/advisor/clients`}>
             <Button variant="primary" className="w-full">
-              Voir mes clients
+              {t('viewClients')}
             </Button>
           </Link>
           <Link href={`/${locale}/advisor/loans`}>
             <Button variant="secondary" className="w-full">
-              Prêts à valider ({stats.pendingLoans})
+              {t('loansToValidate', { count: stats.pendingLoans })}
             </Button>
           </Link>
         </div>

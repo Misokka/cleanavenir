@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { loanService, type LoanDTO, type RequestLoanRequest } from '@/infrastructure/web/services/loanService';
 import { useToast } from '@/contexts/ToastProvider';
+import { useTranslations } from 'next-intl';
 
 export function useRequestLoan() {
   const toast = useToast();
+  const t = useTranslations('Loans.request.toast');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -18,10 +20,10 @@ export function useRequestLoan() {
       
       const result = await loanService.requestLoan(data);
       setSuccess(true);
-      toast.success('Demande de prêt envoyée avec succès');
+      toast.success(t('success'));
       return result;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erreur lors de la demande de prêt';
+      const message = err instanceof Error ? err.message : t('error');
       setError(message);
       toast.error(message);
       console.error('Error requesting loan:', err);
