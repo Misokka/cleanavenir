@@ -779,7 +779,19 @@
         "UNAUTHORIZED_TARGET_ACCOUNT": "Unauthorized access to target bank account",
         "UNAUTHORIZED": "Not authenticated",
         "INTERNAL_ERROR": "An internal error occurred",
+        "fromAccountRequired": "Source account required",
+        "amountInvalid": "Please enter a valid amount",
+        "amountAboveBalance": "Amount exceeds available balance",
         "default": "An error occurred"
+      },
+      "depositModal": {
+        "title": "Fund savings",
+        "sourceAccount": "Source account",
+        "selectAccount": "Select an account",
+        "amount": "Amount to deposit (€)",
+        "confirm": "Confirm deposit",
+        "cancel": "Cancel",
+        "submitting": "Depositing..."
       }
     }
   },

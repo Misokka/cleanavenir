@@ -779,7 +779,19 @@
         "UNAUTHORIZED_TARGET_ACCOUNT": "Accès non autorisé au compte bancaire cible",
         "UNAUTHORIZED": "Non authentifié",
         "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "fromAccountRequired": "Compte source requis",
+        "amountInvalid": "Veuillez entrer un montant valide",
+        "amountAboveBalance": "Montant supérieur au solde disponible du compte source",
         "default": "Une erreur est survenue"
+      },
+      "depositModal": {
+        "title": "Alimenter l'épargne",
+        "sourceAccount": "Compte source",
+        "selectAccount": "Sélectionner un compte",
+        "amount": "Montant à déposer (€)",
+        "confirm": "Confirmer le dépôt",
+        "cancel": "Annuler",
+        "submitting": "Dépôt en cours..."
       }
     }
   },
