@@ -2,7 +2,7 @@
 
 import { useGetStocks } from '@/features/stocks/useGetStocks';
 import React, { useState, useMemo, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   LineChart,
   Line,
@@ -24,21 +24,21 @@ type ChartDataPoint = {
   value: number;
 };
 
-// Fonction utilitaire pour formater le prix (ex: 15000 -> 150,00 €)
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat('fr-FR', {
+// Fonction utilitaire pour formater le prix selon la locale
+const formatPrice = (price: number, locale: string = 'fr-FR') => {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'EUR',
   }).format(price);
 };
 
 
-function generateHistoryPoints(history: StockWithPriceHistory){
+function generateHistoryPoints(history: StockWithPriceHistory, locale: string){
   const historyPoints = history.stockPriceHistory.map((priceHistory) => {
     const date = new Date(priceHistory.recordedAt);
 
     const chartPoint: ChartDataPoint = {
-      time: date.toLocaleDateString('fr-FR', {day: '2-digit', month: "2-digit", timeZone: 'UTC'}),
+      time: date.toLocaleDateString(locale, {day: '2-digit', month: "2-digit", timeZone: 'UTC'}),
       value : priceHistory.price
     }
 
@@ -55,6 +55,7 @@ interface StockOverviewProps{
 
 function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
   const t = useTranslations('Investment.stocks');
+  const locale = useLocale();
   const { stocks, fetchStocks, loading, error } = useGetStocks();
   const {history, getStockPriceHistory, loading: priceHistoryLoading, error: priceHistoryError} = useGetStockPriceHistory()
   
@@ -93,8 +94,8 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
     if (!selectedStock) return [];
     if (!history) return []; 
     
-    return generateHistoryPoints(history)
-  }, [selectedStock, history])
+    return generateHistoryPoints(history, locale)
+  }, [selectedStock, history, locale])
 
   if (loading) {
     return (
@@ -188,9 +189,9 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
         <div className="bg-white p-6 rounded-xl shadow-sm ring-1 ring-gray-900/5 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900">
-              Évolution de {selectedStock.ticker}
+              {t('chart.evolution', { ticker: selectedStock.ticker })}
             </h3>
-            <p className="text-sm text-gray-500">Historique sur 30 jours (simulé)</p>
+            <p className="text-sm text-gray-500">{t('chart.history')}</p>
           </div>
 
           <div className="h-[300px] w-full">
@@ -201,7 +202,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                </div>
             ) : !chartData || chartData.length === 0 ? (
                <div className="flex h-full w-full items-center justify-center text-gray-400">
-                 Pas de données disponibles pour cette période.
+                 {t('chart.noData')}
                </div>
             ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -226,12 +227,12 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                   axisLine={false}
                   tickLine={false}
                   tick={{fontSize: 12, fill: '#6B7280'}}
-                  tickFormatter={(value: number) => `${value}€`} // Correction type string -> number si besoin
+                  tickFormatter={(value: number) => formatPrice(value, locale)}
                   domain={['auto', 'auto']} 
                 />
                 <Tooltip 
                   contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                  formatter={(value: number | undefined) => [formatPrice(value ?? 0), 'Prix']}
+                  formatter={(value: number | undefined) => [formatPrice((value ?? 0) as number, locale), t('chart.price')]}
                 />
                 <Area 
                   type="monotone" 

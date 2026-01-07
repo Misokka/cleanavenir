@@ -1,6 +1,7 @@
 'use client';
 import { useGetMyOrders } from '@/features/orders/useGetMyOrders'
 import React from 'react'
+import { useTranslations } from 'next-intl';
 import { 
   ArrowTrendingUpIcon, 
   ArrowTrendingDownIcon, 
@@ -34,6 +35,7 @@ interface MyOrdersOverviewProps {
 }
 
 function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
+  const t = useTranslations('Investment.orders');
 
   if (loading) {
     return (
@@ -46,7 +48,7 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
-        Une erreur est arrivée pendant la récupération de vos ordres.
+        {t('error')}
       </div>
     );
   }
@@ -54,7 +56,7 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
   if (!orders || orders.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-        <p className="text-gray-500">Aucun ordre récent.</p>
+        <p className="text-gray-500">{t('empty')}</p>
       </div>
     );
   }
@@ -79,7 +81,7 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
                 <div>
                   <h3 className="font-semibold text-gray-900">{order.stockName}</h3>
                   <p className={`text-xs font-medium uppercase tracking-wider ${isBuy ? 'text-indigo-600' : 'text-orange-600'}`}>
-                    {isBuy ? 'Achat' : 'Vente'}
+                    {isBuy ? t('buy') : t('sell')}
                   </p>
                 </div>
               </div>
@@ -91,19 +93,19 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
             {/* --- BODY --- */}
             <div className="p-5 space-y-4 flex-1">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Quantité initiale</span>
-                <span className="font-medium text-gray-900">{order.initialQuantity} titres</span>
+                <span className="text-gray-500">{t('initialQuantity')}</span>
+                <span className="font-medium text-gray-900">{order.initialQuantity} {t('shares')}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Quantité restante</span>
-                <span className="font-medium text-gray-900">{order.remainingQuanity} titres</span>
+                <span className="text-gray-500">{t('remainingQuantity')}</span>
+                <span className="font-medium text-gray-900">{order.remainingQuanity} {t('shares')}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Prix limite</span>
+                <span className="text-gray-500">{t('limitPrice')}</span>
                 <span className="font-medium text-gray-900">{formatCurrency(order.limitPrice)}</span> 
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Date</span>
+                <span className="text-gray-500">{t('date')}</span>
                 <span className="text-gray-700">{formatDate(order.createdAt)}</span>
               </div>
             </div>
@@ -115,14 +117,14 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
                   <>
                     <BanknotesIcon className="w-4 h-4 text-indigo-500" />
                     <span className="text-indigo-700">
-                      Montant bloqué : <span className="font-bold">{formatCurrency(order.blockedMoneyAmount)}</span>
+                      {t('blockedAmount')} : <span className="font-bold">{formatCurrency(order.blockedMoneyAmount)}</span>
                     </span>
                   </>
                 ) : (
                   <>
                     <LockClosedIcon className="w-4 h-4 text-orange-500" />
                     <span className="text-orange-700">
-                      Titres bloqués : <span className="font-bold">{order.blockedStockQuantity} unités</span>
+                      {t('blockedShares')} : <span className="font-bold">{order.blockedStockQuantity} {t('units')}</span>
                     </span>
                   </>
                 )}
@@ -137,6 +139,7 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
 
 // Petit composant interne pour gérer les couleurs des statuts
 function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations('Investment.orders.status');
   const styles = {
     PENDING: "bg-yellow-50 text-yellow-700 border-yellow-200",
     PARTIALLY_FILLED: "bg-blue-50 text-blue-700 border-blue-200",
@@ -144,12 +147,12 @@ function StatusBadge({ status }: { status: string }) {
     CANCELLED: "bg-gray-50 text-gray-600 border-gray-200",
   };
 
-  const labels = {
-    PENDING: "En attente",
-    PARTIALLY_FILLED: "Partiel",
-    EXECUTED: "Exécuté",
-    CANCELLED: "Annulé",
-  };
+  const statusKeyMap = {
+    PENDING: 'pending',
+    PARTIALLY_FILLED: 'partiallyFilled',
+    EXECUTED: 'executed',
+    CANCELLED: 'cancelled',
+  } as const;
 
   const icons = {
     PENDING: ClockIcon,
@@ -159,7 +162,8 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   const style = styles[status as keyof typeof styles] || styles.CANCELLED;
-  const label = labels[status as keyof typeof styles] || status;
+  const key = statusKeyMap[status as keyof typeof statusKeyMap];
+  const label = key ? t(key) : status;
   const Icon = icons[status as keyof typeof styles] || ClockIcon;
 
   return (
