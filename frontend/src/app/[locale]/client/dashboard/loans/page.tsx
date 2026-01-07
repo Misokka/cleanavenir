@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
+import { useTranslations } from 'next-intl';
 import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import { Card } from '@/components/atoms/Card';
@@ -13,6 +14,7 @@ import { useGetLoans } from '@/features/loans/useGetLoans';
 export default function LoansPage() {
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
+  const t = useTranslations('Loans');
   const { loans, loading, error, refetch } = useGetLoans();
 
   if (loading) {
@@ -35,13 +37,13 @@ export default function LoansPage() {
       <DashboardLayout>
         <Card className="text-center py-12 border-red-200 bg-red-50">
           <Typography variant="h4" className="mb-2 text-red-700">
-            Erreur de chargement
+            {t('error.title')}
           </Typography>
           <Typography color="muted" className="mb-4">
             {error}
           </Typography>
           <Button variant="primary" onClick={refetch}>
-            Réessayer
+            {t('actions.retry')}
           </Button>
         </Card>
       </DashboardLayout>
@@ -54,18 +56,18 @@ export default function LoansPage() {
         <div className="flex items-center justify-between">
           <div>
             <Typography variant="body" color="muted">
-              Gérez vos demandes de prêt et suivez vos remboursements
+              {t('subtitle')}
             </Typography>
           </div>
           <div className="flex space-x-3">
             <Link href={`/${locale}/client/dashboard/loans/simulate`}>
               <Button variant="outline" size="sm">
-                Simuler
+                {t('actions.simulate')}
               </Button>
             </Link>
             <Link href={`/${locale}/client/dashboard/loans/request`}>
               <Button variant="primary" size="sm">
-                + Nouvelle demande
+                {t('actions.newRequest')}
               </Button>
             </Link>
           </div>
@@ -76,7 +78,7 @@ export default function LoansPage() {
             <div className="grid md:grid-cols-4 gap-4">
               <Card className="border-l-4 border-l-blue-500">
                 <Typography variant="caption" color="muted" className="mb-1">
-                  Prêts actifs
+                  {t('stats.active')}
                 </Typography>
                 <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'ACTIVE').length}
@@ -84,7 +86,7 @@ export default function LoansPage() {
               </Card>
               <Card className="border-l-4 border-l-amber-500">
                 <Typography variant="caption" color="muted" className="mb-1">
-                  En attente
+                  {t('stats.pending')}
                 </Typography>
                 <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'PENDING').length}
@@ -92,7 +94,7 @@ export default function LoansPage() {
               </Card>
               <Card className="border-l-4 border-l-green-500">
                 <Typography variant="caption" color="muted" className="mb-1">
-                  Remboursés
+                  {t('stats.paid')}
                 </Typography>
                 <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'PAID_OFF').length}
@@ -100,7 +102,7 @@ export default function LoansPage() {
               </Card>
               <Card className="border-l-4 border-l-red-500">
                 <Typography variant="caption" color="muted" className="mb-1">
-                  Refusés
+                  {t('stats.rejected')}
                 </Typography>
                 <Typography variant="h3" className="text-gray-900 font-bold">
                   {loans.filter((l) => l.status === 'REJECTED').length}
@@ -111,7 +113,7 @@ export default function LoansPage() {
             {loans.filter((l) => l.status === 'PENDING').length > 0 && (
               <div>
                 <Typography variant="h3" className="mb-4">
-                  Mes demandes en attente ({loans.filter((l) => l.status === 'PENDING').length})
+                  {t('pendingTitle', { count: loans.filter((l) => l.status === 'PENDING').length })}
                 </Typography>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-start">
                   {loans
@@ -125,7 +127,7 @@ export default function LoansPage() {
 
             <div>
               <Typography variant="h3" className="mb-4">
-                Tous mes prêts ({loans.length})
+                {t('allTitle', { count: loans.length })}
               </Typography>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-start">
                 {loans.map((loan) => (
@@ -137,21 +139,20 @@ export default function LoansPage() {
         ) : (
           <Card className="text-center py-16">
             <Typography variant="h3" className="mb-4">
-              Aucun prêt pour le moment
+              {t('empty.title')}
             </Typography>
             <Typography variant="body" color="muted" className="mb-8 max-w-md mx-auto">
-              Vous n'avez pas encore de prêt actif. 
-              Commencez par simuler un prêt pour découvrir nos offres.
+              {t('empty.description')}
             </Typography>
             <div className="flex justify-center space-x-4">
               <Link href={`/${locale}/client/dashboard/loans/simulate`}>
                 <Button variant="outline">
-                  Simuler un prêt
+                  {t('actions.simulateLoan')}
                 </Button>
               </Link>
               <Link href={`/${locale}/client/dashboard/loans/request`}>
                 <Button variant="primary">
-                  + Faire une demande
+                  {t('actions.makeRequest')}
                 </Button>
               </Link>
             </div>

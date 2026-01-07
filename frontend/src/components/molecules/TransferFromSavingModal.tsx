@@ -6,6 +6,7 @@ import { Typography } from '@/components/atoms/Typography';
 import { Button } from '@/components/atoms/Button';
 import { savingService } from '@/infrastructure/web/services/savingService';
 import { AccountDTO } from '@/infrastructure/web/types';
+import { useTranslations } from 'next-intl';
 
 interface TransferFromSavingModalProps {
   isOpen: boolean;
@@ -24,10 +25,34 @@ export function TransferFromSavingModal({
   savingBalance,
   accounts,
 }: TransferFromSavingModalProps) {
+  const t = useTranslations('Savings.detail');
   const [selectedAccountId, setSelectedAccountId] = useState('');
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const knownErrorCodes = new Set([
+    'VALIDATION_ERROR',
+    'SAVING_PRODUCT_NOT_FOUND',
+    'INITIAL_AMOUNT_BELOW_MIN',
+    'SOURCE_ACCOUNT_NOT_FOUND',
+    'UNAUTHORIZED_SOURCE_ACCOUNT',
+    'INSUFFICIENT_SOURCE_BALANCE',
+    'SAVING_ALREADY_EXISTS',
+    'IBAN_GENERATION_FAILED',
+    'IBAN_INVALID',
+    'DEBIT_SOURCE_FAILED',
+    'DEBIT_BANK_FAILED',
+    'CREDIT_SAVING_FAILED',
+    'DEBIT_SAVING_FAILED',
+    'CREDIT_BANK_FAILED',
+    'TRANSACTION_SAVE_FAILED',
+    'SAVING_NOT_FOUND',
+    'UNAUTHORIZED_SAVING_ACCOUNT',
+    'TARGET_ACCOUNT_NOT_FOUND',
+    'UNAUTHORIZED_TARGET_ACCOUNT',
+    'UNAUTHORIZED',
+    'INTERNAL_ERROR',
+  ] as const);
 
   if (!isOpen) return null;
 
@@ -61,7 +86,8 @@ export function TransferFromSavingModal({
       setAmount('');
       setSelectedAccountId('');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors du transfert');
+      const code = err?.response?.data?.error as string | undefined;
+      setError(code && knownErrorCodes.has(code as any) ? t(`errors.${code}` as any) : t('errors.default'));
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +109,7 @@ export function TransferFromSavingModal({
 
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
           <Typography variant="caption" color="muted" className="block mb-1">
-            Solde disponible
+            {t('availableBalance')}
           </Typography>
           <Typography variant="h3" className="text-green-700">
             {formatCurrency(savingBalance)}
@@ -101,6 +127,9 @@ export function TransferFromSavingModal({
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clean-primary focus:border-clean-primary"
+              id="transfer-target-account"
+              aria-label="Compte de destination"
+              title="Compte de destination"
               disabled={isLoading}
             >
               <option value="">-- Sélectionner un compte --</option>

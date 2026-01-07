@@ -54,7 +54,7 @@ export function Footer() {
 
           <div>
             <Typography variant="h4" color="white" className="mb-4">
-              Contact
+              {t('contact')}
             </Typography>
             <div className="space-y-2 text-white opacity-80">
               <p>contact@cleanavenir.fr</p>

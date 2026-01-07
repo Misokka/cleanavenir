@@ -24,7 +24,7 @@ export default function CreateCompanyPage() {
     e.preventDefault();
 
     if (!name.trim()) {
-      showError('Le nom est requis');
+      showError(t('errors.nameRequired'));
       return;
     }
 
@@ -61,7 +61,7 @@ export default function CreateCompanyPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 fullWidth
-                placeholder="Apple Inc."
+                placeholder={t('form.namePlaceholder')}
                 required
               />
             </div>
@@ -77,7 +77,7 @@ export default function CreateCompanyPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-clean-dark focus:ring-clean-dark"
                 rows={4}
-                placeholder="Description de l'entreprise..."
+                placeholder={t('form.descriptionPlaceholder')}
               />
             </div>
 

@@ -6,11 +6,13 @@ import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
 import { useRequestLoan } from '@/features/loans/useRequestLoan';
+import { useTranslations } from 'next-intl';
 
 export const LoanRequestForm: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
+  const t = useTranslations('Loans.request.form');
   
   const { requestLoan, loading, error, success } = useRequestLoan();
   
@@ -42,14 +44,13 @@ export const LoanRequestForm: React.FC = () => {
     return (
       <Card className="text-center py-12 bg-green-50 border-green-200">
         <Typography variant="h3" className="mb-4 text-green-700">
-          Demande envoyée avec succès !
+          {t('successTitle')}
         </Typography>
         <Typography variant="body" color="muted" className="mb-6">
-          Votre demande de prêt a été transmise à nos conseillers.
-          Vous recevrez une réponse dans les plus brefs délais.
+          {t('successBody')}
         </Typography>
         <Typography variant="caption" className="text-green-600">
-          Redirection en cours...
+          {t('redirecting')}
         </Typography>
       </Card>
     );
@@ -57,16 +58,12 @@ export const LoanRequestForm: React.FC = () => {
 
   return (
     <Card>
-      <Typography variant="h3" className="mb-6">
-        Demande de Prêt
-      </Typography>
+      <Typography variant="h3" className="mb-6">{t('title')}</Typography>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Montant */}
         <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-            Montant souhaité (€) *
-          </label>
+          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">{t('amountLabel')}</label>
           <input
             id="amount"
             type="number"
@@ -75,19 +72,15 @@ export const LoanRequestForm: React.FC = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
-            placeholder="Ex: 10000"
+            placeholder={t('amountPlaceholder')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <Typography variant="caption" color="muted" className="mt-1">
-            Minimum 1 000 €
-          </Typography>
+          <Typography variant="caption" color="muted" className="mt-1">{t('amountHint')}</Typography>
         </div>
 
         {/* Durée */}
         <div>
-          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-            Durée (en mois) *
-          </label>
+          <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">{t('durationLabel')}</label>
           <input
             id="duration"
             type="number"
@@ -97,19 +90,15 @@ export const LoanRequestForm: React.FC = () => {
             value={durationInMonth}
             onChange={(e) => setDurationInMonth(e.target.value)}
             required
-            placeholder="Ex: 24"
+            placeholder={t('durationPlaceholder')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <Typography variant="caption" color="muted" className="mt-1">
-            Entre 6 et 600 mois (50 ans)
-          </Typography>
+          <Typography variant="caption" color="muted" className="mt-1">{t('durationHint')}</Typography>
         </div>
 
         {/* Objet du prêt */}
         <div>
-          <label htmlFor="purpose" className="block text-sm font-medium text-gray-700 mb-2">
-            Objet du prêt *
-          </label>
+          <label htmlFor="purpose" className="block text-sm font-medium text-gray-700 mb-2">{t('purposeLabel')}</label>
           <select
             id="purpose"
             value={purpose}
@@ -117,41 +106,33 @@ export const LoanRequestForm: React.FC = () => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="">Sélectionnez...</option>
-            <option value="AUTO">Achat véhicule</option>
-            <option value="IMMOBILIER">Projet immobilier</option>
-            <option value="TRAVAUX">Travaux</option>
-            <option value="CONSOMMATION">Consommation</option>
-            <option value="AUTRE">Autre</option>
+            <option value="">{t('purposeSelect')}</option>
+            <option value="AUTO">{t('purpose.AUTO')}</option>
+            <option value="IMMOBILIER">{t('purpose.IMMOBILIER')}</option>
+            <option value="TRAVAUX">{t('purpose.TRAVAUX')}</option>
+            <option value="CONSOMMATION">{t('purpose.CONSOMMATION')}</option>
+            <option value="AUTRE">{t('purpose.AUTRE')}</option>
           </select>
         </div>
 
         {/* Conditions */}
         <Card className="bg-blue-50 border-blue-200">
-          <Typography variant="h4" className="mb-3 text-blue-900">
-            Conditions du prêt
-          </Typography>
+          <Typography variant="h4" className="mb-3 text-blue-900">{t('conditionsTitle')}</Typography>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <Typography variant="caption" color="muted">
-                Taux d'intérêt annuel :
-              </Typography>
+              <Typography variant="caption" color="muted">{t('interestRate')}</Typography>
               <Typography variant="caption" className="font-semibold">
                 {(annualInterestRate / 100).toFixed(2)}%
               </Typography>
             </div>
             <div className="flex justify-between">
-              <Typography variant="caption" color="muted">
-                Taux d'assurance annuel :
-              </Typography>
+              <Typography variant="caption" color="muted">{t('insuranceRate')}</Typography>
               <Typography variant="caption" className="font-semibold">
                 {(annualInsuranceRate / 100).toFixed(2)}%
               </Typography>
             </div>
           </div>
-          <Typography variant="caption" className="text-blue-700 mt-4 block">
-            Ces taux sont indicatifs et peuvent être ajustés par votre conseiller.
-          </Typography>
+          <Typography variant="caption" className="text-blue-700 mt-4 block">{t('conditionsNote')}</Typography>
         </Card>
 
         {error && (
@@ -169,7 +150,7 @@ export const LoanRequestForm: React.FC = () => {
             onClick={() => router.back()}
             className="flex-1"
           >
-            Annuler
+            {t('cancel')}
           </Button>
           <Button 
             type="submit"
@@ -177,7 +158,7 @@ export const LoanRequestForm: React.FC = () => {
             disabled={loading}
             className="flex-1"
           >
-            {loading ? 'Envoi en cours...' : 'Envoyer la demande'}
+            {loading ? t('submitting') : t('submit')}
           </Button>
         </div>
       </form>

@@ -8,7 +8,7 @@ import { useGetSavingProducts } from '@/features/savings/useGetSavingProducts';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 
-function page() {
+function Page() {
   const t = useTranslations('Director.savings');
   const [formActive, setFormActive] = useState<boolean>(false);
 
@@ -16,7 +16,7 @@ function page() {
     setFormActive(false)
   }
 
-  const { getSavingProducts, savingProducts, isLoading, error, setError} = useGetSavingProducts();
+  const { getSavingProducts, savingProducts } = useGetSavingProducts();
 
   return (
     <>
@@ -24,7 +24,7 @@ function page() {
       <Typography variant='h1'>{t('savingProduct.title')}</Typography>
 
       <Button className='mt-8' onClick={() => setFormActive(true)}>
-        + Créer un produit d'épargne
+        + {t('savingProduct.create')}
       </Button>
 
       <section className="mt-12">
@@ -38,4 +38,4 @@ function page() {
   )
 }
 
-export default page
+export default Page

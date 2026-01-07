@@ -50,7 +50,8 @@
     "support": "Contact",
     "login": "Login",
     "signup": "Sign up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutLoading": "Logging out..."
   },
   "Footer": {
     "tagline": "Your bank of the future, simple, modern and responsible.",
@@ -214,7 +215,20 @@
     "header": {
       "greeting": "Hello, {firstName}",
       "welcome": "Welcome to your space",
-      "today": "Today"
+      "today": "Today",
+      "loggingOut": "Logging out..."
+    },
+    "pageTitles": {
+      "admin": {
+        "statistics": "Statistics",
+        "clients": "Client management",
+        "settings": "Settings"
+      },
+      "advisor": {
+        "clients": "My clients",
+        "loans": "Loans to validate",
+        "dashboard": "Overview"
+      }
     },
     "overview": {
       "title": "Overview",
@@ -249,7 +263,32 @@
         "downloadRib": "Download RIB",
         "fullHistory": "Full history"
       },
-      "accountDetailsDescription": "Details and operations of your"
+      "accountDetailsDescription": "Details and operations of your",
+      "detail": {
+        "errorTitle": "Error",
+        "notFound": "Account not found",
+        "backToAccounts": "Back to accounts",
+        "balance": "Balance",
+        "iban": "IBAN",
+        "currency": "Currency",
+        "identifier": "Identifier",
+        "makeTransfer": "Make a transfer",
+        "rename": "Rename",
+        "delete": "Delete",
+        "downloadRib": "Download RIB",
+        "ribDownloadFailed": "RIB download failed",
+        "ribUnavailable": "RIB not found or unavailable: {message}",
+        "latestOperations": "Latest operations",
+        "credit": "Credit",
+        "debit": "Debit",
+        "type": "Type:",
+        "from": "From:",
+        "to": "To:",
+        "seeAll": "See all operations",
+        "seeLess": "See less",
+        "noOperationsTitle": "No operation",
+        "noOperationsHint": "Operations for this account will appear here"
+      }
     },
     "savings": {
       "title": "Savings",
@@ -266,6 +305,10 @@
       "retrySaving": "Retry savings",
       "retryRate": "Retry rate",
       "savingsAccount": "Savings account",
+      "rateLabel": "Rate",
+      "active": "Active",
+      "balance": "Balance",
+      "openedOn": "Opened on",
       "perYear": "per year",
       "noSavingsAccount": "No savings account",
       "noSavingsDescription": "Open your first savings account and start growing your money",
@@ -275,9 +318,38 @@
         "premiumRate": "Premium rate: {rate}% for premium accounts",
         "minimumAmount": "Minimum amount: {amount}",
         "lastUpdate": "Last update: {date}"
+      },
+      "createModal": {
+        "title": "Open a savings account",
+        "sourceAccount": "Source account",
+        "loadingAccounts": "Loading accounts...",
+        "selectAccount": "Select an account",
+        "savingProduct": "Savings product (annual rate)",
+        "loadingProducts": "Loading savings products...",
+        "selectProduct": "Select a savings product",
+        "allProductsUsed": "All savings products are already in use",
+        "allProductsUsedMessage": "You have already opened all available savings products.",
+        "initialAmount": "Initial amount (€)",
+        "initialAmountPlaceholder": "E.g.: 100",
+        "minimumAmount": "Minimum €10",
+        "howItWorks": "How it works:",
+        "info1": "The amount will be debited from your source account",
+        "info2": "Interest will be calculated and added daily",
+        "info3": "Formula: balance × (rate / 365) per day",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "submit": "Open savings account",
+        "success": "Savings account created successfully!",
+        "errors": {
+          "selectAccount": "Please select a source account",
+          "minAmount": "The amount must be at least €10",
+          "invalidRate": "The rate must be between 1.5% and 3.5%",
+          "alreadyHasSaving": "This account already has a savings of this type. Please choose another source account."
+        }
       }
     },
     "operations": {
+      "title": "Operations",
       "credit": "Credit",
       "debit": "Debit",
       "date": "Date",
@@ -428,7 +500,9 @@
         "createTitle": "Create a company",
         "editTitle": "Edit company",
         "name": "Company name",
+        "namePlaceholder": "Apple Inc.",
         "description": "Description",
+        "descriptionPlaceholder": "Company description...",
         "submit": "Save",
         "cancel": "Cancel"
       },
@@ -450,6 +524,9 @@
         "updateError": "Error updating company",
         "deleteSuccess": "Company deleted successfully",
         "deleteError": "Error deleting company"
+      },
+      "errors": {
+        "nameRequired": "Name is required"
       }
     },
     "stocks": {
@@ -543,6 +620,347 @@
       "cannotAddSelf": "You cannot add your own account"
     }
   },
+  "Loans": {
+    "title": "My loans",
+    "subtitle": "Manage your loan requests and track repayments",
+    "simulate": {
+      "metaTitle": "Loan Simulator | Clean Avenir",
+      "metaDescription": "Simulate your loan and discover monthly payments tailored to your project",
+      "title": "Loan Simulator",
+      "description": "Adjust parameters to estimate your monthly payments and total loan cost",
+      "form": {
+        "title": "Loan Simulator",
+        "amount": "Loan amount",
+        "duration": "Loan term (months)",
+        "months": "months",
+        "interestRate": "Annual interest rate",
+        "insuranceRate": "Annual insurance rate",
+        "simulate": "Simulate loan",
+        "loading": "Calculating..."
+      },
+      "results": {
+        "title": "Simulation result",
+        "monthlyPayment": "Monthly payment",
+        "totalCost": "Total cost",
+        "totalInterest": "Total interest",
+        "totalInsurance": "Total insurance",
+        "note": "Note:",
+        "disclaimer": "This simulation is indicative. The final rate may vary based on your profile and market conditions."
+      }
+    },
+    "actions": {
+      "simulate": "Simulate",
+      "newRequest": "+ New request",
+      "retry": "Retry",
+      "simulateLoan": "Simulate a loan",
+      "makeRequest": "+ Make a request"
+    },
+    "error": {
+      "title": "Loading error"
+    },
+    "stats": {
+      "active": "Active loans",
+      "pending": "Pending",
+      "paid": "Paid off",
+      "rejected": "Rejected"
+    },
+    "pendingTitle": "My pending requests ({count})",
+    "allTitle": "All my loans ({count})",
+    "empty": {
+      "title": "No loans for now",
+      "description": "You don't have any active loans yet. Start by simulating a loan to discover our offers."
+    },
+    "viewDetails": "View details",
+    "card": {
+      "personalLoan": "Personal loan",
+      "loanAmount": "Loan amount"
+    },
+    "request": {
+      "metaTitle": "Loan Request | Clean Avenir",
+      "metaDescription": "Submit a personalized loan request to our advisors",
+      "title": "Loan Request",
+      "description": "Fill in the form to submit your request to our advisors",
+      "simulateFirst": "Simulate first",
+      "process": {
+        "title": "Validation process",
+        "step1": "Your request is sent to our advisors",
+        "step2": "An advisor reviews your file (24-48h)",
+        "step3": "You receive a response by email",
+        "step4": "If accepted, the loan is activated automatically"
+      },
+      "form": {
+        "title": "Loan Request",
+        "amountLabel": "Requested amount (€) *",
+        "amountPlaceholder": "e.g. 10000",
+        "amountHint": "Minimum €1,000",
+        "durationLabel": "Duration (months) *",
+        "durationPlaceholder": "e.g. 24",
+        "durationHint": "Between 6 and 600 months (50 years)",
+        "purposeLabel": "Loan purpose *",
+        "purposeSelect": "Select...",
+        "purpose": {
+          "AUTO": "Vehicle purchase",
+          "IMMOBILIER": "Real estate project",
+          "TRAVAUX": "Renovation",
+          "CONSOMMATION": "Consumer",
+          "AUTRE": "Other"
+        },
+        "conditionsTitle": "Loan conditions",
+        "interestRate": "Annual interest rate:",
+        "insuranceRate": "Annual insurance rate:",
+        "conditionsNote": "Rates are indicative and may be adjusted by your advisor.",
+        "cancel": "Cancel",
+        "submit": "Submit request",
+        "submitting": "Submitting...",
+        "successTitle": "Request successfully sent!",
+        "successBody": "Your loan request has been sent to our advisors. You will receive a response shortly.",
+        "redirecting": "Redirecting..."
+      },
+      "toast": {
+        "success": "Loan request sent successfully",
+        "error": "Error while submitting the loan request"
+      }
+    },
+    "detail": {
+      "back": "Back",
+      "errorTitle": "Loading error",
+      "notFound": "Loan not found",
+      "title": "Loan details",
+      "requestedOn": "Requested on {date}",
+      "status": {
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "PAID_OFF": "Paid off",
+        "REJECTED": "Rejected"
+      },
+      "borrowed": "Borrowed amount",
+      "remaining": "Remaining to pay",
+      "repaid": "Already repaid",
+      "repaymentProgress": "Repayment progress",
+      "repaidPercent": "{percent}% repaid",
+      "details": {
+        "monthlyPayment": "Monthly payment",
+        "totalDuration": "Total duration",
+        "months": "months",
+        "annualInterest": "Annual interest rate",
+        "monthlyInsurance": "Monthly insurance",
+        "annualInsurance": "Annual insurance rate",
+        "nextPayment": "Next payment"
+      },
+      "totalCost": {
+        "title": "Total credit cost",
+        "breakdown": "Including {amount} interests and insurance"
+      },
+      "messages": {
+        "pendingTitle": "Request under review",
+        "pendingBody": "Our advisors are currently reviewing your request. You will receive a response within 48 hours.",
+        "rejectedTitle": "Request rejected",
+        "rejectedBody": "Unfortunately, your loan request could not be accepted. Feel free to contact an advisor for more information.",
+        "paidOffTitle": "Loan fully repaid",
+        "paidOffBody": "Congratulations! You have fully repaid this loan."
+      }
+    }
+  },
+  "Savings": {
+    "detail": {
+      "title": "Savings Account",
+      "errorTitle": "Error",
+      "notFound": "Savings account not found",
+      "back": "Back",
+      "backToSavings": "Back to savings",
+      "rate": "Rate",
+      "openedOn": "Opened on",
+      "lastUpdate": "Last update",
+      "dailyInterests": "Daily interests",
+      "monthlyInterests": "Estimated monthly interests",
+      "yearlyInterests": "Estimated yearly interests",
+      "perDay": "per day",
+      "perMonth": "per month",
+      "perYear": "per year",
+      "linkedBankAccount": "Linked bank account",
+      "availableBalance": "Available balance",
+      "howItWorks": {
+        "title": "How do interests work?",
+        "dailyCalc": "Interests are calculated daily",
+        "formula": "Formula: balance × (rate / 365)",
+        "addedAt": "Automatically added every day at 00:01",
+        "compound": "Compound interests (calculated on the new balance)"
+      },
+      "projection": {
+        "title": "1-year projection",
+        "currentBalance": "Current balance",
+        "estimatedInterests": "Estimated interests",
+        "finalBalance": "Final balance",
+        "appliedRate": "Applied rate"
+      },
+      "actions": {
+        "title": "Available actions",
+        "deposit": "Add money",
+        "transfer": "Transfer to an account",
+        "refresh": "Refresh",
+        "viewAllSavings": "View all savings",
+        "viewSourceAccount": "View source account"
+      },
+      "toasts": {
+        "depositSuccess": "Deposit completed successfully",
+        "transferSuccess": "Transfer completed successfully"
+      },
+      "errors": {
+        "VALIDATION_ERROR": "Please check the provided information",
+        "SAVING_PRODUCT_NOT_FOUND": "Savings product not found",
+        "INITIAL_AMOUNT_BELOW_MIN": "Initial amount is below minimum",
+        "SOURCE_ACCOUNT_NOT_FOUND": "Source bank account not found",
+        "UNAUTHORIZED_SOURCE_ACCOUNT": "Unauthorized access to source account",
+        "INSUFFICIENT_SOURCE_BALANCE": "Insufficient balance on source account",
+        "SAVING_ALREADY_EXISTS": "You already have a savings of this type",
+        "IBAN_GENERATION_FAILED": "Unable to generate a unique IBAN",
+        "IBAN_INVALID": "Generated IBAN is invalid",
+        "DEBIT_SOURCE_FAILED": "Error debiting source account",
+        "DEBIT_BANK_FAILED": "Error debiting bank account",
+        "CREDIT_SAVING_FAILED": "Error crediting savings account",
+        "DEBIT_SAVING_FAILED": "Error debiting savings account",
+        "CREDIT_BANK_FAILED": "Error crediting bank account",
+        "TRANSACTION_SAVE_FAILED": "Error saving transaction",
+        "SAVING_NOT_FOUND": "Savings account not found",
+        "UNAUTHORIZED_SAVING_ACCOUNT": "Unauthorized access to savings account",
+        "TARGET_ACCOUNT_NOT_FOUND": "Target bank account not found",
+        "UNAUTHORIZED_TARGET_ACCOUNT": "Unauthorized access to target bank account",
+        "UNAUTHORIZED": "Not authenticated",
+        "INTERNAL_ERROR": "An internal error occurred",
+        "fromAccountRequired": "Source account required",
+        "amountInvalid": "Please enter a valid amount",
+        "amountAboveBalance": "Amount exceeds available balance",
+        "default": "An error occurred"
+      },
+      "depositModal": {
+        "title": "Fund savings",
+        "sourceAccount": "Source account",
+        "selectAccount": "Select an account",
+        "amount": "Amount to deposit (€)",
+        "confirm": "Confirm deposit",
+        "cancel": "Cancel",
+        "submitting": "Depositing..."
+      }
+    }
+  },
+  "Advisor": {
+    "dashboard": {
+      "loading": "Loading...",
+      "loadError": "Failed to load statistics",
+      "clients": "My clients",
+      "activeClients": "Active clients",
+      "activeLoans": "Active loans",
+      "creditsInProgress": "Loans in progress",
+      "pending": "Pending",
+      "toValidate": "To validate",
+      "totalAmount": "Total amount",
+      "quickActions": "Quick actions",
+      "viewClients": "View my clients",
+      "loansToValidate": "Loans to validate ({count})"
+    },
+    "loans": {
+      "loading": "Loading...",
+      "title": "Pending loan requests",
+      "pendingCount": "{count} {count, plural, one {request} other {requests}} awaiting processing",
+      "empty": {
+        "title": "No pending requests",
+        "description": "All loan requests have been processed"
+      },
+      "card": {
+        "title": "Loan request",
+        "status": {
+          "PENDING": "PENDING"
+        },
+        "amountRequested": "Requested amount",
+        "duration": "Duration",
+        "months": "months",
+        "monthlyPayment": "Monthly payments",
+        "interestRate": "Interest rate",
+        "monthlyInsurance": "Monthly insurance",
+        "requestedAt": "Requested at"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "confirmRejectTitle": "Confirm rejection",
+        "confirmRejectBody": "Are you sure you want to reject this loan request? This action is irreversible.",
+        "cancel": "Cancel",
+        "confirmReject": "Confirm rejection",
+        "rejecting": "Rejecting..."
+      },
+      "toasts": {
+        "approveSuccess": "Loan approved successfully! The client has been credited and now appears in your clients.",
+        "rejectSuccess": "Loan rejected successfully",
+        "approveError": "Error approving loan",
+        "rejectError": "Error rejecting loan",
+        "loadError": "Error loading requests"
+      }
+    }
+  },
+  "Investment": {
+    "title": "Investments",
+    "welcome": "Welcome to the investments section of your client portal.",
+    "stocks": {
+      "title": "Stocks",
+      "error": "Error",
+      "table": {
+        "ticker": "Ticker",
+        "company": "Company",
+        "currentPrice": "Current Price",
+        "action": "Action"
+      },
+      "buyOrSell": "Buy or sell",
+      "chart": {
+        "evolution": "Evolution of {ticker}",
+        "history": "30-day history",
+        "noData": "No data available for this period.",
+        "price": "Price"
+      }
+    },
+    "portfolio": {
+      "title": "My Wallet",
+      "empty": {
+        "title": "No active Wallet",
+        "description": "Start your investment journey now by opening your first securities Wallet.",
+        "button": "Open my Wallet"
+      },
+      "error": "Error",
+      "totalValue": "Estimated total value",
+      "holdings": "My holdings",
+      "holdingsEmpty": {
+        "title": "Your Wallet is empty",
+        "description": "You don't have any open positions yet. Explore the market to find your first opportunity."
+      },
+      "search": "Search for a stock...",
+      "noResults": "No stock matches your search.",
+      "quantity": "Quantity",
+      "avgPrice": "Avg. price",
+      "currentPrice": "Current price",
+      "profitLoss": "P/L",
+      "sharesCount": "{count} {count, plural, one {share} other {shares}}"
+    },
+    "orders": {
+      "title": "My orders",
+      "error": "An error occurred while fetching your orders.",
+      "empty": "No recent orders.",
+      "buy": "Buy",
+      "sell": "Sell",
+      "initialQuantity": "Initial quantity",
+      "remainingQuantity": "Remaining quantity",
+      "limitPrice": "Limit price",
+      "date": "Date",
+      "shares": "shares",
+      "blockedAmount": "Blocked amount",
+      "blockedShares": "Blocked shares",
+      "units": "units",
+      "status": {
+        "pending": "Pending",
+        "partiallyFilled": "Partial",
+        "executed": "Executed",
+        "cancelled": "Cancelled"
+      }
+    }
+  },
   "Transfer": {
     "title": "Make a transfer",
     "subtitle": "Transfer funds to another account",
@@ -587,7 +1005,21 @@
     "actions": {
       "submit": "Make transfer",
       "cancel": "Cancel",
-      "back": "Back"
+      "back": "Back",
+      "inProgress": "Transfer in progress..."
+    },
+    "placeholders": {
+      "description": "E.g.: Refund, Monthly savings..."
+    },
+    "info": {
+      "title": "Important information",
+      "checkDetails": "Please check the accounts and amount carefully before confirming",
+      "immediate": "The transfer is immediate between your accounts",
+      "emailConfirmation": "You will receive a confirmation by email"
+    },
+    "labels": {
+      "availableBalance": "Available balance",
+      "newSourceBalance": "New balance (source account)"
     }
   },
   "LearnMore": {

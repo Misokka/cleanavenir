@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
+import { AppError, SavingErrorCodes } from '../../../../shared/errors';
 
 export const transferFromSavingController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -35,16 +36,31 @@ export const transferFromSavingController = asyncHandler(
     });
 
     if (!result.ok) {
-      res.status(400).json({
-        error: 'TRANSFER_ERROR',
-        message: result.error.message,
-      });
-      return;
+      const error = result.error as AppError;
+      switch (error.code) {
+        case SavingErrorCodes.VALIDATION_ERROR:
+          res.status(400).json({ error: error.code });
+          return;
+        case SavingErrorCodes.SAVING_NOT_FOUND:
+        case SavingErrorCodes.TARGET_ACCOUNT_NOT_FOUND:
+          res.status(404).json({ error: error.code });
+          return;
+        case SavingErrorCodes.UNAUTHORIZED_SAVING_ACCOUNT:
+        case SavingErrorCodes.UNAUTHORIZED_TARGET_ACCOUNT:
+          res.status(403).json({ error: error.code });
+          return;
+        case SavingErrorCodes.INSUFFICIENT_SOURCE_BALANCE:
+          res.status(400).json({ error: error.code });
+          return;
+        case SavingErrorCodes.DEBIT_SAVING_FAILED:
+        case SavingErrorCodes.CREDIT_BANK_FAILED:
+        case SavingErrorCodes.TRANSACTION_SAVE_FAILED:
+        default:
+          res.status(500).json({ error: error.code });
+          return;
+      }
     }
 
-    res.json({
-      message: 'Transfert effectué avec succès',
-      success: true,
-    });
+    res.json({ success: true });
   }
 );

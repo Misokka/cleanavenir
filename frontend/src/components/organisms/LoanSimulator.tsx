@@ -1,18 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import { Button} from '../atoms/Button';
 import { useSimulateLoan } from '@/features/loans/useSimulateLoan';
+import { type LoanSimulation } from '@/infrastructure/web/services/loanService';
 
 interface LoanSimulatorProps {
-  onSimulationComplete?: (simulation: any) => void;
+  onSimulationComplete?: (simulation: LoanSimulation) => void;
 }
 
 export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComplete }) => {
   const locale = useLocale();
+  const t = useTranslations('Loans.simulate');
   const { simulate, loading, error, simulation } = useSimulateLoan();
   
   const [amount, setAmount] = useState<number>(10000);
@@ -48,17 +50,18 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
     <div className="space-y-6">
       <Card>
         <Typography variant="h3" className="mb-6">
-          Simulateur de Prêt
+          {t('form.title')}
         </Typography>
 
         <div className="space-y-6">
           {/* Montant du prêt */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Montant du prêt
+            <label htmlFor="loan-amount" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('form.amount')}
             </label>
             <div className="flex items-center space-x-4">
               <input
+                id="loan-amount"
                 type="range"
                 min="1000"
                 max="10000000"
@@ -75,11 +78,12 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
           {/* Durée */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Durée du prêt (mois)
+            <label htmlFor="loan-duration" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('form.duration')}
             </label>
             <div className="flex items-center space-x-4">
               <input
+                id="loan-duration"
                 type="range"
                 min="6"
                 max="600"
@@ -89,18 +93,19 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
                 className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <Typography variant="body" className="font-bold text-blue-600 min-w-[120px]">
-                {durationInMonth} mois
+                {durationInMonth} {t('form.months')}
               </Typography>
             </div>
           </div>
 
           {/* Taux d'intérêt */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Taux d'intérêt annuel
+            <label htmlFor="loan-interest" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('form.interestRate')}
             </label>
             <div className="flex items-center space-x-4">
               <input
+                id="loan-interest"
                 type="range"
                 min="100"
                 max="1000"
@@ -117,11 +122,12 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
           {/* Taux d'assurance */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Taux d'assurance annuel
+            <label htmlFor="loan-insurance" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('form.insuranceRate')}
             </label>
             <div className="flex items-center space-x-4">
               <input
+                id="loan-insurance"
                 type="range"
                 min="10"
                 max="200"
@@ -142,7 +148,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
             disabled={loading}
             className="w-full"
           >
-            {loading ? 'Calcul en cours...' : 'Simuler le prêt'}
+            {loading ? t('form.loading') : t('form.simulate')}
           </Button>
 
           {error && (
@@ -158,13 +164,13 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
       {simulation && (
         <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
           <Typography variant="h4" className="mb-6 text-blue-900">
-            Résultat de la simulation
+            {t('results.title')}
           </Typography>
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <Typography variant="caption" color="muted" className="mb-1">
-                Mensualité
+                {t('results.monthlyPayment')}
               </Typography>
               <Typography variant="h3" className="text-blue-600 font-bold">
                 {formatCurrency(simulation.monthlyPayment)}
@@ -173,7 +179,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <Typography variant="caption" color="muted" className="mb-1">
-                Coût total
+                {t('results.totalCost')}
               </Typography>
               <Typography variant="h3" className="text-purple-600 font-bold">
                 {formatCurrency(simulation.totalCost)}
@@ -182,7 +188,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <Typography variant="caption" color="muted" className="mb-1">
-                Total des intérêts
+                {t('results.totalInterest')}
               </Typography>
               <Typography variant="h4" className="text-orange-600 font-semibold">
                 {formatCurrency(simulation.totalInterest)}
@@ -191,7 +197,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <Typography variant="caption" color="muted" className="mb-1">
-                Total de l'assurance
+                {t('results.totalInsurance')}
               </Typography>
               <Typography variant="h4" className="text-green-600 font-semibold">
                 {formatCurrency(simulation.totalInsurance)}
@@ -201,8 +207,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({ onSimulationComple
 
           <div className="mt-6 bg-blue-100 rounded-lg p-4">
             <Typography variant="caption" className="text-blue-900">
-              <strong>Remarque :</strong> Cette simulation est indicative. 
-              Le taux final peut varier selon votre profil et les conditions du marché.
+              <strong>{t('results.note')}</strong> {t('results.disclaimer')}
             </Typography>
           </div>
         </Card>

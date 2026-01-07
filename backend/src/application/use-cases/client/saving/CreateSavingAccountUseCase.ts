@@ -9,6 +9,7 @@ import { SavingProductRepository } from "../../../ports/repositories/SavingProdu
 import { IbanGenerator } from "../../../../infrastructure/adapters/IbanGenerator";
 import { Iban } from "../../../../domain/value-objects/Iban";
 import { ClientRepository } from "../../../ports/repositories/ClientRepository";
+import { AppError, appError, SavingErrorCodes } from "../../../../shared/errors";
 
 export interface CreateSavingAccountInput {
   userId: string;
@@ -30,22 +31,22 @@ export class CreateSavingAccountUseCase {
     this.ibanGenerator = new IbanGenerator();
   }
 
-  public async execute(input: CreateSavingAccountInput): Promise<Result<SavingAccount, Error>> {
+  public async execute(input: CreateSavingAccountInput): Promise<Result<SavingAccount, AppError>> {
     const clientResult = await this.clientRepository.findByUserId(input.userId);
     if (!clientResult.ok) {
-      return err(clientResult.error);
+      return err(appError(SavingErrorCodes.UNAUTHORIZED));
     }
 
     const client = clientResult.value;
     const savingProductResult = await this.savingProductRepository.findById(input.savingProductIdentifier);
     if (!savingProductResult.ok) {
-      return err(new Error('Produit d\'épargne introuvable'));
+      return err(appError(SavingErrorCodes.SAVING_PRODUCT_NOT_FOUND));
     }
 
     const savingProduct = savingProductResult.value;
    
     if (input.initialAmount < 10) {
-      return err(new Error('Le montant initial doit être d\'au moins 10€'));
+      return err(appError(SavingErrorCodes.INITIAL_AMOUNT_BELOW_MIN));
     }
 
     const amountInCents = Math.round(input.initialAmount * 100);
@@ -53,20 +54,20 @@ export class CreateSavingAccountUseCase {
     const sourceAccount = await this.bankAccountRepository.findById(input.sourceAccountId);
     
     if (!sourceAccount.ok) {
-      return err(new Error('Compte source introuvable'));
+      return err(appError(SavingErrorCodes.SOURCE_ACCOUNT_NOT_FOUND));
     }
 
     if (sourceAccount.value.clientIdentifier !== client.clientIdentifier) {
-      return err(new Error('Accès non autorisé au compte source'));
+      return err(appError(SavingErrorCodes.UNAUTHORIZED_SOURCE_ACCOUNT));
     }
 
     if (sourceAccount.value.balance < amountInCents) {
-      return err(new Error('Solde insuffisant sur le compte source'));
+      return err(appError(SavingErrorCodes.INSUFFICIENT_SOURCE_BALANCE));
     }
 
     const existingSaving = await this.savingAccountRepository.findByOwnerAndProductId(client.clientIdentifier, input.savingProductIdentifier);
     if (existingSaving.ok && existingSaving.value !== null) {
-      return err(new Error('Ce compte possède déjà une épargne de ce type.'));
+      return err(appError(SavingErrorCodes.SAVING_ALREADY_EXISTS));
     }
 
     
@@ -90,12 +91,12 @@ export class CreateSavingAccountUseCase {
     }
 
     if (attempts >= maxAttempts) {
-      return err(new Error('Impossible de générer un IBAN unique'));
+      return err(appError(SavingErrorCodes.IBAN_GENERATION_FAILED));
     }
 
     const finalIbanResult = Iban.from(finalIban);
     if (!finalIbanResult.ok) {
-      return err(new Error('IBAN généré invalide'));
+      return err(appError(SavingErrorCodes.IBAN_INVALID));
     }
     const finalIbanObject = finalIbanResult.value;
 
@@ -123,7 +124,7 @@ export class CreateSavingAccountUseCase {
         input.sourceAccountId,
         sourceAccount.value.balance
       );
-      return err(new Error(createSavingResult.error.message));
+      return err(appError(SavingErrorCodes.INTERNAL_ERROR, createSavingResult.error.message));
     }
 
     const newSourceBalance = sourceAccount.value.balance - amountInCents;
@@ -133,7 +134,7 @@ export class CreateSavingAccountUseCase {
     );
 
     if (!updateSourceResult.ok) {
-      return err(new Error('Erreur lors du débit du compte source'));
+      return err(appError(SavingErrorCodes.DEBIT_SOURCE_FAILED));
     }
 
     const debitTransactionId = randomUUID();
@@ -164,7 +165,7 @@ export class CreateSavingAccountUseCase {
         input.sourceAccountId,
         sourceAccount.value.balance
       );
-      return err(new Error("Erreur lors de l'enregistrement de l'opération"));
+      return err(appError(SavingErrorCodes.TRANSACTION_SAVE_FAILED));
     }
 
     return ok(newSavingAccount);

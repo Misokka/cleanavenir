@@ -50,7 +50,8 @@
     "support": "Contact",
     "login": "Connexion",
     "signup": "Inscription",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "logoutLoading": "Déconnexion..."
   },
   "Footer": {
     "tagline": "Votre banque du futur, simple, moderne et responsable.",
@@ -214,7 +215,8 @@
     "header": {
       "greeting": "Bonjour, {firstName}",
       "welcome": "Bienvenue sur votre espace",
-      "today": "Aujourd'hui"
+      "today": "Aujourd'hui",
+      "loggingOut": "Déconnexion..."
     },
     "overview": {
       "title": "Vue d'ensemble",
@@ -249,7 +251,32 @@
         "downloadRib": "Télécharger le RIB",
         "fullHistory": "Historique complet"
       },
-      "accountDetailsDescription": "Détails et opérations de votre"
+      "accountDetailsDescription": "Détails et opérations de votre",
+      "detail": {
+        "errorTitle": "Erreur",
+        "notFound": "Compte introuvable",
+        "backToAccounts": "Retour aux comptes",
+        "balance": "Solde",
+        "iban": "IBAN",
+        "currency": "Devise",
+        "identifier": "Identifiant",
+        "makeTransfer": "Effectuer un virement",
+        "rename": "Renommer",
+        "delete": "Supprimer",
+        "downloadRib": "Télécharger le RIB",
+        "ribDownloadFailed": "Téléchargement du RIB échoué",
+        "ribUnavailable": "RIB introuvable ou indisponible: {message}",
+        "latestOperations": "Dernières opérations",
+        "credit": "Crédit",
+        "debit": "Débit",
+        "type": "Type:",
+        "from": "De:",
+        "to": "Vers:",
+        "seeAll": "Voir toutes les opérations",
+        "seeLess": "Voir moins",
+        "noOperationsTitle": "Aucune opération",
+        "noOperationsHint": "Les opérations sur ce compte apparaîtront ici"
+      }
     },
     "savings": {
       "title": "Épargne",
@@ -264,6 +291,10 @@
       "account": "compte",
       "accounts": "comptes",
       "savingsAccount": "Livret d'épargne",
+      "rateLabel": "Taux",
+      "active": "Actif",
+      "balance": "Solde",
+      "openedOn": "Ouvert le",
       "perYear": "par an",
       "retrySaving": "Réessayer épargne",
       "retryRate": "Réessayer taux",
@@ -275,9 +306,38 @@
         "premiumRate": "Taux premium: {rate}% pour les comptes premium",
         "minimumAmount": "Montant minimum: {amount}",
         "lastUpdate": "Dernière mise à jour: {date}"
+      },
+      "createModal": {
+        "title": "Ouvrir une épargne",
+        "sourceAccount": "Compte source",
+        "loadingAccounts": "Chargement des comptes...",
+        "selectAccount": "Sélectionnez un compte",
+        "savingProduct": "Produit d'épargne (taux annuel)",
+        "loadingProducts": "Chargement des produits d'épargne...",
+        "selectProduct": "Sélectionnez un produit d'épargne",
+        "allProductsUsed": "Tous les produits d'épargne sont déjà utilisés",
+        "allProductsUsedMessage": "Vous avez déjà ouvert tous les produits d'épargne disponibles.",
+        "initialAmount": "Montant initial (€)",
+        "initialAmountPlaceholder": "Ex: 100",
+        "minimumAmount": "Minimum 10€",
+        "howItWorks": "Fonctionnement :",
+        "info1": "Le montant sera débité de votre compte source",
+        "info2": "Les intérêts seront calculés et ajoutés chaque jour",
+        "info3": "Formule : solde × (taux / 365) par jour",
+        "cancel": "Annuler",
+        "creating": "Création...",
+        "submit": "Ouvrir l'épargne",
+        "success": "Compte épargne créé avec succès !",
+        "errors": {
+          "selectAccount": "Veuillez sélectionner un compte source",
+          "minAmount": "Le montant doit être d'au moins 10€",
+          "invalidRate": "Le taux doit être compris entre 1.5% et 3.5%",
+          "alreadyHasSaving": "Ce compte possède déjà une épargne de ce type. Veuillez choisir un autre compte source."
+        }
       }
     },
     "operations": {
+      "title": "Opérations",
       "credit": "Crédit",
       "debit": "Débit",
       "date": "Date",
@@ -285,6 +345,18 @@
       "amount": "Montant",
       "category": "Catégorie",
       "recentTransactionsWillAppear": "Vos dernières transactions apparaîtront ici"
+    },
+    "pageTitles": {
+      "admin": {
+        "statistics": "Statistiques",
+        "clients": "Gestion des clients",
+        "settings": "Paramètres"
+      },
+      "advisor": {
+        "clients": "Mes clients",
+        "loans": "Prêts à valider",
+        "dashboard": "Vue d'ensemble"
+      }
     }
   },
   "Director": {
@@ -428,7 +500,9 @@
         "createTitle": "Créer une entreprise",
         "editTitle": "Modifier l'entreprise",
         "name": "Nom de l'entreprise",
+        "namePlaceholder": "Apple Inc.",
         "description": "Description",
+        "descriptionPlaceholder": "Description de l'entreprise...",
         "submit": "Enregistrer",
         "cancel": "Annuler"
       },
@@ -450,6 +524,9 @@
         "updateError": "Erreur lors de la modification",
         "deleteSuccess": "Entreprise supprimée avec succès",
         "deleteError": "Erreur lors de la suppression"
+      },
+      "errors": {
+        "nameRequired": "Le nom est requis"
       }
     },
     "stocks": {
@@ -543,6 +620,347 @@
       "cannotAddSelf": "Vous ne pouvez pas ajouter votre propre compte"
     }
   },
+  "Loans": {
+    "title": "Mes prêts",
+    "subtitle": "Gérez vos demandes de prêt et suivez vos remboursements",
+    "simulate": {
+      "metaTitle": "Simulateur de Prêt | Clean Avenir",
+      "metaDescription": "Simulez votre prêt et découvrez les mensualités adaptées à votre projet",
+      "title": "Simulateur de Prêt",
+      "description": "Ajustez les paramètres pour estimer vos mensualités et le coût total de votre prêt",
+      "form": {
+        "title": "Simulateur de Prêt",
+        "amount": "Montant du prêt",
+        "duration": "Durée du prêt (mois)",
+        "months": "mois",
+        "interestRate": "Taux d'intérêt annuel",
+        "insuranceRate": "Taux d'assurance annuel",
+        "simulate": "Simuler le prêt",
+        "loading": "Calcul en cours..."
+      },
+      "results": {
+        "title": "Résultat de la simulation",
+        "monthlyPayment": "Mensualité",
+        "totalCost": "Coût total",
+        "totalInterest": "Total des intérêts",
+        "totalInsurance": "Total de l'assurance",
+        "note": "Remarque :",
+        "disclaimer": "Cette simulation est indicative. Le taux final peut varier selon votre profil et les conditions du marché."
+      }
+    },
+    "actions": {
+      "simulate": "Simuler",
+      "newRequest": "+ Nouvelle demande",
+      "retry": "Réessayer",
+      "simulateLoan": "Simuler un prêt",
+      "makeRequest": "+ Faire une demande"
+    },
+    "error": {
+      "title": "Erreur de chargement"
+    },
+    "stats": {
+      "active": "Prêts actifs",
+      "pending": "En attente",
+      "paid": "Remboursés",
+      "rejected": "Refusés"
+    },
+    "pendingTitle": "Mes demandes en attente ({count})",
+    "allTitle": "Tous mes prêts ({count})",
+    "empty": {
+      "title": "Aucun prêt pour le moment",
+      "description": "Vous n'avez pas encore de prêt actif. Commencez par simuler un prêt pour découvrir nos offres."
+    },
+    "viewDetails": "Voir les détails",
+    "card": {
+      "personalLoan": "Prêt personnel",
+      "loanAmount": "Montant du prêt"
+    },
+    "request": {
+      "metaTitle": "Demande de Prêt | Clean Avenir",
+      "metaDescription": "Faites une demande de prêt personnalisée auprès de nos conseillers",
+      "title": "Demande de Prêt",
+      "description": "Remplissez le formulaire pour soumettre votre demande à nos conseillers",
+      "simulateFirst": "Simuler d'abord",
+      "process": {
+        "title": "Processus de validation",
+        "step1": "Votre demande est transmise à nos conseillers",
+        "step2": "Un conseiller examine votre dossier (24-48h)",
+        "step3": "Vous recevez une réponse par email",
+        "step4": "Si accepté, le prêt est activé automatiquement"
+      },
+      "form": {
+        "title": "Demande de Prêt",
+        "amountLabel": "Montant souhaité (€) *",
+        "amountPlaceholder": "Ex: 10000",
+        "amountHint": "Minimum 1 000 €",
+        "durationLabel": "Durée (en mois) *",
+        "durationPlaceholder": "Ex: 24",
+        "durationHint": "Entre 6 et 600 mois (50 ans)",
+        "purposeLabel": "Objet du prêt *",
+        "purposeSelect": "Sélectionnez...",
+        "purpose": {
+          "AUTO": "Achat véhicule",
+          "IMMOBILIER": "Projet immobilier",
+          "TRAVAUX": "Travaux",
+          "CONSOMMATION": "Consommation",
+          "AUTRE": "Autre"
+        },
+        "conditionsTitle": "Conditions du prêt",
+        "interestRate": "Taux d'intérêt annuel :",
+        "insuranceRate": "Taux d'assurance annuel :",
+        "conditionsNote": "Ces taux sont indicatifs et peuvent être ajustés par votre conseiller.",
+        "cancel": "Annuler",
+        "submit": "Envoyer la demande",
+        "submitting": "Envoi en cours...",
+        "successTitle": "Demande envoyée avec succès !",
+        "successBody": "Votre demande de prêt a été transmise à nos conseillers. Vous recevrez une réponse dans les plus brefs délais.",
+        "redirecting": "Redirection en cours..."
+      },
+      "toast": {
+        "success": "Demande de prêt envoyée avec succès",
+        "error": "Erreur lors de la demande de prêt"
+      }
+    },
+    "detail": {
+      "back": "Retour",
+      "errorTitle": "Erreur de chargement",
+      "notFound": "Prêt introuvable",
+      "title": "Détails du prêt",
+      "requestedOn": "Demandé le {date}",
+      "status": {
+        "ACTIVE": "Actif",
+        "PENDING": "En attente",
+        "PAID_OFF": "Remboursé",
+        "REJECTED": "Refusé"
+      },
+      "borrowed": "Montant emprunté",
+      "remaining": "Restant à payer",
+      "repaid": "Déjà remboursé",
+      "repaymentProgress": "Progression du remboursement",
+      "repaidPercent": "{percent}% remboursé",
+      "details": {
+        "monthlyPayment": "Mensualité",
+        "totalDuration": "Durée totale",
+        "months": "mois",
+        "annualInterest": "Taux d'intérêt annuel",
+        "monthlyInsurance": "Assurance mensuelle",
+        "annualInsurance": "Taux d'assurance annuel",
+        "nextPayment": "Prochain paiement"
+      },
+      "totalCost": {
+        "title": "Coût total du crédit",
+        "breakdown": "Dont {amount} d'intérêts et assurance"
+      },
+      "messages": {
+        "pendingTitle": "Demande en cours d'examen",
+        "pendingBody": "Nos conseillers étudient actuellement votre demande. Vous recevrez une réponse sous 48 heures.",
+        "rejectedTitle": "Demande refusée",
+        "rejectedBody": "Malheureusement, votre demande de prêt n'a pas pu être acceptée. N'hésitez pas à contacter un conseiller pour plus d'informations.",
+        "paidOffTitle": "Prêt intégralement remboursé",
+        "paidOffBody": "Félicitations ! Vous avez remboursé l'intégralité de ce prêt."
+      }
+    }
+  },
+  "Savings": {
+    "detail": {
+      "title": "Compte Épargne",
+      "errorTitle": "Erreur",
+      "notFound": "Compte épargne introuvable",
+      "back": "Retour",
+      "backToSavings": "Retour aux épargnes",
+      "rate": "Taux",
+      "openedOn": "Ouvert le",
+      "lastUpdate": "Dernière mise à jour",
+      "dailyInterests": "Intérêts journaliers",
+      "monthlyInterests": "Intérêts mensuels estimés",
+      "yearlyInterests": "Intérêts annuels estimés",
+      "perDay": "par jour",
+      "perMonth": "par mois",
+      "perYear": "par an",
+      "linkedBankAccount": "Compte bancaire associé",
+      "availableBalance": "Solde disponible",
+      "howItWorks": {
+        "title": "Comment fonctionnent les intérêts ?",
+        "dailyCalc": "Les intérêts sont calculés quotidiennement",
+        "formula": "Formule : solde × (taux / 365)",
+        "addedAt": "Ajoutés automatiquement chaque jour à 00:01",
+        "compound": "Intérêts composés (calculés sur le nouveau solde)"
+      },
+      "projection": {
+        "title": "Projection sur 1 an",
+        "currentBalance": "Solde actuel",
+        "estimatedInterests": "Intérêts estimés",
+        "finalBalance": "Solde final",
+        "appliedRate": "Taux appliqué"
+      },
+      "actions": {
+        "title": "Actions disponibles",
+        "deposit": "Ajouter de l'argent",
+        "transfer": "Transférer vers un compte",
+        "refresh": "Actualiser",
+        "viewAllSavings": "Voir toutes les épargnes",
+        "viewSourceAccount": "Voir le compte source"
+      },
+      "toasts": {
+        "depositSuccess": "Dépôt effectué avec succès",
+        "transferSuccess": "Transfert effectué avec succès"
+      },
+      "errors": {
+        "VALIDATION_ERROR": "Veuillez vérifier les informations fournies",
+        "SAVING_PRODUCT_NOT_FOUND": "Produit d'épargne introuvable",
+        "INITIAL_AMOUNT_BELOW_MIN": "Le montant initial est insuffisant",
+        "SOURCE_ACCOUNT_NOT_FOUND": "Compte bancaire source introuvable",
+        "UNAUTHORIZED_SOURCE_ACCOUNT": "Accès non autorisé au compte source",
+        "INSUFFICIENT_SOURCE_BALANCE": "Solde insuffisant sur le compte source",
+        "SAVING_ALREADY_EXISTS": "Vous avez déjà une épargne de ce type",
+        "IBAN_GENERATION_FAILED": "Impossible de générer un IBAN unique",
+        "IBAN_INVALID": "IBAN généré invalide",
+        "DEBIT_SOURCE_FAILED": "Erreur lors du débit du compte source",
+        "DEBIT_BANK_FAILED": "Erreur lors du débit du compte bancaire",
+        "CREDIT_SAVING_FAILED": "Erreur lors du crédit du compte épargne",
+        "DEBIT_SAVING_FAILED": "Erreur lors du débit du compte épargne",
+        "CREDIT_BANK_FAILED": "Erreur lors du crédit du compte bancaire",
+        "TRANSACTION_SAVE_FAILED": "Erreur lors de l'enregistrement de la transaction",
+        "SAVING_NOT_FOUND": "Compte épargne introuvable",
+        "UNAUTHORIZED_SAVING_ACCOUNT": "Accès non autorisé au compte épargne",
+        "TARGET_ACCOUNT_NOT_FOUND": "Compte bancaire cible introuvable",
+        "UNAUTHORIZED_TARGET_ACCOUNT": "Accès non autorisé au compte bancaire cible",
+        "UNAUTHORIZED": "Non authentifié",
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "fromAccountRequired": "Compte source requis",
+        "amountInvalid": "Veuillez entrer un montant valide",
+        "amountAboveBalance": "Montant supérieur au solde disponible du compte source",
+        "default": "Une erreur est survenue"
+      },
+      "depositModal": {
+        "title": "Alimenter l'épargne",
+        "sourceAccount": "Compte source",
+        "selectAccount": "Sélectionner un compte",
+        "amount": "Montant à déposer (€)",
+        "confirm": "Confirmer le dépôt",
+        "cancel": "Annuler",
+        "submitting": "Dépôt en cours..."
+      }
+    }
+  },
+  "Advisor": {
+    "dashboard": {
+      "loading": "Chargement...",
+      "loadError": "Impossible de charger les statistiques",
+      "clients": "Mes clients",
+      "activeClients": "Clients actifs",
+      "activeLoans": "Prêts actifs",
+      "creditsInProgress": "Crédits en cours",
+      "pending": "En attente",
+      "toValidate": "À valider",
+      "totalAmount": "Montant total",
+      "quickActions": "Actions rapides",
+      "viewClients": "Voir mes clients",
+      "loansToValidate": "Prêts à valider ({count})"
+    },
+    "loans": {
+      "loading": "Chargement...",
+      "title": "Demandes de prêts en attente",
+      "pendingCount": "{count} {count, plural, one {demande} other {demandes}} en attente de traitement",
+      "empty": {
+        "title": "Aucune demande en attente",
+        "description": "Toutes les demandes de prêts ont été traitées"
+      },
+      "card": {
+        "title": "Demande de prêt",
+        "status": {
+          "PENDING": "EN ATTENTE"
+        },
+        "amountRequested": "Montant demandé",
+        "duration": "Durée",
+        "months": "mois",
+        "monthlyPayment": "Mensualités",
+        "interestRate": "Taux d'intérêt",
+        "monthlyInsurance": "Assurance mensuelle",
+        "requestedAt": "Date de demande"
+      },
+      "actions": {
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "confirmRejectTitle": "Confirmer le rejet",
+        "confirmRejectBody": "Êtes-vous sûr de vouloir rejeter cette demande de prêt ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirmReject": "Confirmer le rejet",
+        "rejecting": "Rejet..."
+      },
+      "toasts": {
+        "approveSuccess": "Prêt approuvé avec succès ! Le client a été crédité et apparaît maintenant dans vos clients.",
+        "rejectSuccess": "Prêt rejeté avec succès",
+        "approveError": "Erreur lors de l'approbation du prêt",
+        "rejectError": "Erreur lors du rejet du prêt",
+        "loadError": "Erreur lors du chargement des demandes"
+      }
+    }
+  },
+  "Investment": {
+    "title": "Investissements",
+    "welcome": "Bienvenue dans la section investissements de votre espace client.",
+    "stocks": {
+      "title": "Actions",
+      "error": "Erreur",
+      "table": {
+        "ticker": "Ticker",
+        "company": "Entreprise",
+        "currentPrice": "Prix Actuel",
+        "action": "Action"
+      },
+      "buyOrSell": "Acheter ou vendre",
+      "chart": {
+        "evolution": "Évolution de {ticker}",
+        "history": "Historique sur 30 jours",
+        "noData": "Pas de données disponibles pour cette période.",
+        "price": "Prix"
+      }
+    },
+    "portfolio": {
+      "title": "Mon portefeuille",
+      "empty": {
+        "title": "Aucun portefeuille actif",
+        "description": "Commencez votre aventure d'investissement dès maintenant en ouvrant votre premier portefeuille de titres.",
+        "button": "Ouvrir mon portefeuille"
+      },
+      "error": "Erreur",
+      "totalValue": "Valeur totale estimée",
+      "holdings": "Mes positions",
+      "holdingsEmpty": {
+        "title": "Votre portefeuille est vide",
+        "description": "Vous n'avez pas encore de positions ouvertes. Explorez le marché pour trouver votre première opportunité."
+      },
+      "search": "Rechercher un titre...",
+      "noResults": "Aucun titre ne correspond à votre recherche.",
+      "quantity": "Quantité",
+      "avgPrice": "Prix moyen",
+      "currentPrice": "Prix actuel",
+      "profitLoss": "P/L",
+      "sharesCount": "{count} {count, plural, one {part} other {parts}}"
+    },
+    "orders": {
+      "title": "Mes ordres",
+      "error": "Une erreur est arrivée pendant la récupération de vos ordres.",
+      "empty": "Aucun ordre récent.",
+      "buy": "Achat",
+      "sell": "Vente",
+      "initialQuantity": "Quantité initiale",
+      "remainingQuantity": "Quantité restante",
+      "limitPrice": "Prix limite",
+      "date": "Date",
+      "shares": "titres",
+      "blockedAmount": "Montant bloqué",
+      "blockedShares": "Titres bloqués",
+      "units": "unités",
+      "status": {
+        "pending": "En attente",
+        "partiallyFilled": "Partiel",
+        "executed": "Exécuté",
+        "cancelled": "Annulé"
+      }
+    }
+  },
   "Transfer": {
     "title": "Effectuer un virement",
     "subtitle": "Transférer des fonds vers un autre compte",
@@ -587,7 +1005,21 @@
     "actions": {
       "submit": "Effectuer le virement",
       "cancel": "Annuler",
-      "back": "Retour"
+      "back": "Retour",
+      "inProgress": "Virement en cours..."
+    },
+    "placeholders": {
+      "description": "Ex: Remboursement, Épargne mensuelle..."
+    },
+    "info": {
+      "title": "Information importante",
+      "checkDetails": "Vérifiez attentivement les comptes et le montant avant de confirmer",
+      "immediate": "Le virement est immédiat entre vos comptes",
+      "emailConfirmation": "Vous recevrez une confirmation par email"
+    },
+    "labels": {
+      "availableBalance": "Solde disponible",
+      "newSourceBalance": "Nouveau solde (compte source)"
     }
   },
   "LearnMore": {
