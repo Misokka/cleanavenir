@@ -27,6 +27,7 @@ interface NavigationItem {
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const t = useTranslations('Dashboard');
+  const tLoans = useTranslations('Loans');
   const locale = useLocale();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -66,7 +67,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
   const getLogoutButtonText = () => {
     if (logoutLoading) {
-      return locale === 'fr' ? 'Déconnexion...' : 'Logging out...';
+      return t('header.loggingOut');
     }
     return t('navigation.logout');
   };
@@ -338,20 +339,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   );
 
   function getCurrentPageTitle(): string {
-    if (pathname.startsWith(`/${locale}/admin/statistics`)) return 'Statistiques';
-    if (pathname.startsWith(`/${locale}/admin/clients`)) return 'Gestion des clients';
-    if (pathname.startsWith(`/${locale}/admin/settings`)) return 'Paramètres';
+    if (pathname.startsWith(`/${locale}/admin/statistics`)) return t('pageTitles.admin.statistics');
+    if (pathname.startsWith(`/${locale}/admin/clients`)) return t('pageTitles.admin.clients');
+    if (pathname.startsWith(`/${locale}/admin/settings`)) return t('pageTitles.admin.settings');
     
-    if (pathname.startsWith(`/${locale}/advisor/clients`)) return 'Mes clients';
-    if (pathname.startsWith(`/${locale}/advisor/loans`)) return 'Prêts à valider';
-    if (pathname === `/${locale}/advisor/dashboard`) return 'Vue d\'ensemble';
-    
+    if (pathname.startsWith(`/${locale}/advisor/clients`)) return t('pageTitles.advisor.clients');
+    if (pathname.startsWith(`/${locale}/advisor/loans`)) return t('pageTitles.advisor.loans');
+    if (pathname === `/${locale}/advisor/dashboard`) return t('pageTitles.advisor.dashboard');
+     
     if (pathname === `/${locale}/client/dashboard`) return t('overview.title');
     if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
     if (pathname.startsWith(`/${locale}/dashboard/savings`)) return t('savings.title');
-    if (pathname.startsWith(`/${locale}/client/dashboard/loans`)) return 'Mes prêts';
-    if (pathname.startsWith(`/${locale}/client/dashboard/operations`)) return 'Opérations';
-    
+        if (pathname.startsWith(`/${locale}/client/dashboard/loans`)) return tLoans('title');
+    if (pathname.startsWith(`/${locale}/client/dashboard/operations`)) return t('operations.title');
+        if (pathname.startsWith(`/${locale}/client/dashboard/loans`)) return tLoans('title');
+
     if (pathname === `/${locale}/dashboard`) return t('overview.title');
     if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
     if (pathname === `/${locale}/dashboard/savings`) return t('savings.title');

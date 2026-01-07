@@ -212,7 +212,32 @@
         "downloadRib": "Télécharger le RIB",
         "fullHistory": "Historique complet"
       },
-      "accountDetailsDescription": "Détails et opérations de votre"
+      "accountDetailsDescription": "Détails et opérations de votre",
+      "detail": {
+        "errorTitle": "Erreur",
+        "notFound": "Compte introuvable",
+        "backToAccounts": "Retour aux comptes",
+        "balance": "Solde",
+        "iban": "IBAN",
+        "currency": "Devise",
+        "identifier": "Identifiant",
+        "makeTransfer": "Effectuer un virement",
+        "rename": "Renommer",
+        "delete": "Supprimer",
+        "downloadRib": "Télécharger le RIB",
+        "ribDownloadFailed": "Téléchargement du RIB échoué",
+        "ribUnavailable": "RIB introuvable ou indisponible: {message}",
+        "latestOperations": "Dernières opérations",
+        "credit": "Crédit",
+        "debit": "Débit",
+        "type": "Type:",
+        "from": "De:",
+        "to": "Vers:",
+        "seeAll": "Voir toutes les opérations",
+        "seeLess": "Voir moins",
+        "noOperationsTitle": "Aucune opération",
+        "noOperationsHint": "Les opérations sur ce compte apparaîtront ici"
+      }
     },
     "savings": {
       "title": "Épargne",

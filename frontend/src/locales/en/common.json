@@ -179,6 +179,18 @@
       "today": "Today",
       "loggingOut": "Logging out..."
     },
+    "pageTitles": {
+      "admin": {
+        "statistics": "Statistics",
+        "clients": "Client management",
+        "settings": "Settings"
+      },
+      "advisor": {
+        "clients": "My clients",
+        "loans": "Loans to validate",
+        "dashboard": "Overview"
+      }
+    },
     "overview": {
       "title": "Overview",
       "description": "Manage your accounts and view your recent transactions on your Clean Avenir dashboard",
@@ -212,7 +224,32 @@
         "downloadRib": "Download RIB",
         "fullHistory": "Full history"
       },
-      "accountDetailsDescription": "Details and operations of your"
+      "accountDetailsDescription": "Details and operations of your",
+      "detail": {
+        "errorTitle": "Error",
+        "notFound": "Account not found",
+        "backToAccounts": "Back to accounts",
+        "balance": "Balance",
+        "iban": "IBAN",
+        "currency": "Currency",
+        "identifier": "Identifier",
+        "makeTransfer": "Make a transfer",
+        "rename": "Rename",
+        "delete": "Delete",
+        "downloadRib": "Download RIB",
+        "ribDownloadFailed": "RIB download failed",
+        "ribUnavailable": "RIB not found or unavailable: {message}",
+        "latestOperations": "Latest operations",
+        "credit": "Credit",
+        "debit": "Debit",
+        "type": "Type:",
+        "from": "From:",
+        "to": "To:",
+        "seeAll": "See all operations",
+        "seeLess": "See less",
+        "noOperationsTitle": "No operation",
+        "noOperationsHint": "Operations for this account will appear here"
+      }
     },
     "savings": {
       "title": "Savings",

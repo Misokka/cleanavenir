@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { DashboardLayout } from '../../../../../components/templates/DashboardLayout';
 import { Card } from '../../../../../components/atoms/Card';
@@ -21,6 +22,7 @@ export default function AccountDetailPage() {
   const params = useParams();
   const locale = params.locale as string;
   const accountId = params.id as string;
+  const tDetail = useTranslations('Dashboard.accounts.detail');
   
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [displayLimit, setDisplayLimit] = useState(10);
@@ -79,13 +81,13 @@ export default function AccountDetailPage() {
       <DashboardLayout>
         <Card className="text-center py-12 border-red-200 bg-red-50">
           <Typography variant="h4" className="mb-2 text-red-700">
-            Erreur
+            {tDetail('errorTitle')}
           </Typography>
           <Typography color="muted" className="mb-4">
-            {error || 'Compte introuvable'}
+            {error || tDetail('notFound')}
           </Typography>
           <Button variant="primary" onClick={() => router.push(`/${locale}/dashboard/accounts`)}>
-            Retour aux comptes
+            {tDetail('backToAccounts')}
           </Button>
         </Card>
       </DashboardLayout>
@@ -118,7 +120,7 @@ export default function AccountDetailPage() {
             </div>
             <div className="text-right">
               <Typography variant="caption" className="text-white opacity-75 mb-1">
-                Solde
+                {tDetail('balance')}
               </Typography>
               <Typography variant="h1" className={`font-bold ${getBalanceColor(account.balance)} text-white`}>
                 {formatCurrency(account.balance, locale === 'fr' ? 'fr-FR' : 'en-US', account.currency)}
@@ -130,7 +132,7 @@ export default function AccountDetailPage() {
         <div className="grid md:grid-cols-3 gap-6">
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              IBAN
+              {tDetail('iban')}
             </Typography>
             <Typography variant="body" className="font-mono">
               {formatIban(account.iban)}
@@ -139,7 +141,7 @@ export default function AccountDetailPage() {
           
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              Devise
+              {tDetail('currency')}
             </Typography>
             <Typography variant="body">
               {account.currency}
@@ -148,7 +150,7 @@ export default function AccountDetailPage() {
           
           <Card>
             <Typography variant="caption" color="muted" className="mb-2">
-              Identifiant
+              {tDetail('identifier')}
             </Typography>
             <Typography variant="body" className="font-mono text-sm">
               {account.id}
@@ -161,26 +163,26 @@ export default function AccountDetailPage() {
             variant="primary"
             onClick={() => router.push(`/${locale}/dashboard/operations/transfer?from=${accountId}`)}
           >
-            Effectuer un virement
+            {tDetail('makeTransfer')}
           </Button>
           <Button 
             variant="outline"
             onClick={() => setIsRenameModalOpen(true)}
           >
-            Renommer
+            {tDetail('rename')}
           </Button>
           <Button 
             variant="outline"
             onClick={() => setIsDeleteModalOpen(true)}
             className="text-red-600 border-red-600 hover:bg-red-50"
           >
-           Supprimer
+           {tDetail('delete')}
           </Button>
           <Button
             variant="outline"
             onClick={async () => {
               try {
-                console.log('Téléchargement RIB pour compte:', params.id);
+                console.log('RIB download for account:', params.id);
                 const blob = await accountService.downloadRib(params.id as string);
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -189,13 +191,13 @@ export default function AccountDetailPage() {
                 a.click();
                 URL.revokeObjectURL(url);
               } catch (e) {
-                console.error('Téléchargement du RIB échoué:', e);
-                const errorMessage = e instanceof Error ? e.message : 'Erreur inconnue';
-                alert(`RIB introuvable ou indisponible: ${errorMessage}`);
+                console.error(tDetail('ribDownloadFailed') + ':', e);
+                const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+                alert(tDetail('ribUnavailable', { message: errorMessage }));
               }
             }}
           >
-            Télécharger le RIB
+            {tDetail('downloadRib')}
           </Button>
         </div>
 
@@ -219,7 +221,7 @@ export default function AccountDetailPage() {
         {operations && operations.length > 0 ? (
           <div>
             <Typography variant="h3" className="mb-4">
-              Dernières opérations
+              {tDetail('latestOperations')}
             </Typography>
             <Card>
               <div className="divide-y divide-gray-200">
@@ -256,13 +258,13 @@ export default function AccountDetailPage() {
                               <span className={`px-2 py-0.5 rounded text-xs font-medium ${
                                 isCredit ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                               }`}>
-                                {isCredit ? 'Crédit' : 'Débit'}
+                                {isCredit ? tDetail('credit') : tDetail('debit')}
                               </span>
                             </div>
                             
                             <div className="space-y-1">
                               <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <span className="font-medium">Type:</span>
+                                <span className="font-medium">{tDetail('type')}</span>
                                 <span>{operationType}</span>
                                 <span>•</span>
                                 <span className="text-gray-500">{paymentMethod}</span>
@@ -271,7 +273,7 @@ export default function AccountDetailPage() {
                               {otherAccount && (
                                 <div className="flex items-center gap-2 text-sm">
                                   <span className="font-medium text-gray-600">
-                                    {isCredit ? 'De:' : 'Vers:'}
+                                    {isCredit ? tDetail('from') : tDetail('to')}
                                   </span>
                                   <span className="text-gray-900">{otherAccount.label}</span>
                                   <span className="text-xs font-mono text-gray-500">
@@ -308,7 +310,7 @@ export default function AccountDetailPage() {
                   onClick={() => setDisplayLimit(50)}
                   className="w-full md:w-auto"
                 >
-                  Voir toutes les opérations
+                  {tDetail('seeAll')}
                 </Button>
               </div>
             )}
@@ -319,7 +321,7 @@ export default function AccountDetailPage() {
                   onClick={() => setDisplayLimit(10)}
                   className="w-full md:w-auto"
                 >
-                  Voir moins
+                  {tDetail('seeLess')}
                 </Button>
               </div>
             )}
@@ -328,10 +330,10 @@ export default function AccountDetailPage() {
           <Card className="text-center py-12">
             <div className="text-6xl mb-4"></div>
             <Typography variant="h4" className="mb-2">
-              Aucune opération
+              {tDetail('noOperationsTitle')}
             </Typography>
             <Typography color="muted">
-              Les opérations sur ce compte apparaîtront ici
+              {tDetail('noOperationsHint')}
             </Typography>
           </Card>
         )}

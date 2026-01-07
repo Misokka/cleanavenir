@@ -42,7 +42,7 @@ export function Header() {
 
   const getLogoutButtonText = () => {
     if (logoutLoading) {
-      return locale === 'fr' ? 'Déconnexion...' : 'Logging out...';
+      return t('logoutLoading');
     }
     return t('logout');
   };
