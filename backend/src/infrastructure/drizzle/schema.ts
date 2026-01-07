@@ -186,7 +186,9 @@ export const orders = sqliteTable('orders', {
   limitPrice: integer('limit_price').notNull(), // price in cents
   status: text('status').notNull().default('OPEN'),
   blockedMoneyAmount: integer('blocked_money_amount'),
+  remainingBlockedMoneyAmount: integer('remaining_blocked_money_amount'),
   blockedStockQuantity: integer('blocked_stock_quantity'),
+  sellerHoldingAveragePrice: integer('seller_holding_average_price'),
   createdAt: text('created_at').notNull(),
 });
 
@@ -237,11 +239,39 @@ export const discussions = sqliteTable('discussions', {
   clientId: text('client_id').notNull().references(() => clients.id),
   advisorId: text('advisor_id').references(() => advisors.id),
   subject: text('subject'),
+  status: text('status').notNull().default('PENDING'), // PENDING, ASSIGNED, CLOSED
   createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 });
 
 export type DiscussionDrizzle = InferSelectModel<typeof discussions>;
 export type NewDiscussionDrizzle = InferInsertModel<typeof discussions>;
+
+// Messages
+export const messages = sqliteTable('messages', {
+  id: text('id').primaryKey(),
+  discussionId: text('discussion_id').notNull().references(() => discussions.id),
+  senderId: text('sender_id').notNull().references(() => users.id),
+  senderRole: text('sender_role').notNull(), // CLIENT, ADVISOR
+  content: text('content').notNull(),
+  createdAt: text('created_at').notNull(),
+});
+
+export type MessageDrizzle = InferSelectModel<typeof messages>;
+export type NewMessageDrizzle = InferInsertModel<typeof messages>;
+
+// Discussion transfers (traçabilité des transferts)
+export const discussionTransfers = sqliteTable('discussion_transfers', {
+  id: text('id').primaryKey(),
+  discussionId: text('discussion_id').notNull().references(() => discussions.id),
+  fromAdvisorId: text('from_advisor_id').notNull().references(() => advisors.id),
+  toAdvisorId: text('to_advisor_id').notNull().references(() => advisors.id),
+  reason: text('reason'),
+  createdAt: text('created_at').notNull(),
+});
+
+export type DiscussionTransferDrizzle = InferSelectModel<typeof discussionTransfers>;
+export type NewDiscussionTransferDrizzle = InferInsertModel<typeof discussionTransfers>;
 
 
 //---------------- relations -------------------------
@@ -455,6 +485,36 @@ export const discussionsRelations = relations(discussions, ({ one, many }) => ({
   advisor: one(advisors, {
     fields: [discussions.advisorId],
     references: [advisors.id]
+  }),
+  messages: many(messages),
+  transfers: many(discussionTransfers)
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  discussion: one(discussions, {
+    fields: [messages.discussionId],
+    references: [discussions.id]
+  }),
+  sender: one(users, {
+    fields: [messages.senderId],
+    references: [users.id]
+  })
+}));
+
+export const discussionTransfersRelations = relations(discussionTransfers, ({ one }) => ({
+  discussion: one(discussions, {
+    fields: [discussionTransfers.discussionId],
+    references: [discussions.id]
+  }),
+  fromAdvisor: one(advisors, {
+    fields: [discussionTransfers.fromAdvisorId],
+    references: [advisors.id],
+    relationName: "transfer_from"
+  }),
+  toAdvisor: one(advisors, {
+    fields: [discussionTransfers.toAdvisorId],
+    references: [advisors.id],
+    relationName: "transfer_to"
   })
 }));
 
@@ -465,3 +525,22 @@ export const beneficiariesRelations = relations(beneficiaries, ({ one }) => ({
   })
 }));
 
+
+export const emailVerificationTokens = sqliteTable('email_verification_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  tokenHash: text('token_hash').notNull(), 
+  expiresAt: text('expires_at').notNull(),
+  usedAt: text('used_at'), 
+  createdAt: text('created_at').notNull(),
+});
+
+export type EmailVerificationTokenDrizzle = InferSelectModel<typeof emailVerificationTokens>;
+export type NewEmailVerificationTokenDrizzle = InferInsertModel<typeof emailVerificationTokens>;
+
+export const emailVerificationTokensRelations = relations(emailVerificationTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [emailVerificationTokens.userId],
+    references: [users.id]
+  })
+}));

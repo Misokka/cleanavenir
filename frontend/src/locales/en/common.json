@@ -115,7 +115,11 @@
       "register": "Create account",
       "loading": "Signing in...",
       "success": "Login successful!",
-      "error": "Invalid credentials"
+      "error": "Invalid credentials",
+      "emailNotVerified": "Your account has not been activated yet. Please check your email.",
+      "verificationEmailSent": "A new verification email has been sent.",
+      "resendingEmail": "Sending...",
+      "resendVerificationEmail": "Resend verification email"
     },
     "register": {
       "title": "Sign up",
@@ -135,7 +139,8 @@
         "emailExists": "This email address is already in use",
         "passwordMismatch": "Passwords do not match",
         "weakPassword": "Password must contain at least 8 characters"
-      }
+      },
+      "successWithVerification": "Account created! Please check your email to activate your account."
     },
     "roles": {
       "client": "Individual client",
@@ -147,6 +152,38 @@
       "invalidEmail": "Invalid email address",
       "minLength": "Minimum {{count}} characters",
       "maxLength": "Maximum {{count}} characters"
+    },
+    "verifyEmail": {
+      "title": "Email Verification",
+      "subtitle": "Confirm your email address",
+      "verifying": "Verifying...",
+      "successTitle": "Email verified!",
+      "successMessage": "Your account has been activated successfully. You can now sign in.",
+      "goToLogin": "Sign in",
+      "expiredTitle": "Link expired",
+      "expiredMessage": "This verification link has expired. Please request a new one.",
+      "invalidTitle": "Invalid link",
+      "invalidMessage": "This verification link is invalid or has already been used.",
+      "noTokenMessage": "No verification token provided.",
+      "backToLogin": "Back to login",
+      "emailPlaceholder": "Your email address",
+      "resendButton": "Resend email",
+      "resending": "Sending...",
+      "resendSuccess": "A new verification email has been sent."
+    },
+    "checkEmail": {
+      "title": "Verification Required",
+      "subtitle": "Confirm your email address to continue",
+      "mainTitle": "Check your email",
+      "message": "We have sent a verification email to:",
+      "instruction": "Click the link in the email to activate your account. Then you can sign in.",
+      "goToLogin": "Go to login page",
+      "noEmailReceived": "Didn't receive the email?",
+      "resendButton": "Resend verification email",
+      "resending": "Sending...",
+      "resendSuccess": "A new verification email has been sent!",
+      "resendError": "Error sending email. Please try again.",
+      "spamWarning": "Remember to check your spam or junk folder."
     }
   },
   "Dashboard": {
@@ -159,6 +196,7 @@
       "loans": "Loans",
       "operations": "Operations",
       "investments": "Investments",
+      "messaging": "Messaging",
       "logout": "Logout",
       "director": {
         "overview": "Overview",
@@ -170,7 +208,8 @@
       "advisor": {
         "overview": "Overview",
         "clients": "My clients",
-        "loansToValidate": "Loans to validate"
+        "loansToValidate": "Loans to validate",
+        "messaging": "Messaging"
       }
     },
     "header": {
@@ -1036,6 +1075,46 @@
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has been moved.",
     "backHome": "Back to home"
+  },
+  "Messaging": {
+    "contactAdvisor": "Contact an advisor",
+    "title": "Messaging",
+    "newConversation": "New conversation",
+    "newDiscussion": "New discussion",
+    "myConversations": "My conversations",
+    "myDiscussions": "My discussions",
+    "noConversations": "No conversations",
+    "noDiscussions": "No discussions",
+    "noMessages": "No messages yet",
+    "selectDiscussion": "Select a discussion",
+    "startConversation": "Start a conversation with your advisor",
+    "pending": "Pending",
+    "assigned": "In progress",
+    "closed": "Closed",
+    "send": "Send",
+    "cancel": "Cancel",
+    "create": "Create",
+    "typePlaceholder": "Type your message...",
+    "subjectPlaceholder": "Subject of your request",
+    "subject": "Subject",
+    "advisor": {
+      "inbox": "Inbox",
+      "pendingDiscussions": "Pending discussions",
+      "myDiscussions": "My discussions",
+      "noPending": "No pending discussions",
+      "noAssigned": "No assigned discussions",
+      "transfer": "Transfer",
+      "transferTo": "Transfer to",
+      "transferReason": "Reason for transfer",
+      "transferSuccess": "Discussion transferred successfully",
+      "selectAdvisor": "Select an advisor",
+      "claimSuccess": "You are now the advisor for this discussion",
+      "alreadyClaimed": "This discussion has already been claimed by another advisor"
+    },
+    "errors": {
+      "loadFailed": "Error loading discussions",
+      "sendFailed": "Error sending message",
+      "createFailed": "Error creating discussion"
+    }
   }
-
 }

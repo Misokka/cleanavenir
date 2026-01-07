@@ -2,19 +2,24 @@ import { useState, useCallback } from 'react';
 import { authService } from '@/infrastructure/web/services/authService';
 import { 
   RegisterRequest, 
-  AuthResponse, 
+  RegisterResponse,
   MutationState,
   ValidationError 
 } from '@/infrastructure/web/types';
 
+interface RegisterState extends MutationState {
+  registeredEmail: string | null;
+}
+
 export function useRegister() {
-  const [state, setState] = useState<MutationState>({
+  const [state, setState] = useState<RegisterState>({
     loading: false,
     error: null,
     success: false,
+    registeredEmail: null,
   });
 
-  const register = useCallback(async (userData: RegisterRequest): Promise<AuthResponse | null> => {
+  const register = useCallback(async (userData: RegisterRequest): Promise<RegisterResponse | null> => {
     if (userData.password !== userData.confirmation) {
       setState(prev => ({
         ...prev,
@@ -35,6 +40,7 @@ export function useRegister() {
       loading: true,
       error: null,
       success: false,
+      registeredEmail: null,
     });
 
     try {
@@ -44,6 +50,7 @@ export function useRegister() {
         ...prev,
         loading: false,
         success: true,
+        registeredEmail: result.email,
       }));
 
       return result;
@@ -66,6 +73,7 @@ export function useRegister() {
         ...prev,
         loading: false,
         error: errorMessage,
+        registeredEmail: null,
       }));
 
       return null;
@@ -77,6 +85,7 @@ export function useRegister() {
       loading: false,
       error: null,
       success: false,
+      registeredEmail: null,
     });
   }, []);
 
@@ -121,6 +130,7 @@ export function useRegister() {
     loading: state.loading,
     error: state.error,
     success: state.success,
+    registeredEmail: state.registeredEmail,
   };
 }
 

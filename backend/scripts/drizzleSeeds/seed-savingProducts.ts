@@ -10,18 +10,21 @@ async function seed(){
       id: randomUUID(),
       label: "Livret A",
       rate: 1.75 * 1_000_000, // en micro pourcent
+      rateUpdatedAt: new Date().toISOString(),
     }
 
     const savingProduct2: NewSavingProductDrizzle = {
       id: randomUUID(),
       label: "PEL",
       rate: 3 * 1_000_000, // en micro pourcent
+      rateUpdatedAt: new Date().toISOString(),
     }
 
     const savingProduct3: NewSavingProductDrizzle = {
       id: randomUUID(),
       label: "LLDS",
       rate: 2.3 * 1_000_000, // en micro pourcent
+      rateUpdatedAt: new Date().toISOString(),
     }
 
     await db.insert(savingProducts).values(savingProduct1);

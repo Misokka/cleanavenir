@@ -2,6 +2,8 @@
 import { useGetMyOrders } from '@/features/orders/useGetMyOrders'
 import React from 'react'
 import { useTranslations } from 'next-intl';
+
+import React, { FormEvent, useState, useRef, useEffect } from 'react'
 import { 
   ArrowTrendingUpIcon, 
   ArrowTrendingDownIcon, 
@@ -9,11 +11,14 @@ import {
   CheckCircleIcon, 
   XCircleIcon,
   BanknotesIcon,
-  LockClosedIcon
+  LockClosedIcon,
+  EllipsisVerticalIcon, // <--- NOUVEL IMPORT
+  TrashIcon             // <--- NOUVEL IMPORT
 } from '@heroicons/react/24/outline';
 import { Order } from '@/infrastructure/web/services/orderService';
+import { useCancelMyOrder } from '@/features/orders/useCancelMyOrder';
 
-
+// --- UTILITAIRES ---
 const formatCurrency = (value: number | undefined) => {
   if (value === undefined) return '0,00 €';
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
@@ -31,11 +36,28 @@ const formatDate = (dateString: string) => {
 interface MyOrdersOverviewProps {
   orders: Order[] | undefined,
   loading: boolean,
-  error: Error | null
+  error: Error | null,
+  refetchOrders: () => void;
+  refetchPortfolio: () => void;
 }
 
-function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
-  const t = useTranslations('Investment.orders');
+
+function MyOrdersOverview({orders, loading, error, refetchOrders, refetchPortfolio}: MyOrdersOverviewProps) {
+    const t = useTranslations('Investment.orders');
+
+
+  // Cette fonction est passée aux enfants
+  async function handleCancelOrder(orderId: string){
+    const response = await cancelMyOrder(orderId);
+    if(response instanceof Error){
+      throw response
+    } else {
+      console.log(response.message);
+      refetchOrders();
+      refetchPortfolio();
+
+    }
+  }
 
   if (loading) {
     return (
@@ -63,15 +85,46 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {orders.map((order) => {
-        const isBuy = order.type === 'BUY';
-        
-        return (
-          <div 
-            key={order.id} 
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col"
-          >
-            {/* --- HEADER --- */}
+      {orders.map((order) => (
+        <OrderCard 
+          key={order.id} 
+          order={order} 
+          onCancelOrder={handleCancelOrder} 
+        />
+      ))}
+    </div>
+  )
+}
+
+// --- SOUS-COMPOSANT CARTE (Pour isoler la logique du menu) ---
+interface OrderCardProps {
+  order: Order;
+  onCancelOrder: (id: string) => Promise<void>;
+}
+
+function OrderCard({ order, onCancelOrder }: OrderCardProps) {
+  const isBuy = order.type === 'BUY';
+  const isCancelable = ["PENDING", "PARTIALLY_FILLED"].includes(order.status);
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible hover:shadow-md transition-shadow duration-200 flex flex-col relative">
+
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+       {/* --- HEADER --- */}
             <div className="p-5 border-b border-gray-50 flex justify-between items-start">
               <div className="flex gap-3">
                 {/* Icône Type d'ordre */}
@@ -130,14 +183,78 @@ function MyOrdersOverview({orders, loading, error}: MyOrdersOverviewProps) {
                 )}
               </div>
             </div>
-          </div>
-        );
-      })}
+      
+      
+      
+      
+
+
     </div>
-  )
+  );
 }
 
-// Petit composant interne pour gérer les couleurs des statuts
+// --- SOUS-COMPOSANT MENU DÉROULANT ---
+function OrderMenu({ orderId, onCancel }: { orderId: string, onCancel: (id: string) => Promise<void> }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fermer le menu si on clique ailleurs
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleCancelClick = async () => {
+    try {
+      setIsCancelling(true);
+      await onCancel(orderId);
+      setIsCancelling(false);
+      setIsOpen(false);
+    } catch (e) {
+      console.error(e);
+      setIsCancelling(false);
+    }
+  };
+
+  return (
+    <div className="relative ml-2" ref={menuRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        aria-label="Options"
+      >
+        <EllipsisVerticalIcon className="w-5 h-5" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+          <div className="py-1">
+            <button
+              onClick={handleCancelClick}
+              disabled={isCancelling}
+              className="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCancelling ? (
+                <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+              ) : (
+                <TrashIcon className="mr-3 h-4 w-4 text-red-500 group-hover:text-red-600" aria-hidden="true" />
+              )}
+              {isCancelling ? 'Annulation...' : "Annuler l'ordre"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- SOUS-COMPOSANT BADGE STATUT ---
 function StatusBadge({ status }: { status: string }) {
   const t = useTranslations('Investment.orders.status');
   const styles = {
@@ -156,7 +273,7 @@ function StatusBadge({ status }: { status: string }) {
 
   const icons = {
     PENDING: ClockIcon,
-    PARTIALLY_FILLED: ClockIcon, // Ou une icône pie-chart
+    PARTIALLY_FILLED: ClockIcon, 
     EXECUTED: CheckCircleIcon,
     CANCELLED: XCircleIcon,
   };
@@ -174,4 +291,4 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export default MyOrdersOverview
+export default MyOrdersOverview;

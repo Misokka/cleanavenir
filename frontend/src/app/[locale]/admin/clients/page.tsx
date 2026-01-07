@@ -26,7 +26,6 @@ export default function AdminClientsPage() {
     return (
       <DashboardLayout>
         <Card className="text-center py-12 border-red-200 bg-red-50">
-          <div className="text-6xl mb-4">⚠️</div>
           <Typography variant="h4" className="mb-2 text-red-700">
             Erreur de chargement
           </Typography>

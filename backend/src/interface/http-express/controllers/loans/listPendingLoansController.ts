@@ -6,8 +6,17 @@ export const listPendingLoansController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const container = getContainer();
     const listPendingLoansUseCase = container.useCases.loan.listPendingLoans;
+    const userId = req.user?.id;
 
-    const result = await listPendingLoansUseCase.execute();
+    if (!userId) {
+      res.status(401).json({
+        error: 'UNAUTHORIZED',
+        message: 'User not authenticated',
+      });
+      return;
+    }
+
+    const result = await listPendingLoansUseCase.execute({ userId });
 
     if (!result.ok) {
       res.status(500).json({

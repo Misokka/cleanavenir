@@ -13,10 +13,12 @@ export class Order {
     public status: OrderStatus = "PENDING",
     public createdAt: Date,
     public blockedMoneyAmount?: number,
-    public blockedStockQuantity?: number
+    public remainingBlockedMoneyAmount?: number,
+    public blockedStockQuantity?: number,
+    public sellerHoldingAveragePrice?: number
   ) {}
 
-  public static create({orderIdentifier, stockIdentifier, clientIdentifier, orderType, initialQuantity, remainingQuantity, limitPrice, createdAt, status = "PENDING", blockedMoneyAmount, blockedStockQuantity}: {
+  public static create({orderIdentifier, stockIdentifier, clientIdentifier, orderType, initialQuantity, remainingQuantity, limitPrice, createdAt, status = "PENDING", blockedMoneyAmount, remainingBlockedMoneyAmount, blockedStockQuantity, sellerHoldingAveragePrice}: {
     orderIdentifier: string,
     stockIdentifier: string,
     clientIdentifier: string,
@@ -27,8 +29,10 @@ export class Order {
     createdAt: Date
     status?: OrderStatus,
     blockedMoneyAmount?: number,
-    blockedStockQuantity?: number
+    remainingBlockedMoneyAmount?: number,
+    blockedStockQuantity?: number,
+    sellerHoldingAveragePrice?: number
   }): Order {
-    return new Order(orderIdentifier, stockIdentifier, clientIdentifier, orderType, initialQuantity, remainingQuantity, limitPrice, status, createdAt, blockedMoneyAmount, blockedStockQuantity);
+    return new Order(orderIdentifier, stockIdentifier, clientIdentifier, orderType, initialQuantity, remainingQuantity, limitPrice, status, createdAt, blockedMoneyAmount, remainingBlockedMoneyAmount, blockedStockQuantity, sellerHoldingAveragePrice);
   }
 }

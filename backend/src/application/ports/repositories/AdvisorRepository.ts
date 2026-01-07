@@ -9,4 +9,5 @@ export interface AdvisorRepository{
   findById(advisorIdentifier: string): Promise<Result<Advisor, UserNotFoundError>>;
   findByUserId(userIdentifier: string): Promise<Result<Advisor, AdvisorNotFoundError>>;
   findRandom(): Promise<Result<Advisor, Error>>;
+  findAll(): Promise<Result<Advisor[], Error>>;
 }

@@ -110,7 +110,7 @@ export default function LoansClient() {
       {error && (
         <Card className="bg-red-50 border-red-200">
           <Typography variant="body" className="text-red-800">
-            ⚠️ {error}
+            {error}
           </Typography>
         </Card>
       )}

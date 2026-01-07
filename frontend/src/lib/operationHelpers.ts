@@ -4,6 +4,7 @@ export function getOperationTypeLabel(type: string): string {
     LOAN_PAYMENT: 'Prêt',
     STOCK_PURCHASE: 'Bourse',
     STOCK_SALE: 'Bourse',
+    ORDER_REFUND: 'Bourse',
     SAVINGS_INTEREST: 'Intérêts',
     INITIAL_DEPOSIT: 'Dépôt initial',
   };
@@ -28,6 +29,9 @@ export function getPaymentMethod(type: string, isCredit: boolean): string {
   }
   if (type === 'LOAN_PAYMENT') {
     return 'Prélèvement';
+  }
+  if (type === 'ORDER_REFUND') {
+    return 'Remboursement';
   }
   if (type === 'STOCK_PURCHASE') {
     return 'Achat';

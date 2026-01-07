@@ -143,20 +143,46 @@ export class OrderMatchingService {
       const savedTransactionResult = await this.transactionRepository.save(newTransaction);
       if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
+      const newBestBuyRemainingBlockedMonyAmount = (bestBuy.remainingBlockedMoneyAmount ?? 0) - (tradedQuantity * executionPrice)
       // mise à jour des ordres
       bestBuy.remainingQuantity -= tradedQuantity;
+      bestBuy.remainingBlockedMoneyAmount = newBestBuyRemainingBlockedMonyAmount;
       bestSell.remainingQuantity -= tradedQuantity;
 
       if(bestBuy.remainingQuantity === 0){
         bestBuy.status = "EXECUTED";
+        if(bestBuy.remainingBlockedMoneyAmount && bestBuy.remainingBlockedMoneyAmount > 100){ // > 100 car on laisse les frais d'achat
+          const buyerBankAccountResult = await this.bankAccountRepository.findDefaultAccountByClientId(bestBuy.clientIdentifier);
+          if(!buyerBankAccountResult.ok) return err(buyerBankAccountResult.error);
+          const buyerBankAccount = buyerBankAccountResult.value;
+
+          buyerBankAccount.deposit(bestBuy.remainingBlockedMoneyAmount);
+          const updatedBalanceResult = await this.bankAccountRepository.updateBalance(buyerBankAccount.accountIdentifier, buyerBankAccount.balance);
+          if(!updatedBalanceResult.ok) return err(updatedBalanceResult.error);
+
+          const remainingMoneyTransaction = Transaction.create({
+            transactionIdentifier: randomUUID(),
+            bankAccountIdentifier: buyerBankAccount.accountIdentifier,
+            fromAccountIdentifier: systemBankAccount.accountIdentifier,
+            toAccountIdentifier: buyerBankAccount.accountIdentifier,
+            amount: bestBuy.remainingBlockedMoneyAmount,
+            currency: "EUR",
+            description: `Refund for remaining money of ${stock.ticker.value} stocks purchase.`,
+            direction: "CREDIT",
+            type: "ORDER_REFUND",
+            createdAt: new Date()
+          });
+
+          const savedTransactionResult = await this.transactionRepository.save(remainingMoneyTransaction);
+          if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
+        }
         buyOrders.shift(); 
       } else {
         bestBuy.status = "PARTIALLY_FILLED";
       }
 
-      //Créer une fonction update
-      const buyOrderResult = await this.orderRepository.update(bestBuy);
-      if (!buyOrderResult.ok) return err(buyOrderResult.error);
+      const updateBuyOrderResult = await this.orderRepository.update(bestBuy);
+      if (!updateBuyOrderResult.ok) return err(updateBuyOrderResult.error);
 
 
       if (bestSell.remainingQuantity === 0) {
@@ -166,8 +192,8 @@ export class OrderMatchingService {
         bestSell.status = "PARTIALLY_FILLED";
       }
 
-      const sellOrderResult = await this.orderRepository.update(bestSell);
-      if (!sellOrderResult.ok) return err(sellOrderResult.error);
+      const updateSellOrderResult = await this.orderRepository.update(bestSell);
+      if (!updateSellOrderResult.ok) return err(updateSellOrderResult.error);
     }
 
     return ok(undefined);

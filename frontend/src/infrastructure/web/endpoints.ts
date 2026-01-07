@@ -5,6 +5,8 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     ME: '/auth/me',
+    VERIFY_EMAIL: '/auth/verify-email',
+    RESEND_VERIFICATION: '/auth/resend-verification',
   },
 
   USERS: {
@@ -70,7 +72,8 @@ export const API_ENDPOINTS = {
     ORDERS: {
       LIST_MY_ORDERS: '/orders/list-my-orders',
       CREATE: "/orders/create",
-      SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`
+      SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`,
+      CANCEL: (orderId: string) => `/orders/${orderId}/cancel`
     },
   },
 
