@@ -50,7 +50,8 @@
     "support": "Contact",
     "login": "Connexion",
     "signup": "Inscription",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "logoutLoading": "Déconnexion..."
   },
   "Footer": {
     "tagline": "Votre banque du futur, simple, moderne et responsable.",
@@ -175,7 +176,8 @@
     "header": {
       "greeting": "Bonjour, {firstName}",
       "welcome": "Bienvenue sur votre espace",
-      "today": "Aujourd'hui"
+      "today": "Aujourd'hui",
+      "loggingOut": "Déconnexion..."
     },
     "overview": {
       "title": "Vue d'ensemble",
@@ -267,6 +269,7 @@
       }
     },
     "operations": {
+      "title": "Opérations",
       "credit": "Crédit",
       "debit": "Débit",
       "date": "Date",
@@ -274,6 +277,18 @@
       "amount": "Montant",
       "category": "Catégorie",
       "recentTransactionsWillAppear": "Vos dernières transactions apparaîtront ici"
+    },
+    "pageTitles": {
+      "admin": {
+        "statistics": "Statistiques",
+        "clients": "Gestion des clients",
+        "settings": "Paramètres"
+      },
+      "advisor": {
+        "clients": "Mes clients",
+        "loans": "Prêts à valider",
+        "dashboard": "Vue d'ensemble"
+      }
     }
   },
   "Director": {
@@ -533,6 +548,7 @@
     }
   },
   "Loans": {
+    "title": "Mes prêts",
     "subtitle": "Gérez vos demandes de prêt et suivez vos remboursements",
     "actions": {
       "simulate": "Simuler",

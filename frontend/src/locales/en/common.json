@@ -50,7 +50,8 @@
     "support": "Contact",
     "login": "Login",
     "signup": "Sign up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutLoading": "Logging out..."
   },
   "Footer": {
     "tagline": "Your bank of the future, simple, modern and responsible.",
@@ -175,7 +176,8 @@
     "header": {
       "greeting": "Hello, {firstName}",
       "welcome": "Welcome to your space",
-      "today": "Today"
+      "today": "Today",
+      "loggingOut": "Logging out..."
     },
     "overview": {
       "title": "Overview",
@@ -267,6 +269,7 @@
       }
     },
     "operations": {
+      "title": "Operations",
       "credit": "Credit",
       "debit": "Debit",
       "date": "Date",
@@ -533,6 +536,7 @@
     }
   },
   "Loans": {
+    "title": "My loans",
     "subtitle": "Manage your loan requests and track repayments",
     "actions": {
       "simulate": "Simulate",
