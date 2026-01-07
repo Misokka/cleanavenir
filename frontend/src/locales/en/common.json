@@ -713,6 +713,76 @@
       }
     }
   },
+  "Savings": {
+    "detail": {
+      "title": "Savings Account",
+      "errorTitle": "Error",
+      "notFound": "Savings account not found",
+      "back": "Back",
+      "backToSavings": "Back to savings",
+      "rate": "Rate",
+      "openedOn": "Opened on",
+      "lastUpdate": "Last update",
+      "dailyInterests": "Daily interests",
+      "monthlyInterests": "Estimated monthly interests",
+      "yearlyInterests": "Estimated yearly interests",
+      "perDay": "per day",
+      "perMonth": "per month",
+      "perYear": "per year",
+      "linkedBankAccount": "Linked bank account",
+      "availableBalance": "Available balance",
+      "howItWorks": {
+        "title": "How do interests work?",
+        "dailyCalc": "Interests are calculated daily",
+        "formula": "Formula: balance × (rate / 365)",
+        "addedAt": "Automatically added every day at 00:01",
+        "compound": "Compound interests (calculated on the new balance)"
+      },
+      "projection": {
+        "title": "1-year projection",
+        "currentBalance": "Current balance",
+        "estimatedInterests": "Estimated interests",
+        "finalBalance": "Final balance",
+        "appliedRate": "Applied rate"
+      },
+      "actions": {
+        "title": "Available actions",
+        "deposit": "Add money",
+        "transfer": "Transfer to an account",
+        "refresh": "Refresh",
+        "viewAllSavings": "View all savings",
+        "viewSourceAccount": "View source account"
+      },
+      "toasts": {
+        "depositSuccess": "Deposit completed successfully",
+        "transferSuccess": "Transfer completed successfully"
+      },
+      "errors": {
+        "VALIDATION_ERROR": "Please check the provided information",
+        "SAVING_PRODUCT_NOT_FOUND": "Savings product not found",
+        "INITIAL_AMOUNT_BELOW_MIN": "Initial amount is below minimum",
+        "SOURCE_ACCOUNT_NOT_FOUND": "Source bank account not found",
+        "UNAUTHORIZED_SOURCE_ACCOUNT": "Unauthorized access to source account",
+        "INSUFFICIENT_SOURCE_BALANCE": "Insufficient balance on source account",
+        "SAVING_ALREADY_EXISTS": "You already have a savings of this type",
+        "IBAN_GENERATION_FAILED": "Unable to generate a unique IBAN",
+        "IBAN_INVALID": "Generated IBAN is invalid",
+        "DEBIT_SOURCE_FAILED": "Error debiting source account",
+        "DEBIT_BANK_FAILED": "Error debiting bank account",
+        "CREDIT_SAVING_FAILED": "Error crediting savings account",
+        "DEBIT_SAVING_FAILED": "Error debiting savings account",
+        "CREDIT_BANK_FAILED": "Error crediting bank account",
+        "TRANSACTION_SAVE_FAILED": "Error saving transaction",
+        "SAVING_NOT_FOUND": "Savings account not found",
+        "UNAUTHORIZED_SAVING_ACCOUNT": "Unauthorized access to savings account",
+        "TARGET_ACCOUNT_NOT_FOUND": "Target bank account not found",
+        "UNAUTHORIZED_TARGET_ACCOUNT": "Unauthorized access to target bank account",
+        "UNAUTHORIZED": "Not authenticated",
+        "INTERNAL_ERROR": "An internal error occurred",
+        "default": "An error occurred"
+      }
+    }
+  },
   "Advisor": {
     "dashboard": {
       "loading": "Loading...",

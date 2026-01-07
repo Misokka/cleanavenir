@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { DashboardLayout } from '../../../../../components/templates/DashboardLayout';
 import { Card } from '../../../../../components/atoms/Card';
@@ -18,7 +19,9 @@ import Link from 'next/link';
 export default function SavingDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = params.locale as string;
+  const localeParam = params.locale as string;
+  const locale = useLocale();
+  const t = useTranslations('Savings.detail');
   const savingId = params.id as string;
   
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -30,19 +33,19 @@ export default function SavingDetailPage() {
 
   const handleDepositSuccess = () => {
     refetch();
-    addToast('success', 'Dépôt effectué avec succès');
+    addToast('success', t('toasts.depositSuccess'));
   };
 
   const handleTransferSuccess = () => {
     refetch();
-    addToast('success', 'Transfert effectué avec succès');
+    addToast('success', t('toasts.transferSuccess'));
   };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      router.push(`/${locale}/auth/login`);
+      router.push(`/${localeParam}/auth/login`);
     }
-  }, [authLoading, isAuthenticated, router, locale]);
+  }, [authLoading, isAuthenticated, router, localeParam]);
 
   if (authLoading) {
     return (
@@ -69,13 +72,13 @@ export default function SavingDetailPage() {
       <DashboardLayout>
         <Card className="text-center py-12 border-red-200 bg-red-50">
           <Typography variant="h4" className="mb-2 text-red-700">
-            Erreur
+            {t('errorTitle')}
           </Typography>
           <Typography color="muted" className="mb-4">
-            {error || 'Compte épargne introuvable'}
+            {error || t('notFound')}
           </Typography>
-          <Button variant="primary" onClick={() => router.push(`/${locale}/dashboard/savings`)}>
-            Retour aux épargnes
+          <Button variant="primary" onClick={() => router.push(`/${localeParam}/dashboard/savings`)}>
+            {t('backToSavings')}
           </Button>
         </Card>
       </DashboardLayout>
@@ -85,14 +88,14 @@ export default function SavingDetailPage() {
   const sourceAccount = accounts?.find(acc => acc.id === saving.accountId);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'EUR',
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+    return new Date(dateString).toLocaleDateString(locale, {
       day: '2-digit',
       month: 'long',
       year: 'numeric'
@@ -128,16 +131,16 @@ export default function SavingDetailPage() {
               </div>
               <div>
                 <Typography variant="caption" className="text-green-100 mb-1">
-                  Compte Épargne
+                  {t('title')}
                 </Typography>
                 <Typography variant="h3" className="font-bold">
                   {formatCurrency(saving.balance)}
                 </Typography>
               </div>
             </div>
-            <Link href={`/${locale}/dashboard/savings`}>
+            <Link href={`/${localeParam}/dashboard/savings`}>
               <Button variant="outline" size="sm" className="text-white border-white hover:bg-white/20">
-                ← Retour
+                ← {t('back')}
               </Button>
             </Link>
           </div>
@@ -148,12 +151,12 @@ export default function SavingDetailPage() {
                 {saving.savingProduct?.label}
               </Typography>
               <Typography variant="body" className="font-semibold">
-                Taux: {(saving.savingProduct?.rate || 0).toFixed(2)}%
+                {t('rate')}: {(saving.savingProduct?.rate || 0).toFixed(2)}%
               </Typography>
             </div>
             <div>
               <Typography variant="caption" className="text-green-100 mb-1">
-                Ouvert le
+                {t('openedOn')}
               </Typography>
               <Typography variant="body" className="font-semibold">
                 {formatDate(saving.createdAt)}
@@ -161,7 +164,7 @@ export default function SavingDetailPage() {
             </div>
             <div>
               <Typography variant="caption" className="text-green-100 mb-1">
-                Dernière mise à jour
+                {t('lastUpdate')}
               </Typography>
               <Typography variant="body" className="font-semibold">
                 {formatDate(saving.updatedAt)}
@@ -174,13 +177,13 @@ export default function SavingDetailPage() {
           <Card>
             <div className="text-center">
               <Typography variant="caption" color="muted" className="mb-2">
-                Intérêts journaliers
+                {t('dailyInterests')}
               </Typography>
               <Typography variant="h3" className="text-green-600 font-bold mb-1">
                 +{formatCurrency(calculateDailyInterest())}
               </Typography>
               <Typography variant="caption" color="muted">
-                par jour
+                {t('perDay')}
               </Typography>
             </div>
           </Card>
@@ -188,13 +191,13 @@ export default function SavingDetailPage() {
           <Card>
             <div className="text-center">
               <Typography variant="caption" color="muted" className="mb-2">
-                Intérêts mensuels estimés
+                {t('monthlyInterests')}
               </Typography>
               <Typography variant="h3" className="text-green-600 font-bold mb-1">
                 +{formatCurrency(calculateMonthlyInterest())}
               </Typography>
               <Typography variant="caption" color="muted">
-                par mois
+                {t('perMonth')}
               </Typography>
             </div>
           </Card>
@@ -202,13 +205,13 @@ export default function SavingDetailPage() {
           <Card>
             <div className="text-center">
               <Typography variant="caption" color="muted" className="mb-2">
-                Intérêts annuels estimés
+                {t('yearlyInterests')}
               </Typography>
               <Typography variant="h3" className="text-green-600 font-bold mb-1">
                 +{formatCurrency(calculateYearlyInterest())}
               </Typography>
               <Typography variant="caption" color="muted">
-                par an
+                {t('perYear')}
               </Typography>
             </div>
           </Card>
@@ -217,9 +220,9 @@ export default function SavingDetailPage() {
         {sourceAccount && (
           <Card>
             <Typography variant="h4" className="mb-4">
-              Compte bancaire associé
+              {t('linkedBankAccount')}
             </Typography>
-            <Link href={`/${locale}/dashboard/accounts/${sourceAccount.id}`}>
+            <Link href={`/${localeParam}/dashboard/accounts/${sourceAccount.id}`}>
               <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                 <div className="flex items-center space-x-4">
                   <div className="bg-blue-100 p-3 rounded-full">
@@ -239,7 +242,7 @@ export default function SavingDetailPage() {
                     {formatCurrency(sourceAccount.balance)}
                   </Typography>
                   <Typography variant="caption" color="muted">
-                    Solde disponible
+                    {t('availableBalance')}
                   </Typography>
                 </div>
               </div>
@@ -253,13 +256,13 @@ export default function SavingDetailPage() {
               <span className="text-2xl"></span>
               <div>
                 <Typography variant="body" className="font-medium text-blue-900 mb-2">
-                  Comment fonctionnent les intérêts ?
+                  {t('howItWorks.title')}
                 </Typography>
                 <Typography variant="caption" className="text-blue-800">
-                  • Les intérêts sont calculés quotidiennement<br/>
-                  • Formule : solde × (taux / 365)<br/>
-                  • Ajoutés automatiquement chaque jour à 00:01<br/>
-                  • Intérêts composés (calculés sur le nouveau solde)
+                  • {t('howItWorks.dailyCalc')}<br/>
+                  • {t('howItWorks.formula')}<br/>
+                  • {t('howItWorks.addedAt')}<br/>
+                  • {t('howItWorks.compound')}
                 </Typography>
               </div>
             </div>
@@ -270,13 +273,13 @@ export default function SavingDetailPage() {
               <span className="text-2xl"></span>
               <div>
                 <Typography variant="body" className="font-medium text-green-900 mb-2">
-                  Projection sur 1 an
+                  {t('projection.title')}
                 </Typography>
                 <Typography variant="caption" className="text-green-800">
-                  • Solde actuel : {formatCurrency(saving.balance)}<br/>
-                  • Intérêts estimés : {formatCurrency(calculateYearlyInterest())}<br/>
-                  • Solde final : {formatCurrency(saving.balance + calculateYearlyInterest())}<br/>
-                  • Taux appliqué : {(saving.savingProduct?.rate || 0).toFixed(2)}% 
+                  • {t('projection.currentBalance')}: {formatCurrency(saving.balance)}<br/>
+                  • {t('projection.estimatedInterests')}: {formatCurrency(calculateYearlyInterest())}<br/>
+                  • {t('projection.finalBalance')}: {formatCurrency(saving.balance + calculateYearlyInterest())}<br/>
+                  • {t('projection.appliedRate')}: {(saving.savingProduct?.rate || 0).toFixed(2)}% 
                 </Typography>
               </div>
             </div>
@@ -285,34 +288,34 @@ export default function SavingDetailPage() {
 
         <Card>
           <Typography variant="h4" className="mb-4">
-            Actions disponibles
+            {t('actions.title')}
           </Typography>
           <div className="flex flex-wrap gap-4">
             <Button 
               variant="primary" 
               onClick={() => setIsDepositModalOpen(true)}
             >
-              Ajouter de l&apos;argent
+              {t('actions.deposit')}
             </Button>
             <Button 
               variant="secondary" 
               onClick={() => setIsTransferModalOpen(true)}
               disabled={saving.balance === 0}
             >
-              Transférer vers un compte
+              {t('actions.transfer')}
             </Button>
             <Button variant="outline" onClick={refetch}>
-              Actualiser
+              {t('actions.refresh')}
             </Button>
-            <Link href={`/${locale}/dashboard/savings`}>
+            <Link href={`/${localeParam}/dashboard/savings`}>
               <Button variant="secondary">
-                Voir toutes les épargnes
+                {t('actions.viewAllSavings')}
               </Button>
             </Link>
             {sourceAccount && (
-              <Link href={`/${locale}/dashboard/accounts/${sourceAccount.id}`}>
+              <Link href={`/${localeParam}/dashboard/accounts/${sourceAccount.id}`}>
                 <Button variant="secondary">
-                  Voir le compte source
+                  {t('actions.viewSourceAccount')}
                 </Button>
               </Link>
             )}

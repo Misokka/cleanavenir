@@ -713,6 +713,76 @@
       }
     }
   },
+  "Savings": {
+    "detail": {
+      "title": "Compte Épargne",
+      "errorTitle": "Erreur",
+      "notFound": "Compte épargne introuvable",
+      "back": "Retour",
+      "backToSavings": "Retour aux épargnes",
+      "rate": "Taux",
+      "openedOn": "Ouvert le",
+      "lastUpdate": "Dernière mise à jour",
+      "dailyInterests": "Intérêts journaliers",
+      "monthlyInterests": "Intérêts mensuels estimés",
+      "yearlyInterests": "Intérêts annuels estimés",
+      "perDay": "par jour",
+      "perMonth": "par mois",
+      "perYear": "par an",
+      "linkedBankAccount": "Compte bancaire associé",
+      "availableBalance": "Solde disponible",
+      "howItWorks": {
+        "title": "Comment fonctionnent les intérêts ?",
+        "dailyCalc": "Les intérêts sont calculés quotidiennement",
+        "formula": "Formule : solde × (taux / 365)",
+        "addedAt": "Ajoutés automatiquement chaque jour à 00:01",
+        "compound": "Intérêts composés (calculés sur le nouveau solde)"
+      },
+      "projection": {
+        "title": "Projection sur 1 an",
+        "currentBalance": "Solde actuel",
+        "estimatedInterests": "Intérêts estimés",
+        "finalBalance": "Solde final",
+        "appliedRate": "Taux appliqué"
+      },
+      "actions": {
+        "title": "Actions disponibles",
+        "deposit": "Ajouter de l'argent",
+        "transfer": "Transférer vers un compte",
+        "refresh": "Actualiser",
+        "viewAllSavings": "Voir toutes les épargnes",
+        "viewSourceAccount": "Voir le compte source"
+      },
+      "toasts": {
+        "depositSuccess": "Dépôt effectué avec succès",
+        "transferSuccess": "Transfert effectué avec succès"
+      },
+      "errors": {
+        "VALIDATION_ERROR": "Veuillez vérifier les informations fournies",
+        "SAVING_PRODUCT_NOT_FOUND": "Produit d'épargne introuvable",
+        "INITIAL_AMOUNT_BELOW_MIN": "Le montant initial est insuffisant",
+        "SOURCE_ACCOUNT_NOT_FOUND": "Compte bancaire source introuvable",
+        "UNAUTHORIZED_SOURCE_ACCOUNT": "Accès non autorisé au compte source",
+        "INSUFFICIENT_SOURCE_BALANCE": "Solde insuffisant sur le compte source",
+        "SAVING_ALREADY_EXISTS": "Vous avez déjà une épargne de ce type",
+        "IBAN_GENERATION_FAILED": "Impossible de générer un IBAN unique",
+        "IBAN_INVALID": "IBAN généré invalide",
+        "DEBIT_SOURCE_FAILED": "Erreur lors du débit du compte source",
+        "DEBIT_BANK_FAILED": "Erreur lors du débit du compte bancaire",
+        "CREDIT_SAVING_FAILED": "Erreur lors du crédit du compte épargne",
+        "DEBIT_SAVING_FAILED": "Erreur lors du débit du compte épargne",
+        "CREDIT_BANK_FAILED": "Erreur lors du crédit du compte bancaire",
+        "TRANSACTION_SAVE_FAILED": "Erreur lors de l'enregistrement de la transaction",
+        "SAVING_NOT_FOUND": "Compte épargne introuvable",
+        "UNAUTHORIZED_SAVING_ACCOUNT": "Accès non autorisé au compte épargne",
+        "TARGET_ACCOUNT_NOT_FOUND": "Compte bancaire cible introuvable",
+        "UNAUTHORIZED_TARGET_ACCOUNT": "Accès non autorisé au compte bancaire cible",
+        "UNAUTHORIZED": "Non authentifié",
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "default": "Une erreur est survenue"
+      }
+    }
+  },
   "Advisor": {
     "dashboard": {
       "loading": "Chargement...",

@@ -5,6 +5,7 @@ import { SavingAccountRepository } from "../../../ports/repositories/SavingAccou
 import { TransactionRepository } from "../../../ports/repositories/TransactionRepository";
 import { Transaction } from "../../../../domain/entities/Transaction";
 import { ClientRepository } from "../../../ports/repositories/ClientRepository";
+import { AppError, appError, SavingErrorCodes } from "../../../../shared/errors";
 
 export interface TransferFromSavingInput {
   userId: string;
@@ -21,41 +22,41 @@ export class TransferFromSavingUseCase {
     private readonly transactionRepository: TransactionRepository
   ) {}
 
-  public async execute(input: TransferFromSavingInput): Promise<Result<true, Error>> {
+  public async execute(input: TransferFromSavingInput): Promise<Result<true, AppError>> {
     if (input.amount <= 0) {
-      return err(new Error('Le montant doit être supérieur à 0'));
+      return err(appError(SavingErrorCodes.VALIDATION_ERROR));
     }
 
     const amountInCents = Math.round(input.amount * 100);
 
     const clientResult = await this.clientRepository.findByUserId(input.userId);
     if (!clientResult.ok) {
-      return err(clientResult.error);
+      return err(appError(SavingErrorCodes.UNAUTHORIZED));
     }
     const client = clientResult.value;
 
     const savingResult = await this.savingAccountRepository.findById(input.savingAccountId);
     if (!savingResult.ok) {
-      return err(new Error('Compte épargne introuvable'));
+      return err(appError(SavingErrorCodes.SAVING_NOT_FOUND));
     }
     const savingAccount = savingResult.value;
 
     if (savingAccount.clientIdentifier !== client.clientIdentifier) {
-      return err(new Error('Accès non autorisé au compte épargne'));
+      return err(appError(SavingErrorCodes.UNAUTHORIZED_SAVING_ACCOUNT));
     }
 
     if (savingAccount.balance < amountInCents) {
-      return err(new Error('Solde insuffisant sur le compte épargne'));
+      return err(appError(SavingErrorCodes.INSUFFICIENT_SOURCE_BALANCE));
     }
 
     const targetAccountResult = await this.bankAccountRepository.findById(input.targetBankAccountId);
     if (!targetAccountResult.ok) {
-      return err(new Error('Compte bancaire cible introuvable'));
+      return err(appError(SavingErrorCodes.TARGET_ACCOUNT_NOT_FOUND));
     }
     const targetAccount = targetAccountResult.value;
 
     if (targetAccount.clientIdentifier !== client.clientIdentifier) {
-      return err(new Error('Accès non autorisé au compte bancaire cible'));
+      return err(appError(SavingErrorCodes.UNAUTHORIZED_TARGET_ACCOUNT));
     }
 
     const newSavingBalance = savingAccount.balance - amountInCents;
@@ -65,7 +66,7 @@ export class TransferFromSavingUseCase {
     );
 
     if (!updateSavingResult.ok) {
-      return err(new Error('Erreur lors du débit du compte épargne'));
+      return err(appError(SavingErrorCodes.DEBIT_SAVING_FAILED));
     }
 
     const newBankBalance = targetAccount.balance + amountInCents;
@@ -79,7 +80,7 @@ export class TransferFromSavingUseCase {
         input.savingAccountId,
         savingAccount.balance
       );
-      return err(new Error('Erreur lors du crédit du compte bancaire'));
+      return err(appError(SavingErrorCodes.CREDIT_BANK_FAILED));
     }
 
     const creditTransactionId = randomUUID();
@@ -100,7 +101,7 @@ export class TransferFromSavingUseCase {
     if (!saveCreditResult.ok) {
       await this.savingAccountRepository.updateBalance(input.savingAccountId, savingAccount.balance);
       await this.bankAccountRepository.updateBalance(input.targetBankAccountId, targetAccount.balance);
-      return err(new Error("Erreur lors de l'enregistrement de la transaction"));
+      return err(appError(SavingErrorCodes.TRANSACTION_SAVE_FAILED));
     }
 
     return ok(true);

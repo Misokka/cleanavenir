@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
+import { AppError, SavingErrorCodes } from '../../../../shared/errors';
 
 export const createSavingController = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -34,53 +35,34 @@ export const createSavingController = asyncHandler(
     });
 
     if (!result.ok) {
-      const message = result.error.message;
-      
-      if (message.includes('au moins 10')) {
-        res.status(400).json({
-          error: 'VALIDATION_ERROR',
-          message,
-        });
-        return;
+      const error = result.error as AppError;
+      switch (error.code) {
+        case SavingErrorCodes.INITIAL_AMOUNT_BELOW_MIN:
+        case SavingErrorCodes.VALIDATION_ERROR:
+          res.status(400).json({ error: error.code });
+          return;
+        case SavingErrorCodes.INSUFFICIENT_SOURCE_BALANCE:
+          res.status(400).json({ error: error.code });
+          return;
+        case SavingErrorCodes.SOURCE_ACCOUNT_NOT_FOUND:
+        case SavingErrorCodes.SAVING_PRODUCT_NOT_FOUND:
+          res.status(404).json({ error: error.code });
+          return;
+        case SavingErrorCodes.UNAUTHORIZED_SOURCE_ACCOUNT:
+          res.status(403).json({ error: error.code });
+          return;
+        case SavingErrorCodes.SAVING_ALREADY_EXISTS:
+          res.status(409).json({ error: error.code });
+          return;
+        case SavingErrorCodes.IBAN_GENERATION_FAILED:
+        case SavingErrorCodes.IBAN_INVALID:
+        case SavingErrorCodes.DEBIT_SOURCE_FAILED:
+        case SavingErrorCodes.TRANSACTION_SAVE_FAILED:
+        case SavingErrorCodes.INTERNAL_ERROR:
+        default:
+          res.status(500).json({ error: error.code });
+          return;
       }
-
-      if (message.includes('Solde insuffisant')) {
-        res.status(400).json({
-          error: 'INSUFFICIENT_BALANCE',
-          message,
-        });
-        return;
-      }
-
-      if (message.includes('introuvable')) {
-        res.status(404).json({
-          error: 'ACCOUNT_NOT_FOUND',
-          message,
-        });
-        return;
-      }
-
-      if (message.includes('non autorisé')) {
-        res.status(403).json({
-          error: 'UNAUTHORIZED',
-          message,
-        });
-        return;
-      }
-
-      if (message.includes('déjà une épargne')) {
-        res.status(409).json({
-          error: 'CONFLICT',
-          message,
-        });
-        return;
-      }
-
-      res.status(500).json({
-        error: 'INTERNAL_ERROR',
-        message: result.error.message,
-      });
-      return;
     }
 
     res.status(201).json(result.value);
