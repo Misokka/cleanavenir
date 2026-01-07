@@ -7,7 +7,7 @@ import { Card } from '../atoms/Card';
 import { Typography } from '../atoms/Typography';
 import { Button } from '../atoms/Button';
 import { CreateSavingModal } from '../molecules/CreateSavingModal';
-import { useGetSavingsNew, useCurrentSavingRateNew } from '../../features/savings/useGetSavings';
+import { useGetSavingsNew } from '../../features/savings/useGetSavings';
 import { SavingDTO } from '../../infrastructure/web/services/savingService';
 
 interface SavingsOverviewProps {
@@ -19,12 +19,8 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
 }) => {
   const t = useTranslations('Dashboard.savings');
   const locale = useLocale();
-  const { savings, loading: savingsLoading, error: savingsError, refetch: refetchSavings } = useGetSavingsNew();
+  const { savings, loading: savingsLoading, refetch: refetchSavings } = useGetSavingsNew();
   // const { currentRate, loading: rateLoading, error: rateError, refetch: refetchRate } = useCurrentSavingRateNew();
-  const currentRate = {
-    rate: 2.5,
-    updatedAt: new Date().toISOString()
-  }
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -43,7 +39,7 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
   };
 
   const loading = savingsLoading // || rateLoading;
-  const error = savingsError // || rateError;
+  // const error = savingsError // || rateError;
 
   if (loading) {
     return (
@@ -148,29 +144,29 @@ export const SavingsOverview: React.FC<SavingsOverviewProps> = ({
                       <span className="text-2xl"></span>
                       <div>
                         <Typography variant="body" className="font-medium">
-                          {saving.savingProduct?.label ?? "Compte d'Épargne"}
+                          {saving.savingProduct?.label ?? t('savingsAccount')}
                         </Typography>
                         <Typography variant="caption" color="muted">
-                          Taux: {(saving.savingProduct?.rate || 0).toFixed(2)}%
+                          {t('rateLabel')}: {(saving.savingProduct?.rate || 0).toFixed(2)}%
                         </Typography>
                       </div>
                     </div>
                     <div className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                      Actif
+                      {t('active')}
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <Typography variant="caption" color="muted">
-                        Solde
+                        {t('balance')}
                       </Typography>
                       <Typography variant="h4" className="text-green-600">
                         {formatCurrency(saving.balance)}
                       </Typography>
                     </div>
                     <Typography variant="caption" color="muted">
-                      Ouvert le {formatDate(saving.createdAt)}
+                      {t('openedOn')} {formatDate(saving.createdAt)}
                     </Typography>
                   </div>
                 </Card>
