@@ -378,6 +378,30 @@
         "manageCompaniesDesc": "Create, edit, delete"
       }
     },
+  "SavingProductForm": {
+    "title": {
+      "create": "Create a savings product",
+      "edit": "Edit a savings product"
+    },
+    "fields": {
+      "label": "Label",
+      "rate": "Rate"
+    },
+    "placeholders": {
+      "label": "PEL",
+      "rate": "1.03%"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "errors": {
+      "labelRequired": "Label is required",
+      "labelInvalid": "Label is invalid",
+      "rateRequired": "Rate is required",
+      "rateTooLow": "Rate must be greater than 0"
+    }
+  },
     "accounts": {
       "title": "Client Accounts Management",
       "list": {

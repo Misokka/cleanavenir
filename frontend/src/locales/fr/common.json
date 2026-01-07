@@ -378,6 +378,30 @@
         "manageCompaniesDesc": "Créer, modifier, supprimer"
       }
     },
+  "SavingProductForm": {
+    "title": {
+      "create": "Créer un produit d'épargne",
+      "edit": "Modifier un produit d'épargne"
+    },
+    "fields": {
+      "label": "Libellé",
+      "rate": "Taux"
+    },
+    "placeholders": {
+      "label": "PEL",
+      "rate": "1,03%"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "confirm": "Confirmer"
+    },
+    "errors": {
+      "labelRequired": "Le libellé est obligatoire",
+      "labelInvalid": "Le libellé est invalide",
+      "rateRequired": "Le taux est obligatoire",
+      "rateTooLow": "Le taux doit être supérieur à 0"
+    }
+  },
     "accounts": {
       "title": "Gestion des Comptes Clients",
       "list": {
