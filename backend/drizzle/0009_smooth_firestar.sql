@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `remaining_blocked_money_amount` integer;

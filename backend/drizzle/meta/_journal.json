@@ -63,6 +63,15 @@
       "version": "6",
       "when": 1767786926546,
       "tag": "0008_cloudy_ultimates",
+      "when": 1767790926518,
+      "tag": "0008_parched_newton_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1767797875838,
+      "tag": "0009_smooth_firestar",
       "breakpoints": true
     }
   ]

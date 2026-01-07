@@ -14,7 +14,9 @@ export class DrizzleOrderMapper implements Mapper<OrderDrizzle, Order, NewOrderD
       status: raw.status as OrderStatus,
       createdAt: new Date(raw.createdAt),
       blockedMoneyAmount: raw.blockedMoneyAmount as number | undefined,
-      blockedStockQuantity: raw.blockedStockQuantity as number | undefined
+      blockedStockQuantity: raw.blockedStockQuantity as number | undefined,
+      sellerHoldingAveragePrice: raw.sellerHoldingAveragePrice as number | undefined,
+      remainingBlockedMoneyAmount: raw.remainingBlockedMoneyAmount as number | undefined,
     }) ;
   }
 

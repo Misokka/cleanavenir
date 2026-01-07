@@ -72,7 +72,8 @@ export const API_ENDPOINTS = {
     ORDERS: {
       LIST_MY_ORDERS: '/orders/list-my-orders',
       CREATE: "/orders/create",
-      SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`
+      SHOW_BEST_BUY_AND_SELL: (stockId: string) => `/orders/show-best-buy-and-sell/${stockId}`,
+      CANCEL: (orderId: string) => `/orders/${orderId}/cancel`
     },
   },
 

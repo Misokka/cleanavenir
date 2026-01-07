@@ -90,6 +90,7 @@ export class PlaceOrderUseCase {
         remainingQuantity: quantity,
         orderType,
         blockedMoneyAmount: totalCostInCents,
+        remainingBlockedMoneyAmount: totalCostInCents,
         limitPrice: limiPriceInCents,
         createdAt: new Date()
       });
@@ -122,6 +123,7 @@ export class PlaceOrderUseCase {
         orderType,
         blockedStockQuantity: quantity,
         limitPrice: limiPriceInCents, // Prix du marché au moment de la commande
+        sellerHoldingAveragePrice: stockHolding.averagePrice,
         createdAt: new Date()
       });
 

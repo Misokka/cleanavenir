@@ -4,6 +4,7 @@ export type TransactionType =
   | "LOAN_DISBURSEMENT"
   | "STOCK_PURCHASE" 
   | "STOCK_SALE"
+  | "ORDER_REFUND"
   | "SAVINGS_INTEREST"
   | "INITIAL_DEPOSIT";
 
