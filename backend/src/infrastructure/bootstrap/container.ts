@@ -132,6 +132,7 @@ import { AddBeneficiaryUseCase } from '../../application/use-cases/client/benefi
 import { ListUserBeneficiariesUseCase } from '../../application/use-cases/client/beneficiary/ListUserBeneficiariesUseCase';
 import { DeleteBeneficiaryUseCase } from '../../application/use-cases/client/beneficiary/DeleteBeneficiaryUseCase';
 import { UpdateBeneficiaryLabelUseCase } from '../../application/use-cases/client/beneficiary/UpdateBeneficiaryLabelUseCase';
+import { CancelOrderUseCase } from '../../application/use-cases/client/investment/Order/CancelOrderUseCase';
 
 // Use Cases - Messaging (Client)
 import { CreateDiscussionUseCase } from '../../application/use-cases/client/messaging/CreateDiscussionUseCase';
@@ -307,6 +308,7 @@ export function createContainer() {
 
   //Investment Use Cases
   const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
+  const cancelOrderUseCase = new CancelOrderUseCase(clientRepository, orderRepository, portfolioRepository, bankAccountRepository, transactionRepository, stockRepository);
   const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
   const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository, stockRepository, companyRepository);
@@ -444,6 +446,7 @@ export function createContainer() {
         deleteCompany: deleteCompanyUseCase,
         createStock: createStockUseCase,
         placeOrder: placeOrderUseCase,
+        cancelOrder: cancelOrderUseCase,
         createPortfolio: createPortfolioUseCase,
         getMyPortfolio: getMyPortfolioUseCase,
         settleTrade: settleTradeUseCase,

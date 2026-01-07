@@ -60,7 +60,7 @@ async function seedStocks(){
       companyId: company.id,
       ticker: tickerPicker(company.name),
       price: parseFloat((Math.random() * 300 + 100).toFixed(2)) * 100, // Random price between 100 and 400 and convert to cents
-      isAvailable: Math.random() < 0.8 ? 1 : 0, // 80% chance to be available
+      isAvailable: 1,
       createdAt: now,
       updatedAt: now,
     };

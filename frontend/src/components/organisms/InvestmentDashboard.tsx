@@ -10,7 +10,7 @@ import { useGetMyPortfolio } from '@/features/portfolios/useGetMyPortfolio';
 
 function InvestmentDashBoard() {
   const { fetchMyOrders, myOrders, loading: getOrdersLoading, error: getOrdersError } = useGetMyOrders();
-  const {fetchMyPortfolio, portfolio, loading: getPortfolioLoading, error: getPortfolioError} = useGetMyPortfolio();
+  const { fetchMyPortfolio, portfolio, loading: getPortfolioLoading, error: getPortfolioError} = useGetMyPortfolio();
 
   return (
     <>
@@ -42,6 +42,8 @@ function InvestmentDashBoard() {
             orders={myOrders}
             loading={getOrdersLoading}
             error={getOrdersError}
+            refetchOrders={fetchMyOrders}
+            refetchPortfolio={fetchMyPortfolio}
           />
         </section>
       </DashboardLayout>

@@ -41,6 +41,20 @@ export class OrderService {
     }
   }
 
+  async cancel(orderId: string){
+    try{
+      const response = await httpClient.patch<{
+        success: boolean,
+        message: string
+      }>(API_ENDPOINTS.INVESTMENTS.ORDERS.CANCEL(orderId));
+      
+      return response.data
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'ordre", error);
+      throw error;
+    }
+  }
+
   async listMyOrders(){
     try{
       const response = await httpClient.get<{orders: Order[]}>(API_ENDPOINTS.INVESTMENTS.ORDERS.LIST_MY_ORDERS);

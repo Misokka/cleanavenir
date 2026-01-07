@@ -186,7 +186,9 @@ export const orders = sqliteTable('orders', {
   limitPrice: integer('limit_price').notNull(), // price in cents
   status: text('status').notNull().default('OPEN'),
   blockedMoneyAmount: integer('blocked_money_amount'),
+  remainingBlockedMoneyAmount: integer('remaining_blocked_money_amount'),
   blockedStockQuantity: integer('blocked_stock_quantity'),
+  sellerHoldingAveragePrice: integer('seller_holding_average_price'),
   createdAt: text('created_at').notNull(),
 });
 

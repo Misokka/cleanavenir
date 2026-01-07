@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/authMiddleware";
-import { ListMyOrdersController, PlaceOrderControlller, ShowBestBuyAndSellOrderController } from "../controllers/orders";
+import { CancelOrderController, ListMyOrdersController, PlaceOrderControlller, ShowBestBuyAndSellOrderController } from "../controllers/orders";
 
 const router = Router();
 
 router.get("/list-my-orders", requireAuth, ListMyOrdersController);
 router.post("/create", requireAuth, PlaceOrderControlller);
-router.get("/show-best-buy-and-sell/:stockId", requireAuth, ShowBestBuyAndSellOrderController)
+router.get("/show-best-buy-and-sell/:stockId", requireAuth, ShowBestBuyAndSellOrderController);
+router.patch("/:orderId/cancel", requireAuth, CancelOrderController)
 
 export const orderRoutes = router;
