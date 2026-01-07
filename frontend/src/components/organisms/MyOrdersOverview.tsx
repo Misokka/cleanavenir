@@ -102,7 +102,6 @@ interface OrderCardProps {
 }
 
 function OrderCard({ order, onCancelOrder }: OrderCardProps) {
-  const t = useTranslations('Orders'); // ✅ Ajouter cette ligne
   const isBuy = order.type === 'BUY';
   const isCancelable = ["PENDING", "PARTIALLY_FILLED"].includes(order.status);
 
