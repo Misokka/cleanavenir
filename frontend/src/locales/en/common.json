@@ -557,6 +557,65 @@
       "description": "You don't have any active loans yet. Start by simulating a loan to discover our offers."
     }
   },
+  "Investment": {
+    "title": "Investments",
+    "welcome": "Welcome to the investments section of your client portal.",
+    "stocks": {
+      "title": "Stocks",
+      "error": "Error",
+      "table": {
+        "ticker": "Ticker",
+        "company": "Company",
+        "currentPrice": "Current Price",
+        "action": "Action"
+      },
+      "buyOrSell": "Buy or sell",
+      "chart": {
+        "evolution": "Evolution of {ticker}",
+        "history": "30-day history",
+        "noData": "No data available for this period.",
+        "price": "Price"
+      }
+    },
+    "portfolio": {
+      "title": "My portfolio",
+      "empty": {
+        "title": "No active portfolio",
+        "description": "Start your investment journey now by opening your first securities portfolio.",
+        "button": "Open my portfolio"
+      },
+      "error": "Error",
+      "totalValue": "Estimated total value",
+      "holdings": "My holdings",
+      "search": "Search for a stock...",
+      "noResults": "No stock matches your search.",
+      "quantity": "Quantity",
+      "avgPrice": "Avg. price",
+      "currentPrice": "Current price",
+      "profitLoss": "P/L"
+    },
+    "orders": {
+      "title": "My orders",
+      "error": "An error occurred while fetching your orders.",
+      "empty": "No recent orders.",
+      "buy": "Buy",
+      "sell": "Sell",
+      "initialQuantity": "Initial quantity",
+      "remainingQuantity": "Remaining quantity",
+      "limitPrice": "Limit price",
+      "date": "Date",
+      "shares": "shares",
+      "blockedAmount": "Blocked amount",
+      "blockedShares": "Blocked shares",
+      "units": "units",
+      "status": {
+        "pending": "Pending",
+        "partiallyFilled": "Partial",
+        "executed": "Executed",
+        "cancelled": "Cancelled"
+      }
+    }
+  },
   "Transfer": {
     "title": "Make a transfer",
     "subtitle": "Transfer funds to another account",

@@ -2,6 +2,7 @@
 
 import { useGetStocks } from '@/features/stocks/useGetStocks';
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   LineChart,
   Line,
@@ -53,6 +54,7 @@ interface StockOverviewProps{
 }
 
 function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
+  const t = useTranslations('Investment.stocks');
   const { stocks, fetchStocks, loading, error } = useGetStocks();
   const {history, getStockPriceHistory, loading: priceHistoryLoading, error: priceHistoryError} = useGetStockPriceHistory()
   
@@ -105,7 +107,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
   if (error) {
     return (
       <div className="p-4 bg-red-50 text-red-700 rounded-md border border-red-200">
-        Erreur: {error}
+        {t('error')}: {error}
       </div>
     );
   }
@@ -130,16 +132,16 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
           <thead className="bg-gray-50">
             <tr>
               <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                Ticker
+                {t('table.ticker')}
               </th>
               <th scope="col" className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell">
-                Entreprise
+                {t('table.company')}
               </th>
               <th scope="col" className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
-                Prix Actuel
+                {t('table.currentPrice')}
               </th>
               <th scope="col" className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
-                Action
+                {t('table.action')}
               </th>
             </tr>
           </thead>
@@ -172,7 +174,7 @@ function StockOverview({ fetchOrders, fetchPortfolio }: StockOverviewProps) {
                       selectStockForForm(stock);
                     }}
                   >
-                    Acheter ou vendre
+                    {t('buyOrSell')}
                   </button>
                 </td>
               </tr>

@@ -1,5 +1,6 @@
 'use client';
 import React, { FormEvent } from 'react'
+import { useTranslations } from 'next-intl';
 import { Typography } from '../atoms/Typography'
 import { useGetMyPortfolio } from '@/features/portfolios/useGetMyPortfolio';
 import { useCreatePortfolio } from '@/features/portfolios/useCreatePortfolio';

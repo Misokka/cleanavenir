@@ -557,6 +557,65 @@
       "description": "Vous n'avez pas encore de prêt actif. Commencez par simuler un prêt pour découvrir nos offres."
     }
   },
+  "Investment": {
+    "title": "Investissements",
+    "welcome": "Bienvenue dans la section investissements de votre espace client.",
+    "stocks": {
+      "title": "Actions",
+      "error": "Erreur",
+      "table": {
+        "ticker": "Ticker",
+        "company": "Entreprise",
+        "currentPrice": "Prix Actuel",
+        "action": "Action"
+      },
+      "buyOrSell": "Acheter ou vendre",
+      "chart": {
+        "evolution": "Évolution de {ticker}",
+        "history": "Historique sur 30 jours",
+        "noData": "Pas de données disponibles pour cette période.",
+        "price": "Prix"
+      }
+    },
+    "portfolio": {
+      "title": "Mon portefeuille",
+      "empty": {
+        "title": "Aucun portefeuille actif",
+        "description": "Commencez votre aventure d'investissement dès maintenant en ouvrant votre premier portefeuille de titres.",
+        "button": "Ouvrir mon portefeuille"
+      },
+      "error": "Erreur",
+      "totalValue": "Valeur totale estimée",
+      "holdings": "Mes positions",
+      "search": "Rechercher un titre...",
+      "noResults": "Aucun titre ne correspond à votre recherche.",
+      "quantity": "Quantité",
+      "avgPrice": "Prix moyen",
+      "currentPrice": "Prix actuel",
+      "profitLoss": "P/L"
+    },
+    "orders": {
+      "title": "Mes ordres",
+      "error": "Une erreur est arrivée pendant la récupération de vos ordres.",
+      "empty": "Aucun ordre récent.",
+      "buy": "Achat",
+      "sell": "Vente",
+      "initialQuantity": "Quantité initiale",
+      "remainingQuantity": "Quantité restante",
+      "limitPrice": "Prix limite",
+      "date": "Date",
+      "shares": "titres",
+      "blockedAmount": "Montant bloqué",
+      "blockedShares": "Titres bloqués",
+      "units": "unités",
+      "status": {
+        "pending": "En attente",
+        "partiallyFilled": "Partiel",
+        "executed": "Exécuté",
+        "cancelled": "Annulé"
+      }
+    }
+  },
   "Transfer": {
     "title": "Effectuer un virement",
     "subtitle": "Transférer des fonds vers un autre compte",
