@@ -461,7 +461,9 @@
         "createTitle": "Create a company",
         "editTitle": "Edit company",
         "name": "Company name",
+        "namePlaceholder": "Apple Inc.",
         "description": "Description",
+        "descriptionPlaceholder": "Company description...",
         "submit": "Save",
         "cancel": "Cancel"
       },
@@ -483,6 +485,9 @@
         "updateError": "Error updating company",
         "deleteSuccess": "Company deleted successfully",
         "deleteError": "Error deleting company"
+      },
+      "errors": {
+        "nameRequired": "Name is required"
       }
     },
     "stocks": {

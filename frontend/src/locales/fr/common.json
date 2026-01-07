@@ -461,7 +461,9 @@
         "createTitle": "Créer une entreprise",
         "editTitle": "Modifier l'entreprise",
         "name": "Nom de l'entreprise",
+        "namePlaceholder": "Apple Inc.",
         "description": "Description",
+        "descriptionPlaceholder": "Description de l'entreprise...",
         "submit": "Enregistrer",
         "cancel": "Annuler"
       },
@@ -483,6 +485,9 @@
         "updateError": "Erreur lors de la modification",
         "deleteSuccess": "Entreprise supprimée avec succès",
         "deleteError": "Erreur lors de la suppression"
+      },
+      "errors": {
+        "nameRequired": "Le nom est requis"
       }
     },
     "stocks": {
