@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { FormFieldWithInput, FormField } from '../atoms/FormField';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
@@ -23,6 +23,7 @@ export const RegisterForm: React.FC = () => {
   const tRoles = useTranslations('Auth.roles');
   const tValidations = useTranslations('Auth.validations');
   const router = useRouter();
+  const locale = useLocale();
   const { register, loading: registerLoading, error: registerError } = useRegister();
   
   const [formData, setFormData] = useState<RegisterData>({
@@ -124,10 +125,7 @@ export const RegisterForm: React.FC = () => {
     });
     
     if (result?.requiresVerification) {
-      if (globalThis.window !== undefined) {
-        const currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-        router.push(`/${currentLocale}/auth/check-email?email=${encodeURIComponent(result.email)}`);
-      }
+      router.push(`/${locale}/auth/check-email?email=${encodeURIComponent(result.email)}`);
     }
   };
 
@@ -231,11 +229,7 @@ export const RegisterForm: React.FC = () => {
         <button
           type="button"
           onClick={() => {
-            let currentLocale = 'fr';
-            if (globalThis.window) {
-              currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-            }
-            router.push(`/${currentLocale}/auth/login`);
+            router.push(`/${locale}/auth/login`);
           }}
           className="text-sm font-medium text-[#083A31] hover:text-[#3F6868] transition-colors"
         >

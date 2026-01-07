@@ -1,6 +1,5 @@
 'use client';
 import { useGetMyOrders } from '@/features/orders/useGetMyOrders'
-import React from 'react'
 import { useTranslations } from 'next-intl';
 
 import React, { FormEvent, useState, useRef, useEffect } from 'react'

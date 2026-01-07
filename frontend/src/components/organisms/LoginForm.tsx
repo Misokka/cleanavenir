@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { FormFieldWithInput } from '../atoms/FormField';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
@@ -17,6 +17,7 @@ interface LoginCredentials {
 export const LoginForm: React.FC = () => {
   const t = useTranslations('Auth.login');
   const router = useRouter();
+  const locale = useLocale();
   const { 
     login, 
     resendVerificationEmail,
@@ -84,11 +85,7 @@ export const LoginForm: React.FC = () => {
     
     if (result?.user) {
       setUser(result.user);
-      
-      if (globalThis.window !== undefined) {
-        const currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-        router.push(`/${currentLocale}/${result.user.role.toLocaleLowerCase()}/dashboard`);
-      }
+      router.push(`/${locale}/${result.user.role.toLocaleLowerCase()}/dashboard`);
     }
   };
 
@@ -189,11 +186,7 @@ export const LoginForm: React.FC = () => {
         <button
           type="button"
           onClick={() => {
-            let currentLocale = 'fr';
-            if (globalThis.window) {
-              currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-            }
-            router.push(`/${currentLocale}/auth/register`);
+            router.push(`/${locale}/auth/register`);
           }}
           className="text-sm font-medium text-[#083A31] hover:text-[#3F6868] transition-colors"
         >

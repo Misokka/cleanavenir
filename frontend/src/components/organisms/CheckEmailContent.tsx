@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { authService } from '../../infrastructure/web/services/authService';
@@ -14,6 +14,7 @@ interface CheckEmailContentProps {
 export const CheckEmailContent: React.FC<CheckEmailContentProps> = ({ email }) => {
   const t = useTranslations('Auth.checkEmail');
   const router = useRouter();
+  const locale = useLocale();
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [resendError, setResendError] = useState<string | null>(null);
@@ -36,11 +37,7 @@ export const CheckEmailContent: React.FC<CheckEmailContentProps> = ({ email }) =
   };
 
   const handleGoToLogin = () => {
-    let currentLocale = 'fr';
-    if (globalThis.window) {
-      currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-    }
-    router.push(`/${currentLocale}/auth/login`);
+    router.push(`/${locale}/auth/login`);
   };
 
   return (

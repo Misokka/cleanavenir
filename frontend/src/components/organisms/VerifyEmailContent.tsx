@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { authService } from '../../infrastructure/web/services/authService';
@@ -16,6 +16,7 @@ type VerificationStatus = 'loading' | 'success' | 'expired' | 'invalid' | 'no-to
 export const VerifyEmailContent: React.FC<VerifyEmailContentProps> = ({ token }) => {
   const t = useTranslations('Auth.verifyEmail');
   const router = useRouter();
+  const locale = useLocale();
   const [status, setStatus] = useState<VerificationStatus>('loading');
   const [resendEmail, setResendEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
@@ -66,11 +67,7 @@ export const VerifyEmailContent: React.FC<VerifyEmailContentProps> = ({ token })
   };
 
   const handleGoToLogin = () => {
-    let currentLocale = 'fr';
-    if (globalThis.window) {
-      currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-    }
-    router.push(`/${currentLocale}/auth/login`);
+    router.push(`/${locale}/auth/login`);
   };
 
   const getCurrentLocale = () => {
