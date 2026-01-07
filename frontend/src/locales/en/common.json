@@ -532,6 +532,31 @@
       "cannotAddSelf": "You cannot add your own account"
     }
   },
+  "Loans": {
+    "subtitle": "Manage your loan requests and track repayments",
+    "actions": {
+      "simulate": "Simulate",
+      "newRequest": "+ New request",
+      "retry": "Retry",
+      "simulateLoan": "Simulate a loan",
+      "makeRequest": "+ Make a request"
+    },
+    "error": {
+      "title": "Loading error"
+    },
+    "stats": {
+      "active": "Active loans",
+      "pending": "Pending",
+      "paid": "Paid off",
+      "rejected": "Rejected"
+    },
+    "pendingTitle": "My pending requests ({count})",
+    "allTitle": "All my loans ({count})",
+    "empty": {
+      "title": "No loans for now",
+      "description": "You don't have any active loans yet. Start by simulating a loan to discover our offers."
+    }
+  },
   "Transfer": {
     "title": "Make a transfer",
     "subtitle": "Transfer funds to another account",

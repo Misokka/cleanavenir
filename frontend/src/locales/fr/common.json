@@ -532,6 +532,31 @@
       "cannotAddSelf": "Vous ne pouvez pas ajouter votre propre compte"
     }
   },
+  "Loans": {
+    "subtitle": "Gérez vos demandes de prêt et suivez vos remboursements",
+    "actions": {
+      "simulate": "Simuler",
+      "newRequest": "+ Nouvelle demande",
+      "retry": "Réessayer",
+      "simulateLoan": "Simuler un prêt",
+      "makeRequest": "+ Faire une demande"
+    },
+    "error": {
+      "title": "Erreur de chargement"
+    },
+    "stats": {
+      "active": "Prêts actifs",
+      "pending": "En attente",
+      "paid": "Remboursés",
+      "rejected": "Refusés"
+    },
+    "pendingTitle": "Mes demandes en attente ({count})",
+    "allTitle": "Tous mes prêts ({count})",
+    "empty": {
+      "title": "Aucun prêt pour le moment",
+      "description": "Vous n'avez pas encore de prêt actif. Commencez par simuler un prêt pour découvrir nos offres."
+    }
+  },
   "Transfer": {
     "title": "Effectuer un virement",
     "subtitle": "Transférer des fonds vers un autre compte",
