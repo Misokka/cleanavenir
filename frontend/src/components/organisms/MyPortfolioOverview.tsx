@@ -54,6 +54,7 @@ interface MyPortfolioOverviewProps{
 function MyPortfolioOverview({portfolio, fetchPortfolio, loading, error}: MyPortfolioOverviewProps) {
 
   const {createPortfolio, success, error: createPortfolioError} = useCreatePortfolio();
+  const t = useTranslations('Investment.portfolio');
 
   // Calculs (inchangés, fonctionnent pareil avec des entiers ou des floats)
   const totalPortfolioValue = MOCK_HOLDINGS.reduce((acc, h) => acc + (h.quantity * h.currentPrice), 0);
@@ -112,9 +113,9 @@ if(loading){
           <BriefcaseIcon className="w-8 h-8 text-indigo-600" />
         </div>
         
-        <h3 className="text-lg font-semibold text-gray-900">Aucun portefeuille actif</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('empty.title')}</h3>
         <p className="text-gray-500 max-w-sm mt-2 mb-6 text-sm">
-          Commencez votre aventure d'investissement dès maintenant en ouvrant votre premier portefeuille de titres.
+          {t('empty.description')}
         </p>
 
         <form onSubmit={handleCreatePortfolio}>
@@ -123,14 +124,14 @@ if(loading){
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <PlusIcon className="w-5 h-5" />
-            Ouvrir mon portefeuille
+            {t('empty.button')}
           </button>
         </form>
         
         {/* Message d'erreur discret si la création échoue */}
         {createPortfolioError && (
           <p className="text-red-600 text-xs mt-4 bg-red-50 px-3 py-1 rounded-md">
-              Erreur : {createPortfolioError.message}
+              {t('error')} : {createPortfolioError.message}
           </p>
         )}
       </div>
@@ -158,7 +159,7 @@ if(loading){
       {/* --- BLOC 2: LISTE DES HOLDINGS --- */}
       <div className="space-y-4">
         <Typography variant="h3" className="font-semibold text-gray-900">
-          Mes Positions
+          {t('holdings')}
         </Typography>
 
         {portfolio && !portfolio.holdings.length && (
@@ -168,12 +169,11 @@ if(loading){
               <MagnifyingGlassIcon className="w-6 h-6 text-indigo-600" />
             </div>
 
-            {/* Titre et Description */}
             <h3 className="text-sm font-semibold text-gray-900">
-              Votre portefeuille est vide
+              {t('holdingsEmpty.title')}
             </h3>
             <p className="mt-1 text-sm text-gray-500 max-w-xs mx-auto">
-              Vous n'avez pas encore de positions ouvertes. Explorez le marché pour trouver votre première opportunité.
+              {t('holdingsEmpty.description')}
             </p>
           </div>
         )}
@@ -201,7 +201,7 @@ if(loading){
                           <div>
                             <p className="font-medium text-gray-900">{holding.stock.company.name}</p>
                             <p className="text-sm text-gray-500">
-                              {holding.quantity} part{holding.quantity > 1 ? 's' : ''} • PRU {formatCurrency(holding.averagePrice)}
+                              {t('sharesCount', { count: holding.quantity })} • {t('avgPrice')} {formatCurrency(holding.averagePrice)}
                             </p>
                           </div>
                         </div>

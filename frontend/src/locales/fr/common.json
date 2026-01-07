@@ -587,12 +587,17 @@
       "error": "Erreur",
       "totalValue": "Valeur totale estimée",
       "holdings": "Mes positions",
+      "holdingsEmpty": {
+        "title": "Votre portefeuille est vide",
+        "description": "Vous n'avez pas encore de positions ouvertes. Explorez le marché pour trouver votre première opportunité."
+      },
       "search": "Rechercher un titre...",
       "noResults": "Aucun titre ne correspond à votre recherche.",
       "quantity": "Quantité",
       "avgPrice": "Prix moyen",
       "currentPrice": "Prix actuel",
-      "profitLoss": "P/L"
+      "profitLoss": "P/L",
+      "sharesCount": "{count} {count, plural, one {part} other {parts}}"
     },
     "orders": {
       "title": "Mes ordres",
