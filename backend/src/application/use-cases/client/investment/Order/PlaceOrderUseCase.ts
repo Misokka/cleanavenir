@@ -64,6 +64,7 @@ export class PlaceOrderUseCase {
       clientBankAccount.withdraw(totalCostInCents) // money withdrawn but reserved
       //créer une transaction et savoir vers où va l'argent
 
+      // transaction côté client
       const newTransaction = Transaction.create({
         transactionIdentifier: randomUUID(),
         bankAccountIdentifier: clientBankAccount.accountIdentifier,
@@ -78,9 +79,31 @@ export class PlaceOrderUseCase {
       });
 
       const savedTransactionResult = await this.transactionRepository.save(newTransaction);
-      // if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
       if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
+       // transaction côté système
+      const systemTransaction = Transaction.create({
+        transactionIdentifier: randomUUID(),
+        bankAccountIdentifier: systemBankAccount.accountIdentifier,
+        fromAccountIdentifier: clientBankAccount.accountIdentifier,
+        toAccountIdentifier: systemBankAccount.accountIdentifier,
+        amount: totalCostInCents,
+        currency: "EUR",
+        direction: "CREDIT",
+        type: "STOCK_PURCHASE",
+        description: `Reserved funds for purchase of ${stock.ticker.value} stocks from client ${client.clientIdentifier}`,
+        createdAt: new Date()
+      });
+
+      const savedSystemTransactionResult = await this.transactionRepository.save(systemTransaction);
+      if(!savedSystemTransactionResult.ok) return err(savedSystemTransactionResult.error);
+
+      systemBankAccount.deposit(totalCostInCents); // On ajoute l'argent bloqué au compte système
+      const updatedSystemBalanceResult = await this.bankAccountRepository.updateBalance(
+        systemBankAccount.accountIdentifier, 
+        systemBankAccount.balance
+      );
+      if(!updatedSystemBalanceResult.ok) return err(updatedSystemBalanceResult.error);
 
       const newOrder = Order.create({
         orderIdentifier,

@@ -143,6 +143,22 @@ export class OrderMatchingService {
       const savedTransactionResult = await this.transactionRepository.save(newTransaction);
       if(!savedTransactionResult.ok) return err(savedTransactionResult.error);
 
+      const systemTransaction = Transaction.create({
+        transactionIdentifier: randomUUID(),
+        bankAccountIdentifier: systemBankAccount.accountIdentifier,
+        fromAccountIdentifier: systemBankAccount.accountIdentifier,
+        toAccountIdentifier: sellerBankAccount.accountIdentifier,
+        amount: totalSaleAmount,
+        currency: "EUR",
+        direction: "DEBIT",
+        type: "STOCK_SALE",
+        description : `Withdrawn money of ${stock.ticker.value} stock purchase from client ${buyerPortfolio.clientIdentifier}.`,
+        createdAt: new Date()
+      });
+
+      const savedSystemTransactionResult = await this.transactionRepository.save(systemTransaction);
+      if(!savedSystemTransactionResult.ok) return err(savedSystemTransactionResult.error);
+
       const newBestBuyRemainingBlockedMonyAmount = (bestBuy.remainingBlockedMoneyAmount ?? 0) - (tradedQuantity * executionPrice)
       // mise à jour des ordres
       bestBuy.remainingQuantity -= tradedQuantity;
