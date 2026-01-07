@@ -173,15 +173,18 @@ export default function LoanDetailPage() {
                   {formatCurrency(paidAmount)} / {formatCurrency(loan.loanAmount)}
                 </Typography>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-4 rounded-full transition-all flex items-center justify-end pr-2"
-                  style={{ width: `${Math.min(progress, 100)}%` }}
-                >
-                  {progress > 10 && (
-                    <span className="text-white text-xs font-semibold">{progress.toFixed(0)}%</span>
-                  )}
-                </div>
+              <div className="w-full">
+                <progress
+                  aria-label={t('repaymentProgress')}
+                  className="w-full h-4 [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-blue-600 [&::-webkit-progress-value]:rounded-full [&::-moz-progress-bar]:bg-blue-600"
+                  max={100}
+                  value={Math.max(0, Math.min(100, Math.round(progress)))}
+                />
+                {progress > 10 && (
+                  <div className="flex justify-end pr-1">
+                    <span className="text-xs font-semibold text-gray-600">{Math.round(progress)}%</span>
+                  </div>
+                )}
               </div>
             </div>
           </Card>

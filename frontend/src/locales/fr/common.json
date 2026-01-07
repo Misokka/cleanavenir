@@ -622,6 +622,11 @@
       "title": "Aucun prêt pour le moment",
       "description": "Vous n'avez pas encore de prêt actif. Commencez par simuler un prêt pour découvrir nos offres."
     },
+    "viewDetails": "Voir les détails",
+    "card": {
+      "personalLoan": "Prêt personnel",
+      "loanAmount": "Montant du prêt"
+    },
     "request": {
       "metaTitle": "Demande de Prêt | Clean Avenir",
       "metaDescription": "Faites une demande de prêt personnalisée auprès de nos conseillers",

@@ -622,6 +622,11 @@
       "title": "No loans for now",
       "description": "You don't have any active loans yet. Start by simulating a loan to discover our offers."
     },
+    "viewDetails": "View details",
+    "card": {
+      "personalLoan": "Personal loan",
+      "loanAmount": "Loan amount"
+    },
     "request": {
       "metaTitle": "Loan Request | Clean Avenir",
       "metaDescription": "Submit a personalized loan request to our advisors",

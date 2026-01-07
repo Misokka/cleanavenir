@@ -197,6 +197,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 bg-white rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+          aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
+          title={isSidebarOpen ? 'Close menu' : 'Open menu'}
         >
           <div className="w-5 h-5 flex flex-col justify-between">
             <span className={`block h-0.5 bg-clean-dark transition-transform ${isSidebarOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
