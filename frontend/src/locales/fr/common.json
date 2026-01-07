@@ -575,6 +575,31 @@
   "Loans": {
     "title": "Mes prêts",
     "subtitle": "Gérez vos demandes de prêt et suivez vos remboursements",
+    "simulate": {
+      "metaTitle": "Simulateur de Prêt | Clean Avenir",
+      "metaDescription": "Simulez votre prêt et découvrez les mensualités adaptées à votre projet",
+      "title": "Simulateur de Prêt",
+      "description": "Ajustez les paramètres pour estimer vos mensualités et le coût total de votre prêt",
+      "form": {
+        "title": "Simulateur de Prêt",
+        "amount": "Montant du prêt",
+        "duration": "Durée du prêt (mois)",
+        "months": "mois",
+        "interestRate": "Taux d'intérêt annuel",
+        "insuranceRate": "Taux d'assurance annuel",
+        "simulate": "Simuler le prêt",
+        "loading": "Calcul en cours..."
+      },
+      "results": {
+        "title": "Résultat de la simulation",
+        "monthlyPayment": "Mensualité",
+        "totalCost": "Coût total",
+        "totalInterest": "Total des intérêts",
+        "totalInsurance": "Total de l'assurance",
+        "note": "Remarque :",
+        "disclaimer": "Cette simulation est indicative. Le taux final peut varier selon votre profil et les conditions du marché."
+      }
+    },
     "actions": {
       "simulate": "Simuler",
       "newRequest": "+ Nouvelle demande",

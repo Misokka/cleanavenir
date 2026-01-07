@@ -575,6 +575,31 @@
   "Loans": {
     "title": "My loans",
     "subtitle": "Manage your loan requests and track repayments",
+    "simulate": {
+      "metaTitle": "Loan Simulator | Clean Avenir",
+      "metaDescription": "Simulate your loan and discover monthly payments tailored to your project",
+      "title": "Loan Simulator",
+      "description": "Adjust parameters to estimate your monthly payments and total loan cost",
+      "form": {
+        "title": "Loan Simulator",
+        "amount": "Loan amount",
+        "duration": "Loan term (months)",
+        "months": "months",
+        "interestRate": "Annual interest rate",
+        "insuranceRate": "Annual insurance rate",
+        "simulate": "Simulate loan",
+        "loading": "Calculating..."
+      },
+      "results": {
+        "title": "Simulation result",
+        "monthlyPayment": "Monthly payment",
+        "totalCost": "Total cost",
+        "totalInterest": "Total interest",
+        "totalInsurance": "Total insurance",
+        "note": "Note:",
+        "disclaimer": "This simulation is indicative. The final rate may vary based on your profile and market conditions."
+      }
+    },
     "actions": {
       "simulate": "Simulate",
       "newRequest": "+ New request",

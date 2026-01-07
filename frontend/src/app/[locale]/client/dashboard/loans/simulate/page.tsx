@@ -15,10 +15,12 @@ export async function generateMetadata({ params }: SimulatePageProps): Promise<M
   if (!['fr', 'en'].includes(locale)) {
     notFound();
   }
-  
+
+  const t = await getTranslations({ locale, namespace: 'Loans.simulate' });
+
   return {
-    title: 'Simulateur de Prêt | Clean Avenir',
-    description: 'Simulez votre prêt et découvrez les mensualités adaptées à votre projet',
+    title: t('metaTitle'),
+    description: t('metaDescription'),
     robots: {
       index: false, 
       follow: false
@@ -33,15 +35,17 @@ export default async function SimulatePage({ params }: SimulatePageProps) {
     notFound();
   }
 
+  const t = await getTranslations({ locale, namespace: 'Loans.simulate' });
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
           <Typography variant="h2" className="mb-2">
-            Simulateur de Prêt
+            {t('title')}
           </Typography>
           <Typography variant="body" color="muted">
-            Ajustez les paramètres pour estimer vos mensualités et le coût total de votre prêt
+            {t('description')}
           </Typography>
         </div>
 
