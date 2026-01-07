@@ -5,73 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1766161322676,
-      "tag": "0000_nasty_randall",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1766583205835,
-      "tag": "0001_good_risque",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1766878538396,
-      "tag": "0002_left_black_crow",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1767098421798,
-      "tag": "0003_sour_mordo",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1767182095768,
-      "tag": "0004_aberrant_alex_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1767375557881,
-      "tag": "0005_dazzling_amazoness",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1767379553776,
-      "tag": "0006_flat_mephisto",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1767468418938,
-      "tag": "0007_cultured_black_tarantula",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1767786926546,
-      "tag": "0008_cloudy_ultimates",
-      "when": 1767790926518,
-      "tag": "0008_parched_newton_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1767797875838,
-      "tag": "0009_smooth_firestar",
+      "when": 1767807337322,
+      "tag": "0000_dizzy_captain_britain",
       "breakpoints": true
     }
   ]
