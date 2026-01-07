@@ -9,6 +9,7 @@ import { stocksRoutes } from './stocks.routes';
 import { orderRoutes } from './order.routes';
 import { portfolioRoutes } from './portfolio.routes';
 import { beneficiaryRoutes } from './beneficiary.routes';
+import { messagingRoutes } from './messaging.routes';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/stocks', stocksRoutes)
 router.use("/orders", orderRoutes)
 router.use("/portfolios", portfolioRoutes);
 router.use('/beneficiaries', beneficiaryRoutes);
+router.use('/messaging', messagingRoutes);
 
 export { router as mainRouter };

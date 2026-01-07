@@ -177,7 +177,6 @@ export function ApprovalModal({
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-orange-600">
-                    <span className="text-xl">⚠️</span>
                     <Typography variant="body" className="font-semibold">
                       Attention : Capacité de remboursement limitée
                     </Typography>

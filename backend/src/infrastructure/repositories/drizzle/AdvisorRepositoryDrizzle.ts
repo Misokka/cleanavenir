@@ -71,4 +71,14 @@ export class AdvisorRepositoryDrizzle implements AdvisorRepository {
       return err(new Error("An error occured when retrieving random advisor"))
     }
   }
+
+  async findAll(): Promise<Result<Advisor[], Error>> {
+    try {
+      const advisorRows = await this.db.select().from(advisors);
+      const advisorsToDomain = advisorRows.map((row) => this.advisorMapper.toDomain(row));
+      return ok(advisorsToDomain);
+    } catch (error) {
+      return err(new Error("An error occurred when retrieving all advisors"));
+    }
+  }
 }

@@ -17,6 +17,8 @@ import { PortfolioRepositoryDrizzle } from '../repositories/drizzle/PortfolioRep
 import { HoldingRepositoryDrizzle } from '../repositories/drizzle/HoldingRepositoryDrizzle';
 import { TradeRepositoryDrizzle } from '../repositories/drizzle/TradeRepositoryDrizzle';
 import { DiscussionRepositoryDrizzle } from '../repositories/drizzle/DiscussionRepositoryDrizzle';
+import { MessageRepositoryDrizzle } from '../repositories/drizzle/MessageRepositoryDrizzle';
+import { DiscussionTransferRepositoryDrizzle } from '../repositories/drizzle/DiscussionTransferRepositoryDrizzle';
 import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/StockPriceHistoryRepositoryDrizzle';
 import { BeneficiaryRepositoryDrizzle } from '../repositories/drizzle/BeneficiaryRepositoryDrizzle';
 
@@ -39,6 +41,8 @@ import { DrizzlePortfolioMapper } from '../repositories/mappers/DrizzleMappers/D
 import { DrizzleHoldingMapper } from '../repositories/mappers/DrizzleMappers/DrizzleHoldingMapper';
 import { DrizzleTradeMapper } from '../repositories/mappers/DrizzleMappers/DrizzleTradeMapper';
 import { DrizzleDiscussionMapper } from '../repositories/mappers/DrizzleMappers/DrizzleDiscussionMapper';
+import { DrizzleMessageMapper } from '../repositories/mappers/DrizzleMappers/DrizzleMessageMapper';
+import { DrizzleDiscussionTransferMapper } from '../repositories/mappers/DrizzleMappers/DrizzleDiscussionTransferMapper';
 import { DrizzleStockPriceHistoryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleStockPriceHistoryMapper';
 import { DrizzleBeneficiaryMapper } from '../repositories/mappers/DrizzleMappers/DrizzleBeneficiaryMapper';
 
@@ -125,6 +129,19 @@ import { ListUserBeneficiariesUseCase } from '../../application/use-cases/client
 import { DeleteBeneficiaryUseCase } from '../../application/use-cases/client/beneficiary/DeleteBeneficiaryUseCase';
 import { UpdateBeneficiaryLabelUseCase } from '../../application/use-cases/client/beneficiary/UpdateBeneficiaryLabelUseCase';
 
+// Use Cases - Messaging (Client)
+import { CreateDiscussionUseCase } from '../../application/use-cases/client/messaging/CreateDiscussionUseCase';
+import { ListClientDiscussionsUseCase } from '../../application/use-cases/client/messaging/ListClientDiscussionsUseCase';
+import { SendClientMessageUseCase } from '../../application/use-cases/client/messaging/SendClientMessageUseCase';
+import { GetClientDiscussionUseCase } from '../../application/use-cases/client/messaging/GetClientDiscussionUseCase';
+
+// Use Cases - Messaging (Advisor)
+import { ListAdvisorDiscussionsUseCase } from '../../application/use-cases/advisor/messaging/ListAdvisorDiscussionsUseCase';
+import { SendAdvisorMessageUseCase } from '../../application/use-cases/advisor/messaging/SendAdvisorMessageUseCase';
+import { GetAdvisorDiscussionUseCase } from '../../application/use-cases/advisor/messaging/GetAdvisorDiscussionUseCase';
+import { TransferDiscussionUseCase } from '../../application/use-cases/advisor/messaging/TransferDiscussionUseCase';
+import { ListAdvisorsUseCase } from '../../application/use-cases/advisor/messaging/ListAdvisorsUseCase';
+
 
 export function createContainer() {
 
@@ -144,6 +161,8 @@ export function createContainer() {
   const drizzleHoldingMapper = new DrizzleHoldingMapper();
   const drizzleTradeMapper = new DrizzleTradeMapper();
   const drizzleDiscussionMapper = new DrizzleDiscussionMapper();
+  const drizzleMessageMapper = new DrizzleMessageMapper();
+  const drizzleDiscussionTransferMapper = new DrizzleDiscussionTransferMapper();
   const drizzleStockPriceHistoryMapper = new DrizzleStockPriceHistoryMapper();
   const drizzleBeneficiaryMapper = new DrizzleBeneficiaryMapper();
   
@@ -164,6 +183,8 @@ export function createContainer() {
   const holdingRepository = new HoldingRepositoryDrizzle(db, drizzleHoldingMapper);
   const tradeRepository = new TradeRepositoryDrizzle(db, drizzleTradeMapper);
   const discussionRepository = new DiscussionRepositoryDrizzle(db, drizzleDiscussionMapper);
+  const messageRepository = new MessageRepositoryDrizzle(db, drizzleMessageMapper);
+  const discussionTransferRepository = new DiscussionTransferRepositoryDrizzle(db, drizzleDiscussionTransferMapper);
   const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
   const beneficiaryRepository = new BeneficiaryRepositoryDrizzle(db, drizzleBeneficiaryMapper);
   
@@ -267,7 +288,7 @@ export function createContainer() {
   const grantLoanUseCase = new GrantLoanUseCase(loanRepository, clientRepository, advisorRepository);
   const simulateLoanUseCase = new SimulateLoanUseCase();
   const processScheduledLoanPaymentsUseCase = new ProcessScheduledLoanPaymentsUseCase(loanRepository, bankAccountRepository, transactionRepository);
-  const listPendingLoansUseCase = new ListPendingLoansUseCase(loanRepository);
+  const listPendingLoansUseCase = new ListPendingLoansUseCase(loanRepository, advisorRepository, clientRepository);
   const approveLoanUseCase = new ApproveLoanUseCase(loanRepository, bankAccountRepository, transactionRepository, clientRepository);
   const rejectLoanUseCase = new RejectLoanUseCase(loanRepository);
   const listAdvisorClientsUseCase = new ListAdvisorClientsUseCase(loanRepository);
@@ -315,6 +336,19 @@ export function createContainer() {
   const deleteBeneficiaryUseCase = new DeleteBeneficiaryUseCase(beneficiaryRepository, clientRepository);
   const updateBeneficiaryLabelUseCase = new UpdateBeneficiaryLabelUseCase(beneficiaryRepository, clientRepository);
 
+  // Messaging Use Cases - Client
+  const createDiscussionUseCase = new CreateDiscussionUseCase(discussionRepository, clientRepository);
+  const listClientDiscussionsUseCase = new ListClientDiscussionsUseCase(discussionRepository, clientRepository, advisorRepository, userRepository);
+  const sendClientMessageUseCase = new SendClientMessageUseCase(discussionRepository, messageRepository, clientRepository);
+  const getClientDiscussionUseCase = new GetClientDiscussionUseCase(discussionRepository, messageRepository, clientRepository, advisorRepository, userRepository);
+
+  // Messaging Use Cases - Advisor
+  const listAdvisorDiscussionsUseCase = new ListAdvisorDiscussionsUseCase(discussionRepository, advisorRepository, userRepository, clientRepository);
+  const sendAdvisorMessageUseCase = new SendAdvisorMessageUseCase(discussionRepository, messageRepository, advisorRepository);
+  const getAdvisorDiscussionUseCase = new GetAdvisorDiscussionUseCase(discussionRepository, messageRepository, advisorRepository, userRepository, clientRepository);
+  const transferDiscussionUseCase = new TransferDiscussionUseCase(discussionRepository, discussionTransferRepository, advisorRepository);
+  const listAdvisorsUseCase = new ListAdvisorsUseCase(advisorRepository, userRepository);
+
   
   return {
     repositories: {
@@ -333,6 +367,8 @@ export function createContainer() {
       holding: holdingRepository,
       trade: tradeRepository,
       discussion: discussionRepository,
+      message: messageRepository,
+      discussionTransfer: discussionTransferRepository,
       company: companyRepository,
       stockPriceHistory: stockPriceHistoryRepository,
       beneficiary: beneficiaryRepository,
@@ -417,7 +453,22 @@ export function createContainer() {
         list: listUserBeneficiariesUseCase,
         delete: deleteBeneficiaryUseCase,
         update: updateBeneficiaryLabelUseCase,
-      }
+      },
+      messaging: {
+        client: {
+          create: createDiscussionUseCase,
+          list: listClientDiscussionsUseCase,
+          send: sendClientMessageUseCase,
+          get: getClientDiscussionUseCase,
+        },
+        advisor: {
+          list: listAdvisorDiscussionsUseCase,
+          send: sendAdvisorMessageUseCase,
+          get: getAdvisorDiscussionUseCase,
+          transfer: transferDiscussionUseCase,
+          listAdvisors: listAdvisorsUseCase,
+        },
+      },
     },
   };
 }
