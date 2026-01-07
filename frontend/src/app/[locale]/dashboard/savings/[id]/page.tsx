@@ -163,12 +163,12 @@ export default function SavingDetailPage() {
               </Typography>
             </div>
             <div>
-              <Typography variant="caption" className="text-green-100 mb-1">
+              {/* <Typography variant="caption" className="text-green-100 mb-1">
                 {t('lastUpdate')}
               </Typography>
               <Typography variant="body" className="font-semibold">
                 {formatDate(saving.updatedAt)}
-              </Typography>
+              </Typography> */}
             </div>
           </div>
         </Card>
