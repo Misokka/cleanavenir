@@ -41,7 +41,7 @@ export function setTokenCookie(res: Response, token: string): void {
   res.cookie('accessToken', token, {
     httpOnly: true,
     secure: isProduction, // HTTPS uniquement en production
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax', // 'lax' works for same-site cross-port requests
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
     path: '/',
   });
@@ -56,7 +56,7 @@ export function setRefreshTokenCookie(res: Response, token: string): void {
   res.cookie('refreshToken', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax', // 'lax' works for same-site cross-port requests
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
     path: '/',
   });

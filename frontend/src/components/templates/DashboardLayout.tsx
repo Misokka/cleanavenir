@@ -11,6 +11,7 @@ import { useLogout } from '@/features/auth/useLogin';
 import { savingService, SavingDTO } from '@/infrastructure/web/services/savingService';
 import { useRateChangeNotification } from '@/hooks/useRateChangeNotification';
 import { RateChangeNotificationModal } from '../molecules/RateChangeNotificationModal';
+import { ChatWidget } from '../molecules/ChatWidget';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -121,6 +122,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         iconClass: 'fi fi-br-chart-line-up',
         isActive: pathname.startsWith(`/${locale}/client/investment`),
       },
+      {
+        href: `/${locale}/client/dashboard/messaging`,
+        label: t('navigation.messaging'),
+        iconClass: 'fi fi-br-comment',
+        isActive: pathname.startsWith(`/${locale}/client/dashboard/messaging`),
+      },
     ];
 
     const advisorItems: NavigationItem[] = [
@@ -141,6 +148,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         label: t('navigation.advisor.loansToValidate'),
         iconClass: 'fi fi-br-check-circle',
         isActive: pathname.startsWith(`/${locale}/advisor/loans`),
+      },
+      {
+        href: `/${locale}/advisor/messaging`,
+        label: t('navigation.advisor.messaging'),
+        iconClass: 'fi fi-br-comment',
+        isActive: pathname.startsWith(`/${locale}/advisor/messaging`),
       },
     ];
 
@@ -334,6 +347,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         onAcknowledge={handleAcknowledge}
         rateChanges={rateChanges}
       />
+
+      {user?.role === 'CLIENT' && <ChatWidget />}
     </div>
   );
 
@@ -342,10 +357,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     if (pathname.startsWith(`/${locale}/admin/clients`)) return 'Gestion des clients';
     if (pathname.startsWith(`/${locale}/admin/settings`)) return 'Paramètres';
     
+    if (pathname.startsWith(`/${locale}/advisor/messaging`)) return 'Messagerie';
     if (pathname.startsWith(`/${locale}/advisor/clients`)) return 'Mes clients';
     if (pathname.startsWith(`/${locale}/advisor/loans`)) return 'Prêts à valider';
     if (pathname === `/${locale}/advisor/dashboard`) return 'Vue d\'ensemble';
     
+    if (pathname.startsWith(`/${locale}/client/dashboard/messaging`)) return 'Messagerie';
     if (pathname === `/${locale}/client/dashboard`) return t('overview.title');
     if (pathname.startsWith(`/${locale}/dashboard/accounts`)) return t('accounts.title');
     if (pathname.startsWith(`/${locale}/dashboard/savings`)) return t('savings.title');

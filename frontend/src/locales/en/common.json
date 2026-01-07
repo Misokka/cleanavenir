@@ -158,6 +158,7 @@
       "loans": "Loans",
       "operations": "Operations",
       "investments": "Investments",
+      "messaging": "Messaging",
       "logout": "Logout",
       "director": {
         "overview": "Overview",
@@ -169,7 +170,8 @@
       "advisor": {
         "overview": "Overview",
         "clients": "My clients",
-        "loansToValidate": "Loans to validate"
+        "loansToValidate": "Loans to validate",
+        "messaging": "Messaging"
       }
     },
     "header": {
@@ -605,6 +607,46 @@
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has been moved.",
     "backHome": "Back to home"
+  },
+  "Messaging": {
+    "contactAdvisor": "Contact an advisor",
+    "title": "Messaging",
+    "newConversation": "New conversation",
+    "newDiscussion": "New discussion",
+    "myConversations": "My conversations",
+    "myDiscussions": "My discussions",
+    "noConversations": "No conversations",
+    "noDiscussions": "No discussions",
+    "noMessages": "No messages yet",
+    "selectDiscussion": "Select a discussion",
+    "startConversation": "Start a conversation with your advisor",
+    "pending": "Pending",
+    "assigned": "In progress",
+    "closed": "Closed",
+    "send": "Send",
+    "cancel": "Cancel",
+    "create": "Create",
+    "typePlaceholder": "Type your message...",
+    "subjectPlaceholder": "Subject of your request",
+    "subject": "Subject",
+    "advisor": {
+      "inbox": "Inbox",
+      "pendingDiscussions": "Pending discussions",
+      "myDiscussions": "My discussions",
+      "noPending": "No pending discussions",
+      "noAssigned": "No assigned discussions",
+      "transfer": "Transfer",
+      "transferTo": "Transfer to",
+      "transferReason": "Reason for transfer",
+      "transferSuccess": "Discussion transferred successfully",
+      "selectAdvisor": "Select an advisor",
+      "claimSuccess": "You are now the advisor for this discussion",
+      "alreadyClaimed": "This discussion has already been claimed by another advisor"
+    },
+    "errors": {
+      "loadFailed": "Error loading discussions",
+      "sendFailed": "Error sending message",
+      "createFailed": "Error creating discussion"
+    }
   }
-
 }

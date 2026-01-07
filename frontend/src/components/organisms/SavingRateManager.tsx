@@ -122,7 +122,7 @@ export const SavingRateManager: React.FC = () => {
         {baseRate >= premiumRate && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <Typography variant="caption" className="text-yellow-800">
-              ⚠️ Le taux premium devrait être supérieur au taux de base
+              Le taux premium devrait être supérieur au taux de base
             </Typography>
           </div>
         )}
