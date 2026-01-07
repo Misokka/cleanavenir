@@ -1,5 +1,6 @@
 import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
 import { MissingCredentialsError } from "../../../../domain/errors/MissingCredentialsError";
+import { EmailNotVerifiedError } from "../../../../domain/errors/EmailNotVerifiedError";
 import { err, ok, Result } from "../../../../shared/Result";
 import { UserRepository } from "../../../ports/repositories/UserRepository";
 import { PasswordHasher } from "../../../ports/services/PasswordHasher";
@@ -44,6 +45,10 @@ export class LoginUseCase{
 
     if(!user.value.active){
       return err(new Error("Votre compte a été désactivé. Veuillez contacter la banque."))
+    }
+
+    if(!user.value.emailVerifiedAt){
+      return err(new EmailNotVerifiedError(user.value.email))
     }
 
     const profile = await this.profileManager.fetch(user.value.userIdentifier, user.value.role);

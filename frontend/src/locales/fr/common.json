@@ -114,7 +114,11 @@
       "register": "Créer un compte",
       "loading": "Connexion en cours...",
       "success": "Connexion réussie !",
-      "error": "Identifiants incorrects"
+      "error": "Identifiants incorrects",
+      "emailNotVerified": "Votre compte n'a pas encore été activé. Veuillez vérifier votre email.",
+      "verificationEmailSent": "Un nouvel email de vérification a été envoyé.",
+      "resendingEmail": "Envoi en cours...",
+      "resendVerificationEmail": "Renvoyer l'email de vérification"
     },
     "register": {
       "title": "Inscription",
@@ -134,7 +138,8 @@
         "emailExists": "Cette adresse e-mail est déjà utilisée",
         "passwordMismatch": "Les mots de passe ne correspondent pas",
         "weakPassword": "Le mot de passe doit contenir au moins 8 caractères"
-      }
+      },
+      "successWithVerification": "Compte créé ! Veuillez vérifier votre email pour activer votre compte."
     },
     "roles": {
       "client": "Client particulier",
@@ -146,6 +151,38 @@
       "invalidEmail": "Adresse e-mail invalide",
       "minLength": "Minimum {{count}} caractères",
       "maxLength": "Maximum {{count}} caractères"
+    },
+    "verifyEmail": {
+      "title": "Vérification de l'email",
+      "subtitle": "Confirmez votre adresse email",
+      "verifying": "Vérification en cours...",
+      "successTitle": "Email vérifié !",
+      "successMessage": "Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.",
+      "goToLogin": "Se connecter",
+      "expiredTitle": "Lien expiré",
+      "expiredMessage": "Ce lien de vérification a expiré. Veuillez demander un nouveau lien.",
+      "invalidTitle": "Lien invalide",
+      "invalidMessage": "Ce lien de vérification est invalide ou a déjà été utilisé.",
+      "noTokenMessage": "Aucun token de vérification fourni.",
+      "backToLogin": "Retour à la connexion",
+      "emailPlaceholder": "Votre adresse email",
+      "resendButton": "Renvoyer l'email",
+      "resending": "Envoi en cours...",
+      "resendSuccess": "Un nouvel email de vérification a été envoyé."
+    },
+    "checkEmail": {
+      "title": "Vérification requise",
+      "subtitle": "Confirmez votre adresse email pour continuer",
+      "mainTitle": "Vérifiez votre email",
+      "message": "Nous avons envoyé un email de vérification à :",
+      "instruction": "Cliquez sur le lien dans l'email pour activer votre compte. Ensuite, vous pourrez vous connecter.",
+      "goToLogin": "Aller à la page de connexion",
+      "noEmailReceived": "Vous n'avez pas reçu l'email ?",
+      "resendButton": "Renvoyer l'email de vérification",
+      "resending": "Envoi en cours...",
+      "resendSuccess": "Un nouvel email de vérification a été envoyé !",
+      "resendError": "Erreur lors de l'envoi. Veuillez réessayer.",
+      "spamWarning": "Pensez à vérifier votre dossier spam ou courrier indésirable."
     }
   },
   "Dashboard": {
@@ -235,7 +272,7 @@
       "importantInfo": "Informations importantes",
       "rateInfo": {
         "baseRate": "Taux de base: {rate}% pour tous les clients",
-        "premiumRate": "Taux premium: {rate}% pour les comptes premium", 
+        "premiumRate": "Taux premium: {rate}% pour les comptes premium",
         "minimumAmount": "Montant minimum: {amount}",
         "lastUpdate": "Dernière mise à jour: {date}"
       }

@@ -6,14 +6,22 @@ import {
   AuthResponse, 
   MutationState,
   AuthenticationError,
-  ValidationError 
+  ValidationError,
+  EmailNotVerifiedError 
 } from '@/infrastructure/web/types';
 
+interface LoginState extends MutationState {
+  emailNotVerified: boolean;
+  unverifiedEmail: string | null;
+}
+
 export function useLogin() {
-  const [state, setState] = useState<MutationState>({
+  const [state, setState] = useState<LoginState>({
     loading: false,
     error: null,
     success: false,
+    emailNotVerified: false,
+    unverifiedEmail: null,
   });
 
   const login = useCallback(async (credentials: LoginRequest): Promise<AuthResponse | null> => {
@@ -21,6 +29,8 @@ export function useLogin() {
       loading: true,
       error: null,
       success: false,
+      emailNotVerified: false,
+      unverifiedEmail: null,
     });
 
     try {
@@ -35,8 +45,14 @@ export function useLogin() {
       return result;
     } catch (error) {
       let errorMessage = 'Une erreur inattendue s\'est produite';
+      let emailNotVerified = false;
+      let unverifiedEmail: string | null = null;
 
-      if (error instanceof AuthenticationError) {
+      if (error instanceof EmailNotVerifiedError) {
+        emailNotVerified = true;
+        unverifiedEmail = error.email;
+        errorMessage = error.message;
+      } else if (error instanceof AuthenticationError) {
         errorMessage = 'Identifiants invalides. Veuillez vérifier votre email et mot de passe.';
       } else if (error instanceof ValidationError) {
         errorMessage = 'Veuillez remplir tous les champs requis.';
@@ -48,9 +64,21 @@ export function useLogin() {
         ...prev,
         loading: false,
         error: errorMessage,
+        emailNotVerified,
+        unverifiedEmail,
       }));
 
       return null;
+    }
+  }, []);
+
+  const resendVerificationEmail = useCallback(async (email: string): Promise<boolean> => {
+    try {
+      await authService.resendVerificationEmail(email);
+      return true;
+    } catch (error) {
+      console.error('Failed to resend verification email:', error);
+      return false;
     }
   }, []);
 
@@ -59,15 +87,20 @@ export function useLogin() {
       loading: false,
       error: null,
       success: false,
+      emailNotVerified: false,
+      unverifiedEmail: null,
     });
   }, []);
 
   return {
     login,
+    resendVerificationEmail,
     resetState,
     loading: state.loading,
     error: state.error,
     success: state.success,
+    emailNotVerified: state.emailNotVerified,
+    unverifiedEmail: state.unverifiedEmail,
   };
 }
 

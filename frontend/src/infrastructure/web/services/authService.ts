@@ -4,9 +4,11 @@ import {
   LoginRequest, 
   RegisterRequest, 
   AuthResponse, 
+  RegisterResponse,
   UserDTO,
   AuthenticationError,
-  ValidationError 
+  ValidationError,
+  EmailNotVerifiedError 
 } from '../types';
 
 export class AuthService {
@@ -18,11 +20,16 @@ export class AuthService {
         credentials
       );
 
-      // Les cookies sont gérés automatiquement par le backend (httpOnly)
-      // Plus besoin de stocker le token manuellement
-
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      // Handle EMAIL_NOT_VERIFIED error from backend
+      if (error?.response?.data?.error === 'EMAIL_NOT_VERIFIED') {
+        throw new EmailNotVerifiedError(
+          error.response.data.message || 'Votre compte n\'a pas encore été activé',
+          error.response.data.email
+        );
+      }
+      
       if (error instanceof Error) {
         if (error.message.includes('Invalid credentials') || 
             error.message.includes('MissingCredentialsError') ||
@@ -34,17 +41,20 @@ export class AuthService {
     }
   }
 
-  async register(userData: RegisterRequest): Promise<AuthResponse> {
+  async register(userData: RegisterRequest): Promise<RegisterResponse> {
     try {
-      const response = await httpClient.post<AuthResponse>(
+      const response = await httpClient.post<RegisterResponse>(
         API_ENDPOINTS.AUTH.REGISTER,
         userData
       );
 
-      // Les cookies sont gérés automatiquement par le backend (httpOnly)
-
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.error === 'EMAIL_ALREADY_EXISTS') {
+        throw new ValidationError('Cette adresse email est déjà utilisée', {
+          email: ['Cette adresse email est déjà utilisée']
+        });
+      }
       if (error instanceof Error) {
         if (error.message.includes('EmailAlreadyUsedError')) {
           throw new ValidationError('Cette adresse email est déjà utilisée', {
@@ -61,13 +71,45 @@ export class AuthService {
     }
   }
 
+  async verifyEmail(token: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await httpClient.get<{ success: boolean; message: string }>(
+        `${API_ENDPOINTS.AUTH.VERIFY_EMAIL}?token=${encodeURIComponent(token)}`
+      );
+      return response.data;
+    } catch (error: any) {
+      const errorCode = error?.response?.data?.error;
+      const errorMessage = error?.response?.data?.message;
+      
+      if (errorCode === 'TOKEN_EXPIRED') {
+        throw new Error('TOKEN_EXPIRED');
+      }
+      if (errorCode === 'TOKEN_INVALID') {
+        throw new Error('TOKEN_INVALID');
+      }
+      
+      throw new Error(errorMessage || 'Verification failed');
+    }
+  }
+
+  async resendVerificationEmail(email: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await httpClient.post<{ success: boolean; message: string }>(
+        API_ENDPOINTS.AUTH.RESEND_VERIFICATION,
+        { email }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error?.response?.data?.message || 'Failed to resend verification email');
+    }
+  }
+
   async logout(): Promise<void> {
     try {
       await httpClient.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
       console.warn('Erreur lors de la déconnexion API:', error);
     }
-    // Les cookies sont supprimés automatiquement par le backend
   }
 
   async getCurrentUser(): Promise<UserDTO> {
@@ -93,7 +135,6 @@ export class AuthService {
 
   clearAuthToken(): void {
     // Méthode pour compatibilité - les cookies sont gérés par le backend
-    // On pourrait forcer un logout ici si nécessaire
   }
 }
 

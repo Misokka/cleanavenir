@@ -7,7 +7,6 @@ import { FormFieldWithInput, FormField } from '../atoms/FormField';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
 import { useRegister } from '../../features/auth/useRegister';
-import { useAuth } from '../../contexts/AuthProvider';
 import { UserRole } from '../../infrastructure/web/types';
 
 interface RegisterData {
@@ -25,7 +24,6 @@ export const RegisterForm: React.FC = () => {
   const tValidations = useTranslations('Auth.validations');
   const router = useRouter();
   const { register, loading: registerLoading, error: registerError } = useRegister();
-  const { setUser } = useAuth();
   
   const [formData, setFormData] = useState<RegisterData>({
     firstName: '',
@@ -125,12 +123,10 @@ export const RegisterForm: React.FC = () => {
       role: roleMapping[formData.role] as UserRole
     });
     
-    if (result?.user) {
-      setUser(result.user);
-      
+    if (result?.requiresVerification) {
       if (globalThis.window !== undefined) {
         const currentLocale = globalThis.location.pathname.startsWith('/fr') ? 'fr' : 'en';
-        router.push(`/${currentLocale}/client/dashboard`);
+        router.push(`/${currentLocale}/auth/check-email?email=${encodeURIComponent(result.email)}`);
       }
     }
   };

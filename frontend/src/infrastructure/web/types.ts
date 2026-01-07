@@ -32,6 +32,13 @@ export interface AuthResponse {
   expires_in?: number;
 }
 
+export interface RegisterResponse {
+  success: boolean;
+  requiresVerification: boolean;
+  message: string;
+  email: string;
+}
+
 export interface AccountDTO {
   id: string;
   iban: string;
@@ -104,6 +111,13 @@ export class ValidationError extends Error {
   constructor(message: string, public errors?: Record<string, string[]>) {
     super(message);
     this.name = 'ValidationError';
+  }
+}
+
+export class EmailNotVerifiedError extends Error {
+  constructor(message: string, public email: string) {
+    super(message);
+    this.name = 'EmailNotVerifiedError';
   }
 }
 

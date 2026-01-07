@@ -33,6 +33,15 @@ export const loginController = asyncHandler(
         return;
       }
 
+      if (error.name === 'EmailNotVerifiedError') {
+        res.status(403).json({
+          error: 'EMAIL_NOT_VERIFIED',
+          message: 'Votre compte n\'a pas encore été activé. Consultez vos emails pour valider votre compte.',
+          email: email.toLowerCase(),
+        });
+        return;
+      }
+
       if (error.message.includes('désactivé') || error.message.includes('inactive') || error.message.includes('banned') || error.message.includes('banni')) {
         res.status(403).json({
           error: 'ACCOUNT_BANNED',

@@ -305,11 +305,9 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
           </div>
         </div>
 
-        {/* Right Panel - Conversation */}
         <div className="lg:w-2/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
           {selectedDiscussion ? (
             <>
-              {/* Header */}
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
@@ -338,7 +336,6 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
                 </div>
               </div>
 
-              {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {selectedDiscussion.messages.length === 0 ? (
                   <div className="text-center text-gray-500 py-8">
@@ -371,7 +368,6 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
                 )}
               </div>
 
-              {/* Input */}
               {selectedDiscussion.status !== 'CLOSED' && (
                 <div className="p-4 border-t border-gray-200">
                   <div className="flex gap-2">
@@ -425,7 +421,6 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
         </div>
       </div>
 
-      {/* Transfer Modal */}
       {showTransferModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">

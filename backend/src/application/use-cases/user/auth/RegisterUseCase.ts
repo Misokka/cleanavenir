@@ -11,6 +11,9 @@ import { Client } from "../../../../domain/entities/Client";
 import { Director } from "../../../../domain/entities/Director";
 import { Advisor } from "../../../../domain/entities/Advisor";
 import { AdvisorRepository } from "../../../ports/repositories/AdvisorRepository";
+import { EmailVerificationTokenRepository } from "../../../ports/repositories/EmailVerificationTokenRepository";
+import { EmailService } from "../../../ports/services/EmailService";
+import { SendVerificationEmailUseCase } from "../email-verification/SendVerificationEmailUseCase";
 
 type RegisterResult = {
   user: User;
@@ -22,7 +25,9 @@ export class RegisterUseCase{
     private readonly userRepository: UserRepository,
     private readonly advisorRepository: AdvisorRepository,
     private readonly profileManager: ProfileManager,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
+    private readonly tokenRepository?: EmailVerificationTokenRepository,
+    private readonly emailService?: EmailService
   ){}
 
   public async execute(
@@ -73,6 +78,18 @@ export class RegisterUseCase{
 
     if(!newProfile.ok){
       return err(newProfile.error);
+    }
+
+    if (this.tokenRepository && this.emailService) {
+      const sendVerificationUseCase = new SendVerificationEmailUseCase(
+        this.tokenRepository,
+        this.emailService
+      );
+      
+      sendVerificationUseCase.execute(savedUser.value.userIdentifier, savedUser.value.email)
+        .catch(error => {
+          console.error('Failed to send verification email:', error);
+        });
     }
 
     return ok({
