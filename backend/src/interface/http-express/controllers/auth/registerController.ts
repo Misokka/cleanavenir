@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { toUserDTO } from '../../mappers/dtoMappers';
 import { asyncHandler } from '../../middlewares/errorMiddleware';
 import { getContainer } from '../../../../infrastructure/bootstrap/instance';
-import { generateToken, generateRefreshToken, setTokenCookie, setRefreshTokenCookie } from '../../../../infrastructure/adapters/JwtService';
 
 
 export const registerController = asyncHandler(
@@ -71,27 +70,13 @@ export const registerController = asyncHandler(
       return;
     }
 
-    const { user, profile } = result.value;
-
-    // Générer de vrais tokens JWT et les poser en cookies httpOnly
-    const accessToken = generateToken({
-      userId: user.userIdentifier,
-      email: user.email,
-      role: user.role,
-    });
-
-    const refreshToken = generateRefreshToken({
-      userId: user.userIdentifier,
-      email: user.email,
-      role: user.role,
-    });
-
-    setTokenCookie(res, accessToken);
-    setRefreshTokenCookie(res, refreshToken);
+    const { user } = result.value;
 
     res.status(201).json({
-      token: accessToken,
-      user: toUserDTO(user),
+      success: true,
+      requiresVerification: true,
+      message: 'Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.',
+      email: user.email,
     });
   }
 );

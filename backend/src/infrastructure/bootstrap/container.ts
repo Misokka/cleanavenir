@@ -21,6 +21,7 @@ import { MessageRepositoryDrizzle } from '../repositories/drizzle/MessageReposit
 import { DiscussionTransferRepositoryDrizzle } from '../repositories/drizzle/DiscussionTransferRepositoryDrizzle';
 import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/StockPriceHistoryRepositoryDrizzle';
 import { BeneficiaryRepositoryDrizzle } from '../repositories/drizzle/BeneficiaryRepositoryDrizzle';
+import { EmailVerificationTokenRepositoryDrizzle } from '../repositories/drizzle/EmailVerificationTokenRepositoryDrizzle';
 
 
 // Mappers Drizzle
@@ -49,6 +50,7 @@ import { DrizzleBeneficiaryMapper } from '../repositories/mappers/DrizzleMappers
 
 // Services/Adapters
 import { SimplePasswordHasher } from '../adapters/SimplePasswordHasher';
+import { NodemailerEmailService } from '../adapters/NodemailerEmailService';
 import { ProfileManager } from '../../application/ports/services/ProfileFetcher';
 import { OrderMatchingService } from '../../application/ports/services/OrderMatchingService';
 
@@ -58,6 +60,8 @@ import { LoginUseCase } from '../../application/use-cases/user/auth/LoginUseCase
 import { GetUserProfileUseCase } from '../../application/use-cases/user/auth/GetUserProfileUseCase';
 import { RefreshTokenUseCase } from '../../application/use-cases/user/auth/RefreshTokenUseCase';
 import { ResetPasswordUseCase } from '../../application/use-cases/user/auth/ResetPasswordUseCase';
+import { VerifyEmailUseCase } from '../../application/use-cases/user/email-verification/VerifyEmailUseCase';
+import { ResendVerificationEmailUseCase } from '../../application/use-cases/user/email-verification/ResendVerificationEmailUseCase';
 
 // Use Cases - Account
 import { GetBankAccountUseCase } from '../../application/use-cases/client/account/GetBankAccountUseCase';
@@ -187,8 +191,10 @@ export function createContainer() {
   const discussionTransferRepository = new DiscussionTransferRepositoryDrizzle(db, drizzleDiscussionTransferMapper);
   const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
   const beneficiaryRepository = new BeneficiaryRepositoryDrizzle(db, drizzleBeneficiaryMapper);
+  const emailVerificationTokenRepository = new EmailVerificationTokenRepositoryDrizzle(db);
   
   const passwordHasher = new SimplePasswordHasher();
+  const emailService = new NodemailerEmailService();
 
   const profileManager = new ProfileManager(
     clientRepository,
@@ -202,8 +208,14 @@ export function createContainer() {
     userRepository,
     advisorRepository,
     profileManager,
-    passwordHasher
+    passwordHasher,
+    emailVerificationTokenRepository,
+    emailService
   );
+
+  // Email Verification Use Cases
+  const verifyEmailUseCase = new VerifyEmailUseCase(emailVerificationTokenRepository, userRepository);
+  const resendVerificationEmailUseCase = new ResendVerificationEmailUseCase(userRepository, emailVerificationTokenRepository, emailService);
 
   const loginUseCase = new LoginUseCase(
     userRepository,
@@ -372,6 +384,7 @@ export function createContainer() {
       company: companyRepository,
       stockPriceHistory: stockPriceHistoryRepository,
       beneficiary: beneficiaryRepository,
+      emailVerificationToken: emailVerificationTokenRepository,
     },
 
     services: {
@@ -386,6 +399,8 @@ export function createContainer() {
         getUserProfile: getUserProfileUseCase,
         refreshToken: refreshTokenUseCase,
         resetPassword: resetPasswordUseCase,
+        verifyEmail: verifyEmailUseCase,
+        resendVerificationEmail: resendVerificationEmailUseCase,
       },
       bankAccount: {
         get: getBankAccountUseCase,

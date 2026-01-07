@@ -523,3 +523,22 @@ export const beneficiariesRelations = relations(beneficiaries, ({ one }) => ({
   })
 }));
 
+
+export const emailVerificationTokens = sqliteTable('email_verification_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  tokenHash: text('token_hash').notNull(), 
+  expiresAt: text('expires_at').notNull(),
+  usedAt: text('used_at'), 
+  createdAt: text('created_at').notNull(),
+});
+
+export type EmailVerificationTokenDrizzle = InferSelectModel<typeof emailVerificationTokens>;
+export type NewEmailVerificationTokenDrizzle = InferInsertModel<typeof emailVerificationTokens>;
+
+export const emailVerificationTokensRelations = relations(emailVerificationTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [emailVerificationTokens.userId],
+    references: [users.id]
+  })
+}));
