@@ -14,7 +14,7 @@ export function Header() {
   const { isAuthenticated, user } = useAuth();
   const { logout, loading: logoutLoading } = useLogout();
 
-  const currentLocale = pathname.split('/')[1] || 'en';
+  const currentLocale = locale;
   const isAuthenticatedPage = pathname.includes('/dashboard') || 
                                pathname.includes('/client') || 
                                pathname.includes('/advisor') || 

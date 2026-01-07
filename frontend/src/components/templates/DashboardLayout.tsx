@@ -51,7 +51,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   
   const { rateChanges, showModal, setShowModal, handleAcknowledge } = useRateChangeNotification(savings);
 
-  const currentLocale = pathname.split('/')[1] || 'en';
+  const currentLocale = locale;
 
   const switchLocale = (newLocale: string) => {
     const segments = pathname.split('/').filter(Boolean);
