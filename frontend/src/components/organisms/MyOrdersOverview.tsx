@@ -1,7 +1,6 @@
 'use client';
-import { useGetMyOrders } from '@/features/orders/useGetMyOrders'
-import { useTranslations } from 'next-intl';
 
+import { useGetMyOrders } from '@/features/orders/useGetMyOrders'
 import React, { FormEvent, useState, useRef, useEffect } from 'react'
 import { 
   ArrowTrendingUpIcon, 
@@ -16,6 +15,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Order } from '@/infrastructure/web/services/orderService';
 import { useCancelMyOrder } from '@/features/orders/useCancelMyOrder';
+import { useTranslations } from 'next-intl';
 
 // --- UTILITAIRES ---
 const formatCurrency = (value: number | undefined) => {
@@ -35,16 +35,14 @@ const formatDate = (dateString: string) => {
 interface MyOrdersOverviewProps {
   orders: Order[] | undefined,
   loading: boolean,
-  error: Error | null,
+  error: Error | null
   refetchOrders: () => void;
   refetchPortfolio: () => void;
 }
 
-
 function MyOrdersOverview({orders, loading, error, refetchOrders, refetchPortfolio}: MyOrdersOverviewProps) {
-    const t = useTranslations('Investment.orders');
-
-
+  const { cancelMyOrder } = useCancelMyOrder();
+  
   // Cette fonction est passée aux enfants
   async function handleCancelOrder(orderId: string){
     const response = await cancelMyOrder(orderId);
@@ -53,8 +51,7 @@ function MyOrdersOverview({orders, loading, error, refetchOrders, refetchPortfol
     } else {
       console.log(response.message);
       refetchOrders();
-      refetchPortfolio();
-
+      refetchPortfolio()
     }
   }
 
@@ -69,7 +66,7 @@ function MyOrdersOverview({orders, loading, error, refetchOrders, refetchPortfol
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
-        {t('error')}
+        Une erreur est arrivée pendant la récupération de vos ordres.
       </div>
     );
   }
@@ -77,7 +74,7 @@ function MyOrdersOverview({orders, loading, error, refetchOrders, refetchPortfol
   if (!orders || orders.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-        <p className="text-gray-500">{t('empty')}</p>
+        <p className="text-gray-500">Aucun ordre récent.</p>
       </div>
     );
   }
@@ -102,47 +99,39 @@ interface OrderCardProps {
 }
 
 function OrderCard({ order, onCancelOrder }: OrderCardProps) {
+  const t = useTranslations('Investment.orders');
   const isBuy = order.type === 'BUY';
-  const isCancelable = ["PENDING", "PARTIALLY_FILLED"].includes(order.status);
+  const isPending = order.status === 'PENDING';
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible hover:shadow-md transition-shadow duration-200 flex flex-col relative">
+      {/* --- HEADER --- */}
+      <div className="p-5 border-b border-gray-50 flex justify-between items-start">
+        <div className="flex gap-3">
+          {/* Icône Type d'ordre */}
+          <div className={`p-2 rounded-lg ${isBuy ? 'bg-indigo-50 text-indigo-600' : 'bg-orange-50 text-orange-600'}`}>
+            {isBuy ? <ArrowTrendingUpIcon className="w-5 h-5" /> : <ArrowTrendingDownIcon className="w-5 h-5" />}
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">{order.stockName}</h3>
+            <p className={`text-xs font-medium uppercase tracking-wider ${isBuy ? 'text-indigo-600' : 'text-orange-600'}`}>
+              {isBuy ? t('buy') : t('sell')}
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {/* Badge Statut */}
+          <StatusBadge status={order.status} />
 
+          {/* --- MENU TROIS POINTS (Seulement si PENDING) --- */}
+          {isPending && (
+            <OrderMenu orderId={order.id} onCancel={onCancelOrder} />
+          )}
+        </div>
+      </div>
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-       {/* --- HEADER --- */}
-            <div className="p-5 border-b border-gray-50 flex justify-between items-start">
-              <div className="flex gap-3">
-                {/* Icône Type d'ordre */}
-                <div className={`p-2 rounded-lg ${isBuy ? 'bg-indigo-50 text-indigo-600' : 'bg-orange-50 text-orange-600'}`}>
-                  {isBuy ? <ArrowTrendingUpIcon className="w-5 h-5" /> : <ArrowTrendingDownIcon className="w-5 h-5" />}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{order.stockName}</h3>
-                  <p className={`text-xs font-medium uppercase tracking-wider ${isBuy ? 'text-indigo-600' : 'text-orange-600'}`}>
-                    {isBuy ? t('buy') : t('sell')}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Badge Statut */}
-              <StatusBadge status={order.status} />
-            </div>
-
-            {/* --- BODY --- */}
+      {/* --- BODY --- */}
             <div className="p-5 space-y-4 flex-1">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">{t('initialQuantity')}</span>
@@ -162,32 +151,26 @@ function OrderCard({ order, onCancelOrder }: OrderCardProps) {
               </div>
             </div>
 
-            {/* --- FOOTER (Info Bloquée) --- */}
-            <div className={`px-5 py-3 text-xs font-medium border-t ${isBuy ? 'bg-indigo-50/50 border-indigo-100' : 'bg-orange-50/50 border-orange-100'}`}>
-              <div className="flex items-center gap-2">
-                {isBuy ? (
-                  <>
-                    <BanknotesIcon className="w-4 h-4 text-indigo-500" />
-                    <span className="text-indigo-700">
-                      {t('blockedAmount')} : <span className="font-bold">{formatCurrency(order.blockedMoneyAmount)}</span>
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <LockClosedIcon className="w-4 h-4 text-orange-500" />
-                    <span className="text-orange-700">
-                      {t('blockedShares')} : <span className="font-bold">{order.blockedStockQuantity} {t('units')}</span>
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-      
-      
-      
-      
-
-
+      {/* --- FOOTER --- */}
+      <div className={`px-5 py-3 text-xs font-medium border-t ${isBuy ? 'bg-indigo-50/50 border-indigo-100' : 'bg-orange-50/50 border-orange-100'}`}>
+        <div className="flex items-center gap-2">
+          {isBuy ? (
+            <>
+              <BanknotesIcon className="w-4 h-4 text-indigo-500" />
+              <span className="text-indigo-700">
+               {t('blockedAmount')} : <span className="font-bold">{formatCurrency(order.blockedMoneyAmount)}</span>
+              </span>
+            </>
+          ) : (
+            <>
+              <LockClosedIcon className="w-4 h-4 text-orange-500" />
+              <span className="text-orange-700">
+                {t('blockedShares')} : <span className="font-bold">{order.blockedStockQuantity} {t('units')}</span>
+              </span>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -263,12 +246,12 @@ function StatusBadge({ status }: { status: string }) {
     CANCELLED: "bg-gray-50 text-gray-600 border-gray-200",
   };
 
-  const statusKeyMap = {
-    PENDING: 'pending',
-    PARTIALLY_FILLED: 'partiallyFilled',
-    EXECUTED: 'executed',
-    CANCELLED: 'cancelled',
-  } as const;
+  const labels = {
+    PENDING: t('pending'),
+    PARTIALLY_FILLED: t('partiallyFilled'),
+    EXECUTED: t('executed'),
+    CANCELLED: t('cancelled'),
+  };
 
   const icons = {
     PENDING: ClockIcon,
@@ -278,8 +261,7 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   const style = styles[status as keyof typeof styles] || styles.CANCELLED;
-  const key = statusKeyMap[status as keyof typeof statusKeyMap];
-  const label = key ? t(key) : status;
+  const label = labels[status as keyof typeof styles] || status;
   const Icon = icons[status as keyof typeof styles] || ClockIcon;
 
   return (
