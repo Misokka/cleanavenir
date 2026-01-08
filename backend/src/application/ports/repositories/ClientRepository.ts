@@ -9,4 +9,5 @@ export interface ClientRepository{
   all(): Promise<Result<Client[], Error>>;
   delete(clientIdentifier: string): Promise<Result<void, ClientNotFoundError | Error>>;
   updateAdvisor(clientIdentifier: string, advisorIdentifier: string): Promise<Result<Client, ClientNotFoundError>>;
+  getSystemClient(systemUserIdentifier: string): Promise<Result<Client, Error>>
 }

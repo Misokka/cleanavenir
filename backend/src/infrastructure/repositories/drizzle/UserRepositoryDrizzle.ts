@@ -31,6 +31,16 @@ export class UserRepositoryDrizzle implements UserRepository {
     }
   }
 
+  async getSystemUser(): Promise<Result<User, Error>> {
+    try{
+      const rows = await this.db.select().from(users).where(eq(users.email, 'sys@example.com'));
+      const toDomain = this.userMapper.toDomain(rows[0]);
+      return ok(toDomain);
+    } catch (error) {
+      return err(new Error("System user not found"))
+    }
+  }
+
   async update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>> {
     try {
       const userToPersist = this.userMapper.toPersistence(user);
