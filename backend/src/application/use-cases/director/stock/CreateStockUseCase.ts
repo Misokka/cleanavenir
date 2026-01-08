@@ -8,6 +8,10 @@ import { CompanyRepository } from "../../../ports/repositories/CompanyRepository
 import { PortfolioRepository } from "../../../ports/repositories/PortfolioRepository";
 import { Portfolio } from "../../../../domain/entities/Portfolio";
 import { SYSTEM_PORTFOLIO_ID } from "../../../../shared/constants/Investment";
+import { OrderRepository } from "../../../ports/repositories/OrderRepository";
+import { Order } from "../../../../domain/entities/Order";
+import { UserRepository } from "../../../ports/repositories/UserRepository";
+import { ClientRepository } from "../../../ports/repositories/ClientRepository";
 
 type CreateStockProps = {
   companyIdentifier: string,
@@ -20,7 +24,10 @@ export class CreateStockUseCase{
   constructor(
     private readonly stockRepository: StockRepository,
     private readonly companyRepository: CompanyRepository,
-    private readonly portfolioRepository: PortfolioRepository
+    private readonly userRepository: UserRepository,
+    private readonly clientRepository: ClientRepository,
+    private readonly portfolioRepository: PortfolioRepository,
+    private readonly orderRepository: OrderRepository,
   ){}
 
   public async execute({companyIdentifier, tickerValue, price, isAvailable, initialQuantity}: CreateStockProps): Promise<Result<Stock, Error>>{
@@ -53,10 +60,35 @@ export class CreateStockUseCase{
       console.error('CreateStockUseCase - Stock save error:', maybeStock.error);
       return err(new CouldNotCreateStockError())
     }
+    const stock = maybeStock.value;
 
-    // Note: Les holdings initiaux peuvent être gérés par un système de matching d'ordres
-    // Pour l'instant, on ne crée pas de portfolio système automatiquement
-    // car cela nécessiterait un utilisateur système dans la table clients
+    const systemUserResult = await this.userRepository.getSystemUser();
+    if(!systemUserResult.ok) return err(systemUserResult.error);
+    const systemUser = systemUserResult.value;
+
+    const systemClientResult = await this.clientRepository.getSystemClient(systemUser.userIdentifier);
+    if(!systemClientResult.ok) return err(systemClientResult.error);
+    const systemClient = systemClientResult.value;
+
+    const systemPortfolioResult = await this.portfolioRepository.findByClientId(systemClient.clientIdentifier);
+    if(!systemPortfolioResult.ok) return err(systemPortfolioResult.error);
+    const systemPortfolio = systemPortfolioResult.value;
+
+    const systemSellOrder = Order.create({
+      orderIdentifier: randomUUID(),
+      clientIdentifier: systemClient.clientIdentifier,
+      stockIdentifier:stock.stockIdentifier,
+      limitPrice: stock.price * 100,
+      orderType: "SELL",
+      initialQuantity: initialQuantity,
+      remainingQuantity: initialQuantity,
+      blockedStockQuantity: initialQuantity,
+      sellerHoldingAveragePrice: stock.price * 100,
+      createdAt: new Date()
+    });
+
+    const savedOrderResult = await this.orderRepository.save(systemSellOrder);
+    if(!savedOrderResult.ok) return err(savedOrderResult.error);
 
     return ok(maybeStock.value)
   }

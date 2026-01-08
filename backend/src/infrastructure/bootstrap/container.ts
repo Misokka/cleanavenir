@@ -316,7 +316,7 @@ export function createContainer() {
   const getCompanyByIdUseCase = new GetCompanyByIdUseCase(companyRepository);
   const updateCompanyUseCase = new UpdateCompanyUseCase(companyRepository);
   const deleteCompanyUseCase = new DeleteCompanyUseCase(companyRepository, stockRepository);
-  const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository, portfolioRepository);
+  const createStockUseCase  = new CreateStockUseCase(stockRepository, companyRepository, userRepository, clientRepository, portfolioRepository, orderRepository);
   const listCompaniesUseCase = new ListCompaniesUseCase(companyRepository);
   const listStockUseCase = new ListStocksUseCase(stockRepository);
   const listMyOrdersUseCase = new ListMyOrdersUseCase(clientRepository, orderRepository, stockRepository);

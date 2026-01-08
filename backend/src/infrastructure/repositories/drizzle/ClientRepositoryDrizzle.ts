@@ -74,6 +74,16 @@ export class ClientRepositoryDrizzle implements ClientRepository {
     }
   }
 
+  async getSystemClient(systemUserIdentifier: string): Promise<Result<Client, Error>> {
+    try{
+      const rows = await this.db.select().from(clients).where(eq(clients.userId, systemUserIdentifier));
+      const toDomain = this.clientMapper.toDomain(rows[0]);
+      return ok(toDomain);
+    } catch (error) {
+      return err(new Error("System client account not found."))
+    }
+  }
+
   async delete(clientIdentifier: string): Promise<Result<void, ClientNotFoundError | Error>> {
     try {
       const result = await this.db.delete(clients).where(eq(clients.id, clientIdentifier)).returning();

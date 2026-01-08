@@ -7,6 +7,7 @@ import { User } from "../../../domain/entities/User";
 
 export interface UserRepository {
   save(user: User): Promise<Result<User, EmailAlreadyUsedError | InvalidRoleError | Error>>;
+  getSystemUser(): Promise<Result<User, Error>>
   update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>>;
   delete(userId: string): Promise<Result<void, UserNotFoundError | Error>>;
 
