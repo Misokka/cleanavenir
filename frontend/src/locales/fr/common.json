@@ -482,6 +482,22 @@
         "updateSuccess": "Taux mis à jour avec succès",
         "updateError": "Erreur lors de la mise à jour",
         "invalidRate": "Le taux doit être entre 0 et 100"
+      },
+      "form": {
+        "titleCreate": "Créer un produit d'épargne",
+        "titleEdit": "Modifier un produit d'épargne",
+        "label": "Nom du produit",
+        "labelPlaceholder": "PEL",
+        "rate": "Taux d'intérêt (%)",
+        "ratePlaceholder": "1.03",
+        "cancel": "Annuler",
+        "confirm": "Confirmer",
+        "errors": {
+          "labelRequired": "Le nom du produit est requis",
+          "labelInvalid": "Le nom du produit est invalide",
+          "rateRequired": "Le taux est requis",
+          "rateInvalid": "Le taux doit être supérieur à 0"
+        }
       }
     },
     "companies": {
