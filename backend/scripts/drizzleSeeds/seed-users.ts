@@ -28,7 +28,7 @@ async function seedDirector(now: string){
 async function seed() {
   const now = new Date().toISOString();
   const hasher = new SimplePasswordHasher();
-  const defaultPlainPassword = 'Password123!';
+  const defaultPlainPassword = 'password';
   const hashedDefaultPassword = await hasher.hash(defaultPlainPassword);
 
   const rows: NewUserDrizzle[] = [
