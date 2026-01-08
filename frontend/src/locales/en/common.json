@@ -482,6 +482,22 @@
         "updateSuccess": "Rate updated successfully",
         "updateError": "Error updating rate",
         "invalidRate": "Rate must be between 0 and 100"
+      },
+      "form": {
+        "titleCreate": "Create a saving product",
+        "titleEdit": "Edit a saving product",
+        "label": "Product name",
+        "labelPlaceholder": "PEL",
+        "rate": "Interest rate (%)",
+        "ratePlaceholder": "1.03",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "errors": {
+          "labelRequired": "Product name is required",
+          "labelInvalid": "Product name is invalid",
+          "rateRequired": "Rate is required",
+          "rateInvalid": "Rate must be greater than 0"
+        }
       }
     },
     "companies": {

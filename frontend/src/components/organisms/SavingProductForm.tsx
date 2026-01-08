@@ -17,9 +17,8 @@ interface SavingProductFormProps {
 }
 
 function SavingProductForm({ action, productToEdit, isActive, onClose, onSuccess } :SavingProductFormProps) {
-  const t = useTranslations('Auth.login'); // à changer
+  const t = useTranslations('Director.savings.form');
   const {createSavingProduct, updateSavingProduct, isLoading, error, setError} = useCreateSavingProduct();
-  const actionTitle = action == "create" ? "Create" : "Edit"
   const [formData, setFormData] = useState<savingProductType>({
     id: "",
     label: "",
@@ -41,15 +40,15 @@ function SavingProductForm({ action, productToEdit, isActive, onClose, onSuccess
     const newErrors: Partial<savingProductErrosType> = {};
     
     if (!formData.label) {
-      newErrors.label = "Label is required";
+      newErrors.label = t('errors.labelRequired');
     } else if (formData.label.length < 2) {
-      newErrors.label = "Label is invalid";
+      newErrors.label = t('errors.labelInvalid');
     }
     
     if (!formData.rate) {
-      newErrors.rate = "Rate is required";
+      newErrors.rate = t('errors.rateRequired');
     } else if (formData.rate <= 0){
-      newErrors.rate = "Rate cannot be equal or lower to 0."
+      newErrors.rate = t('errors.rateInvalid');
     }
     
     setErrors(newErrors);
@@ -114,34 +113,34 @@ function SavingProductForm({ action, productToEdit, isActive, onClose, onSuccess
       <form 
         className='bg-white relative z-[60] space-y-6 min-w-96 p-4 rounded-md'
         >
-        <Typography variant='h3'>{actionTitle} a saving product</Typography>
+        <Typography variant='h3'>{action === 'create' ? t('titleCreate') : t('titleEdit')}</Typography>
         <FormFieldWithInput
-          label={"Label"}
+          label={t('label')}
           type="label"
           value={formData.label}
           onChange={handleInputChange('label')}
           error={errors.label}
           required
-          placeholder="PEL"
+          placeholder={t('labelPlaceholder')}
         />
 
         <FormFieldWithInput
-          label={"Rate"}
+          label={t('rate')}
           type="number"
           value={formData.rate}
           onChange={handleInputChange('rate')}
           error={errors.rate}
           required
-          placeholder="1.03%"
+          placeholder={t('ratePlaceholder')}
         />
 
         <div className='actions flex justify-between'>
           <Button variant='outline' onClick={triggerCloseForm}>
-            Annuler
+            {t('cancel')}
           </Button>
 
           <Button variant='primary' onClick={handleSubmit}>
-            Confirmer
+            {t('confirm')}
           </Button>
         </div>
 
