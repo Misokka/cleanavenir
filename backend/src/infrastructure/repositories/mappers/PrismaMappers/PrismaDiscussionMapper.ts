@@ -17,13 +17,16 @@ export class PrismaDiscussionMapper implements Mapper<PrismaDiscussion, Discussi
       raw.clientIdentifier,
       raw.advisorIdentifier || undefined,
       raw.subject || undefined,
+      raw.status,
       raw.createdAt || undefined
     )
   };
 
   toPersistence(obj: Discussion): DiscussionToPersit {
     return {
-      ...obj
+      ...obj,
+      advisorIdentifier: obj.advisorIdentifier as string | undefined,
+      subject: obj.subject as string | undefined,
     }
   }
 }

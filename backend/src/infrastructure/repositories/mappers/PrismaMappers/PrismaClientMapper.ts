@@ -5,6 +5,7 @@ import { Mapper } from "../MapperInterface";
 type ClientToPersist = {
   clientIdentifier: string,
   userIdentifier: string,
+  advisorIdentifier: string,
 }
 
 export class PrismaClientMapper implements Mapper<PrismaClient, Client, ClientToPersist>{

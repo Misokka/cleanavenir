@@ -1,6 +1,6 @@
 import { Loan as PrismaLoan } from "@prisma/client";
 import { Mapper } from "../MapperInterface";
-import { Loan } from "../../../../domain/entities/Loan";
+import { Loan, LoanStatus } from "../../../../domain/entities/Loan";
 
 type LoanToPersist = {
     loanIdentifier: string,
@@ -13,7 +13,7 @@ type LoanToPersist = {
     remainingAmountToPay: number,
     annualInterestRate: number,
     annualInsuranceRate: number,
-    status: "ACTIVE" | "PAID_OFF",
+    status: LoanStatus,
     createdAt: Date,
     lastPaidAt?: Date,
     nextToPayAt?: Date,
@@ -21,22 +21,11 @@ type LoanToPersist = {
 
 export class PrismaLoanMapper implements Mapper<PrismaLoan, Loan, LoanToPersist> {
   toDomain(raw : PrismaLoan): Loan {
-    return new Loan(
-      raw.loanIdentifier,
-      raw.clientIdentifier,
-      raw.advisorIdentifier,
-      raw.loanAmount,
-      raw.durationInMonth,
-      raw.mensualities,
-      raw.insuranceMensualities,
-      raw.remainingAmountToPay,
-      raw.annualInterestRate,
-      raw.annualInsuranceRate,
-      raw.status,
-      raw.createdAt,
-      raw.lastPaidAt ?? undefined,
-      raw.nextToPayAt ?? undefined,
-    )
+    return Loan.create({
+      ...raw,
+      lastPaidAt: raw.lastPaidAt as Date | undefined,
+      nextToPayAt: raw.nextToPayAt as Date | undefined,
+    })
   }
 
   toPersistence(loan: Loan): LoanToPersist{

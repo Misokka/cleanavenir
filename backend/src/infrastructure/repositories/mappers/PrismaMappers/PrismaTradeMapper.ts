@@ -14,15 +14,9 @@ type TradeToPersist = {
 
 export class PrismaTradeMapper implements Mapper<PrismaTrade, Trade, TradeToPersist>{
   toDomain(raw: PrismaTrade): Trade {
-    return new Trade(
-      raw.tradeIdentifier,
-      raw.stockIdentifier,
-      raw.buyOrderIdentifier,
-      raw.sellOrderIdentifier,
-      raw.quantity,
-      raw.price,
-      raw.createdAt
-    )
+    return Trade.create({
+      ...raw
+    })
   }
 
   toPersistence(obj: Trade): TradeToPersist {

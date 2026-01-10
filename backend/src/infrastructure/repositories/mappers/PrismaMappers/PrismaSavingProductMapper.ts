@@ -5,16 +5,16 @@ import { SavingProduct } from "../../../../domain/entities/SavingProduct";
 type SavingProductToPersist = {
   savingProductIdentifier: string,
   label: string,
-  rate: number
+  rate: number,
+  rateUpdatedAt?: Date
 }
 
 export class PrismaSavingProductMapper implements Mapper<PrismaSavingProduct, SavingProduct, SavingProductToPersist>{
   toDomain(raw: PrismaSavingProduct): SavingProduct {
-    return new SavingProduct(
-      raw.savingProductIdentifier,
-      raw.label,
-      raw.rate
-    )
+    return SavingProduct.create({
+      ...raw,
+      rateUpdatedAt: raw.rateUpdatedAt as Date | undefined
+    })
   }
 
   toPersistence(obj: SavingProduct): SavingProductToPersist {

@@ -7,15 +7,25 @@ type OrderToPersist = {
   stockIdentifier: string;
   clientIdentifier: string;
   orderType: OrderType;
-  quantity: number;
+  initialQuantity: number;
+  remainingQuantity: number;
   limitPrice: number;
   status: OrderStatus;
+  blockedMoneyAmount?: number
+  remainingBlockedMoneyAmount?: number
+  blockedStckQuantity?: number
+  sellerHoldingAveragePrice?: number
+  createdAt: Date
 }
 
 export class PrismaOrderMapper implements Mapper<PrismaOrder, Order, OrderToPersist> {
   toDomain(raw: PrismaOrder): Order {
     return Order.create({
-      ...raw
+      ...raw,
+      blockedMoneyAmount: raw.blockedMoneyAmount as number | undefined,
+      remainingBlockedMoneyAmount: raw.remainingBlockedMoneyAmount as number | undefined,
+      blockedStockQuantity: raw.blockedStockQuantity as number | undefined,
+      sellerHoldingAveragePrice: raw.sellerHoldingAveragePrice as number | undefined
     })
   }
 

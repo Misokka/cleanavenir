@@ -9,19 +9,20 @@ type TransactionToPersist = {
   direction: $Enums.TransactionDirection,
   type: $Enums.TransactionType,
   description: string,
-  date: Date
+  currency: string,
+  createdAt: Date,
+  fromAccountIdentifier?: string,
+  toAccountIdentifier?: string,
+  toSavingAccountIdentifier?: string,
 }
 export class PrismaTransactionMapper implements Mapper<PrismaTransaction, Transaction, TransactionToPersist>{
   toDomain(raw: PrismaTransaction): Transaction {
-    return new Transaction(
-      raw.transactionIdentifier,
-      raw.bankAccountIdentifier,
-      raw.amount,
-      raw.direction as TransactionDirection,
-      raw.type as TransactionType,
-      raw.description,
-      raw.date
-    )
+    return Transaction.create({
+      ...raw,
+      fromAccountIdentifier: raw.fromAccountIdentifier as string | undefined,
+      toAccountIdentifier: raw.toAccountIdentifier as string | undefined,
+      toSavingAccountIdentifier: raw.toSavingAccountIdentifier as string | undefined
+    })
   }
 
   toPersistence(obj: Transaction): TransactionToPersist {
