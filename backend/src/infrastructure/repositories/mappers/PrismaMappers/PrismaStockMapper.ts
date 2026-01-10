@@ -9,6 +9,7 @@ type StockToPersist = {
   ticker: string;
   price: number;
   isAvailable: boolean;
+  createdAt: Date
 }
 
 export class PrismaStockMapper implements Mapper<PrismaStock, Stock, StockToPersist> {

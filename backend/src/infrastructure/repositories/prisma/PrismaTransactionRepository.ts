@@ -129,7 +129,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
           }
         },
         orderBy: {
-          date: 'desc'
+          createdAt: 'desc'
         },
         take: limit
       });
@@ -197,6 +197,20 @@ export class PrismaTransactionRepository implements TransactionRepository {
       return ok(transactionsArray); 
     } catch (error) {
       return err(new Error(`An error occured when retrieving transactions with filters.`))
+    }
+  }
+
+  async delete(transactionIdentifier: string): Promise<Result<boolean, Error>> {
+    try{
+      const deleted = await this.prismaClient.transaction.delete({
+        where: {
+          transactionIdentifier
+        }
+      });
+      if(!deleted) return err(new Error(`Couldn't delete transaction ${transactionIdentifier} or transaction not found.`));
+      return ok(true);
+    } catch {
+      return err(new Error(`An error occured when deleting transaction ${transactionIdentifier}`))
     }
   }
 }

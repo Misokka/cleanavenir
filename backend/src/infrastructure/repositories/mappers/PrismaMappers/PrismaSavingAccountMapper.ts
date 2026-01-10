@@ -11,6 +11,7 @@ type SavingAccountToPersist = {
   iban: string,
   label: string,
   balance: number,
+  createdAt: Date
 }
 export class PrismaSavingAccountMapper implements Mapper<PrismaSavingAccount, SavingAccount, SavingAccountToPersist>{
   toDomain(raw: PrismaSavingAccount): SavingAccount {

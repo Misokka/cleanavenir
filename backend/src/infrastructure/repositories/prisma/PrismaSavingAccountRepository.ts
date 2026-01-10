@@ -1,12 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { SavingAccountDTO } from "../../../application/dtos/SavingAccountDTO";
-import { SavingRateDTO } from "../../../application/dtos/SavingRateDTO";
 import { SavingAccountRepository } from "../../../application/ports/repositories/SavingAccountRepository";
 import { SavingAccount } from "../../../domain/entities/SavingAccount";
-import { AlreadyHasSavingAccountError } from "../../../domain/errors/AlreadyHasSavingAccountError";
-import { BankAccountNotFoundError } from "../../../domain/errors/BankAccountNotFoundError";
 import { SavingBankAccountNotFoundError } from "../../../domain/errors/SavingAccountNotFoundError";
-import { SavingRateNotSetError } from "../../../domain/errors/SavingRateNotSetError";
 import Result, { err, ok } from "../../../shared/Result";
 import { PrismaSavingAccountMapper } from "../mappers/PrismaMappers/PrismaSavingAccountMapper";
 
@@ -95,6 +90,69 @@ export class PrismaSavingAccountRepository implements SavingAccountRepository {
       return err(new Error("An error occured when retrieving saving accounts by account IDs."));
     }
   }
+
+  async findByOwnerAndProductId(ownerId: string, productId: string): Promise<Result<SavingAccount | null, Error>> {
+    try{
+      const savingAccount = await this.prismaClient.savingAccount.findFirst({
+        where: {
+          clientIdentifier: ownerId,
+          productIdentifier: productId
+        }
+      });
+      if(!savingAccount) return err(new Error(`Saving account for client ${ownerId} with product ${productId} not found.`));
+      const toDomain = this.prismaSavingAccountMapper.toDomain(savingAccount);
+      return ok(toDomain);
+    } catch {
+      return err(new Error(`An error occured when retrieving saving account with product ${productId} for client ${ownerId}`))
+    }
+  }
+
+  async findManyByOwner(clientIdentifier: string): Promise<Result<SavingAccount[], Error>> {
+    try{
+      const savingAccounts = await this.prismaClient.savingAccount.findMany({
+        where: {
+          clientIdentifier: clientIdentifier
+        }
+      });
+
+      const toDomain = savingAccounts.map((savingAccount) => this.prismaSavingAccountMapper.toDomain(savingAccount));
+      return ok(toDomain);
+    } catch {
+      return err(new Error(`An error occured when retrieving saving accounts for client ${clientIdentifier}`))
+    }
+  }
+
+  async updateBalance(accountId: string, newBalance: number): Promise<Result<number, Error>> {
+    try{
+      const updated = await this.prismaClient.savingAccount.update({
+        where: {
+          accountIdentifier: accountId
+        },
+        data: {
+          balance: newBalance
+        }
+      });
+      if(!updated) return err(new Error(`Couldn't update saving account ${accountId} balance.`));
+      return ok(newBalance);
+    } catch {
+      return err(new Error(`An error occured when updating the balance for saving account ${accountId}`))
+    }
+  }
+
+  async delete(accountId: string): Promise<Result<boolean, Error>> {
+    try{
+      const deleted = await this.prismaClient.savingAccount.delete({
+        where: {
+          accountIdentifier: accountId
+        }
+      });
+      if(!deleted) return err(new Error(`Couldn't delete saving account ${accountId}`))
+      return ok(true);
+    } catch {
+      return err(new Error(`An error occured when deleting saving account: ${accountId}`))
+    }
+  }
+
 
 
 }

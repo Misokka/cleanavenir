@@ -135,4 +135,20 @@ export class PrismaUserRepository implements UserRepository {
       return err(new Error(`An error occurred when deleting user ${userId}`));
     }
   }
+
+  async getSystemUser(): Promise<Result<User, Error>> {
+    try{
+      const systemUser = await this.prismaClient.user.findUnique({
+        where: {
+          email: "sys@example.com"
+        }
+      });
+      if(!systemUser) return err(new Error("System user not found."));
+
+      const toDomain = this.prismaUserMapper.toDomain(systemUser);
+      return ok(toDomain);
+    } catch (error: any) {
+      return err(new Error(`An error occured when retrieving system user: ${error.message}`))
+    }
+  }
 }

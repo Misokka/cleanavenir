@@ -1,12 +1,13 @@
 import { Mapper } from "../MapperInterface";
 import { Discussion as PrismaDiscussion } from "@prisma/client";
-import { Discussion } from "../../../../domain/entities/Discussion";
+import { Discussion, DiscussionStatus } from "../../../../domain/entities/Discussion";
 
 type DiscussionToPersit = {
   discussionIdentifier: string,
   clientIdentifier: string,
   advisorIdentifier?: string,
   subject?: string,
+  status: DiscussionStatus,
   createdAt: Date,
 }
 

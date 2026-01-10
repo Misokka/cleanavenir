@@ -7,6 +7,7 @@ type HoldingToPersist = {
   portfolioIdentifier: string;
   stockIdentifier: string;
   quantity: number;
+  averagePrice: number;
 }
 
 export class PrismaHoldingMapper implements Mapper<PrismaHolding, Holding, HoldingToPersist> {

@@ -128,4 +128,20 @@ export class PrismaClientRepository implements ClientRepository{
       return err(new UserNotFoundError(clientIdentifier));
     }
   }
+
+  async getSystemClient(systemUserIdentifier: string): Promise<Result<Client, Error>> {
+    try{
+      const systemClient = await this.prismaClient.client.findUnique({
+        where: {
+          userIdentifier: systemUserIdentifier
+        }
+      });
+      if(!systemClient) return err(new Error(`No system client is linked to system user with id: ${systemUserIdentifier}`));
+
+      const toDomain = this.prismaCientMapper.toDomain(systemClient);
+      return ok(toDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving system client account`))
+    }
+  }
 }

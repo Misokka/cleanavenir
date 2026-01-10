@@ -5,13 +5,8 @@ import { Result, ok, err } from "../../../shared/Result";
 import { emailVerificationTokens } from "../../drizzle/schema";
 import { DrizzleEmailVerificationTokenMapper } from "../mappers/DrizzleMappers/DrizzleEmailVerificationTokenMapper";
 import { DrizzleClient } from "../../drizzle/client";
+import { EmailVerificationTokenNotFoundError } from "../../../domain/errors/EmailVerificationTokenNotFoundError";
 
-export class EmailVerificationTokenNotFoundError extends Error {
-  readonly name = "EmailVerificationTokenNotFoundError" as const;
-  constructor() {
-    super("Email verification token not found");
-  }
-}
 
 export class EmailVerificationTokenRepositoryDrizzle implements EmailVerificationTokenRepository {
   constructor(private readonly db: DrizzleClient) {}
@@ -30,11 +25,11 @@ export class EmailVerificationTokenRepositoryDrizzle implements EmailVerificatio
     try {
       const rows = await this.db.select().from(emailVerificationTokens).where(eq(emailVerificationTokens.tokenHash, tokenHash));
       if (!rows.length) {
-        return err(new EmailVerificationTokenNotFoundError());
+        return err(new EmailVerificationTokenNotFoundError(`Token with hash ${tokenHash} not found`));
       }
       return ok(DrizzleEmailVerificationTokenMapper.toDomain(rows[0]));
     } catch (error) {
-      return err(new EmailVerificationTokenNotFoundError());
+      return err(new EmailVerificationTokenNotFoundError(`Token with hash ${tokenHash} not found`));
     }
   }
 

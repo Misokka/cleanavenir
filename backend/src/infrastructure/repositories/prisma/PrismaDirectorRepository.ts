@@ -5,6 +5,7 @@ import Result, { err, ok } from "../../../shared/Result";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { PrismaDirectorMapper } from "../mappers/PrismaMappers/PrismaDirectorMapper";
+import { DirectorNotFoundError } from "../../../domain/errors/DirectorNotFoundError";
 
 export class PrismaDirectorRepository implements DirectorRepository{
   constructor(
@@ -46,6 +47,22 @@ export class PrismaDirectorRepository implements DirectorRepository{
       return ok(directorToDomain);
     } catch (error){
       return err(new UserNotFoundError(directorIdentifier));
+    }
+  }
+
+  async findByUserId(userIdentifier: string): Promise<Result<Director, DirectorNotFoundError>> {
+    try{
+      const director = await this.prismaClient.director.findUnique({
+        where: {
+          userIdentifier
+        }
+      });
+      if(!director) return err(new DirectorNotFoundError(`No director is linked to user with id ${userIdentifier}`));
+
+      const toDomain = this.prismaDirectorMapper.toDomain(director);
+      return ok(toDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving director with userIdentifier: ${userIdentifier}`))
     }
   }
 }

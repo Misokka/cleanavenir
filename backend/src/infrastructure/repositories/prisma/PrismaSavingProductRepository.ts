@@ -97,4 +97,23 @@ export class PrismaSavingProductRepository implements SavingProductRepository {
       return err(new Error(`An error occured when deleting saving product: ${savingProductIdentifier}`))
     }
   }
+
+  async update(savingProduct: SavingProduct): Promise<Result<SavingProduct, Error>> {
+    try{
+      const toPersist = this.prismaSavingProductMapper.toPersistence(savingProduct);
+      const updated = await this.prismaClient.savingProduct.update({
+        where: {
+          savingProductIdentifier: savingProduct.savingProductIdentifier
+        },
+        data: {
+          ...toPersist
+        }
+      });
+      if(!updated) return err(new Error(`couldn't update saving product ${savingProduct.savingProductIdentifier}`));
+      const toDomain = this.prismaSavingProductMapper.toDomain(updated);
+      return ok(toDomain);
+    } catch {
+      return err(new Error(`Couldn't update saving product ${savingProduct.savingProductIdentifier}`))
+    }
+  }
 }
