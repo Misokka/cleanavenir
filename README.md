@@ -1,12 +1,22 @@
 # cleanavenir
 
+# COMMENT LANCER LE PROJET 
+
 dans ./backend 
 
+cp .env.example .env
+
 npm install
+
+npx drizzle-kit push
+
+npm run db:seed:all:drizzle
 
 npm run dev:express
 
 dans ./frontend
+
+cp .env.example .env
 
 npm install
 
@@ -17,7 +27,16 @@ npm run dev
 pour connaitre les command allez dans le package.json du backend.
 
 le mot de passe par défaut pour les utilisateurs seedés est
-Password123!
+password
+les utilisateurs
+
+
+alice@example.com client 
+bob@example.com client
+tom@example.com conseiller
+didier@example.com conseiller
+pat@example.com directeur
+
 
 dans ./backend
 
