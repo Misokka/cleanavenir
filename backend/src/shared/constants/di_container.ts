@@ -1,0 +1,1 @@
+export const DI_CONTAINER = 'DI_CONTAINER';

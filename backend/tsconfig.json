@@ -5,17 +5,18 @@
     "moduleResolution": "node",
     "rootDir": ".",
     "outDir": "dist",
+    "noEmit": true,
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "experimentalDecorators": true, // INDISPENSABLE pour NestJS
+    "emitDecoratorMetadata": true
   },
   "include": ["src", "scripts", "tests", "prisma.config.ts"],
   "exclude": [
-    "./src/infrastructure/repositories/in-memory/*",
-    "./src/scripts/drizzleSeeds/*",
-    "./src/tests/*"
+    
   ]
 }

@@ -144,11 +144,29 @@ import { GetAdvisorDiscussionUseCase } from '../../application/use-cases/advisor
 import { TransferDiscussionUseCase } from '../../application/use-cases/advisor/messaging/TransferDiscussionUseCase';
 import { ListAdvisorsUseCase } from '../../application/use-cases/advisor/messaging/ListAdvisorsUseCase';
 import { PrismaEmailVerificationTokenMapper } from "../repositories/mappers/PrismaMappers/PrismaEmailVerificationTokenMapper";
+import { PrismaPg } from "@prisma/adapter-pg";
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
+const envPath = path.resolve(__dirname, '../../../.env');
+
+dotenv.config({ path: envPath });
+
+if (!process.env.DATABASE_URL_PRISMA) {
+  console.log(envPath);
+  console.error(`❌ Erreur: Impossible de trouver .env à : ${envPath}`);
+  console.error("DATABASE_URL est undefined !");
+} else {
+  console.log('✅ .env chargé avec succès pour Prisma Container');
+  console.log(envPath);
+}
 
 export function createPrismaContainer() {
 
-  const prismaClient = new PrismaClient();
+  const connectionString = process.env.DATABASE_URL_PRISMA;
+  console.log(connectionString);
+  const adapter = new PrismaPg({connectionString})
+  const prismaClient = new PrismaClient({adapter});
 
   const prismaUserMapper = new PrismaUserMapper();
   const prismaClientMapper = new PrismaClientMapper();

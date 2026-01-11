@@ -2,7 +2,7 @@ import { Advisor as PrismaAdvisor } from "@prisma/client";
 import { Advisor } from "../../../../domain/entities/Advisor";
 import { Mapper } from "../MapperInterface";
 
-type AdvisorToPersist = {
+export type AdvisorToPersist = {
   advisorIdentifier: string,
   userIdentifier: string,
 }

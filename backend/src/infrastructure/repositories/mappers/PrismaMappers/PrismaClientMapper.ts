@@ -2,7 +2,7 @@ import { Client as PrismaClient } from "@prisma/client";
 import { Client } from "../../../../domain/entities/Client";
 import { Mapper } from "../MapperInterface";
 
-type ClientToPersist = {
+export type ClientToPersist = {
   clientIdentifier: string,
   userIdentifier: string,
   advisorIdentifier: string,

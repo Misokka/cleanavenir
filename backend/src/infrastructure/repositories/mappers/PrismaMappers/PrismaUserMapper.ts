@@ -3,7 +3,7 @@ import { UserRole as PrismaUserRole } from "@prisma/client";
 import { User, UserRole } from "../../../../domain/entities/User";
 import { Mapper } from "../MapperInterface";
 
-type UserToPersist = {
+export type UserToPersist = {
   userIdentifier: string;
   firstname: string;
   lastname: string;
