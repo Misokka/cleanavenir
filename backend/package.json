@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:express": "nodemon",
+    "dev:express": "nodemon --config nodemon.express.json",
+    "dev:nest": "nest start --watch",
     "start:express": "node dist/server.js",
     "build": "tsc",
     "test": "vitest run",

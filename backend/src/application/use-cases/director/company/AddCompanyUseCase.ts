@@ -15,7 +15,7 @@ export class AddCompanyUseCase{
     const maybeCompany = await this.compoanyRepository.save(newCompany);
 
     if(!maybeCompany.ok){
-      return err(new CouldNotCreateCompanyError())
+      return err(new CouldNotCreateCompanyError(`Couldn't create company ${companyIdentifier}`))
     }
 
     return ok(maybeCompany.value)

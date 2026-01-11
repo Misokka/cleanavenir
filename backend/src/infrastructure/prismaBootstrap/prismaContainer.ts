@@ -99,7 +99,6 @@ import { ListAdvisorClientsUseCase } from '../../application/use-cases/advisor/l
 
 // Use Cases - Investment
 import { PlaceOrderUseCase } from '../../application/use-cases/client/investment/Order/PlaceOrderUseCase';
-import { SettleTradesUseCase } from '../../application/use-cases/client/investment/Order/SettleTradesUseCase';
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { GetCompanyByIdUseCase } from '../../application/use-cases/director/company/GetCompanyByIdUseCase';
@@ -147,7 +146,7 @@ import { ListAdvisorsUseCase } from '../../application/use-cases/advisor/messagi
 import { PrismaEmailVerificationTokenMapper } from "../repositories/mappers/PrismaMappers/PrismaEmailVerificationTokenMapper";
 
 
-export function createContainer() {
+export function createPrismaContainer() {
 
   const prismaClient = new PrismaClient();
 
@@ -318,7 +317,6 @@ export function createContainer() {
   //Investment Use Cases
   const placeOrderUseCase = new PlaceOrderUseCase(prismaOrderRepository, prismaStockRepository, prismaClientRepository, prismaBankAccountRepository, prismaPortfolioRepository, prismaTransactionRepository, orderMatchingService);
   const cancelOrderUseCase = new CancelOrderUseCase(prismaClientRepository, prismaOrderRepository, prismaPortfolioRepository, prismaBankAccountRepository, prismaTransactionRepository, prismaStockRepository);
-  const settleTradeUseCase = new SettleTradesUseCase(prismaTradeRepository, prismaPortfolioRepository, prismaBankAccountRepository, prismaTransactionRepository);
   const createPortfolioUseCase = new CreatePortfolioUseCase(prismaClientRepository, prismaPortfolioRepository);
   const getMyPortfolioUseCase = new GetMyPortfolioUseCase(prismaClientRepository, prismaPortfolioRepository, prismaStockRepository, prismaCompanyRepository);
   const addCompanyUseCase = new AddCompanyUseCase(prismaCompanyRepository);
@@ -458,7 +456,6 @@ export function createContainer() {
         cancelOrder: cancelOrderUseCase,
         createPortfolio: createPortfolioUseCase,
         getMyPortfolio: getMyPortfolioUseCase,
-        settleTrade: settleTradeUseCase,
         listCompanies: listCompaniesUseCase,
         listStocks: listStockUseCase,
         listMyOrders: listMyOrdersUseCase,
@@ -500,4 +497,4 @@ export function createContainer() {
   };
 }
 
-export type PrismaContainer = ReturnType<typeof createContainer>;
+export type PrismaContainer = ReturnType<typeof createPrismaContainer>;

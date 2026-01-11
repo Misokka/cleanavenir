@@ -21,5 +21,9 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "exclude": [
+    "/src/infrastructure/repositories/in-memory",
+    "/src/scripts/drizzleSeeds"
+  ]
 }

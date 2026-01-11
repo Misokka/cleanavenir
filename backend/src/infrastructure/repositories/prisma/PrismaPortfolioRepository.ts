@@ -14,18 +14,36 @@ export class PrismaPortfolioRepository implements PortfolioRepository {
     private readonly prismaHoldingMapper: PrismaHoldingMapper
   ){}
 
-  async save(portfolio: Portfolio): Promise<Result<Portfolio, UserNotFoundError>> {
-    try{
-      const portfolioToPersistence = this.prismaPortfolioMapper.toPersistence(portfolio);
+async save(portfolio: Portfolio): Promise<Result<Portfolio, UserNotFoundError>> {
+    try {
+      
+      const portfolioToPersist = this.prismaPortfolioMapper.toPersistence(portfolio);
+      
+      const holdingsToPersist = portfolio.allHoldings().map((holding) => 
+        this.prismaHoldingMapper.toPersistence(holding)
+      );
 
       const registeredPortfolio = await this.prismaClient.portfolio.create({
-        data: { ...portfolioToPersistence }
+        data: {
+          ...portfolioToPersist,
+        },
       });
 
       const portfolioToDomain = this.prismaPortfolioMapper.toDomain(registeredPortfolio);
-      return ok(portfolioToDomain)
-    } catch (error) {
-      return err(new UserNotFoundError(portfolio.clientIdentifier))
+
+      for(const holding of holdingsToPersist){
+        const savedHolding = await this.prismaClient.holding.create({
+          data: holding
+        });
+        const holdingToDomain = this.prismaHoldingMapper.toDomain(savedHolding);
+        portfolioToDomain.addHolding(holdingToDomain.stockIdentifier, holdingToDomain.quantity, holdingToDomain.averagePrice)
+      }
+
+      return ok(portfolioToDomain);
+
+    } catch (error: any) {
+      console.error("Error saving portfolio:", error);
+      return err(new UserNotFoundError(portfolio.clientIdentifier));
     }
   }
 
@@ -48,19 +66,50 @@ export class PrismaPortfolioRepository implements PortfolioRepository {
     }
   }
 
-  async update(portfolio: Portfolio): Promise<Result<Portfolio, Error>> {
-    try{
-      const toPersit = this.prismaPortfolioMapper.toPersistence(portfolio);
+async update(portfolio: Portfolio): Promise<Result<Portfolio, Error>> {
+    try {
+      const portfolioToPersist = this.prismaPortfolioMapper.toPersistence(portfolio);
+    
+      const domainHoldings = portfolio.allHoldings();
+    
+      const currentHoldingIds = domainHoldings.map(h => h.holdingIdentifier);
+
       const updatedPortfolio = await this.prismaClient.portfolio.update({
         where: {
-          portfolioIdentifier: portfolio.portfolioIdentifier,
+          portfolioIdentifier: portfolio.portfolioIdentifier
         },
-        data: toPersit
+        data: portfolioToPersist
+      })
+
+      const updatedPortfolioToDomain = this.prismaPortfolioMapper.toDomain(updatedPortfolio);
+
+      await this.prismaClient.holding.deleteMany({
+        where: {
+          portfolioIdentifier: portfolio.portfolioIdentifier,
+          holdingIdentifier: {
+            notIn: currentHoldingIds
+          }
+        }
       });
-      const toDomain = this.prismaPortfolioMapper.toDomain(updatedPortfolio);
-      return ok(toDomain);
+
+      for(const holding of domainHoldings){
+        const holdingToPersist = this.prismaHoldingMapper.toPersistence(holding);
+
+        const upserted = await this.prismaClient.holding.upsert({
+          where: { holdingIdentifier: holding.portfolioIdentifier},
+          create: holdingToPersist,
+          update: holdingToPersist
+        });
+
+        updatedPortfolioToDomain.addHolding(upserted.stockIdentifier, upserted.quantity, upserted.averagePrice)
+        
+      }
+    
+      return ok(updatedPortfolioToDomain);
+
     } catch (error: any) {
-      return err(new Error(`An error occured when updating portfolio: ${portfolio.portfolioIdentifier}. Message: ${error.message}`))
+      console.error("Error updating portfolio:", error);
+      return err(new Error(`An error occured when updating portfolio: ${portfolio.portfolioIdentifier}. Message: ${error.message}`));
     }
   }
 

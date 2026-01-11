@@ -32,7 +32,7 @@ export class UpdateSavingProductUseCase {
     savingProduct.rate = props.rate; // à voir pour stocker en décimal
     
     if (rateChanged) {
-      savingProduct.rateUpdatedAt = new Date().toISOString();
+      savingProduct.rateUpdatedAt = new Date();
     }
 
     const updatedSavingProductResult = await this.savingProductRepository.update(savingProduct);
