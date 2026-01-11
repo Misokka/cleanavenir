@@ -85,7 +85,7 @@ export function toSavingProductDTO(savingProduct: SavingProduct): SavingProductD
     ...savingProduct,
     id: savingProduct.savingProductIdentifier,
     rate: savingProduct.rate, // Le mapper toDomain a déjà converti en pourcentage (10.75 pour 10.75%)
-    rateUpdatedAt: savingProduct.rateUpdatedAt,
+    rateUpdatedAt: savingProduct.rateUpdatedAt ? savingProduct.rateUpdatedAt.toISOString() : null,
   }
 }
 

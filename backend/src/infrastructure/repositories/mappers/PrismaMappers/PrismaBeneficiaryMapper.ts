@@ -20,23 +20,17 @@ export class PrismaBeneficiaryMapper implements Mapper<PrismaBeneficiary, Benefi
     }
     
     return Beneficiary.create({
-      beneficiaryIdentifier: raw.beneficiaryIdentifier,
-      clientIdentifier: raw.clientIdentifier,
+      ...raw,
       iban: ibanResult.value,
-      label: raw.label,
-      createdAt: raw.createdAt,
-      accountName: raw.accountName ?? undefined
+      accountName: raw.accountName as string | undefined
     });
   }
 
   toPersistence(obj: Beneficiary): BeneficiaryToPersist {
     return {
-      beneficiaryIdentifier: obj.beneficiaryIdentifier,
-      clientIdentifier: obj.clientIdentifier,
+      ...obj,
       iban: obj.iban.value,
-      label: obj.label,
-      accountName: obj.accountName ?? null,
-      createdAt: obj.createdAt
+      accountName: obj.accountName as string | null
     };
   }
 }

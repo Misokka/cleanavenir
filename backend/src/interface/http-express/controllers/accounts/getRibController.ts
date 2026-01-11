@@ -73,8 +73,8 @@ export const getRibController = asyncHandler(async (req: Request, res: Response)
   const rightX = 320;
   let y = doc.y;
 
-  doc.fontSize(12).text('Établissement', leftX, y, { bold: true });
-  doc.fontSize(12).text('Titulaire du compte', rightX, y, { bold: true });
+  doc.fontSize(12).text('Établissement', leftX, y).font('Helvetica-Bold');
+  doc.fontSize(12).text('Titulaire du compte', rightX, y).font('Helvetica-Bold');
 
   y += 18; // Décale vers le bas (ajuste selon la taille de police)
 

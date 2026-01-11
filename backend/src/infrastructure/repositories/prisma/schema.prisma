@@ -6,19 +6,21 @@ generator client {
 }
 
 model User {
-  userIdentifier String   @id @default(cuid())
-  firstname       String
-  lastname       String
-  email      String   @unique
-  password   String
-  createdAt  DateTime @default(now())
-  emailVerifiedAt  DateTime?
+  userIdentifier    String   @id @default(cuid())
+  firstname         String
+  lastname          String
+  email             String   @unique
+  password          String
   role UserRole
-  active Boolean @default(true)
+  createdAt         DateTime @default(now())
+  emailVerifiedAt   DateTime?
+  active            Boolean @default(true)
 
   client Client?
   director Director?
   advisor Advisor?
+  emailVerificationToken EmailVerificationToken[]
+  messages Message[]
 }
 
 enum UserRole {
@@ -28,36 +30,53 @@ enum UserRole {
   SYSTEM
 }
 
+model EmailVerificationToken {
+  tokenIdentifier String @id
+  userIdentifier String
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime
+  usedAt DateTime?
+
+  user User @relation(fields: [userIdentifier], references: [userIdentifier])
+}
+
 model Client {
   clientIdentifier String   @id @default(cuid())
   userIdentifier String   @unique
+  advisorIdentifier String
   createdAt  DateTime @default(now())
 
   user User @relation(fields: [userIdentifier], references: [userIdentifier])
+  advisor Advisor @relation(fields: [advisorIdentifier], references: [advisorIdentifier])
   savingAccounts SavingAccount[]
   orders Order[]
   portfolio Portfolio?
   bankAccounts BankAccount[]
   discussions Discussion[]
   loans Loan[]
+  beneficiaries Beneficiary[]
 }
 
 model Director{
-  directorIdentifier            String      @id @default(cuid())
-  userIdentifier String   @unique
-  createdAt     DateTime @default(now())
+  directorIdentifier    String      @id @default(cuid())
+  userIdentifier        String   @unique
+  createdAt             DateTime @default(now())
 
   user User @relation(fields: [userIdentifier], references: [userIdentifier])
 }
 
 model Advisor{
-  advisorIdentifier            String      @id @default(cuid())
-  userIdentifier String   @unique
-  createdAt     DateTime @default(now())
+  advisorIdentifier         String     @id @default(cuid())
+  userIdentifier            String     @unique
+  createdAt                 DateTime   @default(now())
 
-  user User @relation(fields: [userIdentifier], references: [userIdentifier])
+  user User                            @relation(fields: [userIdentifier], references: [userIdentifier])
+  clients Client[]
   discussions Discussion[]
   loans Loan[]
+  fromDiscussionTransfers DiscussionTransfer[] @relation("TransfersFromAdvisor")
+  toDiscussionTransfers DiscussionTransfer[] @relation("TransfersToAdvisor")
 }
 
 model BankAccount{
@@ -65,38 +84,46 @@ model BankAccount{
   clientIdentifier String
   iban String @unique
   label String
-  balance Float @default(0)
+  balance Int @default(0)
 
   client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
-  transactions Transaction[]
+  forBankAccountTransactions Transaction[] @relation("ForBankAccount")
+  FromBankAccountTransactions Transaction[] @relation("FromBankAccount")
+  ToBankAccountTransactions Transaction[] @relation("ToBankAccount")
 }
 
 model Transaction{
   transactionIdentifier String @id @default(cuid())
   bankAccountIdentifier String
-  amount Float
+  amount Int
   direction TransactionDirection
   type TransactionType
   description String
   currency String @default("EUR")
-  date DateTime @default(now())
+  createdAt DateTime @default(now())
   fromAccountIdentifier String?
   toAccountIdentifier String?
   toSavingAccountIdentifier String?
 
-  bankAccount BankAccount @relation(fields: [bankAccountIdentifier], references: [accountIdentifier])
+  bankAccount BankAccount @relation("ForBankAccount", fields: [bankAccountIdentifier], references: [accountIdentifier])
+  fromBankAccount BankAccount? @relation("FromBankAccount", fields: [fromAccountIdentifier], references: [accountIdentifier])
+  toBankAccount BankAccount? @relation("ToBankAccount", fields: [toAccountIdentifier], references: [accountIdentifier])
+  toSavingAccount SavingAccount? @relation("ToSavingAccount", fields: [toSavingAccountIdentifier], references: [accountIdentifier])
+
 }
 
-enum TransactionDirection {
+enum TransactionType {
   TRANSFER
   LOAN_PAYMENT
+  LOAN_DISBURSEMENT
   STOCK_PURCHASE
   STOCK_SALE
+  ORDER_REFUND
   SAVINGS_INTEREST
   INITIAL_DEPOSIT
 }
 
-enum TransactionType {
+enum  TransactionDirection {
   DEBIT
   CREDIT
 }
@@ -106,7 +133,7 @@ model Company{
   name String
   description String
 
-  stocks Stock?
+  stock Stock?
 }
 
 model Discussion {
@@ -115,22 +142,60 @@ model Discussion {
   createdAt DateTime @default(now())
   advisorIdentifier String?
   subject String?
+  status DiscussionStatus
 
   client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
   advisor Advisor? @relation(fields: [advisorIdentifier], references: [advisorIdentifier])
+  discussionTransfers DiscussionTransfer[]
+  messages Message[]
 }
 
+enum DiscussionStatus {
+  PENDING
+  ASSIGNED
+  CLOSED
+}
+
+model DiscussionTransfer {
+  transferIdentifier String @id
+  discussionIdentifier String
+  fromAdvisorIdentifier String
+  toAdvisorIdentifier String
+  reason String?
+  createdAt DateTime
+
+  discussion Discussion @relation(fields: [discussionIdentifier], references: [discussionIdentifier])
+  fromAdvisor Advisor @relation("TransfersFromAdvisor", fields: [fromAdvisorIdentifier], references: [advisorIdentifier])
+  toAdvisor Advisor @relation("TransfersToAdvisor", fields: [toAdvisorIdentifier], references: [advisorIdentifier])
+}
+
+model Message {
+  messageIdentifier String @id
+  discussionIdentifier String
+  senderIdentifier String
+  senderRole SenderRole
+  content String
+  createdAt DateTime
+
+  discussion Discussion @relation(fields: [discussionIdentifier], references: [discussionIdentifier])
+  sender User @relation(fields: [senderIdentifier], references: [userIdentifier])
+}
+
+enum SenderRole {
+  CLIENT
+  ADVISOR
+}
 model Loan {
   loanIdentifier String @id @default(cuid())
   clientIdentifier String
   advisorIdentifier String
-  loanAmount Float
-  durationInMonth Float
-  mensualities Float
-  insuranceMensualities Float
-  remainingAmountToPay Float
-  annualInterestRate Float
-  annualInsuranceRate Float
+  loanAmount Int
+  durationInMonth Int
+  mensualities Int
+  insuranceMensualities Int
+  remainingAmountToPay Int
+  annualInterestRate Int
+  annualInsuranceRate Int
   status LoanStatus
   createdAt DateTime @default(now())
   lastPaidAt DateTime?
@@ -144,14 +209,16 @@ enum LoanStatus {
   PENDING
   ACTIVE
   PAID_OFF
+  REJECTED
 }
 
 model Stock {
   stockIdentifier String @id @default(cuid())
   companyIdentifier String @unique
   ticker String @unique
-  price Float
+  price Int
   isAvailable Boolean @default(true)
+  createdAt DateTime
 
   company Company @relation(fields: [companyIdentifier], references: [companyIdentifier])
   orders Order[]
@@ -164,6 +231,7 @@ model Stock {
 model Portfolio {
   portfolioIdentifier String @id @default(cuid())
   clientIdentifier String @unique
+  createdAt DateTime
 
   client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
   holdings Holding[]
@@ -173,21 +241,26 @@ model Holding {
   holdingIdentifier String @id @default(cuid())
   portfolioIdentifier String
   stockIdentifier String
-  quantity Float
+  quantity Int
+  averagePrice Int
 
   portfolio Portfolio @relation(fields: [portfolioIdentifier], references: [portfolioIdentifier])
   stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])
-
 }
 
 model Order {
   orderIdentifier String @id @default(cuid())
-  stockIdentifier String
   clientIdentifier String
+  stockIdentifier String
   orderType OrderType
-  quantity Float
-  limitPrice Float
+  initialQuantity Int
+  remainingQuantity Int
+  limitPrice Int
   status OrderStatus
+  blockedMoneyAmount Int?
+  remainingBlockedMoneyAmount Int?
+  blockedStockQuantity Int?
+  sellerHoldingAveragePrice Int?
   createdAt DateTime @default(now())
 
   client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
@@ -204,6 +277,7 @@ enum OrderType {
 
 enum OrderStatus {
   PENDING
+  PARTIALLY_FILLED
   EXECUTED
   CANCELLED
 }
@@ -213,8 +287,8 @@ model Trade {
   stockIdentifier String @default(cuid())
   buyOrderIdentifier String @default(cuid())
   sellOrderIdentifier String @default(cuid())
-  quantity Float
-  price Float
+  quantity Int
+  price Int
   status TradeStatus
   createdAt DateTime
 
@@ -235,17 +309,19 @@ model SavingAccount {
   productIdentifier String @default(cuid())
   iban String
   label String
-  balance Float
-  isActive Boolean @default(true)
+  balance Int
+  createdAt DateTime
 
   client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
   savingProduct SavingProduct @relation(fields: [productIdentifier], references: [savingProductIdentifier])
+  transactions Transaction[] @relation("ToSavingAccount")
 }
 
 model SavingProduct {
   savingProductIdentifier String @id @default(cuid())
   label String @unique
-  rate Float
+  rate Int
+  rateUpdatedAt DateTime?
 
   savingAccounts SavingAccount[]
 }
@@ -257,12 +333,14 @@ model Beneficiary {
   label String
   accountName String?
   createdAt DateTime @default(now())
+
+  client Client @relation(fields: [clientIdentifier], references: [clientIdentifier])
 }
 
 model StockPriceHistory {
   stockPriceIdentifier String @id @default(cuid())
   stockIdentifier String
-  price Float
+  price Int
   recordedAt DateTime @default(now())
 
   stock Stock @relation(fields: [stockIdentifier], references: [stockIdentifier])

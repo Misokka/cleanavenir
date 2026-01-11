@@ -69,7 +69,9 @@ async function createSellOrdersForSystem(systemClient: ClientDrizzle, systemHold
         type: "SELL",
         status: "PENDING",
         blockedMoneyAmount: null,
+        remainingBlockedMoneyAmount: null,
         blockedStockQuantity: holding.quantity,
+        sellerHoldingAveragePrice: 20,
         createdAt: new Date().toISOString()
       }
 

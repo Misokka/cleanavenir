@@ -100,7 +100,6 @@ import { ListAdvisorClientsUseCase } from '../../application/use-cases/advisor/l
 
 // Use Cases - Investment
 import { PlaceOrderUseCase } from '../../application/use-cases/client/investment/Order/PlaceOrderUseCase';
-import { SettleTradesUseCase } from '../../application/use-cases/client/investment/Order/SettleTradesUseCase';
 import { CreatePortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/CreatePortfolioUseCase';
 import { AddCompanyUseCase } from '../../application/use-cases/director/company/AddCompanyUseCase';
 import { GetCompanyByIdUseCase } from '../../application/use-cases/director/company/GetCompanyByIdUseCase';
@@ -111,7 +110,6 @@ import { ListCompaniesUseCase } from '../../application/use-cases/client/investm
 import { ListStocksUseCase } from '../../application/use-cases/client/investment/stock/ListStocksUseCase';
 import { ListMyOrdersUseCase } from '../../application/use-cases/client/investment/Order/ListMyOrdersUseCase';
 import { GetMyPortfolioUseCase } from '../../application/use-cases/client/investment/portfolio/GetMyPortfolioUseCase';
-import { cli } from 'winston/lib/winston/config';
 import { ShowBestBuyAndSellOrderForStockUseCase } from '../../application/use-cases/client/investment/Order/ShowBestBuyAndSellOrderForStock';
 import { GetStockPriceHistoryUseCase } from '../../application/use-cases/client/investment/stock/GetStockPriceHistoryUseCase';
 import { EditStockUseCase } from '../../application/use-cases/director/stock/EditStockUseCase';
@@ -309,7 +307,6 @@ export function createContainer() {
   //Investment Use Cases
   const placeOrderUseCase = new PlaceOrderUseCase(orderRepository, stockRepository, clientRepository, bankAccountRepository, portfolioRepository, transactionRepository, orderMatchingService);
   const cancelOrderUseCase = new CancelOrderUseCase(clientRepository, orderRepository, portfolioRepository, bankAccountRepository, transactionRepository, stockRepository);
-  const settleTradeUseCase = new SettleTradesUseCase(tradeRepository, portfolioRepository, bankAccountRepository, transactionRepository);
   const createPortfolioUseCase = new CreatePortfolioUseCase(clientRepository, portfolioRepository);
   const getMyPortfolioUseCase = new GetMyPortfolioUseCase(clientRepository, portfolioRepository, stockRepository, companyRepository);
   const addCompanyUseCase = new AddCompanyUseCase(companyRepository);
@@ -449,7 +446,6 @@ export function createContainer() {
         cancelOrder: cancelOrderUseCase,
         createPortfolio: createPortfolioUseCase,
         getMyPortfolio: getMyPortfolioUseCase,
-        settleTrade: settleTradeUseCase,
         listCompanies: listCompaniesUseCase,
         listStocks: listStockUseCase,
         listMyOrders: listMyOrdersUseCase,

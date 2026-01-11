@@ -1,0 +1,5 @@
+{
+  "watch": ["src/interface/http-nest"],
+  "ext": "ts",
+  "exec": "tsx src/interface/http-nest/src/main.ts"
+}

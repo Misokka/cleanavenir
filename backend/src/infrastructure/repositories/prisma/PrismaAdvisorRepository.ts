@@ -5,6 +5,7 @@ import Result, { err, ok } from "../../../shared/Result";
 import { InvalidRoleError } from "../../../domain/errors/InvalidRoleError";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import { PrismaAdvisorMapper } from "../mappers/PrismaMappers/PrismaAdvisorMapper";
+import { AdvisorNotFoundError } from "../../../domain/errors/AdvisorNotFoundError";
 
 export class PrismaAdvisorRepository implements AdvisorRepository{
   constructor(
@@ -45,6 +46,54 @@ export class PrismaAdvisorRepository implements AdvisorRepository{
       return ok(returnedAdvisor);
     } catch (error){
       return err(new UserNotFoundError(advisorIdentifier));
+    }
+  }
+
+  async findAll(): Promise<Result<Advisor[], Error>> {
+    try{
+      const advisors = await this.prismaClient.advisor.findMany();
+      const advisorsToDomain = advisors.map((advisor) => this.prismaAdvisorMapper.toDomain(advisor));
+      return ok(advisorsToDomain);
+    } catch (error: any) {
+      return err(new Error(`An error occured when retrieving all advisors. Message: ${error.message}`))
+    }
+  }
+
+  async findByUserId(userIdentifier: string): Promise<Result<Advisor, AdvisorNotFoundError>> {
+    try{
+      const advisor = await this.prismaClient.advisor.findFirst({
+        where: {
+          userIdentifier
+        }
+      });
+      if(!advisor){
+        return err(new AdvisorNotFoundError(`No advisor account is linked to userIdentifier: ${userIdentifier}`))
+      }
+
+      const toDomain = this.prismaAdvisorMapper.toDomain(advisor);
+      return ok(toDomain);
+    } catch {
+      return err(new Error(`An error occured when fecthing advisor with userIdentifier: ${userIdentifier}`))
+    }
+  }
+
+  async findRandom(): Promise<Result<Advisor, Error>> {
+    try{
+      const totalAdvisorsCount = await this.prismaClient.advisor.count();
+
+      const randomOffset = Math.floor(Math.random() * totalAdvisorsCount);
+
+      const randomAdvisor = await this.prismaClient.advisor.findFirst({
+        take: 1,
+        skip: randomOffset,
+      });
+
+      if(!randomAdvisor) return err(new Error("Couldn't assign random advisor to client"));
+
+      const toDomain = this.prismaAdvisorMapper.toDomain(randomAdvisor);
+      return ok(toDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when assigning a random advisor to client.`))
     }
   }
 }

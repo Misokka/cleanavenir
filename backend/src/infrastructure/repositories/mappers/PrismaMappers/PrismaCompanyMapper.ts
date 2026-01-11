@@ -10,7 +10,9 @@ type CompanyToPersist = {
 
 export class PrismaCompanyMapper implements Mapper<PrismaCompany, Company, CompanyToPersist>{
   toDomain(raw: PrismaCompany): Company {
-    return new Company(raw.companyIdentifier, raw.name, raw.description);
+    return Company.create({
+      ...raw
+    })
   }
 
   toPersistence(obj: Company): CompanyToPersist {

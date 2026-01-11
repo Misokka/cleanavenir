@@ -105,4 +105,34 @@ export class PrismaOrderRepository implements OrderRepository {
       return err(new Error(`An error occured when updating order ${orderIdentifier} status.`))
     }
   }
+
+  async update(order: Order): Promise<Result<Order, Error>> {
+    try{
+      const orderToPerist = this.prismaOrderMapper.toPersistence(order);
+      const updatededOrder = await this.prismaClient.order.update({
+        where: {
+          orderIdentifier: order.orderIdentifier
+        },
+        data: orderToPerist
+      });
+      const orderToDomain = this.prismaOrderMapper.toDomain(updatededOrder);
+      return ok(orderToDomain);
+    } catch {
+      return err(new Error(`An errr occured when updating order: ${order.orderIdentifier}`));
+    }
+  }
+
+  async delete(orderIdentifier: string): Promise<Result<boolean, Error>> {
+    try{
+      const deletedOrder = await this.prismaClient.order.delete({
+        where: {
+          orderIdentifier
+        }
+      });
+      if(!deletedOrder) return err(new Error(`Couldn't delete order ${orderIdentifier}`));
+      return ok(true);
+    } catch {
+      return err(new Error(`An error occured when deleting order ${orderIdentifier}`))
+    }
+  }
 }

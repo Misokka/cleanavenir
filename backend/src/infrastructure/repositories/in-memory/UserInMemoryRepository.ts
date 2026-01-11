@@ -5,12 +5,13 @@ import { UserNotFoundError } from '../../../domain/errors/UserNotFoundError';
 import { InvalidRoleError } from '../../../domain/errors/InvalidRoleError';
 import { UserRole } from '../../../application/dtos/UserDTO';
 import { EmailAlreadyUsedError } from '../../../domain/errors/EmailAlreadyUsedError';
+import { randomUUID } from 'node:crypto';
 
 export class UserInMemoryRepository implements UserRepository {
   private users: Map<string, User> = new Map();
 
   private getIdentifier(user: User): string {
-    return user.userIndentifier;
+    return user.userIdentifier;
   }
 
   async save(
@@ -19,7 +20,7 @@ export class UserInMemoryRepository implements UserRepository {
     for (const existing of this.users.values()) {
       if (
         existing.email.toLowerCase() === user.email.toLowerCase() &&
-        existing.userIndentifier !== user.userIndentifier
+        existing.userIdentifier !== user.userIdentifier
       ) {
         return err(new EmailAlreadyUsedError(user.email));
       }
@@ -106,5 +107,38 @@ export class UserInMemoryRepository implements UserRepository {
       }
     }
     return ok(matchingUsers);
+  }
+
+  async update(user: User): Promise<Result<User, UserNotFoundError | EmailAlreadyUsedError | InvalidRoleError | Error>> {
+    try{
+      return ok(user)
+    } catch {
+      return err(new Error("An error occured"))
+    }
+  }
+
+  async getSystemUser(): Promise<Result<User, Error>> {
+    try{
+      const user = User.create({
+        userIdentifier: randomUUID(),
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: "",
+        role: "CLIENT",
+        createdAt: new Date()
+      })
+      return ok(user)
+    } catch {
+      return err(new Error("An error occured"))
+    }
+  }
+
+  async delete(userId: string): Promise<Result<void, UserNotFoundError | Error>> {
+    try{
+      return ok(undefined)
+    } catch {
+      return err(new UserNotFoundError(userId))
+    }
   }
 }

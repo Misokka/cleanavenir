@@ -2,7 +2,7 @@ import { Director as PrismaDirector } from "@prisma/client";
 import { Director } from "../../../../domain/entities/Director";
 import { Mapper } from "../MapperInterface";
 
-type DirectorToPersist = {
+export type DirectorToPersist = {
   directorIdentifier: string,
   userIdentifier: string,
 }

@@ -5,6 +5,7 @@ import { Portfolio } from "../../../../domain/entities/Portfolio";
 type PortfolioToPersist = {
   portfolioIdentifier: string;
   clientIdentifier: string;
+  createdAt: Date
 }
 export class PrismaPortfolioMapper implements Mapper<PrismaPortfolio, Portfolio, PortfolioToPersist> {
   toDomain(raw: PrismaPortfolio): Portfolio {

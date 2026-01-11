@@ -3,6 +3,7 @@ import { TradeRepository } from "../../../application/ports/repositories/TradeRe
 import { Trade } from "../../../domain/entities/Trade";
 import Result, { err, ok } from "../../../shared/Result";
 import { PrismaTradeMapper } from "../mappers/PrismaMappers/PrismaTradeMapper";
+import { TradeNotFoundError } from "../../../domain/errors/TradeNotFoundError";
 
 export class PrismaTradeRepository implements TradeRepository {
   constructor(
@@ -56,6 +57,31 @@ export class PrismaTradeRepository implements TradeRepository {
       return ok(pendingSettlements)
     } catch (error){
       return err(new Error("An error occured when fetching the pending settlements."))
+    }
+  }
+
+  async findById(tradeIdentifier: string): Promise<Result<Trade, TradeNotFoundError>> {
+    try{
+      const trade = await this.prismaClient.trade.findUnique({
+        where: {
+          tradeIdentifier
+        }
+      });
+      if(!trade) return err(new TradeNotFoundError(tradeIdentifier));
+      const toDomain = this.prismaTradeMapper.toDomain(trade);
+      return ok(toDomain);
+    } catch {
+      return err(new Error(`An error occured when retrieving trade ${tradeIdentifier}`))
+    }
+  }
+
+  async all(): Promise<Result<Trade[], Error>> {
+    try{
+      const trades = await this.prismaClient.trade.findMany();
+      const toDomain = trades.map(trade => this.prismaTradeMapper.toDomain(trade));
+      return ok(toDomain);
+    } catch {
+      return err(new Error("An error occured when retrieving all trades"))
     }
   }
 }

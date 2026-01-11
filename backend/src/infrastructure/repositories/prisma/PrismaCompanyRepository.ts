@@ -25,7 +25,7 @@ export class PrismaCompanyRepository implements CompanyRepository {
   
       return ok(companyToDomain);
     } catch (error){
-      return err(new CouldNotCreateCompanyError());
+      return err(new CouldNotCreateCompanyError(`An error occured when creating company ${company.name}`));
     }
   }
 

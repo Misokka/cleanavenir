@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { $Enums, PrismaClient } from "@prisma/client";
 import { LoanRepository } from "../../../application/ports/repositories/LoanRepository";
 import { Loan } from "../../../domain/entities/Loan";
 import { InsufficientFundsError } from "../../../domain/errors/InsufficientFundsError";
@@ -121,5 +121,54 @@ export class PrismaLoanRepository implements LoanRepository {
     }
   }
 
+  async findByAdvisorId(advisorId: string): Promise<Result<Loan[], Error>> {
+    try{
+      const loans = await this.prismaClient.loan.findMany({
+        where: {
+          advisorIdentifier: advisorId
+        }
+      });
+      if(!loans) return err(new Error(`Couldn't retrieve loans for advisor ${advisorId}`));
+      const toDomain = loans.map((loan => this.prismaLoanMapper.toDomain(loan)));
+      return ok(toDomain)
+    } catch (error) {
+      return err(new Error(`An error occured when retrieving loans for advisor ${advisorId}`))
+    }
+  }
 
+  async findByStatus(status: string): Promise<Result<Loan[], Error>> {
+    try{
+      const loans = await this.prismaClient.loan.findMany({
+        where: {
+          status: status as $Enums.LoanStatus
+        }
+      });
+      if(!loans) return err(new Error(`Couldn't retrieve loans with status ${status}`));
+      const toDomain = loans.map((loan => this.prismaLoanMapper.toDomain(loan)));
+      return ok(toDomain)
+    } catch (error: any) {
+      return err(new Error(`An error occured when retrieving loans with status ${status}. Message: ${error.message}`))
+    }
+  }
+
+  async update(loan: Loan): Promise<Result<Loan, LoanNotFoundError>> {
+    try{
+      const loanTPersist = this.prismaLoanMapper.toPersistence(loan);
+
+      const updatedLoan = await this.prismaClient.loan.update({
+        where: {
+          loanIdentifier: loan.loanIdentifier
+        },
+        data: {
+          ...loanTPersist
+        }
+      });
+      if(!updatedLoan) return err(new LoanNotFoundError(loan.loanIdentifier));
+
+      const loanToDomain = this.prismaLoanMapper.toDomain(updatedLoan)
+      return ok(loanToDomain);
+    } catch (error) {
+      return err(new Error(`An error occured when updating loan ${loan.loanIdentifier}`))
+    }
+  }
 }
