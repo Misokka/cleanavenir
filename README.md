@@ -2,6 +2,8 @@
 
 # COMMENT LANCER LE PROJET 
 
+## Pour drizzle (FORTEMENT RECOMMANDÉ)
+
 dans ./backend 
 
 cp .env.example .env
@@ -43,6 +45,25 @@ dans ./backend
 npx drizzle-kit push
 
 npm run db:seed:all:drizzle
+
+## Pour Prisma (Backend incomplet)
+
+À la racine du projet dans un .env: 
+- Ajouter `DATABASE_URL="postgresql://[username]:[password]@db:[port]/[database_name]"`
+
+dans le .env de backend et backend/src/interface/http-nest
+`NEST_PORT=2999`
+`DATABASE_URL_PRISMA="postgresql://[username]:[password]@db:[port]/[database_name]"`
+
+### Pour la bdd
+
+- `docker compose up -d`
+- Dans backend npx prisma generate puis npx prisma migrate dev
+- Lancer les seeds avec npm run db:seed:users:prisma
+
+### Pour tester le backend prisma + postgres:
+
+Aller sur la route `http://localhost:[port]/users/role/[ROLE]` ROLE === "CLIENT" | "ADVISOR" | "DIRECTOR"
 
 ## Tests Prisma
 
