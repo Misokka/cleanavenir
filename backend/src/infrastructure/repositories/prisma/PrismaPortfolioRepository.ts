@@ -5,11 +5,13 @@ import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError";
 import Result, { err, ok } from "../../../shared/Result";
 import { PrismaPortfolioMapper } from "../mappers/PrismaMappers/PrismaPortfolioMapper";
 import { PortfolioNotFoundError } from "../../../domain/errors/PortfolioNotFoundError";
+import { PrismaHoldingMapper } from "../mappers/PrismaMappers/PrismaHoldingMapper";
 
 export class PrismaPortfolioRepository implements PortfolioRepository {
   constructor(
     private readonly prismaClient: PrismaClient,
-    private readonly prismaPortfolioMapper: PrismaPortfolioMapper
+    private readonly prismaPortfolioMapper: PrismaPortfolioMapper,
+    private readonly prismaHoldingMapper: PrismaHoldingMapper
   ){}
 
   async save(portfolio: Portfolio): Promise<Result<Portfolio, UserNotFoundError>> {
