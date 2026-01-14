@@ -23,6 +23,11 @@ import { StockPriceHistoryRepositoryDrizzle } from '../repositories/drizzle/Stoc
 import { BeneficiaryRepositoryDrizzle } from '../repositories/drizzle/BeneficiaryRepositoryDrizzle';
 import { EmailVerificationTokenRepositoryDrizzle } from '../repositories/drizzle/EmailVerificationTokenRepositoryDrizzle';
 
+// New Repositories for real-time features
+import { DrizzleActivityRepository } from '../repositories/DrizzleActivityRepository';
+import { DrizzleNotificationRepository } from '../repositories/DrizzleNotificationRepository';
+import { DrizzleGroupMessageRepository } from '../repositories/DrizzleGroupMessageRepository';
+
 
 // Mappers Drizzle
 
@@ -145,6 +150,23 @@ import { GetAdvisorDiscussionUseCase } from '../../application/use-cases/advisor
 import { TransferDiscussionUseCase } from '../../application/use-cases/advisor/messaging/TransferDiscussionUseCase';
 import { ListAdvisorsUseCase } from '../../application/use-cases/advisor/messaging/ListAdvisorsUseCase';
 
+// Use Cases - Messaging (Shared)
+import { MarkMessagesAsReadUseCase } from '../../application/use-cases/messaging/MarkMessagesAsReadUseCase';
+
+// Use Cases - Activity Feed
+import { CreateActivityUseCase } from '../../application/use-cases/activity/CreateActivityUseCase';
+import { ListActivitiesUseCase } from '../../application/use-cases/activity/ListActivitiesUseCase';
+
+// Use Cases - Notifications
+import { SendNotificationUseCase } from '../../application/use-cases/notification/SendNotificationUseCase';
+import { ListNotificationsUseCase } from '../../application/use-cases/notification/ListNotificationsUseCase';
+import { MarkNotificationAsReadUseCase } from '../../application/use-cases/notification/MarkNotificationAsReadUseCase';
+import { CreateMessageNotificationUseCase } from '../../application/use-cases/notification/CreateMessageNotificationUseCase';
+
+// Use Cases - Group Messages
+import { SendGroupMessageUseCase } from '../../application/use-cases/groupMessage/SendGroupMessageUseCase';
+import { ListGroupMessagesUseCase } from '../../application/use-cases/groupMessage/ListGroupMessagesUseCase';
+
 
 export function createContainer() {
 
@@ -191,6 +213,11 @@ export function createContainer() {
   const stockPriceHistoryRepository = new StockPriceHistoryRepositoryDrizzle(db, drizzleStockPriceHistoryMapper);
   const beneficiaryRepository = new BeneficiaryRepositoryDrizzle(db, drizzleBeneficiaryMapper);
   const emailVerificationTokenRepository = new EmailVerificationTokenRepositoryDrizzle(db);
+  
+  // New repositories for real-time features
+  const activityRepository = new DrizzleActivityRepository();
+  const notificationRepository = new DrizzleNotificationRepository();
+  const groupMessageRepository = new DrizzleGroupMessageRepository();
   
   const passwordHasher = new SimplePasswordHasher();
   const emailService = new NodemailerEmailService();
@@ -360,6 +387,23 @@ export function createContainer() {
   const transferDiscussionUseCase = new TransferDiscussionUseCase(discussionRepository, discussionTransferRepository, advisorRepository);
   const listAdvisorsUseCase = new ListAdvisorsUseCase(advisorRepository, userRepository);
 
+  // Messaging Use Cases - Shared
+  const markMessagesAsReadUseCase = new MarkMessagesAsReadUseCase(discussionRepository);
+
+  // Activity Feed Use Cases
+  const createActivityUseCase = new CreateActivityUseCase(activityRepository);
+  const listActivitiesUseCase = new ListActivitiesUseCase(activityRepository, userRepository);
+
+  // Notification Use Cases
+  const sendNotificationUseCase = new SendNotificationUseCase(notificationRepository, clientRepository);
+  const listNotificationsUseCase = new ListNotificationsUseCase(notificationRepository, userRepository);
+  const markNotificationAsReadUseCase = new MarkNotificationAsReadUseCase(notificationRepository);
+  const createMessageNotificationUseCase = new CreateMessageNotificationUseCase(notificationRepository);
+
+  // Group Message Use Cases
+  const sendGroupMessageUseCase = new SendGroupMessageUseCase(groupMessageRepository, userRepository);
+  const listGroupMessagesUseCase = new ListGroupMessagesUseCase(groupMessageRepository, userRepository);
+
   
   return {
     repositories: {
@@ -384,6 +428,9 @@ export function createContainer() {
       stockPriceHistory: stockPriceHistoryRepository,
       beneficiary: beneficiaryRepository,
       emailVerificationToken: emailVerificationTokenRepository,
+      activity: activityRepository,
+      notification: notificationRepository,
+      groupMessage: groupMessageRepository,
     },
 
     services: {
@@ -482,6 +529,21 @@ export function createContainer() {
           transfer: transferDiscussionUseCase,
           listAdvisors: listAdvisorsUseCase,
         },
+        markAsRead: markMessagesAsReadUseCase,
+      },
+      activity: {
+        create: createActivityUseCase,
+        list: listActivitiesUseCase,
+      },
+      notification: {
+        send: sendNotificationUseCase,
+        list: listNotificationsUseCase,
+        createMessage: createMessageNotificationUseCase,
+        markAsRead: markNotificationAsReadUseCase,
+      },
+      groupMessage: {
+        send: sendGroupMessageUseCase,
+        list: listGroupMessagesUseCase,
       },
     },
   };

@@ -13,6 +13,7 @@ interface SocketContextType {
   onNewMessage: (callback: (message: MessageDTO) => void) => () => void;
   onDiscussionUpdated: (callback: (discussion: DiscussionDTO) => void) => () => void;
   onNewDiscussion: (callback: (discussion: DiscussionDTO) => void) => () => void;
+  onDiscussionCreated: (callback: (discussion: DiscussionDTO) => void) => () => void;
   onDiscussionClaimed: (callback: (data: { discussionId: string; advisorId: string }) => void) => () => void;
   onDiscussionTransferredIn: (callback: (data: { discussionId: string; fromAdvisorId: string }) => void) => () => void;
   onDiscussionTransferredOut: (callback: (data: { discussionId: string; toAdvisorId: string }) => void) => () => void;
@@ -108,6 +109,14 @@ export function SocketProvider({ children }: SocketProviderProps) {
     };
   }, [socket]);
 
+  const onDiscussionCreated = useCallback((callback: (discussion: DiscussionDTO) => void) => {
+    if (!socket) return () => {};
+    socket.on('discussion_created', callback);
+    return () => {
+      socket.off('discussion_created', callback);
+    };
+  }, [socket]);
+
   const onDiscussionTransferredIn = useCallback((callback: (data: { discussionId: string; fromAdvisorId: string }) => void) => {
     if (!socket) return () => {};
     socket.on('discussion_transferred_in', callback);
@@ -134,6 +143,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
         onNewMessage,
         onDiscussionUpdated,
         onNewDiscussion,
+        onDiscussionCreated,
         onDiscussionClaimed,
         onDiscussionTransferredIn,
         onDiscussionTransferredOut,

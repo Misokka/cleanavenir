@@ -197,19 +197,25 @@
       "operations": "Opérations",
       "investments": "Investissements",
       "messaging": "Messagerie",
+      "activities": "Actualités",
+      "notifications": "Notifications",
       "logout": "Déconnexion",
       "director": {
         "overview": "Vue d'ensemble",
         "accounts": "Comptes Clients",
         "savings": "Taux Épargne",
         "companies": "Entreprises",
-        "stocks": "Actions"
+        "stocks": "Actions",
+        "groupChat": "Discussion de groupe"
       },
       "advisor": {
         "overview": "Vue d'ensemble",
         "clients": "Mes clients",
         "loansToValidate": "Prêts à valider",
-        "messaging": "Messagerie"
+        "messaging": "Messagerie",
+        "activities": "Actualités",
+        "notifications": "Notifications",
+        "groupChat": "Discussion de groupe"
       }
     },
     "header": {
@@ -1113,6 +1119,9 @@
     "typePlaceholder": "Écrivez votre message...",
     "subjectPlaceholder": "Sujet de votre demande",
     "subject": "Sujet",
+    "typing": "est en train d'écrire...",
+    "read": "Lu",
+    "sent": "Envoyé",
     "advisor": {
       "inbox": "Boîte de réception",
       "pendingDiscussions": "Discussions en attente",
@@ -1132,5 +1141,69 @@
       "sendFailed": "Erreur lors de l'envoi du message",
       "createFailed": "Erreur lors de la création de la discussion"
     }
+  },
+  "Activities": {
+    "title": "Actualités",
+    "description": "Les dernières nouvelles de Clean Avenir",
+    "noActivities": "Aucune actualité pour le moment",
+    "loading": "Chargement des actualités...",
+    "connectionError": "Erreur de connexion au flux d'actualités",
+    "reconnecting": "Reconnexion en cours...",
+    "types": {
+      "news": "Actualité",
+      "update": "Mise à jour",
+      "alert": "Alerte",
+      "promo": "Promotion"
+    },
+    "create": {
+      "title": "Créer une actualité",
+      "titleField": "Titre",
+      "titlePlaceholder": "Titre de l'actualité",
+      "content": "Contenu",
+      "contentPlaceholder": "Contenu de l'actualité...",
+      "type": "Type",
+      "submit": "Publier",
+      "success": "Actualité publiée avec succès",
+      "error": "Erreur lors de la publication"
+    }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "noNotifications": "Aucune notification",
+    "markAsRead": "Marquer comme lu",
+    "markAllAsRead": "Tout marquer comme lu",
+    "unread": "non lue(s)",
+    "loading": "Chargement des notifications...",
+    "connectionError": "Erreur de connexion aux notifications",
+    "send": {
+      "title": "Envoyer une notification",
+      "selectClient": "Sélectionner un client",
+      "titleField": "Titre",
+      "titlePlaceholder": "Titre de la notification",
+      "message": "Message",
+      "messagePlaceholder": "Contenu de la notification...",
+      "type": "Type",
+      "submit": "Envoyer",
+      "success": "Notification envoyée avec succès",
+      "error": "Erreur lors de l'envoi"
+    },
+    "types": {
+      "info": "Information",
+      "warning": "Avertissement",
+      "success": "Succès",
+      "alert": "Alerte"
+    }
+  },
+  "GroupChat": {
+    "title": "Discussion de groupe",
+    "subtitle": "Espace d'échange entre conseillers et direction",
+    "noMessages": "Aucun message. Lancez la discussion !",
+    "typePlaceholder": "Écrivez votre message...",
+    "send": "Envoyer",
+    "loading": "Chargement des messages...",
+    "error": "Erreur lors du chargement",
+    "director": "Directeur",
+    "advisor": "Conseiller",
+    "accessDenied": "Accès réservé aux conseillers et à la direction"
   }
 }

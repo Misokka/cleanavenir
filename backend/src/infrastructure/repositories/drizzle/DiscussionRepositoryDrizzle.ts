@@ -1,5 +1,5 @@
-import { eq, isNull, and } from 'drizzle-orm';
-import { discussions } from '../../drizzle/schema';
+import { eq, isNull, and, ne } from 'drizzle-orm';
+import { discussions, messages } from '../../drizzle/schema';
 import { ok, err, Result } from '../../../shared/Result';
 import { DiscussionRepository } from '../../../application/ports/repositories/DiscussionRepository';
 import { DrizzleClient } from '../../drizzle/client';
@@ -126,6 +126,29 @@ export class DiscussionRepositoryDrizzle implements DiscussionRepository {
       return ok(this.discussionMapper.toDomain(updatedRows[0]));
     } catch (e: any) {
       return err(new Error(`Could not claim discussion: ${e.message}`));
+    }
+  }
+
+  async markMessagesAsRead(discussionId: string, readerRole: 'CLIENT' | 'ADVISOR'): Promise<Result<number, Error>> {
+    try {
+      const now = new Date().toISOString();
+      const senderRoleToMark = readerRole === 'CLIENT' ? 'ADVISOR' : 'CLIENT';
+      
+      const result = await this.db
+        .update(messages)
+        .set({
+          isRead: 1,
+          readAt: now,
+        })
+        .where(and(
+          eq(messages.discussionId, discussionId),
+          eq(messages.senderRole, senderRoleToMark),
+          eq(messages.isRead, 0)
+        ));
+      
+      return ok(result.rowsAffected || 0);
+    } catch (e: any) {
+      return err(new Error(`Could not mark messages as read: ${e.message}`));
     }
   }
 }

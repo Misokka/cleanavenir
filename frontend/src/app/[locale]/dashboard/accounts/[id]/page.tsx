@@ -31,7 +31,6 @@ export default function AccountDetailPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [accountsMap, setAccountsMap] = useState<Record<string, { label: string; iban: string }>>({});
 
-  // Fetch all accounts to map IDs to labels and IBANs
   useEffect(() => {
     const fetchAccounts = async () => {
       try {

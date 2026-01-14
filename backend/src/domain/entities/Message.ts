@@ -8,6 +8,8 @@ export class Message {
     public senderRole: SenderRole,
     public content: string,
     public createdAt: Date = new Date(),
+    public isRead: boolean = false,
+    public readAt: Date | null = null,
   ) {}
 
   public static create(props: {
@@ -17,6 +19,8 @@ export class Message {
     senderRole: SenderRole,
     content: string,
     createdAt: Date,
+    isRead?: boolean,
+    readAt?: Date | null,
   }): Message {
     return new Message(
       props.messageIdentifier,
@@ -24,7 +28,9 @@ export class Message {
       props.senderIdentifier,
       props.senderRole,
       props.content,
-      props.createdAt
+      props.createdAt,
+      props.isRead ?? false,
+      props.readAt ?? null
     )
   }
 }

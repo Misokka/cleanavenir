@@ -197,19 +197,25 @@
       "operations": "Operations",
       "investments": "Investments",
       "messaging": "Messaging",
+      "activities": "News",
+      "notifications": "Notifications",
       "logout": "Logout",
       "director": {
         "overview": "Overview",
         "accounts": "Client Accounts",
         "savings": "Savings Rate",
         "companies": "Companies",
-        "stocks": "Stocks"
+        "stocks": "Stocks",
+        "groupChat": "Group Chat"
       },
       "advisor": {
         "overview": "Overview",
         "clients": "My clients",
         "loansToValidate": "Loans to validate",
-        "messaging": "Messaging"
+        "messaging": "Messaging",
+        "activities": "News",
+        "notifications": "Notifications",
+        "groupChat": "Group Chat"
       }
     },
     "header": {
@@ -1113,6 +1119,9 @@
     "typePlaceholder": "Type your message...",
     "subjectPlaceholder": "Subject of your request",
     "subject": "Subject",
+    "typing": "is typing...",
+    "read": "Read",
+    "sent": "Sent",
     "advisor": {
       "inbox": "Inbox",
       "pendingDiscussions": "Pending discussions",
@@ -1132,5 +1141,69 @@
       "sendFailed": "Error sending message",
       "createFailed": "Error creating discussion"
     }
+  },
+  "Activities": {
+    "title": "News",
+    "description": "Latest news from Clean Avenir",
+    "noActivities": "No news at the moment",
+    "loading": "Loading news...",
+    "connectionError": "Error connecting to news feed",
+    "reconnecting": "Reconnecting...",
+    "types": {
+      "news": "News",
+      "update": "Update",
+      "alert": "Alert",
+      "promo": "Promotion"
+    },
+    "create": {
+      "title": "Create news",
+      "titleField": "Title",
+      "titlePlaceholder": "News title",
+      "content": "Content",
+      "contentPlaceholder": "News content...",
+      "type": "Type",
+      "submit": "Publish",
+      "success": "News published successfully",
+      "error": "Error publishing news"
+    }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "noNotifications": "No notifications",
+    "markAsRead": "Mark as read",
+    "markAllAsRead": "Mark all as read",
+    "unread": "unread",
+    "loading": "Loading notifications...",
+    "connectionError": "Error connecting to notifications",
+    "send": {
+      "title": "Send notification",
+      "selectClient": "Select a client",
+      "titleField": "Title",
+      "titlePlaceholder": "Notification title",
+      "message": "Message",
+      "messagePlaceholder": "Notification content...",
+      "type": "Type",
+      "submit": "Send",
+      "success": "Notification sent successfully",
+      "error": "Error sending notification"
+    },
+    "types": {
+      "info": "Information",
+      "warning": "Warning",
+      "success": "Success",
+      "alert": "Alert"
+    }
+  },
+  "GroupChat": {
+    "title": "Group Chat",
+    "subtitle": "Discussion space for advisors and management",
+    "noMessages": "No messages. Start the discussion!",
+    "typePlaceholder": "Type your message...",
+    "send": "Send",
+    "loading": "Loading messages...",
+    "error": "Error loading messages",
+    "director": "Director",
+    "advisor": "Advisor",
+    "accessDenied": "Access restricted to advisors and management"
   }
 }

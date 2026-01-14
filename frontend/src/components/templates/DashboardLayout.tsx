@@ -129,6 +129,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         iconClass: 'fi fi-br-comment',
         isActive: pathname.startsWith(`/${locale}/client/dashboard/messaging`),
       },
+      {
+        href: `/${locale}/client/dashboard/activities`,
+        label: t('navigation.activities'),
+        iconClass: 'fi fi-br-newspaper',
+        isActive: pathname.startsWith(`/${locale}/client/dashboard/activities`),
+      },
+      {
+        href: `/${locale}/client/dashboard/notifications`,
+        label: t('navigation.notifications'),
+        iconClass: 'fi fi-br-bell',
+        isActive: pathname.startsWith(`/${locale}/client/dashboard/notifications`),
+      },
     ];
 
     const advisorItems: NavigationItem[] = [
@@ -155,6 +167,24 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         label: t('navigation.advisor.messaging'),
         iconClass: 'fi fi-br-comment',
         isActive: pathname.startsWith(`/${locale}/advisor/messaging`),
+      },
+      {
+        href: `/${locale}/advisor/activities`,
+        label: t('navigation.advisor.activities'),
+        iconClass: 'fi fi-br-newspaper',
+        isActive: pathname.startsWith(`/${locale}/advisor/activities`),
+      },
+      {
+        href: `/${locale}/advisor/notifications`,
+        label: t('navigation.advisor.notifications'),
+        iconClass: 'fi fi-br-bell',
+        isActive: pathname.startsWith(`/${locale}/advisor/notifications`),
+      },
+      {
+        href: `/${locale}/advisor/group-chat`,
+        label: t('navigation.advisor.groupChat'),
+        iconClass: 'fi fi-br-users',
+        isActive: pathname.startsWith(`/${locale}/advisor/group-chat`),
       },
     ];
 
@@ -188,6 +218,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         label: t('navigation.director.stocks'),
         iconClass: 'fi fi-br-list-check',
         isActive: pathname.startsWith(`/${locale}/director/stocks`),
+      },
+      {
+        href: `/${locale}/advisor/group-chat`,
+        label: t('navigation.director.groupChat'),
+        iconClass: 'fi fi-br-users',
+        isActive: pathname.startsWith(`/${locale}/advisor/group-chat`),
       },
     ];
 

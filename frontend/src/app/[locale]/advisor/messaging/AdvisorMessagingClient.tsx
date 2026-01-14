@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { Typography } from '@/components/atoms/Typography';
@@ -36,6 +36,13 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
   const [selectedAdvisor, setSelectedAdvisor] = useState<string | null>(null);
   const [transferReason, setTransferReason] = useState('');
   const [transferring, setTransferring] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const selectedDiscussionRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    selectedDiscussionRef.current = selectedDiscussion?.id || null;
+  }, [selectedDiscussion?.id]);
 
   const loadDiscussions = useCallback(async () => {
     try {
@@ -78,10 +85,25 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
   useEffect(() => {
     if (!socket || !isConnected) return;
 
-    const handleNewMessage = (data: { discussionId: string }) => {
-      if (selectedDiscussion?.id === data.discussionId) {
-        loadDiscussion(data.discussionId);
+    const handleNewMessage = (message: any) => {
+      const discussionId = message.discussionId || message.id;
+      
+      if (selectedDiscussionRef.current === discussionId) {
+        setSelectedDiscussion(prev => {
+          if (!prev) return prev;
+          
+          const messageExists = prev.messages.some(m => m.id === message.id);
+          if (messageExists) {
+            return prev;
+          }
+          
+          return {
+            ...prev,
+            messages: [...prev.messages, message],
+          };
+        });
       }
+      
       loadDiscussions();
     };
 
@@ -91,7 +113,14 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
 
     const handleDiscussionClaimed = (data: { discussionId: string }) => {
       loadDiscussions();
-      if (selectedDiscussion?.id === data.discussionId) {
+      if (selectedDiscussionRef.current === data.discussionId) {
+        loadDiscussion(data.discussionId);
+      }
+    };
+
+    const handleDiscussionUpdated = (data: { discussionId: string }) => {
+      loadDiscussions();
+      if (selectedDiscussionRef.current === data.discussionId) {
         loadDiscussion(data.discussionId);
       }
     };
@@ -103,31 +132,77 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
 
     const handleDiscussionTransferredOut = (data: { discussionId: string }) => {
       loadDiscussions();
-      if (selectedDiscussion?.id === data.discussionId) {
+      if (selectedDiscussionRef.current === data.discussionId) {
         setSelectedDiscussion(null);
+      }
+    };
+
+    const handleUserTyping = (data: { discussionId: string; userRole: string }) => {
+      if (selectedDiscussionRef.current === data.discussionId && data.userRole === 'CLIENT') {
+        setIsTyping(true);
+      }
+    };
+
+    const handleUserStoppedTyping = (data: { discussionId: string; userRole: string }) => {
+      if (selectedDiscussionRef.current === data.discussionId && data.userRole === 'CLIENT') {
+        setIsTyping(false);
       }
     };
 
     socket.on('new_message', handleNewMessage);
     socket.on('new_discussion', handleNewDiscussion);
     socket.on('discussion_claimed', handleDiscussionClaimed);
+    socket.on('discussion_updated', handleDiscussionUpdated);
     socket.on('discussion_transferred_in', handleDiscussionTransferredIn);
     socket.on('discussion_transferred_out', handleDiscussionTransferredOut);
+    socket.on('user_typing', handleUserTyping);
+    socket.on('user_stopped_typing', handleUserStoppedTyping);
 
     return () => {
       socket.off('new_message', handleNewMessage);
       socket.off('new_discussion', handleNewDiscussion);
       socket.off('discussion_claimed', handleDiscussionClaimed);
+      socket.off('discussion_updated', handleDiscussionUpdated);
       socket.off('discussion_transferred_in', handleDiscussionTransferredIn);
       socket.off('discussion_transferred_out', handleDiscussionTransferredOut);
+      socket.off('user_typing', handleUserTyping);
+      socket.off('user_stopped_typing', handleUserStoppedTyping);
     };
-  }, [socket, isConnected, selectedDiscussion?.id, loadDiscussion, loadDiscussions]);
+  }, [socket, isConnected, loadDiscussion, loadDiscussions]);
 
-  // Join discussion room when selected
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleMessagesRead = (data: { discussionId: string; readerRole: string }) => {
+      if (selectedDiscussionRef.current === data.discussionId && data.readerRole === 'CLIENT') {
+        setSelectedDiscussion(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            messages: prev.messages.map(msg => {
+              if (msg.senderRole === 'ADVISOR') {
+                return { ...msg, isRead: true, readAt: new Date().toISOString() };
+              }
+              return msg;
+            }),
+          };
+        });
+      }
+    };
+
+    socket.on('messages_read', handleMessagesRead);
+
+    return () => {
+      socket.off('messages_read', handleMessagesRead);
+    };
+  }, [socket, isConnected]);
+
   useEffect(() => {
     if (!socket || !isConnected || !selectedDiscussion) return;
 
     socket.emit('join_discussion', selectedDiscussion.id);
+
+    messagingService.markAdvisorMessagesAsRead(selectedDiscussion.id).catch(console.error);
 
     return () => {
       socket.emit('leave_discussion', selectedDiscussion.id);
@@ -137,6 +212,14 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
   const handleSendMessage = async () => {
     if (!selectedDiscussion || !newMessage.trim() || sending) return;
 
+    if (socket && isConnected) {
+      socket.emit('typing_stop', selectedDiscussion.id);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+    }
+
     try {
       setSending(true);
       const result = await messagingService.sendAdvisorMessage(selectedDiscussion.id, newMessage.trim());
@@ -144,10 +227,10 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
       
       if (result.claimed || result.discussionClaimed) {
         console.log(t('advisor.claimSuccess'));
+        await loadDiscussions();
       }
       
-      await loadDiscussion(selectedDiscussion.id);
-      await loadDiscussions();
+      loadDiscussions();
     } catch (err: unknown) {
       console.error('Error sending message:', err);
       if (err instanceof Error && err.message.includes('already')) {
@@ -161,6 +244,30 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
       setSending(false);
     }
   };
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewMessage(e.target.value);
+    
+    if (!socket || !isConnected || !selectedDiscussion) return;
+    
+    socket.emit('typing_start', selectedDiscussion.id);
+    
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit('typing_stop', selectedDiscussion.id);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleTransfer = async () => {
     if (!selectedDiscussion || !selectedAdvisor) return;
@@ -356,12 +463,27 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                        <span className={`text-xs mt-1 block ${
+                        <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                        <div className={`flex items-center justify-end gap-1 mt-1 ${
                           message.senderRole === 'ADVISOR' ? 'text-gray-300' : 'text-gray-500'
                         }`}>
-                          {formatDate(message.createdAt)}
-                        </span>
+                          <span className="text-xs">
+                            {formatDate(message.createdAt)}
+                          </span>
+                          {message.senderRole === 'ADVISOR' && (
+                            <span title={message.isRead ? t('read') : t('sent')}>
+                              {message.isRead ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-blue-400">
+                                  <path d="M1.5 12.5l5 5L18 6l-1.5-1.5L7 14l-3.5-3.5L1.5 12.5zM8 17l-5-5 1.5-1.5L8 14l8.5-8.5L18 7 8 17z"/>
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))
@@ -370,10 +492,20 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
 
               {selectedDiscussion.status !== 'CLOSED' && (
                 <div className="p-4 border-t border-gray-200">
+                  {isTyping && (
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                      <span className="flex gap-1">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      </span>
+                      <span>{t('typing')}</span>
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     <textarea
                       value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
+                      onChange={handleMessageChange}
                       onKeyDown={handleKeyPress}
                       placeholder={t('typePlaceholder')}
                       rows={2}

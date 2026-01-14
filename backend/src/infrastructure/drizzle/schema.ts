@@ -254,6 +254,8 @@ export const messages = sqliteTable('messages', {
   senderId: text('sender_id').notNull().references(() => users.id),
   senderRole: text('sender_role').notNull(), // CLIENT, ADVISOR
   content: text('content').notNull(),
+  isRead: integer('is_read').notNull().default(0), // 0 = unread, 1 = read
+  readAt: text('read_at'),
   createdAt: text('created_at').notNull(),
 });
 
@@ -272,6 +274,53 @@ export const discussionTransfers = sqliteTable('discussion_transfers', {
 
 export type DiscussionTransferDrizzle = InferSelectModel<typeof discussionTransfers>;
 export type NewDiscussionTransferDrizzle = InferInsertModel<typeof discussionTransfers>;
+
+// Activities / Feed (actualités créées par les conseillers)
+export const activities = sqliteTable('activities', {
+  id: text('id').primaryKey(),
+  authorId: text('author_id').notNull().references(() => users.id),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  type: text('type').notNull().default('NEWS'), // NEWS, ANNOUNCEMENT, etc.
+  isPublished: integer('is_published').notNull().default(1),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export type ActivityDrizzle = InferSelectModel<typeof activities>;
+export type NewActivityDrizzle = InferInsertModel<typeof activities>;
+
+// Notifications (notifications automatiques + manuelles)
+export const notifications = sqliteTable('notifications', {
+  id: text('id').primaryKey(),
+  senderId: text('sender_id').notNull().references(() => users.id),
+  recipientId: text('recipient_id').notNull().references(() => users.id),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  type: text('type').notNull().default('INFO'), // MESSAGE, INFO, WARNING, SUCCESS, etc.
+  isRead: integer('is_read').notNull().default(0),
+  createdAt: text('created_at').notNull(),
+  // Metadata for navigation
+  discussionId: text('discussion_id'), // nullable, for MESSAGE type
+  relatedEntityId: text('related_entity_id'), // nullable, generic (messageId, orderId, etc.)
+}, (table) => ({
+  recipientIdIdx: index('idx_notifications_recipient_id').on(table.recipientId),
+}));
+
+export type NotificationDrizzle = InferSelectModel<typeof notifications>;
+export type NewNotificationDrizzle = InferInsertModel<typeof notifications>;
+
+// Group Messages (messages de groupe entre conseillers + directeur)
+export const groupMessages = sqliteTable('group_messages', {
+  id: text('id').primaryKey(),
+  senderId: text('sender_id').notNull().references(() => users.id),
+  senderRole: text('sender_role').notNull(), // ADVISOR, DIRECTOR
+  content: text('content').notNull(),
+  createdAt: text('created_at').notNull(),
+});
+
+export type GroupMessageDrizzle = InferSelectModel<typeof groupMessages>;
+export type NewGroupMessageDrizzle = InferInsertModel<typeof groupMessages>;
 
 
 //---------------- relations -------------------------
