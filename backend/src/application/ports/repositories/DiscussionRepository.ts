@@ -9,4 +9,5 @@ export interface DiscussionRepository {
   listForAdvisor(advisorId: string): Promise<Result<Discussion[], Error>>; 
   update(discussion: Discussion): Promise<Result<Discussion, Error>>;
   claimDiscussion(discussionId: string, advisorId: string): Promise<Result<Discussion, Error>>;
+  markMessagesAsRead(discussionId: string, readerRole: 'CLIENT' | 'ADVISOR'): Promise<Result<number, Error>>;
 }

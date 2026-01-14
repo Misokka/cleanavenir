@@ -74,6 +74,8 @@ export class GetAdvisorDiscussionUseCase {
       senderRole: m.senderRole,
       content: m.content,
       createdAt: m.createdAt.toISOString(),
+      isRead: m.isRead,
+      readAt: m.readAt?.toISOString() ?? null,
     }));
 
     return ok({

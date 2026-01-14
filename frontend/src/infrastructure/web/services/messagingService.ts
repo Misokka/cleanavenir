@@ -23,6 +23,8 @@ export interface MessageDTO {
   senderRole: 'CLIENT' | 'ADVISOR';
   senderName?: string;
   content: string;
+  isRead: boolean;
+  readAt?: string;
   createdAt: string;
 }
 
@@ -143,6 +145,16 @@ export const messagingService = {
 
   getAdvisors: async (): Promise<AdvisorDTO[]> => {
     const response = await httpClient.get<AdvisorDTO[]>('/messaging/advisor/advisors');
+    return response.data;
+  },
+
+  markClientMessagesAsRead: async (discussionId: string): Promise<{ markedCount: number }> => {
+    const response = await httpClient.post<{ markedCount: number }>(`/messaging/discussions/${discussionId}/read`);
+    return response.data;
+  },
+
+  markAdvisorMessagesAsRead: async (discussionId: string): Promise<{ markedCount: number }> => {
+    const response = await httpClient.post<{ markedCount: number }>(`/messaging/advisor/discussions/${discussionId}/read`);
     return response.data;
   },
 };

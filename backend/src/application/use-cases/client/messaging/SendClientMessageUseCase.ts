@@ -64,6 +64,8 @@ export class SendClientMessageUseCase {
       senderRole: saved.senderRole,
       content: saved.content,
       createdAt: saved.createdAt.toISOString(),
+      isRead: saved.isRead,
+      readAt: saved.readAt?.toISOString() ?? null,
     });
   }
 }

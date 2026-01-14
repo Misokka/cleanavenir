@@ -86,6 +86,8 @@ export class GetClientDiscussionUseCase {
       senderName: senderNames[m.senderIdentifier],
       content: m.content,
       createdAt: m.createdAt.toISOString(),
+      isRead: m.isRead,
+      readAt: m.readAt?.toISOString() ?? null,
     }));
 
     return ok({

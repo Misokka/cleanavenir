@@ -11,6 +11,8 @@ export class DrizzleMessageMapper implements Mapper<MessageDrizzle, Message, New
       raw.senderRole as SenderRole,
       raw.content,
       new Date(raw.createdAt),
+      raw.isRead === 1,
+      raw.readAt ? new Date(raw.readAt) : null,
     );
   }
 
@@ -22,6 +24,8 @@ export class DrizzleMessageMapper implements Mapper<MessageDrizzle, Message, New
       senderRole: entity.senderRole,
       content: entity.content,
       createdAt: entity.createdAt?.toISOString() ?? new Date().toISOString(),
+      isRead: entity.isRead ? 1 : 0,
+      readAt: entity.readAt?.toISOString() ?? null,
     };
   }
 }

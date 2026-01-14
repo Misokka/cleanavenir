@@ -22,6 +22,8 @@ export interface MessageDTO {
   senderName?: string;
   content: string;
   createdAt: string;
+  isRead: boolean;
+  readAt: string | null;
 }
 
 export interface DiscussionTransferDTO {

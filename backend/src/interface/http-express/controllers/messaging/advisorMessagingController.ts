@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createContainer } from '../../../../infrastructure/bootstrap/container';
-import { emitNewMessage, emitDiscussionClaimed, emitDiscussionTransferred } from '../../../../infrastructure/socket/socketServer';
+import { emitNewMessage, emitDiscussionClaimed, emitDiscussionTransferred, emitMessagesRead, isUserInDiscussionRoom } from '../../../../infrastructure/socket/socketServer';
 
 const container = createContainer();
 
@@ -90,10 +90,46 @@ export const sendAdvisorMessageController = async (req: Request, res: Response) 
 
     emitNewMessage(discussionId, result.value.message);
 
+    const discussion = await container.repositories.discussion.findById(discussionId);
+    if (discussion.ok && discussion.value.clientIdentifier) {
+      const client = await container.repositories.client.findById(discussion.value.clientIdentifier);
+      if (client.ok) {
+        const isInRoom = isUserInDiscussionRoom(client.value.userIdentifier, discussionId);
+        if (!isInRoom) {
+          const senderName = req.user?.firstname && req.user?.lastname
+            ? `${req.user.firstname} ${req.user.lastname}`
+            : 'Votre conseiller';
+          
+          const notifResult = await container.useCases.notification.createMessage.execute({
+            senderId: userId,
+            recipientId: client.value.userIdentifier,
+            senderName,
+            messageContent: result.value.message.content,
+            discussionId,
+            messageId: result.value.message.id,
+          });
+          
+          if (notifResult.ok) {
+            const { sseManager } = await import('../../../../infrastructure/sse/SSEManager');
+            sseManager.sendToUser(client.value.userIdentifier, 'new_notification', notifResult.value);
+          }
+        }
+      }
+    }
+
     if (result.value.discussionClaimed) {
       const advisorResult = await container.repositories.advisor.findByUserId(userId);
       if (advisorResult.ok) {
-        emitDiscussionClaimed(discussionId, advisorResult.value.advisorIdentifier, { discussionId });
+        const discussionResult = await container.repositories.discussion.findById(discussionId);
+        if (discussionResult.ok) {
+          const discussion = discussionResult.value;
+          emitDiscussionClaimed(discussionId, advisorResult.value.advisorIdentifier, {
+            discussionId,
+            clientId: discussion.clientIdentifier,
+            advisorId: advisorResult.value.advisorIdentifier,
+            status: discussion.status,
+          });
+        }
       }
     }
 
@@ -176,6 +212,34 @@ export const listAdvisorsController = async (req: Request, res: Response) => {
     return res.json(result.value);
   } catch (error) {
     console.error('Error listing advisors:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const markAdvisorMessagesAsReadController = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    const { id: discussionId } = req.params;
+
+    const result = await container.useCases.messaging.markAsRead.execute({
+      discussionId,
+      userId,
+      userRole: 'ADVISOR',
+    });
+
+    if (!result.ok) {
+      return res.status(400).json({ error: result.error.message });
+    }
+
+    emitMessagesRead(discussionId, 'ADVISOR');
+
+    return res.json({ markedCount: result.value.markedCount });
+  } catch (error) {
+    console.error('Error marking messages as read:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
