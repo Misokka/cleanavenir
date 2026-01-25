@@ -33,12 +33,17 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
       return;
     }
 
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
     
     const newSocket = io(socketUrl, {
+      autoConnect: false,
       withCredentials: true, // This sends cookies with the connection
       transports: ['websocket', 'polling'],
     });
@@ -59,6 +64,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
     });
 
     setSocket(newSocket);
+    newSocket.connect();
 
     return () => {
       newSocket.disconnect();

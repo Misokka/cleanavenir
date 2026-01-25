@@ -2,7 +2,7 @@ import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { verifyToken } from '../adapters/JwtService';
 import { db } from '../drizzle/client';
-import { users, clients, advisors } from '../drizzle/schema';
+import { users, clients, advisors, discussions } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import * as cookie from 'cookie';
 
@@ -88,7 +88,6 @@ export function initializeSocket(httpServer: HttpServer): Server {
       socket.join(`client:${socket.clientId}`);
       
       try {
-        const { discussions } = await import('../drizzle/schema');
         const clientDiscussions = await db.select().from(discussions).where(eq(discussions.clientId, socket.clientId));
         clientDiscussions.forEach(discussion => {
           socket.join(`discussion:${discussion.id}`);
@@ -105,7 +104,6 @@ export function initializeSocket(httpServer: HttpServer): Server {
       socket.join('group_chat'); 
       
       try {
-        const { discussions } = await import('../drizzle/schema');
         const advisorDiscussions = await db.select().from(discussions).where(eq(discussions.advisorId, socket.advisorId));
         advisorDiscussions.forEach(discussion => {
           socket.join(`discussion:${discussion.id}`);
