@@ -296,7 +296,7 @@ export default function MessagingClient({ locale }: MessagingClientProps) {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-12rem)] flex flex-col lg:flex-row gap-4">
+      <div className="h-[calc(100vh-12rem)] flex flex-col lg:flex-row gap-4 ">
         {/* liste discussions */}
         <div className="lg:w-1/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -356,7 +356,7 @@ export default function MessagingClient({ locale }: MessagingClientProps) {
         </div>
 
         {/* discussion */}
-        <div className="lg:w-2/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
+        <div className="h-full lg:w-2/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
           {selectedDiscussion ? (
             <>
               <div className="p-4 border-b border-gray-200">

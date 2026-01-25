@@ -412,7 +412,7 @@ export default function AdvisorMessagingClient({ locale }: AdvisorMessagingClien
           </div>
         </div>
 
-        <div className="lg:w-2/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
+        <div className="h-full relative lg:w-2/3 bg-white rounded-lg shadow border border-gray-200 flex flex-col">
           {selectedDiscussion ? (
             <>
               <div className="p-4 border-b border-gray-200">
