@@ -2,8 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useAuth } from '@/features/auth/useAuth';
+
 import { MessageDTO, DiscussionDTO } from '../infrastructure/web/services/messagingService';
+import { useAuth } from './AuthProvider';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -26,17 +27,24 @@ interface SocketProviderProps {
 }
 
 export function SocketProvider({ children }: SocketProviderProps) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const userId = user?.id;
   const isAuthenticated = !!user;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
+    if (loading) return;
+
     if (!isAuthenticated) {
       if (socket) {
         socket.disconnect();
         setSocket(null);
+        console.log('Socket disconnected due to unauthenticated user');
       }
+      setIsConnected(false);
+      setSocket(null);
+      console.log("unauthenticated user, not connecting to socket");
       return;
     }
 
@@ -45,7 +53,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
     const newSocket = io(socketUrl, {
       autoConnect: false,
       withCredentials: true, // This sends cookies with the connection
-      transports: ['websocket', 'polling'],
+      transports: ['websocket'],
     });
 
     newSocket.on('connect', () => {
@@ -67,9 +75,13 @@ export function SocketProvider({ children }: SocketProviderProps) {
     newSocket.connect();
 
     return () => {
+      newSocket.removeAllListeners();
       newSocket.disconnect();
+      setIsConnected(false);
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, userId, loading]);
+
+
 
   const joinDiscussion = useCallback((discussionId: string) => {
     if (socket) {
