@@ -27,18 +27,31 @@ services:
     networks:
       - myapp_network
 
-  frontend:
+  frontend-app:
     build:
-      context: ./frontend
+      context: ./frontend-app
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: frontend-app
     ports:
       - "3000:3000" # On accède au site via http://localhost:3000
     volumes:
-      - ./frontend:/app # Monte le code source pour le live-reload
+      - ./frontend-app:/app # Monte le code source pour le live-reload
       - /app/node_modules # S'assure que node_modules n'est pas écrasé
     env_file:
-      - ./frontend/.env.local
+      - ./frontend-app/.env.local
+    networks:
+      - myapp_network
+  
+  frontend-landing:
+    build:
+      context: ./frontend-landing
+      dockerfile: Dockerfile
+    container_name: frontend-landing
+    ports:
+      - "3001:3000" # On accède au site via http://localhost:3001
+    volumes:
+      - ./frontend-landing:/app # Monte le code source pour le live-reload
+      - /app/node_modules # S'assure que node_modules n'est pas écrasé
     networks:
       - myapp_network
   
