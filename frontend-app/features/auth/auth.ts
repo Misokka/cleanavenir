@@ -1,13 +1,42 @@
-import { post } from "../api";
+import { User } from "@/context/AuthProvider";
+import httpClient from "../api";
 import { LoginDTO } from "./login.dto";
 import { RegisterDTO } from "./register.dto";
 
-export async function login(credentials: LoginDTO){
-  const response = await post("/auth/login", credentials);
-  return response;
+type LoginResponse = {
+  message: string;
+  user: any;
 }
 
-export async function register(data: RegisterDTO){
-  const response = await post("/auth/register", data);
-  return response;
+type RegisterResponse = {
+  message: string;
+  user: any;
 }
+
+
+
+class AuthManager {
+
+  async login(credentials: LoginDTO){
+    const response = await httpClient.post<LoginResponse>("/auth/login", credentials);
+    return response;
+  }
+
+  async register(data: RegisterDTO){
+    const response = await httpClient.post<RegisterResponse>("/auth/register", data);
+    return response;
+  }
+
+  async me(){
+    const response = await httpClient.get<User>("/auth/me");
+    return response;
+  }
+
+  async logout(){
+    const response = await httpClient.remove("/auth/logout");
+    return response;
+  }
+
+}
+
+export const authManager = new AuthManager();
