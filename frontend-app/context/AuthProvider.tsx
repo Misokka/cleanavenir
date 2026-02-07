@@ -25,6 +25,7 @@ interface AuthProviderProps {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  
   function updateUser(user: User | null) {
     setUser(user);
   }
@@ -41,7 +42,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       }
     }
     fetchMe();
-  }, [])
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, updateUser }}>
