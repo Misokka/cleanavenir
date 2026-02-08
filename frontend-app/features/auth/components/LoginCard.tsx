@@ -9,7 +9,14 @@ function LoginCard() {
     <div className="flex w-full max-w-md flex-col items-center gap-8">
       <div className="flex flex-col items-center gap-2">
         <div className="relative h-16 w-16">
-          <Image src="/images/logo.png" alt="KickDeal logo" fill className="object-contain" priority/>
+          <Image
+            src="/images/logo.png"
+            alt="KickDeal logo"
+            fill
+            sizes="64px"
+            className="object-contain"
+            priority
+          />
         </div>
 
         <div className="text-center">
