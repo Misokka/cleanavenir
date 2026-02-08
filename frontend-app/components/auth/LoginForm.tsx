@@ -18,7 +18,6 @@ function LoginForm() {
       if (!response.ok) {
         throw new Error("Identifiants invalides");
       }
-      // Gérer la redirection ou le stockage du token ici
     } catch (err: any) {
       setError(err.message || "Erreur lors de la connexion");
     }
