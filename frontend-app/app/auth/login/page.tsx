@@ -1,16 +1,10 @@
-'use client'
-import LoginForm from '@/components/auth/LoginForm';
+import LoginCard from '@/features/auth/components/LoginCard'
 
-function page() {
-
-  return (
-    <div>
-      <div className="container">
-        <h1>Connexion</h1>
-      </div>
-    <LoginForm />
-    </div>
-  );
+export const metadata = {
+  title: 'Connexion KickDeal',
+  description: 'Connectez-vous à votre compte KickDeal',
 }
 
-export default page
+export default function LoginPage() {
+  return <LoginCard />
+}

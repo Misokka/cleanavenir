@@ -16,9 +16,10 @@ class HttpClient {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify(data),
-      credentials: "include", // Inclure les cookies pour les sessions
+      credentials: "include", 
     });
 
     return {
@@ -30,7 +31,10 @@ class HttpClient {
 
   async get<T>(endpoint: string): Promise<HttpClientResponse<T>> {
     const response = await fetch(`${this.apiUrl}${endpoint}`, {
-      credentials: "include", // Inclure les cookies pour les sessions
+      headers: {
+        "Accept": "application/json",
+      },
+      credentials: "include", 
     });
     return {
       data: await response.json(),
@@ -44,9 +48,10 @@ class HttpClient {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify(data),
-      credentials: "include", // Inclure les cookies pour les sessions
+      credentials: "include", 
     });
 
     return {
@@ -59,7 +64,10 @@ class HttpClient {
   async remove<T>(endpoint: string): Promise<HttpClientResponse<T>> {
     const response = await fetch(`${this.apiUrl}${endpoint}`, {
       method: "DELETE",
-      credentials: "include", // Inclure les cookies pour les sessions
+      headers: {
+        "Accept": "application/json",
+      },
+      credentials: "include", 
     });
 
     return {
