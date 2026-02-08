@@ -14,4 +14,4 @@ nelmio_cors:
             allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
             allow_credentials: true
             allow_methods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
-            origin_regex: false # Plus clair car ce n'est pas une regex
+            origin_regex: true # Active car CORS_ALLOW_ORIGIN est une regex

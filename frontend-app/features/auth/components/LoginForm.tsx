@@ -9,8 +9,9 @@ import { Mail, Lock, ArrowRight } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { loginSchema, type LoginFormData } from '@/features/auth/schemas/login.schema'
-import { authClient } from '@/features/auth/services/auth.client'
+import { authManager } from '@/features/auth/auth'
 import { useAuth } from '@/context/AuthProvider'
+import Link from 'next/link'
 
 function LoginForm() {
   const router = useRouter()
@@ -31,11 +32,12 @@ function LoginForm() {
 
   async function onSubmit(data: LoginFormData) {
     try {
-      const response = await authClient.login(data)
+      const response = await authManager.login(data)
 
       if (!response.ok) {
         const errorData = response.data as unknown as Record<string, string>
         const serverMessage =
+          errorData?.errorMessage ||
           errorData?.message ||
           errorData?.error ||
           'Identifiants invalides'
@@ -85,9 +87,9 @@ function LoginForm() {
       />
 
       <div className="flex justify-end">
-        <a href="/auth/forgot-password" className="text-sm text-brand-purple transition-colors hover:opacity-80 focus:outline-none focus-visible:underline">
+        <Link href="/auth/forgot-password" className="text-sm text-brand-purple transition-colors hover:opacity-80 focus:outline-none focus-visible:underline">
           Mot de passe oublié ?
-        </a>
+        </Link>
       </div>
 
       <Button type="submit" isLoading={isSubmitting} icon={<ArrowRight className="h-4 w-4" />} className="w-full mt-1">
